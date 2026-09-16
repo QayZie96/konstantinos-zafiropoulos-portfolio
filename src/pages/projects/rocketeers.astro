@@ -1,28 +1,812 @@
 ---
-const title = 'Rocketeers | Konstantinos Zafiropoulos';
+/* =========================================================
+   PAGE METADATA
+   ========================================================= */
+
+const title =
+  "Rocketeers | Marketplace Operations Case Study | Konstantinos Zafiropoulos";
+
+/* =========================================================
+   CASE STUDY METRICS
+   ========================================================= */
+
+const metrics = [
+  {
+    value: "23,000+",
+    label: "Items sold",
+  },
+  {
+    value: "6,455",
+    label: "Seller feedback entries",
+  },
+  {
+    value: "3,361",
+    label: "Unique positive feedback",
+  },
+  {
+    value: "807",
+    label: "Store followers",
+  },
+];
 ---
 
 <html lang="en">
   <head>
+    <!-- =====================================================
+         HEAD / SEO
+         ===================================================== -->
+
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width" />
-    <meta name="description" content="A marketplace operations case study: Rocketeers, founded and operated by Konstantinos Zafiropoulos from 2017 to 2024." />
+
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <meta name="viewport" content="width=device-width" />
+
+    <meta
+      name="description"
+      content="Rocketeers marketplace operations case study by Konstantinos Zafiropoulos."
+    />
+
     <title>{title}</title>
   </head>
+
   <body>
     <main>
-      <nav aria-label="Primary navigation"><a class="wordmark" href="/">KZ<span>.</span></a><a class="back" href="/#projects">← Back to selected work</a></nav>
-      <header><p class="eyebrow">Case study · 2017—2024</p><h1>Rocketeers</h1><p class="lede">Building and operating a cross-border digital marketplace business from the ground up.</p></header>
-      <section class="metrics" aria-label="Rocketeers at a glance"><div><strong>23,000</strong><span>items sold</span></div><div><strong>10,000+</strong><span>customer transactions</span></div><div><strong>5,000+</strong><span>customers served</span></div><div><strong>20+</strong><span>countries reached</span></div></section>
-      <section class="story"><p class="eyebrow">The work</p><h2>A business where every operating detail mattered.</h2><p>Rocketeers was a digital marketplace business I founded and ran for seven years. It required hands-on ownership across sourcing, listings, pricing, inventory, customer service, returns, disputes, and seller performance.</p><p>Rather than treating marketplace work as a sequence of isolated tasks, I built and refined operating routines that connected customer experience with commercial decisions and platform health.</p></section>
-      <section class="columns"><article><p class="eyebrow">Operations</p><h2>From listing to resolution.</h2><ul><li>Sourcing, buying, pricing, and inventory decisions</li><li>Listing quality and day-to-day marketplace administration</li><li>Returns, disputes, cases, and Resolution Center workflows</li><li>Seller-performance metrics and operational problem solving</li></ul></article><article><p class="eyebrow">Customer experience</p><h2>Trust, built repeatedly.</h2><p>Across the life of the business, Rocketeers received zero negative eBay feedback and exactly one neutral feedback. That outcome came from careful communication, clear expectations, and prompt handling when a transaction needed attention.</p></article></section>
-      <section class="outcome"><p class="eyebrow">What it demonstrates</p><h2>Marketplace experience grounded in real volume and accountability.</h2><p>Rocketeers is evidence of practical judgement under operating pressure: recognizing issues early, resolving them clearly, and improving the system behind the work as volume grows.</p></section>
+      <!-- ===================================================
+           MAIN NAVIGATION
+           =================================================== -->
+
+      <nav aria-label="Primary navigation">
+        <a class="wordmark" href="/">
+          KZ<span>.</span>
+        </a>
+
+        <div class="nav-links">
+          <a href="/#projects">Projects</a>
+          <a href="/#about">About</a>
+          <a href="/#contact">Contact</a>
+        </div>
+      </nav>
+
+      <!-- ===================================================
+           HERO
+           =================================================== -->
+
+      <header class="hero">
+        <a class="back-link" href="/#projects">← Back to projects</a>
+
+        <p class="eyebrow">Marketplace operations · 2017–2024</p>
+
+        <h1>Rocketeers</h1>
+
+        <p class="hero-subtitle">
+          Building and operating a digital marketplace business across
+          international customers, inventory, listings, pricing, fulfilment,
+          seller performance, disputes, and day-to-day operations.
+        </p>
+
+        <!-- Project tags -->
+        <div class="hero-tags">
+          <span>eBay</span>
+          <span>Marketplace Operations</span>
+          <span>Pricing</span>
+          <span>Inventory</span>
+          <span>Process Design</span>
+        </div>
+      </header>
+
+      <!-- ===================================================
+           KEY METRICS
+           =================================================== -->
+
+      <section class="metrics" aria-label="Rocketeers results">
+        {
+          metrics.map((metric) => (
+            <article class="metric-card">
+              <strong>{metric.value}</strong>
+              <span>{metric.label}</span>
+            </article>
+          ))
+        }
+      </section>
+
+      <!-- ===================================================
+           SECTION 01 — OVERVIEW
+           =================================================== -->
+
+      <section class="case-section overview">
+        <div class="section-label">
+          <p class="eyebrow">01 — Overview</p>
+        </div>
+
+        <div class="section-content">
+          <h2>A marketplace business built from the operational level up.</h2>
+
+          <p class="lead">
+            Rocketeers was a digital marketplace operation I ran for seven
+            years. I handled the practical systems behind the business rather
+            than working on only one isolated part of the process.
+          </p>
+
+          <p>
+            That included sourcing, catalogue management, listing creation,
+            pricing, inventory, order handling, customer communication,
+            returns, disputes, marketplace cases, and seller-performance
+            monitoring.
+          </p>
+
+          <p>
+            The business sold more than 23,000 items while maintaining zero
+            negative seller feedback across its operating history.
+          </p>
+        </div>
+      </section>
+
+      <!-- ===================================================
+           SECTION 02 — THE CHALLENGE
+           =================================================== -->
+
+      <section class="case-section">
+        <div class="section-label">
+          <p class="eyebrow">02 — The challenge</p>
+        </div>
+
+        <div class="section-content">
+          <h2>Manual work becomes a systems problem when volume grows.</h2>
+
+          <p class="lead">
+            Marketplace operations become increasingly difficult to manage as
+            the catalogue expands.
+          </p>
+
+          <!-- Challenge cards -->
+          <div class="challenge-grid">
+            <article>
+              <span class="card-number">01</span>
+
+              <h3>Pricing</h3>
+
+              <p>
+                Large numbers of listings and variations made individual
+                repricing increasingly inefficient.
+              </p>
+            </article>
+
+            <article>
+              <span class="card-number">02</span>
+
+              <h3>Catalogue control</h3>
+
+              <p>
+                Listings needed consistent titles, attributes, availability,
+                pricing, and marketplace-specific information.
+              </p>
+            </article>
+
+            <article>
+              <span class="card-number">03</span>
+
+              <h3>Operational quality</h3>
+
+              <p>
+                Growth could not come at the expense of seller performance,
+                customer service, or accurate fulfilment.
+              </p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================================================
+           SECTION 03 — OPERATIONS
+           =================================================== -->
+
+      <section class="case-section">
+        <div class="section-label">
+          <p class="eyebrow">03 — Operations</p>
+        </div>
+
+        <div class="section-content">
+          <h2>The work behind the storefront.</h2>
+
+          <!-- Operations grid -->
+          <div class="operations-grid">
+            <div class="operation">
+              <span>Marketplace</span>
+
+              <strong>Listings & catalogue</strong>
+
+              <p>
+                Created, maintained, and improved marketplace listings across a
+                large catalogue.
+              </p>
+            </div>
+
+            <div class="operation">
+              <span>Commercial</span>
+
+              <strong>Pricing</strong>
+
+              <p>
+                Managed pricing decisions and developed more structured ways of
+                handling repeated pricing work.
+              </p>
+            </div>
+
+            <div class="operation">
+              <span>Operations</span>
+
+              <strong>Orders & inventory</strong>
+
+              <p>
+                Coordinated availability, order processing, stock-related
+                decisions, and fulfilment workflows.
+              </p>
+            </div>
+
+            <div class="operation">
+              <span>Customer experience</span>
+
+              <strong>Returns & disputes</strong>
+
+              <p>
+                Used eBay Seller Hub and Resolution Center extensively for
+                returns, disputes, cases, and seller-performance management.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================================================
+           SECTION 04 — EVIDENCE & RESULTS
+           =================================================== -->
+
+      <section class="case-section evidence">
+        <div class="section-label">
+          <p class="eyebrow">04 — Evidence & results</p>
+        </div>
+
+        <div class="section-content">
+          <h2>Marketplace performance backed by real operating history.</h2>
+
+          <p class="lead">
+            Rocketeers was not a conceptual project. It was a real operating
+            business with years of marketplace activity and measurable seller
+            performance.
+          </p>
+
+          <!-- Evidence cards -->
+          <div class="evidence-grid">
+            <article>
+              <strong>0</strong>
+              <span>Negative feedback</span>
+            </article>
+
+            <article>
+              <strong>1</strong>
+              <span>Neutral feedback</span>
+            </article>
+
+            <article>
+              <strong>23,000+</strong>
+              <span>Items sold</span>
+            </article>
+
+            <article>
+              <strong>20+</strong>
+              <span>Countries served</span>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================================================
+           SECTION 05 — SKILLS DEMONSTRATED
+           =================================================== -->
+
+      <section class="case-section">
+        <div class="section-label">
+          <p class="eyebrow">05 — Skills demonstrated</p>
+        </div>
+
+        <div class="section-content">
+          <h2>Business ownership translated into operational capability.</h2>
+
+          <!-- Skills list -->
+          <div class="skills-list">
+            <span>Marketplace operations</span>
+            <span>eBay Seller Hub</span>
+            <span>Resolution Center</span>
+            <span>Pricing</span>
+            <span>Inventory</span>
+            <span>Catalogue management</span>
+            <span>Customer experience</span>
+            <span>Returns & disputes</span>
+            <span>Process improvement</span>
+            <span>Operational ownership</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================================================
+           NEXT PROJECT / RETURN CTA
+           =================================================== -->
+
+      <section class="project-end">
+        <p class="eyebrow">Next</p>
+
+        <h2>Explore the rest of the portfolio.</h2>
+
+        <a class="text-link" href="/#projects">
+          Back to selected work <span aria-hidden="true">→</span>
+        </a>
+      </section>
     </main>
-    <footer><span>© {new Date().getFullYear()} Konstantinos Zafiropoulos</span><a href="/">Portfolio home</a></footer>
+
+    <!-- =====================================================
+         FOOTER
+         ===================================================== -->
+
+    <footer>
+      <span>© {new Date().getFullYear()} Konstantinos Zafiropoulos</span>
+      <span>Built with Astro</span>
+    </footer>
   </body>
 </html>
 
 <style>
-  :root{color:#12221f;background:#f4f1e9;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}*{box-sizing:border-box}body{margin:0}main,footer{max-width:1100px;margin:auto;padding-left:clamp(1.5rem,5vw,4.5rem);padding-right:clamp(1.5rem,5vw,4.5rem)}nav{display:flex;justify-content:space-between;align-items:center;padding:1.5rem 0}.wordmark{font-size:1.3rem;font-weight:800;letter-spacing:-.08em;text-decoration:none;color:inherit}.wordmark span,.eyebrow{color:#e6562e}.back{color:inherit;font-size:.9rem;text-underline-offset:.25em}header{padding:clamp(4rem,10vw,8rem) 0 3rem;border-bottom:1px solid #bac5bc}.eyebrow{margin:0 0 1.2rem;font-size:.78rem;font-weight:750;letter-spacing:.08em;text-transform:uppercase}h1,h2{font-family:Georgia,"Times New Roman",serif;font-weight:400;letter-spacing:-.055em}h1{margin:0;font-size:clamp(4rem,11vw,8rem);line-height:.86}h2{margin:0 0 1.25rem;font-size:clamp(2rem,4.6vw,3.8rem);line-height:1}.lede{max-width:600px;margin:2rem 0 0;font-size:clamp(1.15rem,2vw,1.45rem);line-height:1.5}.metrics{display:grid;grid-template-columns:repeat(4,1fr);border-bottom:1px solid #bac5bc}.metrics div{padding:2rem 1rem 2rem 0}.metrics div+div{border-left:1px solid #bac5bc;padding-left:1.5rem}.metrics strong{display:block;font-family:Georgia,"Times New Roman",serif;font-size:clamp(2rem,4vw,3.4rem);font-weight:400;letter-spacing:-.05em}.metrics span{color:#53645d;font-size:.82rem}.story,.outcome{max-width:720px;padding:clamp(4rem,9vw,7rem) 0}.story p:not(.eyebrow),.outcome p:not(.eyebrow),article p:not(.eyebrow){font-size:1.08rem;line-height:1.65}.columns{display:grid;grid-template-columns:1fr 1fr;border-top:1px solid #bac5bc;border-bottom:1px solid #bac5bc}.columns article{padding:clamp(2.5rem,5vw,4rem) clamp(1.5rem,4vw,3.5rem) clamp(2.5rem,5vw,4rem) 0}.columns article+article{border-left:1px solid #bac5bc;padding-left:clamp(1.5rem,4vw,3.5rem)}ul{margin:0;padding-left:1.1rem;line-height:1.65}li+li{margin-top:.7rem}.outcome{padding-bottom:clamp(5rem,10vw,8rem)}footer{display:flex;justify-content:space-between;padding-top:1.5rem;padding-bottom:1.5rem;border-top:1px solid #bac5bc;color:#53645d;font-size:.82rem}footer a{color:inherit}@media(max-width:700px){.metrics,.columns{grid-template-columns:1fr 1fr}.metrics div:nth-child(3){border-left:0}.columns article{grid-column:span 2}.columns article+article{border-left:0;border-top:1px solid #bac5bc;padding-left:0}}@media(max-width:450px){.metrics{grid-template-columns:1fr}.metrics div+div,.metrics div:nth-child(3){border-left:0;border-top:1px solid #bac5bc;padding-left:0}}
+  /* =========================================================
+     DESIGN TOKENS / GLOBAL THEME
+     ========================================================= */
+
+  :root {
+    color: #e8edf3;
+    background: #050b14;
+    font-family:
+      Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+      "Segoe UI", sans-serif;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    margin: 0;
+    color: #e8edf3;
+    background:
+      radial-gradient(
+        circle at top right,
+        rgba(42, 167, 255, 0.12),
+        transparent 34rem
+      ),
+      radial-gradient(
+        circle at 15% 35%,
+        rgba(255, 138, 0, 0.05),
+        transparent 28rem
+      ),
+      #050b14;
+  }
+
+  /* =========================================================
+     PAGE WIDTH / LAYOUT
+     ========================================================= */
+
+  main,
+  footer {
+    max-width: 1200px;
+    margin: auto;
+    padding-left: clamp(1.5rem, 5vw, 4.5rem);
+    padding-right: clamp(1.5rem, 5vw, 4.5rem);
+  }
+
+  /* =========================================================
+     LINKS
+     ========================================================= */
+
+  a {
+    color: inherit;
+    text-underline-offset: 0.25em;
+  }
+
+  /* =========================================================
+     NAVIGATION
+     ========================================================= */
+
+  nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 1.5rem;
+  }
+
+  .wordmark {
+    font-size: 1.3rem;
+    font-weight: 800;
+    text-decoration: none;
+    letter-spacing: -0.08em;
+  }
+
+  .wordmark span,
+  .text-link span {
+    color: #ff8a00;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: clamp(1rem, 3vw, 2.5rem);
+    font-size: 0.9rem;
+  }
+
+  .nav-links a {
+    color: #b8c7d6;
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+
+  .nav-links a:hover {
+    color: #ffffff;
+  }
+
+  /* =========================================================
+     HERO
+     ========================================================= */
+
+  .hero {
+    padding: clamp(5rem, 10vw, 8rem) 0 clamp(3.5rem, 7vw, 5.5rem);
+  }
+
+  .back-link {
+    display: inline-block;
+    margin-bottom: 3rem;
+    color: #7f95aa;
+    font-size: 0.85rem;
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+
+  .back-link:hover {
+    color: #ffffff;
+  }
+
+  .eyebrow {
+    margin: 0 0 1.25rem;
+    color: #ff8a00;
+    font-size: 0.78rem;
+    font-weight: 750;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  h1,
+  h2,
+  h3,
+  p {
+    margin-top: 0;
+  }
+
+  h1,
+  h2 {
+    font-family: Georgia, "Times New Roman", serif;
+    font-weight: 400;
+    letter-spacing: -0.055em;
+  }
+
+  h1 {
+    max-width: 900px;
+    margin-bottom: 1.5rem;
+    color: #ffffff;
+    font-size: clamp(4rem, 10vw, 8rem);
+    line-height: 0.9;
+  }
+
+  h2 {
+    max-width: 760px;
+    color: #ffffff;
+    font-size: clamp(2.2rem, 5vw, 4rem);
+    line-height: 1;
+  }
+
+  h3 {
+    color: #ffffff;
+  }
+
+  .hero-subtitle {
+    max-width: 720px;
+    color: #b8c7d6;
+    font-size: clamp(1.1rem, 2vw, 1.35rem);
+    line-height: 1.6;
+  }
+
+  .hero-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.65rem;
+    margin-top: 2rem;
+  }
+
+  .hero-tags span {
+    padding: 0.55rem 0.8rem;
+    border: 1px solid #203247;
+    border-radius: 999px;
+    color: #a9bbcc;
+    background: rgba(8, 18, 32, 0.8);
+    font-size: 0.78rem;
+  }
+
+  /* =========================================================
+     METRICS
+     ========================================================= */
+
+  .metrics {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+    padding-bottom: clamp(4rem, 8vw, 6rem);
+  }
+
+  .metric-card {
+    min-height: 145px;
+    padding: 1.4rem;
+    border: 1px solid #203247;
+    border-radius: 14px;
+    background:
+      linear-gradient(
+        135deg,
+        rgba(42, 167, 255, 0.08),
+        rgba(255, 138, 0, 0.025)
+      ),
+      rgba(8, 18, 32, 0.82);
+  }
+
+  .metric-card strong {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #2aa7ff;
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+  }
+
+  .metric-card span {
+    color: #9fb1c2;
+    font-size: 0.9rem;
+  }
+
+  /* =========================================================
+     CASE STUDY SECTIONS
+     ========================================================= */
+
+  .case-section {
+    display: grid;
+    grid-template-columns: minmax(150px, 0.32fr) minmax(0, 1fr);
+    gap: clamp(2rem, 7vw, 6rem);
+    padding: clamp(4.5rem, 9vw, 7.5rem) 0;
+    border-top: 1px solid #203247;
+  }
+
+  .section-content {
+    max-width: 800px;
+  }
+
+  .section-content > p {
+    color: #a9bbcc;
+    line-height: 1.7;
+  }
+
+  .lead {
+    color: #d7e0e8 !important;
+    font-size: 1.15rem;
+  }
+
+  /* =========================================================
+     CHALLENGE CARDS
+     ========================================================= */
+
+  .challenge-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-top: 2.5rem;
+  }
+
+  .challenge-grid article {
+    padding: 1.4rem;
+    border: 1px solid #28394b;
+    border-radius: 14px;
+    background: rgba(9, 18, 31, 0.9);
+  }
+
+  .card-number {
+    display: inline-block;
+    margin-bottom: 1.3rem;
+    color: #ff8a00;
+    font-size: 0.8rem;
+    font-weight: 700;
+  }
+
+  .challenge-grid p {
+    color: #94a8ba;
+    line-height: 1.55;
+  }
+
+  /* =========================================================
+     OPERATIONS GRID
+     ========================================================= */
+
+  .operations-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    margin-top: 2.5rem;
+  }
+
+  .operation {
+    padding: 1.5rem;
+    border-left: 2px solid #2aa7ff;
+    background: rgba(8, 17, 30, 0.72);
+  }
+
+  .operation > span {
+    display: block;
+    margin-bottom: 0.6rem;
+    color: #ff8a00;
+    font-size: 0.72rem;
+    font-weight: 750;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+  }
+
+  .operation strong {
+    display: block;
+    margin-bottom: 0.7rem;
+    color: #ffffff;
+  }
+
+  .operation p {
+    margin-bottom: 0;
+    color: #91a4b7;
+    line-height: 1.55;
+  }
+
+  /* =========================================================
+     EVIDENCE / RESULT CARDS
+     ========================================================= */
+
+  .evidence-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+    margin-top: 2.5rem;
+  }
+
+  .evidence-grid article {
+    padding: 1.4rem;
+    border: 1px solid #203247;
+    border-radius: 12px;
+    background: rgba(8, 17, 30, 0.72);
+  }
+
+  .evidence-grid strong {
+    display: block;
+    margin-bottom: 0.45rem;
+    color: #ff8a00;
+    font-size: 1.7rem;
+  }
+
+  .evidence-grid span {
+    color: #91a4b7;
+    font-size: 0.85rem;
+  }
+
+  /* =========================================================
+     SKILLS
+     ========================================================= */
+
+  .skills-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.7rem;
+    margin-top: 2.5rem;
+  }
+
+  .skills-list span {
+    padding: 0.7rem 0.9rem;
+    border: 1px solid #285078;
+    border-radius: 8px;
+    color: #c5d5e4;
+    background: rgba(8, 25, 42, 0.78);
+    font-size: 0.82rem;
+  }
+
+  /* =========================================================
+     PROJECT END / CTA
+     ========================================================= */
+
+  .project-end {
+    padding: clamp(5rem, 10vw, 8rem) 0;
+    border-top: 1px solid #203247;
+  }
+
+  .text-link {
+    display: inline-block;
+    margin-top: 1rem;
+    color: #e8edf3;
+    font-weight: 700;
+  }
+
+  /* =========================================================
+     FOOTER
+     ========================================================= */
+
+  footer {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-top: 1.5rem;
+    padding-bottom: 1.5rem;
+    border-top: 1px solid #203247;
+    color: #7f95aa;
+    font-size: 0.8rem;
+  }
+
+  /* =========================================================
+     RESPONSIVE / TABLET
+     ========================================================= */
+
+  @media (max-width: 900px) {
+    .metrics {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .case-section {
+      grid-template-columns: 1fr;
+      gap: 1rem;
+    }
+
+    .challenge-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .evidence-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  /* =========================================================
+     RESPONSIVE / MOBILE
+     ========================================================= */
+
+  @media (max-width: 620px) {
+    nav {
+      align-items: flex-start;
+      gap: 1rem;
+    }
+
+    .nav-links {
+      gap: 0.8rem;
+      font-size: 0.8rem;
+    }
+
+    .hero {
+      padding-top: 4rem;
+    }
+
+    .metrics,
+    .evidence-grid,
+    .operations-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .metric-card {
+      min-height: auto;
+    }
+
+    footer {
+      flex-direction: column;
+    }
+  }
 </style>
