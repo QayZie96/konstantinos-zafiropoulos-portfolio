@@ -75,13 +75,6 @@ const description =
                         </a>
                     </div>
                 </div>
-
-                <!-- Small positioning statement -->
-                <aside class="hero-note">
-                    <span class="hero-note-line"></span>
-
-                    <p>Better systems create more opportunities.</p>
-                </aside>
             </section>
 
             <!-- =================================================
@@ -94,7 +87,7 @@ const description =
                 aria-labelledby="projects-title"
             >
                 <!-- =============================================
-                     PROJECTS INTRO
+                     PROJECTS INTRODUCTION
                      ============================================= -->
 
                 <div class="section-heading">
@@ -122,7 +115,14 @@ const description =
 
                     <div class="rocketeers-hero">
                         <div class="rocketeers-copy">
-                            <p class="featured-label">Featured project</p>
+                            <p class="featured-label">
+                                Featured project · 2017–2024
+                            </p>
+
+                            <!--
+                                The title leads to the Rocketeers
+                                umbrella/overview page.
+                            -->
 
                             <a
                                 class="rocketeers-title-link"
@@ -130,7 +130,7 @@ const description =
                             >
                                 <h3 id="rocketeers-title">
                                     Rocketeers
-                                    <span aria-hidden="true">→</span>
+                                    <span aria-hidden="true">↗</span>
                                 </h3>
                             </a>
 
@@ -149,25 +149,38 @@ const description =
                             </p>
 
                             <p class="rocketeers-description">
-                                The overview connects the business itself with
-                                the operational systems I built to help manage
-                                and scale it.
+                                Explore the business itself and the operational
+                                systems I built to help manage and scale it.
                             </p>
 
+                            <!--
+                                Main Rocketeers overview button.
+                                Orange makes this distinct from the
+                                individual project links below.
+                            -->
+
                             <a
-                                class="button button-primary"
+                                class="button button-primary rocketeers-overview-button"
                                 href="/projects/rocketeers/"
                             >
-                                View Rocketeers overview
-                                <span aria-hidden="true">→</span>
+                                Explore the Rocketeers project hub
+                                <span aria-hidden="true">↗</span>
                             </a>
                         </div>
 
                         <!--
-                            Temporary visual.
-                            Later we can replace this with genuine Rocketeers imagery.
+                            The entire visual panel is clickable and
+                            leads to the Rocketeers overview.
+
+                            This is a temporary visual until genuine
+                            Rocketeers imagery is added.
                         -->
-                        <div class="rocketeers-visual" aria-hidden="true">
+
+                        <a
+                            class="rocketeers-visual rocketeers-visual-link"
+                            href="/projects/rocketeers/"
+                            aria-label="Explore the Rocketeers project hub"
+                        >
                             <span class="visual-label"> The Rocketeers </span>
 
                             <div class="visual-center">
@@ -178,7 +191,14 @@ const description =
                             <span class="visual-footer">
                                 Business · Marketplace · Systems
                             </span>
-                        </div>
+
+                            <span
+                                class="visual-link-indicator"
+                                aria-hidden="true"
+                            >
+                                Explore project hub ↗
+                            </span>
+                        </a>
                     </div>
 
                     <!-- =========================================
@@ -328,21 +348,16 @@ const description =
                                 across the growing operation.
                             </p>
 
-                            <div class="metrics finance-metrics">
-                                <div>
-                                    <strong>$55.6K</strong>
-                                    <span>recorded turnover</span>
-                                </div>
+                            <!--
+                                Financial totals are intentionally not
+                                displayed here until the newer workbook
+                                has been reconciled and verified.
+                            -->
 
-                                <div>
-                                    <strong>4,154</strong>
-                                    <span>orders</span>
-                                </div>
-
-                                <div>
-                                    <strong>6,372</strong>
-                                    <span>products sold</span>
-                                </div>
+                            <div class="tags">
+                                <span>Excel</span>
+                                <span>Commercial Analytics</span>
+                                <span>Operational Reporting</span>
                             </div>
 
                             <div class="view-link">View case study ↗</div>
@@ -359,13 +374,11 @@ const description =
                     aria-labelledby="other-projects-title"
                 >
                     <div class="other-projects-heading">
-                        <div>
-                            <p class="eyebrow">Other projects</p>
+                        <p class="eyebrow">Other projects</p>
 
-                            <h3 id="other-projects-title">
-                                Different problems. The same mindset.
-                            </h3>
-                        </div>
+                        <h3 id="other-projects-title">
+                            Different problems. The same mindset.
+                        </h3>
 
                         <p>Web development, data, AI, and automation.</p>
                     </div>
@@ -437,10 +450,14 @@ const description =
                         </article>
 
                         <!-- =====================================
-                             AI IMPLEMENTATION PROJECT
+                             AI JOB DISCOVERY & OUTREACH AUTOMATION
                              ===================================== -->
 
-                        <article class="other-project-card">
+                        <a
+                            class="other-project-card project-link"
+                            href="/projects/ai-job-outreach/"
+                            aria-label="View the AI Job Discovery and Outreach Automation case study"
+                        >
                             <div class="project-visual ai-visual">
                                 <div class="ai-circle" aria-hidden="true">
                                     AI
@@ -448,24 +465,34 @@ const description =
                             </div>
 
                             <div class="other-project-body">
-                                <h4>AI Implementation Project</h4>
+                                <h4>
+                                    AI Job Discovery & Outreach Automation
+                                    <span
+                                        class="inline-arrow blue"
+                                        aria-hidden="true"
+                                    >
+                                        →
+                                    </span>
+                                </h4>
 
                                 <p>
-                                    A practical project exploring how language
-                                    models can support workflows, structured
-                                    analysis, decision support, and useful
-                                    automation.
+                                    A Python automation that discovers job
+                                    vacancies across three APIs, uses Google
+                                    Gemini to evaluate suitability and generate
+                                    personalized outreach drafts, and organizes
+                                    qualifying results in Google Sheets.
                                 </p>
 
                                 <div class="tags">
-                                    <span>AI</span>
+                                    <span>Python</span>
+                                    <span>Gemini</span>
+                                    <span>APIs</span>
                                     <span>Automation</span>
-                                    <span>Operations</span>
                                 </div>
 
-                                <div class="card-status">Coming Soon</div>
+                                <div class="view-link">View case study ↗</div>
                             </div>
-                        </article>
+                        </a>
 
                         <!-- =====================================
                              GYM PROGRESS SYSTEM
@@ -511,7 +538,7 @@ const description =
             </section>
 
             <!-- =================================================
-                 ABOUT
+                 ABOUT ME
                  ================================================= -->
 
             <section
@@ -519,23 +546,51 @@ const description =
                 class="section about"
                 aria-labelledby="about-title"
             >
-                <p class="eyebrow">02 — About</p>
+                <p class="eyebrow">02 — About Me</p>
 
                 <h2 id="about-title">
-                    Operations experience, with a systems mindset.
+                    From running a business to building better systems.
                 </h2>
 
                 <p class="section-lead">
-                    I work at the intersection of marketplace operations,
-                    process improvement, data, automation, and technology.
+                    I'm Konstantinos, an operations-focused professional with a
+                    background in e-commerce, marketplace management, data,
+                    automation, and practical technology.
                 </p>
 
                 <p>
-                    My background spans e-commerce, Excel/VBA, SQL, web
-                    development, and practical technical operations. I’m
-                    especially interested in building systems that make work
-                    clearer, faster, and easier to run.
+                    From 2017 to 2024, I founded and operated Rocketeers, a
+                    digital marketplace business that sold more than 23,000
+                    items. Running the business gave me hands-on experience
+                    across sourcing, pricing, inventory, order management,
+                    customer experience, and commercial decision-making.
                 </p>
+
+                <p>
+                    As the operation grew, I became increasingly interested in
+                    solving the problems behind the work itself. I developed
+                    Excel-based systems to streamline repricing, organize
+                    inventory, and track business performance. That same
+                    interest has since expanded into Python, AI-assisted
+                    workflows, data analysis, and web development.
+                </p>
+
+                <p>
+                    I enjoy combining an understanding of real operational
+                    problems with the technical tools needed to solve them.
+                    Whether I'm working with spreadsheets, code, data, or
+                    marketplace systems, my goal is to make processes clearer,
+                    more reliable, and easier to scale.
+                </p>
+
+                <!-- Professional focus areas -->
+                <div class="about-highlights">
+                    <span>Marketplace & Business Operations</span>
+                    <span>Excel / VBA</span>
+                    <span>Python & AI Automation</span>
+                    <span>Data Analysis</span>
+                    <span>Web Development</span>
+                </div>
             </section>
 
             <!-- =================================================
@@ -625,7 +680,6 @@ const description =
         --blue-light: #65baff;
 
         --orange: #ff8a00;
-
         --green: #26d5a2;
 
         --page-width: 1380px;
@@ -657,7 +711,6 @@ const description =
 
     body {
         min-height: 100vh;
-
         margin: 0;
 
         color: var(--text);
@@ -674,7 +727,6 @@ const description =
     main,
     footer {
         width: min(100%, var(--page-width));
-
         margin-inline: auto;
 
         padding-left: clamp(1.5rem, 5vw, 5rem);
@@ -711,42 +763,33 @@ const description =
     h2,
     h3 {
         color: var(--heading);
-
         letter-spacing: -0.04em;
     }
 
     h1 {
         max-width: 900px;
-
         margin-bottom: 1.6rem;
 
         font-size: clamp(3.2rem, 7vw, 6.2rem);
-
-        line-height: 0.96;
+        line-height: 1.02;
     }
 
     h2 {
         margin-bottom: 0.8rem;
-
         font-size: clamp(2.4rem, 4.5vw, 4rem);
-
-        line-height: 1;
+        line-height: 1.08;
     }
 
     h3 {
         font-size: clamp(2rem, 3vw, 2.8rem);
-
-        line-height: 1.05;
+        line-height: 1.1;
     }
 
     h4 {
         margin-bottom: 0.8rem;
-
         color: var(--heading);
-
         font-size: 1.2rem;
-
-        line-height: 1.25;
+        line-height: 1.3;
     }
 
     .eyebrow,
@@ -757,9 +800,7 @@ const description =
 
         font-size: 0.75rem;
         font-weight: 800;
-
         letter-spacing: 0.09em;
-
         text-transform: uppercase;
     }
 
@@ -779,12 +820,9 @@ const description =
 
     .wordmark {
         color: white;
-
         font-size: 1.4rem;
         font-weight: 850;
-
         letter-spacing: -0.08em;
-
         text-decoration: none;
     }
 
@@ -794,27 +832,20 @@ const description =
 
     .nav-links {
         display: flex;
-
         gap: clamp(1rem, 3vw, 2.8rem);
     }
 
     .nav-links a {
         position: relative;
-
         color: var(--muted);
-
         font-size: 0.9rem;
-
         text-decoration: none;
-
         transition: color 0.2s ease;
     }
 
     .nav-links a::after {
         content: "";
-
         position: absolute;
-
         left: 0;
         bottom: -0.35rem;
 
@@ -822,7 +853,6 @@ const description =
         height: 1px;
 
         background: var(--blue);
-
         transition: width 0.2s ease;
     }
 
@@ -835,51 +865,49 @@ const description =
     }
 
     /* =========================================================
-       HERO
+       HERO — CENTERED LAYOUT
        ========================================================= */
 
     .hero {
         display: grid;
-
-        grid-template-columns:
-            minmax(0, 1fr)
-            minmax(220px, 0.28fr);
-
+        grid-template-columns: minmax(0, 1fr);
+        justify-items: center;
         align-items: center;
 
-        gap: clamp(3rem, 8vw, 6rem);
-
-        min-height: 70vh;
-
+        min-height: auto;
         padding: clamp(5rem, 10vw, 8rem) 0;
+
+        text-align: center;
     }
 
     .hero-copy {
-        max-width: 900px;
+        width: 100%;
+        max-width: 980px;
+    }
+
+    .hero h1,
+    .hero .intro {
+        margin-inline: auto;
     }
 
     .hero-accent {
-        display: inline;
-
         color: var(--blue);
     }
 
     .intro {
         max-width: 700px;
-
         color: var(--muted);
 
         font-size: clamp(1.02rem, 1.6vw, 1.25rem);
-
         line-height: 1.7;
     }
 
     .hero-actions {
         display: flex;
         flex-wrap: wrap;
+        justify-content: center;
 
         gap: 0.8rem;
-
         margin-top: 2rem;
     }
 
@@ -893,9 +921,7 @@ const description =
         justify-content: center;
 
         gap: 0.55rem;
-
         min-height: 48px;
-
         padding: 0.85rem 1.3rem;
 
         border: 1px solid var(--blue);
@@ -903,7 +929,6 @@ const description =
 
         font-size: 0.87rem;
         font-weight: 750;
-
         text-decoration: none;
 
         transition:
@@ -919,7 +944,6 @@ const description =
 
     .button-primary {
         color: white;
-
         background: var(--blue);
 
         box-shadow: 0 10px 30px rgba(22, 141, 255, 0.14);
@@ -933,7 +957,6 @@ const description =
 
     .button-secondary {
         color: #dbe7f0;
-
         background: rgba(7, 21, 34, 0.75);
     }
 
@@ -942,71 +965,38 @@ const description =
     }
 
     /* =========================================================
-       HERO NOTE
-       ========================================================= */
-
-    .hero-note {
-        display: flex;
-        align-items: flex-start;
-
-        gap: 1rem;
-
-        color: #cfd9e2;
-
-        font-style: italic;
-
-        line-height: 1.6;
-    }
-
-    .hero-note-line {
-        flex: 0 0 2px;
-
-        width: 2px;
-        height: 56px;
-
-        background: var(--blue);
-    }
-
-    .hero-note p {
-        max-width: 220px;
-
-        margin: 0;
-    }
-
-    /* =========================================================
        GENERAL SECTIONS
        ========================================================= */
 
     .section {
         padding: clamp(5rem, 9vw, 8rem) 0;
-
         border-top: 1px solid var(--border);
+
+        scroll-margin-top: 2rem;
     }
 
     .section-heading {
-        max-width: 780px;
+        max-width: 850px;
+        margin-inline: auto;
+        text-align: center;
     }
 
     .section-intro {
         max-width: 680px;
+        margin-inline: auto;
 
         color: var(--muted);
-
         font-size: 1rem;
-
         line-height: 1.6;
     }
 
     .section-lead {
         max-width: 760px;
-
         margin-bottom: 1rem;
 
         color: #dbe5ee;
-
         font-size: 1.08rem;
         font-weight: 500;
-
         line-height: 1.65;
     }
 
@@ -1016,7 +1006,6 @@ const description =
 
     .rocketeers-feature {
         margin-top: 3rem;
-
         padding: clamp(1.3rem, 2.5vw, 2rem);
 
         border: 1px solid #1f5685;
@@ -1034,34 +1023,32 @@ const description =
     }
 
     /* =========================================================
-       ROCKETEERS HEADER
+       ROCKETEERS HEADER — CENTERED
        ========================================================= */
 
     .rocketeers-hero {
         display: grid;
-
-        grid-template-columns:
-            minmax(0, 1.45fr)
-            minmax(260px, 0.55fr);
-
+        grid-template-columns: minmax(0, 1fr);
+        justify-items: center;
         gap: 1.5rem;
-
-        align-items: stretch;
 
         margin-bottom: 1.4rem;
     }
 
     .rocketeers-copy {
+        width: 100%;
+        max-width: 880px;
         padding: clamp(0.7rem, 2vw, 1.3rem);
+        text-align: center;
     }
 
     .rocketeers-title-link {
+        display: inline-block;
         text-decoration: none;
     }
 
     .rocketeers-title-link h3 {
         margin-bottom: 0.7rem;
-
         font-size: clamp(2.8rem, 5vw, 4.8rem);
 
         transition: color 0.2s ease;
@@ -1071,13 +1058,19 @@ const description =
         color: #dcecff;
     }
 
-    .rocketeers-title-link span {
+    .rocketeers-title-link h3 span {
+        display: inline-block;
         color: var(--orange);
+
+        transition: transform 0.2s ease;
+    }
+
+    .rocketeers-title-link:hover h3 span {
+        transform: translate(3px, -3px);
     }
 
     .rocketeers-tagline {
         margin-bottom: 1.1rem;
-
         color: #e2ebf3;
 
         font-size: 1.18rem;
@@ -1086,14 +1079,32 @@ const description =
 
     .rocketeers-description {
         max-width: 760px;
+        margin-inline: auto;
 
         color: var(--muted);
-
         line-height: 1.65;
     }
 
     /* =========================================================
-       ROCKETEERS TEMPORARY VISUAL
+       ROCKETEERS OVERVIEW BUTTON
+       ========================================================= */
+
+    .rocketeers-overview-button {
+        border-color: var(--orange);
+        background: var(--orange);
+        color: #06111e;
+
+        box-shadow: 0 12px 35px rgba(255, 138, 0, 0.2);
+    }
+
+    .rocketeers-overview-button:hover {
+        background: #ffa128;
+
+        box-shadow: 0 16px 40px rgba(255, 138, 0, 0.28);
+    }
+
+    /* =========================================================
+       ROCKETEERS CLICKABLE VISUAL
        ========================================================= */
 
     .rocketeers-visual {
@@ -1101,9 +1112,11 @@ const description =
         flex-direction: column;
         justify-content: space-between;
 
-        min-height: 280px;
+        width: 100%;
+        max-width: 880px;
+        min-height: 220px;
 
-        padding: 1.4rem;
+        padding: 1.5rem;
 
         border: 1px solid rgba(22, 141, 255, 0.28);
         border-radius: 12px;
@@ -1117,45 +1130,64 @@ const description =
             #071522;
     }
 
+    .rocketeers-visual-link {
+        color: inherit;
+        text-decoration: none;
+        cursor: pointer;
+
+        transition:
+            transform 0.2s ease,
+            border-color 0.2s ease,
+            box-shadow 0.2s ease;
+    }
+
+    .rocketeers-visual-link:hover {
+        transform: translateY(-4px);
+        border-color: var(--orange);
+
+        box-shadow: 0 16px 38px rgba(255, 138, 0, 0.12);
+    }
+
     .visual-label {
         color: var(--orange);
-
         font-size: 0.72rem;
         font-weight: 800;
-
         letter-spacing: 0.1em;
-
         text-transform: uppercase;
     }
 
     .visual-center {
         display: flex;
         flex-direction: column;
+        align-items: center;
     }
 
     .visual-center strong {
         color: white;
-
         font-size: clamp(3rem, 5vw, 5rem);
-
-        line-height: 0.95;
+        line-height: 1;
     }
 
     .visual-center span {
         margin-top: 0.4rem;
-
         color: var(--blue-light);
     }
 
     .visual-footer {
         color: #9eb4c6;
-
         font-size: 0.7rem;
         font-weight: 700;
-
         letter-spacing: 0.05em;
-
         text-transform: uppercase;
+    }
+
+    .visual-link-indicator {
+        align-self: center;
+        margin-top: 1rem;
+
+        color: var(--orange);
+        font-size: 0.78rem;
+        font-weight: 750;
     }
 
     /* =========================================================
@@ -1164,9 +1196,7 @@ const description =
 
     .rocketeers-grid {
         display: grid;
-
         grid-template-columns: repeat(3, minmax(0, 1fr));
-
         gap: 1rem;
     }
 
@@ -1174,18 +1204,17 @@ const description =
         display: flex;
         flex-direction: column;
 
+        min-width: 0;
         min-height: 390px;
-
         padding: 1.45rem;
 
         color: inherit;
-
         border: 1px solid var(--border);
         border-radius: 13px;
 
         background: rgba(6, 18, 31, 0.93);
-
         text-decoration: none;
+        text-align: left;
 
         transition:
             transform 0.2s ease,
@@ -1196,7 +1225,6 @@ const description =
 
     .rocketeers-card:hover {
         transform: translateY(-4px);
-
         background: rgba(9, 25, 42, 0.98);
 
         box-shadow: 0 18px 36px rgba(0, 0, 0, 0.16);
@@ -1230,7 +1258,6 @@ const description =
         display: flex;
         align-items: center;
         justify-content: space-between;
-
         margin-bottom: 1.2rem;
     }
 
@@ -1257,7 +1284,6 @@ const description =
 
     .rocketeers-card > p {
         color: var(--muted);
-
         line-height: 1.55;
     }
 
@@ -1266,14 +1292,12 @@ const description =
     }
 
     /* =========================================================
-       METRICS
+       ROCKETEERS CARD METRICS
        ========================================================= */
 
-    .metrics {
+    .rocketeers-card .metrics {
         display: grid;
-
         grid-template-columns: repeat(3, minmax(0, 1fr));
-
         gap: 0.8rem;
 
         margin-top: auto;
@@ -1282,38 +1306,27 @@ const description =
         border-top: 1px solid var(--border);
     }
 
-    .metrics strong {
+    .rocketeers-card .metrics strong {
         display: block;
-
         color: var(--orange);
-
         font-size: 1.15rem;
     }
 
-    .finance-metrics strong {
-        color: var(--green);
-    }
-
-    .metrics span {
+    .rocketeers-card .metrics span {
         display: block;
-
         margin-top: 0.25rem;
-
         color: #8ea4b6;
-
         font-size: 0.71rem;
-
         line-height: 1.3;
     }
 
     /* =========================================================
-       TAGS / STATUS / LINKS
+       TAGS / STATUS / CASE STUDY LINKS
        ========================================================= */
 
     .tags {
         display: flex;
         flex-wrap: wrap;
-
         gap: 0.45rem;
 
         margin-top: auto;
@@ -1324,12 +1337,10 @@ const description =
         padding: 0.42rem 0.6rem;
 
         color: #c0d1de;
-
         border: 1px solid #213e58;
         border-radius: 6px;
 
         background: #0a2034;
-
         font-size: 0.68rem;
     }
 
@@ -1337,12 +1348,9 @@ const description =
         margin-top: 1rem;
 
         color: var(--subtle);
-
         font-size: 0.65rem;
         font-weight: 750;
-
         letter-spacing: 0.06em;
-
         text-transform: uppercase;
     }
 
@@ -1350,7 +1358,6 @@ const description =
         margin-top: 1rem;
 
         color: var(--blue);
-
         font-size: 0.72rem;
         font-weight: 750;
     }
@@ -1364,7 +1371,7 @@ const description =
     }
 
     /* =========================================================
-       OTHER PROJECTS
+       OTHER PROJECTS — CENTERED HEADING
        ========================================================= */
 
     .other-projects {
@@ -1373,35 +1380,31 @@ const description =
 
     .other-projects-heading {
         display: flex;
-        align-items: flex-end;
-        justify-content: space-between;
+        flex-direction: column;
+        align-items: center;
 
-        gap: 2rem;
-
+        gap: 0.75rem;
         margin-bottom: 2rem;
+
+        text-align: center;
     }
 
     .other-projects-heading h3 {
         margin-bottom: 0;
     }
 
-    .other-projects-heading > p {
-        max-width: 280px;
-
+    .other-projects-heading > p:last-child {
+        max-width: 500px;
         margin-bottom: 0;
 
         color: var(--subtle);
-
         font-size: 0.84rem;
-
         line-height: 1.5;
     }
 
     .other-project-grid {
         display: grid;
-
         grid-template-columns: repeat(4, minmax(0, 1fr));
-
         gap: 1rem;
     }
 
@@ -1410,17 +1413,15 @@ const description =
         flex-direction: column;
 
         min-width: 0;
-
         overflow: hidden;
 
         color: inherit;
-
         border: 1px solid var(--border);
         border-radius: 12px;
 
         background: var(--bg-card);
-
         text-decoration: none;
+        text-align: left;
 
         transition:
             transform 0.2s ease,
@@ -1434,7 +1435,6 @@ const description =
 
     .project-link:hover {
         transform: translateY(-4px);
-
         border-color: #2a5d84;
     }
 
@@ -1464,29 +1464,23 @@ const description =
         padding: 0.8rem 1rem;
 
         color: white;
-
         border: 1px solid #3a5871;
 
         font-size: 1.3rem;
         font-weight: 850;
-
         letter-spacing: 0.08em;
     }
 
     .bar-chart {
         display: flex;
         align-items: flex-end;
-
         gap: 0.45rem;
-
         height: 82px;
     }
 
     .bar-chart span {
         width: 13px;
-
         border-radius: 3px 3px 0 0;
-
         background: var(--blue);
     }
 
@@ -1512,14 +1506,12 @@ const description =
 
     .ai-circle {
         display: grid;
-
         place-items: center;
 
         width: 90px;
         height: 90px;
 
         color: var(--blue-light);
-
         border: 1px solid #296696;
         border-radius: 50%;
 
@@ -1531,10 +1523,8 @@ const description =
 
     .gym-visual span {
         color: #edf4fa;
-
         font-size: 2rem;
         font-weight: 850;
-
         letter-spacing: -0.05em;
     }
 
@@ -1552,9 +1542,7 @@ const description =
 
     .other-project-body > p {
         color: var(--muted);
-
         font-size: 0.88rem;
-
         line-height: 1.55;
     }
 
@@ -1563,48 +1551,125 @@ const description =
     }
 
     /* =========================================================
-       ABOUT / CONTACT
+       ABOUT ME — CENTERED
        ========================================================= */
 
-    .about > p:not(.eyebrow),
-    .contact > p:not(.eyebrow) {
-        max-width: 760px;
+    .about {
+        padding-top: clamp(5rem, 9vw, 8rem);
+        padding-bottom: clamp(5rem, 9vw, 8rem);
 
-        color: var(--muted);
-
-        font-size: 1.05rem;
-
-        line-height: 1.7;
+        text-align: center;
     }
 
+    .about h2 {
+        max-width: 850px;
+        margin-inline: auto;
+    }
+
+    .about > p:not(.eyebrow) {
+        max-width: 780px;
+        margin: 0 auto 1.3rem;
+
+        color: var(--muted);
+        font-size: 1.05rem;
+        line-height: 1.75;
+    }
+
+    .about .section-lead {
+        color: #e4edf5;
+        font-size: clamp(1.1rem, 1.8vw, 1.3rem);
+        font-weight: 500;
+    }
+
+    .about-highlights {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+
+        gap: 0.7rem;
+        max-width: 900px;
+
+        margin: 2rem auto 0;
+    }
+
+    .about-highlights span {
+        padding: 0.65rem 0.9rem;
+
+        color: #c6d8e7;
+        background: #0a2034;
+
+        border: 1px solid #284861;
+        border-radius: 7px;
+
+        font-size: 0.78rem;
+        font-weight: 600;
+    }
+
+    /* =========================================================
+       CONTACT — CENTERED
+       ========================================================= */
+
     .contact {
-        padding-bottom: clamp(5rem, 10vw, 8rem);
+        padding-top: clamp(5rem, 9vw, 8rem);
+        padding-bottom: clamp(6rem, 10vw, 9rem);
+
+        text-align: center;
+    }
+
+    .contact h2 {
+        max-width: 850px;
+        margin-inline: auto;
+    }
+
+    .contact > p:not(.eyebrow) {
+        max-width: 760px;
+        margin: 0 auto 1.25rem;
+
+        color: var(--muted);
+        font-size: 1.05rem;
+        line-height: 1.7;
     }
 
     .contact-links {
         display: flex;
+        justify-content: center;
         flex-wrap: wrap;
 
-        gap: 1.5rem;
+        gap: 1rem;
+        margin-top: 1.5rem;
     }
 
-    .text-link {
-        display: inline-block;
+    .contact-links .text-link {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
 
-        margin-top: 1.2rem;
+        gap: 0.4rem;
+        min-height: 46px;
+        padding: 0.8rem 1.3rem;
 
         color: white;
+        border: 1px solid var(--border);
+        border-radius: 8px;
 
+        background: var(--bg-card);
         font-weight: 750;
+        text-decoration: none;
 
-        text-decoration-thickness: 1px;
-        text-underline-offset: 0.2em;
+        transition:
+            background 0.2s ease,
+            border-color 0.2s ease,
+            transform 0.2s ease;
     }
 
-    .text-link span {
-        color: var(--orange);
+    .contact-links .text-link:hover {
+        background: var(--bg-card-soft);
+        border-color: var(--blue);
+        transform: translateY(-2px);
+    }
 
-        margin-left: 0.35rem;
+    .contact-links .text-link span {
+        color: var(--orange);
     }
 
     /* =========================================================
@@ -1622,42 +1687,35 @@ const description =
         padding-bottom: 1.7rem;
 
         border-top: 1px solid var(--border);
-
         color: var(--subtle);
     }
 
     .footer-left {
         display: flex;
         align-items: center;
-
         gap: 1rem;
     }
 
     .footer-left > strong {
         color: white;
-
         font-size: 1.35rem;
     }
 
     .footer-left div {
         display: flex;
         flex-direction: column;
-
         gap: 0.15rem;
     }
 
     .footer-left span {
         color: #d9e4ec;
-
         font-size: 0.84rem;
     }
 
     .footer-left small,
     .footer-right {
         color: var(--subtle);
-
         font-size: 0.72rem;
-
         line-height: 1.5;
     }
 
@@ -1666,22 +1724,6 @@ const description =
        ========================================================= */
 
     @media (max-width: 1100px) {
-        .hero {
-            grid-template-columns: 1fr;
-        }
-
-        .hero-note {
-            display: none;
-        }
-
-        .rocketeers-hero {
-            grid-template-columns: 1fr;
-        }
-
-        .rocketeers-visual {
-            min-height: 210px;
-        }
-
         .rocketeers-grid {
             grid-template-columns: 1fr;
         }
@@ -1701,20 +1743,18 @@ const description =
 
     @media (max-width: 650px) {
         nav {
-            align-items: flex-start;
-
             gap: 1rem;
         }
 
         .nav-links {
             gap: 0.8rem;
+        }
 
+        .nav-links a {
             font-size: 0.8rem;
         }
 
         .hero {
-            min-height: auto;
-
             padding: 4rem 0 5rem;
         }
 
@@ -1726,7 +1766,7 @@ const description =
             width: 100%;
         }
 
-        .button {
+        .hero-actions .button {
             width: 100%;
         }
 
@@ -1734,7 +1774,11 @@ const description =
             padding: 1rem;
         }
 
-        .metrics {
+        .rocketeers-overview-button {
+            width: 100%;
+        }
+
+        .rocketeers-card .metrics {
             grid-template-columns: 1fr;
         }
 
@@ -1742,11 +1786,9 @@ const description =
             grid-template-columns: 1fr;
         }
 
-        .other-projects-heading {
-            align-items: flex-start;
+        .contact-links {
             flex-direction: column;
-
-            gap: 0.5rem;
+            align-items: stretch;
         }
 
         footer {
@@ -1767,14 +1809,21 @@ const description =
         .button,
         .rocketeers-card,
         .other-project-card,
+        .rocketeers-visual-link,
+        .rocketeers-title-link h3,
+        .rocketeers-title-link h3 span,
         .nav-links a,
-        .nav-links a::after {
+        .nav-links a::after,
+        .contact-links .text-link {
             transition: none;
         }
 
         .button:hover,
+        .rocketeers-card:hover,
         .project-link:hover,
-        .rocketeers-card:hover {
+        .rocketeers-visual-link:hover,
+        .rocketeers-title-link:hover h3 span,
+        .contact-links .text-link:hover {
             transform: none;
         }
     }

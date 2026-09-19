@@ -1,0 +1,1657 @@
+
+---
+/* =========================================================
+   AI JOB DISCOVERY & OUTREACH AUTOMATION
+   Portfolio case study
+   ========================================================= */
+
+const title =
+    "AI Job Discovery & Outreach Automation | Konstantinos Zafiropoulos";
+
+const description =
+    "A Python automation integrating three job APIs, Google Gemini, SQLite, and Google Sheets to discover vacancies and generate personalized outreach drafts.";
+
+const metrics = [
+    {
+        value: "3",
+        label: "Job-source APIs",
+    },
+    {
+        value: "69/69",
+        label: "Cache hits in the final diagnostic",
+    },
+    {
+        value: "20",
+        label: "Jobs per AI validation batch",
+    },
+    {
+        value: "Daily",
+        label: "Configured execution schedule",
+    },
+];
+
+/*
+ * Replace these placeholders with the actual public links
+ * from your completed assessment.
+ *
+ * Keep the links hidden until you have entered the correct URLs.
+ */
+
+const githubUrl = "https://github.com/QayZie96/ai-job-outreach-automation";
+const dashboardUrl = "https://docs.google.com/spreadsheets/d/1HuyvIww3t2x2ta-_hHnoeIT8t0M2MFtA6XQFL-ikbA0/edit?usp=sharing";
+
+const hasGithub = githubUrl.startsWith("https://");
+const hasDashboard = dashboardUrl.startsWith("https://");
+---
+
+<html lang="en">
+    <!-- =====================================================
+         HEAD / SEO
+         ===================================================== -->
+
+    <head>
+        <meta charset="utf-8" />
+        <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1"
+        />
+        <meta name="description" content={description} />
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+        <title>{title}</title>
+    </head>
+
+    <body>
+        <main>
+            <!-- =================================================
+                 NAVIGATION
+                 ================================================= -->
+
+            <nav aria-label="Primary navigation">
+                <a class="wordmark" href="/" aria-label="Homepage">
+                    KZ<span>.</span>
+                </a>
+
+                <div class="nav-links">
+                    <a href="/#projects">Projects</a>
+                    <a href="/#about">About</a>
+                    <a href="/#contact">Contact</a>
+                </div>
+            </nav>
+
+            <!-- =================================================
+                 HERO
+                 ================================================= -->
+
+            <header class="hero">
+                <div class="breadcrumbs">
+                    <a href="/#projects">Projects</a>
+                    <span aria-hidden="true">→</span>
+                    <strong>AI Job Discovery & Outreach</strong>
+                </div>
+
+                <p class="eyebrow">
+                    Python · AI Implementation · Workflow Automation
+                </p>
+
+                <h1>
+                    AI Job Discovery &{" "}
+                    <span class="accent">Outreach Automation.</span>
+                </h1>
+
+                <p class="hero-lead">
+                    A working Python automation that discovers job vacancies,
+                    evaluates their suitability using Google Gemini, generates
+                    personalized outreach drafts, and organizes qualifying
+                    results in Google Sheets.
+                </p>
+
+                <p class="hero-context">
+                    Built for a practical AI automation hiring assessment.
+                    The solution automates repetitive job research and
+                    message drafting while keeping the final outreach
+                    decision under human control.
+                </p>
+
+                <div class="hero-tags">
+                    <span>Python</span>
+                    <span>Google Gemini</span>
+                    <span>REST APIs</span>
+                    <span>SQLite</span>
+                    <span>Google Sheets</span>
+                    <span>PowerShell</span>
+                </div>
+
+                <div class="hero-actions">
+                    {
+                        hasGithub && (
+                            <a
+                                class="button button-primary"
+                                href={githubUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                View source code ↗
+                            </a>
+                        )
+                    }
+
+                    {
+                        hasDashboard && (
+                            <a
+                                class="button button-secondary"
+                                href={dashboardUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                View Google Sheets output ↗
+                            </a>
+                        )
+                    }
+
+                    <a class="button button-secondary" href="#workflow">
+                        Explore the workflow ↓
+                    </a>
+                </div>
+            </header>
+
+            <!-- =================================================
+                 KEY PROJECT METRICS
+                 ================================================= -->
+
+            <section class="metrics" aria-label="Project metrics">
+                {
+                    metrics.map((metric) => (
+                        <article class="metric-card">
+                            <strong>{metric.value}</strong>
+                            <span>{metric.label}</span>
+                        </article>
+                    ))
+                }
+            </section>
+
+            <!-- =================================================
+                 SECTION 01 — THE PROBLEM
+                 ================================================= -->
+
+            <section class="case-section">
+                <div class="section-label">
+                    <p class="eyebrow">01 — The problem</p>
+                </div>
+
+                <div class="section-content">
+                    <h2>
+                        Job research is repetitive. Personalization
+                        takes time.
+                    </h2>
+
+                    <p class="lead">
+                        The assessment called for a workflow that could
+                        discover executive and administrative support
+                        vacancies, evaluate their suitability, and prepare
+                        personalized outreach without relying on LinkedIn.
+                    </p>
+
+                    <p>
+                        Finding a vacancy is only the beginning. Each posting
+                        needs to be checked for remote-work arrangements,
+                        language requirements, and role relevance before
+                        preparing a message that accurately reflects both
+                        the vacancy and the sender's background.
+                    </p>
+
+                    <p>
+                        I built a modular Python workflow to automate those
+                        repetitive steps and deliver the results in a
+                        spreadsheet that the intended user could review
+                        without opening the Python application.
+                    </p>
+                </div>
+            </section>
+
+            <!-- =================================================
+                 SECTION 02 — WORKFLOW ARCHITECTURE
+                 ================================================= -->
+
+            <section id="workflow" class="case-section">
+                <div class="section-label">
+                    <p class="eyebrow">02 — Architecture</p>
+                </div>
+
+                <div class="section-content">
+                    <h2>
+                        From three job APIs to one reviewable dashboard.
+                    </h2>
+
+                    <p class="lead">
+                        The workflow separates discovery, filtering,
+                        AI evaluation, message generation, and storage
+                        into distinct stages.
+                    </p>
+
+                    <div class="workflow">
+                        <div class="workflow-step">
+                            <span>01 / DISCOVERY</span>
+                            <strong>Retrieve vacancies</strong>
+                            <p>
+                                Collect job postings from Arbeitnow,
+                                Remotive, and Adzuna.
+                            </p>
+                        </div>
+
+                        <div class="workflow-arrow" aria-hidden="true">
+                            ↓
+                        </div>
+
+                        <div class="workflow-step">
+                            <span>02 / PROCESSING</span>
+                            <strong>Normalize & deduplicate</strong>
+                            <p>
+                                Standardize job fields, filter titles, and
+                                exclude vacancies already saved.
+                            </p>
+                        </div>
+
+                        <div class="workflow-arrow" aria-hidden="true">
+                            ↓
+                        </div>
+
+                        <div class="workflow-step">
+                            <span>03 / VALIDATION</span>
+                            <strong>Check cache & evaluate</strong>
+                            <p>
+                                Reuse previous validation results where
+                                appropriate or ask Gemini to evaluate
+                                new and changed vacancies.
+                            </p>
+                        </div>
+
+                        <div class="workflow-arrow" aria-hidden="true">
+                            ↓
+                        </div>
+
+                        <div class="workflow-step">
+                            <span>04 / GENERATION</span>
+                            <strong>Draft personalized outreach</strong>
+                            <p>
+                                Generate a message using the job posting,
+                                an editable prompt, and a sender profile.
+                            </p>
+                        </div>
+
+                        <div class="workflow-arrow" aria-hidden="true">
+                            ↓
+                        </div>
+
+                        <div class="workflow-step final-step">
+                            <span>05 / OUTPUT</span>
+                            <strong>Update Google Sheets</strong>
+                            <p>
+                                Append qualifying vacancies and outreach
+                                drafts for human review.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="callout">
+                        <strong>Human-in-the-loop design</strong>
+                        <p>
+                            The workflow does not automatically contact
+                            employers or submit job applications. The
+                            intended user reviews the posting and generated
+                            message before deciding whether to proceed.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- =================================================
+                 SECTION 03 — JOB DISCOVERY
+                 ================================================= -->
+
+            <section class="case-section">
+                <div class="section-label">
+                    <p class="eyebrow">03 — Job discovery</p>
+                </div>
+
+                <div class="section-content">
+                    <h2>
+                        Three independent sources, one consistent
+                        data structure.
+                    </h2>
+
+                    <p class="lead">
+                        Each source returns jobs in a different format.
+                        I implemented normalization functions so the rest
+                        of the pipeline could process all vacancies
+                        consistently.
+                    </p>
+
+                    <div class="source-grid">
+                        <article>
+                            <span>API 01</span>
+                            <strong>Arbeitnow</strong>
+                            <p>
+                                Paginated job discovery with safeguards
+                                against repeated pagination URLs.
+                            </p>
+                        </article>
+
+                        <article>
+                            <span>API 02</span>
+                            <strong>Remotive</strong>
+                            <p>
+                                Remote-job listings with location restrictions,
+                                descriptions, and employer information.
+                            </p>
+                        </article>
+
+                        <article>
+                            <span>API 03</span>
+                            <strong>Adzuna</strong>
+                            <p>
+                                Targeted searches for executive and
+                                administrative assistant vacancies.
+                            </p>
+                        </article>
+                    </div>
+
+                    <p>
+                        The preliminary filtering stage removes duplicate
+                        listings and excludes job titles outside the
+                        target categories before making AI requests.
+                        This reduces unnecessary model calls.
+                    </p>
+
+                    <p>
+                        Because job-board listings may contain incomplete
+                        descriptions or geographical restrictions, the
+                        workflow does not assume that a remote listing
+                        is automatically suitable for every applicant.
+                    </p>
+                </div>
+            </section>
+
+            <!-- =================================================
+                 SECTION 04 — GEMINI VALIDATION
+                 ================================================= -->
+
+            <section class="case-section">
+                <div class="section-label">
+                    <p class="eyebrow">04 — AI validation</p>
+                </div>
+
+                <div class="section-content">
+                    <h2>
+                        Gemini evaluates actual job requirements,
+                        not just job titles.
+                    </h2>
+
+                    <p class="lead">
+                        Candidate vacancies are evaluated in batches of
+                        20 against three conditions.
+                    </p>
+
+                    <div class="criteria-grid">
+                        <article>
+                            <span>01</span>
+                            <strong>Remote suitability</strong>
+                            <p>
+                                The available posting must clearly indicate
+                                that remote work is permitted. On-site,
+                                hybrid, and unclear arrangements are
+                                excluded.
+                            </p>
+                        </article>
+
+                        <article>
+                            <span>02</span>
+                            <strong>English-language suitability</strong>
+                            <p>
+                                The role must be workable professionally
+                                in English without another mandatory
+                                professional language.
+                            </p>
+                        </article>
+
+                        <article>
+                            <span>03</span>
+                            <strong>Role relevance</strong>
+                            <p>
+                                Responsibilities must genuinely involve
+                                executive or administrative support rather
+                                than an unrelated specialist position.
+                            </p>
+                        </article>
+                    </div>
+
+                    <p>
+                        Gemini returns structured results containing
+                        Boolean decisions, confidence values, and short
+                        explanations. The program matches the returned
+                        evaluations to the original vacancies using
+                        their job indexes.
+                    </p>
+
+                    <p>
+                        Validation rules are stored in an editable prompt
+                        file. They can be updated without rewriting the
+                        underlying Python evaluation logic.
+                    </p>
+
+                    <div class="callout">
+                        <strong>AI classification is not definitive</strong>
+                        <p>
+                            During testing, the model incorrectly classified
+                            a position with an Italian-language requirement
+                            as English-suitable. I refined the validation
+                            prompt to address this issue. Model decisions
+                            remain AI-assisted assessments rather than
+                            guaranteed verification of job suitability.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- =================================================
+                 SECTION 05 — PERSONALIZED OUTREACH
+                 ================================================= -->
+
+            <section class="case-section">
+                <div class="section-label">
+                    <p class="eyebrow">05 — Outreach generation</p>
+                </div>
+
+                <div class="section-content">
+                    <h2>
+                        Personalization grounded in real job information.
+                    </h2>
+
+                    <p class="lead">
+                        Once a vacancy passes validation, Gemini generates
+                        a first-contact message using the actual job
+                        posting, a configurable sender profile, and an
+                        editable outreach prompt.
+                    </p>
+
+                    <div class="feature-list">
+                        <div>
+                            <span>01</span>
+                            <div>
+                                <strong>Job-specific context</strong>
+                                <p>
+                                    The draft references concrete details
+                                    supported by the available posting.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div>
+                            <span>02</span>
+                            <div>
+                                <strong>Editable prompts and profiles</strong>
+                                <p>
+                                    Message instructions and sender
+                                    information are stored separately
+                                    from the Python application logic.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div>
+                            <span>03</span>
+                            <div>
+                                <strong>Grounded professional claims</strong>
+                                <p>
+                                    The prompt prohibits inventing
+                                    qualifications, prior experience,
+                                    software skills, or achievements.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div>
+                            <span>04</span>
+                            <div>
+                                <strong>Human approval</strong>
+                                <p>
+                                    The generated text is a draft for
+                                    review, not an automatically sent
+                                    message.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <p>
+                        The individual-applicant mode was implemented
+                        and demonstrated end to end. An additional
+                        business-outreach configuration was prepared,
+                        but it requires genuine business and service
+                        information before it can generate messages.
+                    </p>
+                </div>
+            </section>
+
+            <!-- =================================================
+                 SECTION 06 — PERSISTENT CACHE
+                 ================================================= -->
+
+            <section class="case-section">
+                <div class="section-label">
+                    <p class="eyebrow">06 — Engineering improvement</p>
+                </div>
+
+                <div class="section-content">
+                    <h2>
+                        Solving repeated AI validation with SQLite caching.
+                    </h2>
+
+                    <p class="lead">
+                        Re-evaluating unchanged jobs during every scheduled
+                        execution would waste model requests. I introduced
+                        a persistent SQLite cache to reuse previous
+                        validation results.
+                    </p>
+
+                    <p>
+                        Each cache entry contains a job identifier,
+                        a fingerprint of the validation inputs, the
+                        previous result, and an update timestamp.
+                        The fingerprint accounts for job details,
+                        the validation prompt, and the model identifier.
+                    </p>
+
+                    <p>
+                        When relevant job information or validation
+                        instructions change, the previous result is
+                        invalidated and a new evaluation is required.
+                    </p>
+
+                    <div class="comparison">
+                        <article>
+                            <span>Initial repeated run</span>
+                            <strong>33 / 69</strong>
+                            <p>Previously evaluated jobs retrieved from cache</p>
+                        </article>
+
+                        <div class="comparison-arrow" aria-hidden="true">
+                            →
+                        </div>
+
+                        <article class="comparison-highlight">
+                            <span>Final diagnostic</span>
+                            <strong>69 / 69</strong>
+                            <p>Previously evaluated candidates matched</p>
+                        </article>
+                    </div>
+
+                    <h3>
+                        The underlying problem: inconsistent Adzuna URLs.
+                    </h3>
+
+                    <p>
+                        Investigation showed that the same Adzuna vacancy
+                        could appear with different tracking parameters
+                        or URL paths, preventing the original cache from
+                        recognizing previously evaluated jobs.
+                    </p>
+
+                    <p>
+                        I updated the cache to identify Adzuna listings
+                        using their underlying numeric job IDs and
+                        migrated the existing records. The final
+                        diagnostic returned 69 cache hits and zero
+                        misses for the tested candidate set.
+                    </p>
+
+                    <div class="callout">
+                        <strong>What the result means</strong>
+                        <p>
+                            This was a successful diagnostic against
+                            previously evaluated jobs, not a claim
+                            that every future run will achieve a
+                            100% cache-hit rate. New or modified
+                            vacancies still require fresh evaluation.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- =================================================
+                 SECTION 07 — AUTOMATION & DASHBOARD
+                 ================================================= -->
+
+            <section class="case-section">
+                <div class="section-label">
+                    <p class="eyebrow">07 — Execution & output</p>
+                </div>
+
+                <div class="section-content">
+                    <h2>
+                        Scheduled execution with a spreadsheet
+                        as the user interface.
+                    </h2>
+
+                    <p class="lead">
+                        The system is configured to run daily using
+                        Windows Task Scheduler and deliver qualifying
+                        results to a Google Sheets dashboard.
+                    </p>
+
+                    <div class="output-grid">
+                        <article>
+                            <span>Automation</span>
+                            <strong>Windows Task Scheduler</strong>
+                            <p>
+                                A PowerShell launcher activates the
+                                project's Python environment,
+                                executes the workflow, captures logs,
+                                and reports the execution outcome.
+                            </p>
+                        </article>
+
+                        <article>
+                            <span>Storage</span>
+                            <strong>SQLite</strong>
+                            <p>
+                                Persistent validation results allow
+                                subsequent runs to avoid unnecessary
+                                evaluations of unchanged vacancies.
+                            </p>
+                        </article>
+
+                        <article>
+                            <span>Output</span>
+                            <strong>Google Sheets</strong>
+                            <p>
+                                The dashboard contains job details,
+                                source URLs, descriptions, and
+                                personalized outreach drafts.
+                            </p>
+                        </article>
+
+                        <article>
+                            <span>Presentation</span>
+                            <strong>Google Apps Script</strong>
+                            <p>
+                                Dashboard formatting improves readability
+                                through consistent column widths,
+                                text wrapping, alternating rows,
+                                filters, and a frozen header.
+                            </p>
+                        </article>
+                    </div>
+
+                    <p>
+                        The Task Scheduler manual execution test completed
+                        successfully, with 70 previously evaluated
+                        candidates reused from cache and no unnecessary
+                        outreach messages generated. At the time of
+                        the documented assessment, the first unattended
+                        daily trigger had not yet been independently
+                        verified.
+                    </p>
+
+                    <p>
+                        Because the scheduler and cache run locally,
+                        the Windows computer must be available for
+                        the automation to execute.
+                    </p>
+                </div>
+            </section>
+
+            <!-- =================================================
+                 SECTION 08 — VERIFIED RESULTS
+                 ================================================= -->
+
+            <section class="case-section">
+                <div class="section-label">
+                    <p class="eyebrow">08 — Testing & results</p>
+                </div>
+
+                <div class="section-content">
+                    <h2>
+                        A working end-to-end demonstration with real
+                        vacancy data.
+                    </h2>
+
+                    <p class="lead">
+                        The workflow successfully discovered, evaluated,
+                        and saved a qualifying Remote Office Assistant
+                        vacancy from Coalition Technologies through
+                        Remotive.
+                    </p>
+
+                    <div class="result-card">
+                        <span class="result-label">
+                            VERIFIED WORKFLOW EXAMPLE
+                        </span>
+
+                        <h3>Remote Office Assistant</h3>
+
+                        <p class="result-company">
+                            Coalition Technologies · Remotive
+                        </p>
+
+                        <div class="result-stages">
+                            <span>Discovered</span>
+                            <span>Evaluated</span>
+                            <span>Draft generated</span>
+                            <span>Saved to Sheets</span>
+                        </div>
+
+                        <p>
+                            The Google Sheets output contains the job
+                            details, description, source URL, and a
+                            personalized outreach draft.
+                        </p>
+                    </div>
+
+                    <p>
+                        Subsequent testing confirmed early duplicate
+                        prevention, persistent validation caching,
+                        and successful manual execution through
+                        Windows Task Scheduler.
+                    </p>
+
+                    <p>
+                        No fictional vacancies were added to the
+                        demonstration dashboard to inflate the
+                        number of successful results.
+                    </p>
+                </div>
+            </section>
+
+            <!-- =================================================
+                 SECTION 09 — LIMITATIONS
+                 ================================================= -->
+
+            <section class="case-section">
+                <div class="section-label">
+                    <p class="eyebrow">09 — Limitations</p>
+                </div>
+
+                <div class="section-content">
+                    <h2>
+                        Working automation, with clear operational
+                        boundaries.
+                    </h2>
+
+                    <div class="feature-list">
+                        <div>
+                            <span>01</span>
+                            <div>
+                                <strong>Job-source coverage</strong>
+                                <p>
+                                    Three APIs cannot provide comprehensive
+                                    coverage of every available vacancy.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div>
+                            <span>02</span>
+                            <div>
+                                <strong>Incomplete job information</strong>
+                                <p>
+                                    Some providers return abbreviated
+                                    descriptions, limiting the detail
+                                    available for validation and outreach.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div>
+                            <span>03</span>
+                            <div>
+                                <strong>AI reliability</strong>
+                                <p>
+                                    Language, relevance, and remote-work
+                                    classification can be incorrect.
+                                    Human verification remains important.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div>
+                            <span>04</span>
+                            <div>
+                                <strong>Local execution</strong>
+                                <p>
+                                    Scheduling depends on the Windows
+                                    computer being available. The SQLite
+                                    validation cache is also stored locally.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div>
+                            <span>05</span>
+                            <div>
+                                <strong>Human-controlled outreach</strong>
+                                <p>
+                                    The system generates drafts rather
+                                    than contacting employers or
+                                    submitting applications automatically.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- =================================================
+                 SECTION 10 — SKILLS
+                 ================================================= -->
+
+            <section class="case-section">
+                <div class="section-label">
+                    <p class="eyebrow">10 — Skills demonstrated</p>
+                </div>
+
+                <div class="section-content">
+                    <h2>
+                        Connecting AI with a practical operations
+                        workflow.
+                    </h2>
+
+                    <div class="skills-list">
+                        <span>Python</span>
+                        <span>REST API Integration</span>
+                        <span>Google Gemini</span>
+                        <span>Prompt Engineering</span>
+                        <span>Structured AI Outputs</span>
+                        <span>SQLite</span>
+                        <span>Data Normalization</span>
+                        <span>Deduplication</span>
+                        <span>Workflow Automation</span>
+                        <span>Google Sheets API</span>
+                        <span>Google Apps Script</span>
+                        <span>PowerShell</span>
+                        <span>Debugging</span>
+                        <span>Documentation</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- =================================================
+                 PROJECT NAVIGATION
+                 ================================================= -->
+
+            <section class="project-end">
+                <p class="eyebrow">Explore more</p>
+
+                <h2>
+                    Automation built around practical problems.
+                </h2>
+
+                <div class="project-end-links">
+                    {
+                        hasGithub && (
+                            <a
+                                href={githubUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                View GitHub repository ↗
+                            </a>
+                        )
+                    }
+
+                    {
+                        hasDashboard && (
+                            <a
+                                href={dashboardUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                View Google Sheets output ↗
+                            </a>
+                        )
+                    }
+
+                    <a href="/projects/rocketeers/">
+                        Rocketeers overview →
+                    </a>
+
+                    <a href="/projects/gym-progress/">
+                        Gym Progress System →
+                    </a>
+
+                    <a href="/#projects">
+                        All projects →
+                    </a>
+                </div>
+            </section>
+        </main>
+
+        <!-- ===================================================
+             FOOTER
+             =================================================== -->
+
+        <footer>
+            <span>
+                © {new Date().getFullYear()} Konstantinos Zafiropoulos
+            </span>
+
+            <span>
+                Built with Astro · Git/GitHub · VS Code · Netlify
+            </span>
+        </footer>
+    </body>
+</html>
+
+<style>
+    /* =========================================================
+       DESIGN TOKENS
+       ========================================================= */
+
+    :root {
+        --bg: #050d18;
+        --bg-card: #071522;
+        --text: #e8eef5;
+        --muted: #a9bbcc;
+        --subtle: #71869a;
+        --border: #1d354a;
+        --blue: #168dff;
+        --blue-light: #65baff;
+        --orange: #ff8a00;
+        --green: #26d5a2;
+        --page-width: 1240px;
+
+        color: var(--text);
+        background: var(--bg);
+
+        font-family:
+            Inter, ui-sans-serif, system-ui, -apple-system,
+            BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    /* =========================================================
+       GLOBAL
+       ========================================================= */
+
+    * {
+        box-sizing: border-box;
+    }
+
+    html {
+        scroll-behavior: smooth;
+    }
+
+    body {
+        min-height: 100vh;
+        margin: 0;
+        color: var(--text);
+
+        background:
+            radial-gradient(
+                circle at 90% 8%,
+                rgba(22, 141, 255, 0.11),
+                transparent 34rem
+            ),
+            radial-gradient(
+                circle at 12% 38%,
+                rgba(255, 138, 0, 0.035),
+                transparent 30rem
+            ),
+            var(--bg);
+    }
+
+    main,
+    footer {
+        max-width: var(--page-width);
+        margin-inline: auto;
+
+        padding-left: clamp(1.5rem, 5vw, 4.5rem);
+        padding-right: clamp(1.5rem, 5vw, 4.5rem);
+    }
+
+    a {
+        color: inherit;
+    }
+
+    a:focus-visible {
+        outline: 2px solid var(--orange);
+        outline-offset: 4px;
+    }
+
+    /* =========================================================
+       NAVIGATION
+       ========================================================= */
+
+    nav {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        min-height: 74px;
+        border-bottom: 1px solid var(--border);
+    }
+
+    .wordmark {
+        color: white;
+        font-size: 1.35rem;
+        font-weight: 850;
+        letter-spacing: -0.08em;
+        text-decoration: none;
+    }
+
+    .wordmark span {
+        color: var(--orange);
+    }
+
+    .nav-links {
+        display: flex;
+        gap: clamp(0.8rem, 3vw, 2.5rem);
+    }
+
+    .nav-links a {
+        color: var(--muted);
+        font-size: 0.9rem;
+        text-decoration: none;
+    }
+
+    .nav-links a:hover {
+        color: white;
+    }
+
+    /* =========================================================
+       TYPOGRAPHY
+       ========================================================= */
+
+    h1,
+    h2,
+    h3,
+    p {
+        margin-top: 0;
+    }
+
+    h1,
+    h2,
+    h3 {
+        color: white;
+        letter-spacing: -0.045em;
+    }
+
+    h1 {
+        max-width: 1050px;
+        margin-bottom: 1.6rem;
+        font-size: clamp(3rem, 7vw, 6.6rem);
+        line-height: 0.98;
+        overflow-wrap: anywhere;
+    }
+
+    h2 {
+        font-size: clamp(2.1rem, 4.7vw, 3.7rem);
+        line-height: 1.08;
+    }
+
+    h3 {
+        font-size: clamp(1.4rem, 2.2vw, 1.8rem);
+        line-height: 1.2;
+    }
+
+    .eyebrow {
+        margin-bottom: 1.15rem;
+        color: var(--orange);
+        font-size: 0.75rem;
+        font-weight: 800;
+        letter-spacing: 0.09em;
+        text-transform: uppercase;
+    }
+
+    .lead {
+        color: #dce6ee !important;
+        font-size: 1.1rem;
+    }
+
+    /* =========================================================
+       HERO
+       ========================================================= */
+
+    .hero {
+        padding: clamp(4rem, 9vw, 7rem) 0
+            clamp(3rem, 6vw, 5rem);
+    }
+
+    .breadcrumbs {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.6rem;
+        margin-bottom: 3rem;
+        color: var(--subtle);
+        font-size: 0.8rem;
+    }
+
+    .breadcrumbs a {
+        text-decoration: none;
+    }
+
+    .breadcrumbs a:hover {
+        color: white;
+    }
+
+    .breadcrumbs strong {
+        color: var(--blue-light);
+    }
+
+    .accent {
+        color: var(--blue);
+    }
+
+    .hero-lead {
+        max-width: 800px;
+        color: #dce6ee;
+        font-size: clamp(1.1rem, 2vw, 1.3rem);
+        line-height: 1.65;
+    }
+
+    .hero-context {
+        max-width: 760px;
+        color: var(--muted);
+        line-height: 1.7;
+    }
+
+    .hero-tags,
+    .skills-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.6rem;
+        margin-top: 1.6rem;
+    }
+
+    .hero-tags span,
+    .skills-list span {
+        padding: 0.55rem 0.75rem;
+        border: 1px solid #28445c;
+        border-radius: 7px;
+        background: #091b2b;
+        color: #c5d5e3;
+        font-size: 0.74rem;
+    }
+
+    .hero-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        margin-top: 2rem;
+    }
+
+    .button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 46px;
+        padding: 0.8rem 1.2rem;
+        border: 1px solid var(--blue);
+        border-radius: 8px;
+        font-size: 0.86rem;
+        font-weight: 750;
+        text-decoration: none;
+
+        transition:
+            transform 0.2s ease,
+            background 0.2s ease,
+            border-color 0.2s ease;
+    }
+
+    .button:hover {
+        transform: translateY(-2px);
+    }
+
+    .button-primary {
+        background: var(--blue);
+        color: white;
+    }
+
+    .button-primary:hover {
+        background: #2397ff;
+    }
+
+    .button-secondary {
+        background: rgba(7, 21, 34, 0.8);
+        color: white;
+    }
+
+    .button-secondary:hover {
+        border-color: var(--blue-light);
+    }
+
+    /* =========================================================
+       METRICS
+       ========================================================= */
+
+    .metrics {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 1rem;
+        padding-bottom: clamp(4rem, 8vw, 6rem);
+    }
+
+    .metric-card,
+    .source-grid article,
+    .criteria-grid article,
+    .output-grid article {
+        padding: 1.4rem;
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        background: var(--bg-card);
+    }
+
+    .metric-card strong {
+        display: block;
+        margin-bottom: 0.5rem;
+        color: var(--blue);
+        font-size: clamp(1.7rem, 3.5vw, 2.5rem);
+    }
+
+    .metric-card span {
+        color: var(--muted);
+        font-size: 0.85rem;
+        line-height: 1.4;
+    }
+
+    /* =========================================================
+       CASE STUDY SECTIONS
+       ========================================================= */
+
+    .case-section {
+        display: grid;
+        grid-template-columns: minmax(145px, 0.3fr) minmax(0, 1fr);
+        gap: clamp(2rem, 6vw, 5rem);
+        padding: clamp(4rem, 8vw, 6.5rem) 0;
+        border-top: 1px solid var(--border);
+    }
+
+    .section-content {
+        min-width: 0;
+        max-width: 860px;
+    }
+
+    .section-content > p {
+        color: var(--muted);
+        line-height: 1.75;
+    }
+
+    /* =========================================================
+       WORKFLOW DIAGRAM
+       ========================================================= */
+
+    .workflow {
+        display: grid;
+        gap: 0.5rem;
+        max-width: 700px;
+        margin: 2.5rem 0;
+    }
+
+    .workflow-step {
+        padding: 1.3rem 1.5rem;
+        border: 1px solid #275276;
+        border-radius: 10px;
+        background: #081b2b;
+    }
+
+    .workflow-step > span {
+        display: block;
+        margin-bottom: 0.5rem;
+        color: var(--orange);
+        font-size: 0.7rem;
+        font-weight: 800;
+        letter-spacing: 0.07em;
+    }
+
+    .workflow-step strong {
+        display: block;
+        margin-bottom: 0.4rem;
+        color: white;
+        font-size: 1.05rem;
+    }
+
+    .workflow-step p {
+        margin-bottom: 0;
+        color: var(--muted);
+        font-size: 0.88rem;
+        line-height: 1.55;
+    }
+
+    .workflow-arrow {
+        justify-self: center;
+        color: var(--blue);
+        font-size: 1.2rem;
+    }
+
+    .final-step {
+        border-color: rgba(38, 213, 162, 0.6);
+    }
+
+    /* =========================================================
+       FEATURE GRIDS
+       ========================================================= */
+
+    .source-grid,
+    .criteria-grid,
+    .output-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 1rem;
+        margin: 2.5rem 0;
+    }
+
+    .source-grid article > span,
+    .criteria-grid article > span,
+    .output-grid article > span {
+        display: block;
+        margin-bottom: 0.65rem;
+        color: var(--orange);
+        font-size: 0.7rem;
+        font-weight: 800;
+        letter-spacing: 0.07em;
+        text-transform: uppercase;
+    }
+
+    .source-grid strong,
+    .criteria-grid strong,
+    .output-grid strong {
+        display: block;
+        margin-bottom: 0.5rem;
+        color: white;
+        font-size: 1.1rem;
+    }
+
+    .source-grid p,
+    .criteria-grid p,
+    .output-grid p {
+        margin-bottom: 0;
+        color: var(--muted);
+        font-size: 0.87rem;
+        line-height: 1.6;
+    }
+
+    /* =========================================================
+       FEATURE LISTS
+       ========================================================= */
+
+    .feature-list {
+        display: grid;
+        margin: 2.2rem 0;
+    }
+
+    .feature-list > div {
+        display: grid;
+        grid-template-columns: 38px minmax(0, 1fr);
+        gap: 1rem;
+        padding: 1.15rem 0;
+        border-bottom: 1px solid var(--border);
+    }
+
+    .feature-list > div > span {
+        color: var(--blue);
+        font-size: 0.74rem;
+        font-weight: 800;
+    }
+
+    .feature-list strong {
+        display: block;
+        margin-bottom: 0.4rem;
+        color: white;
+    }
+
+    .feature-list p {
+        margin-bottom: 0;
+        color: var(--muted);
+        line-height: 1.6;
+    }
+
+    /* =========================================================
+       CACHE COMPARISON
+       ========================================================= */
+
+    .comparison {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+        align-items: center;
+        gap: 1rem;
+        margin: 2.5rem 0;
+    }
+
+    .comparison article {
+        padding: 1.5rem;
+        border: 1px solid var(--border);
+        border-radius: 11px;
+        background: var(--bg-card);
+    }
+
+    .comparison article > span {
+        display: block;
+        margin-bottom: 0.7rem;
+        color: var(--subtle);
+        font-size: 0.76rem;
+    }
+
+    .comparison strong {
+        display: block;
+        color: white;
+        font-size: clamp(1.9rem, 4vw, 2.8rem);
+    }
+
+    .comparison p {
+        margin: 0.6rem 0 0;
+        color: var(--muted);
+        font-size: 0.82rem;
+        line-height: 1.5;
+    }
+
+    .comparison-highlight {
+        border-color: rgba(38, 213, 162, 0.5) !important;
+    }
+
+    .comparison-highlight strong {
+        color: var(--green);
+    }
+
+    .comparison-arrow {
+        color: var(--blue);
+        font-size: 1.4rem;
+    }
+
+    /* =========================================================
+       VERIFIED RESULT
+       ========================================================= */
+
+    .result-card {
+        margin: 2.5rem 0;
+        padding: clamp(1.4rem, 3vw, 2rem);
+        border: 1px solid rgba(38, 213, 162, 0.45);
+        border-radius: 13px;
+
+        background:
+            linear-gradient(
+                135deg,
+                rgba(38, 213, 162, 0.06),
+                transparent
+            ),
+            var(--bg-card);
+    }
+
+    .result-label {
+        display: block;
+        margin-bottom: 1rem;
+        color: var(--green);
+        font-size: 0.72rem;
+        font-weight: 800;
+        letter-spacing: 0.07em;
+    }
+
+    .result-card h3 {
+        margin-bottom: 0.5rem;
+    }
+
+    .result-company {
+        color: var(--muted);
+    }
+
+    .result-stages {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.55rem;
+        margin: 1.5rem 0;
+    }
+
+    .result-stages span {
+        padding: 0.5rem 0.65rem;
+        border: 1px solid #245463;
+        border-radius: 6px;
+        color: #c5d5e3;
+        background: #081f2a;
+        font-size: 0.7rem;
+    }
+
+    .result-card > p:last-child {
+        margin-bottom: 0;
+        color: var(--muted);
+        line-height: 1.6;
+    }
+
+    /* =========================================================
+       CALLOUT
+       ========================================================= */
+
+    .callout {
+        margin: 2rem 0;
+        padding: 1.4rem;
+        border-left: 3px solid var(--orange);
+        border-radius: 10px;
+        background: rgba(8, 23, 38, 0.9);
+    }
+
+    .callout strong {
+        display: block;
+        margin-bottom: 0.5rem;
+        color: white;
+    }
+
+    .callout p {
+        margin: 0;
+        color: var(--muted);
+        line-height: 1.65;
+    }
+
+    /* =========================================================
+       PROJECT END / LINKS
+       ========================================================= */
+
+    .project-end {
+        padding: clamp(4rem, 8vw, 7rem) 0;
+        border-top: 1px solid var(--border);
+    }
+
+    .project-end-links {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem 2rem;
+        margin-top: 2rem;
+    }
+
+    .project-end-links a {
+        color: white;
+        font-size: 0.9rem;
+        font-weight: 700;
+        text-underline-offset: 0.25em;
+    }
+
+    .project-end-links a:hover {
+        color: var(--blue-light);
+    }
+
+    /* =========================================================
+       FOOTER
+       ========================================================= */
+
+    footer {
+        display: flex;
+        justify-content: space-between;
+        gap: 2rem;
+        padding-top: 1.6rem;
+        padding-bottom: 1.6rem;
+        border-top: 1px solid var(--border);
+        color: var(--subtle);
+        font-size: 0.72rem;
+    }
+
+    /* =========================================================
+       RESPONSIVE — TABLET
+       ========================================================= */
+
+    @media (max-width: 1000px) {
+        .case-section {
+            grid-template-columns: 1fr;
+            gap: 1rem;
+        }
+
+        .metrics {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+    }
+
+    /* =========================================================
+       RESPONSIVE — MOBILE
+       ========================================================= */
+
+    @media (max-width: 620px) {
+        nav {
+            gap: 1rem;
+        }
+
+        .nav-links {
+            gap: 0.8rem;
+        }
+
+        .nav-links a {
+            font-size: 0.8rem;
+        }
+
+        h1 {
+            font-size: clamp(2.6rem, 11vw, 4rem);
+        }
+
+        .metrics,
+        .source-grid,
+        .criteria-grid,
+        .output-grid,
+        .comparison {
+            grid-template-columns: 1fr;
+        }
+
+        .comparison-arrow {
+            justify-self: center;
+            transform: rotate(90deg);
+        }
+
+        .hero-actions .button {
+            width: 100%;
+        }
+
+        footer {
+            flex-direction: column;
+        }
+    }
+
+    /* =========================================================
+       REDUCED MOTION
+       ========================================================= */
+
+    @media (prefers-reduced-motion: reduce) {
+        html {
+            scroll-behavior: auto;
+        }
+
+        .button {
+            transition: none;
+        }
+
+        .button:hover {
+            transform: none;
+        }
+    }
+</style>
