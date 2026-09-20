@@ -1,0 +1,197 @@
+---
+/* =========================================================
+   PROJECT GALLERY — REUSABLE COMPONENT
+
+   PURPOSE:
+   Display project screenshots consistently across the portfolio.
+
+   USAGE:
+   Import this component into any Astro project page.
+   Pass it an array of image paths, descriptions, and captions.
+
+   FUTURE MAINTENANCE:
+   Changes to the gallery design only need to be made here.
+   ========================================================= */
+
+/* =========================================================
+   COMPONENT PROPS
+   ========================================================= */
+
+interface GalleryImage {
+    src: string;
+    alt: string;
+    caption: string;
+    width: number;
+    height: number;
+}
+
+interface Props {
+    images: GalleryImage[];
+    title?: string;
+    description?: string;
+}
+
+const { images, title = "Project visuals", description = "" } = Astro.props;
+---
+
+<!-- =======================================================
+     PROJECT GALLERY
+     ======================================================= -->
+<div class="project-gallery">
+    <div class="gallery-heading">
+        <p class="gallery-eyebrow">Project visuals</p>
+
+        <h3>{title}</h3>
+
+        {description && <p class="gallery-description">{description}</p>}
+    </div>
+
+    <!-- ===================================================
+         IMAGE GRID
+
+         A single image fills the available width.
+         Multiple images stack vertically for readability.
+         =================================================== -->
+
+    <div class="gallery-grid">
+        {
+            images.map((image) => (
+                <figure class="gallery-card">
+                    <a
+                        href={image.src}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label={`Open full-size image: ${image.alt}`}
+                    >
+                        <img
+                            src={image.src}
+                            alt={image.alt}
+                            width={image.width}
+                            height={image.height}
+                            loading="lazy"
+                            decoding="async"
+                        />
+                    </a>
+
+                    <figcaption>{image.caption}</figcaption>
+                </figure>
+            ))
+        }
+    </div>
+</div>
+
+<style>
+    /* =====================================================
+       GALLERY CONTAINER
+       ===================================================== */
+
+    .project-gallery {
+        width: 100%;
+    }
+
+    .gallery-heading {
+        margin-bottom: 2rem;
+    }
+
+    .gallery-eyebrow {
+        margin-bottom: 0.85rem;
+
+        color: #ff8a00;
+
+        font-size: 0.75rem;
+        font-weight: 800;
+        letter-spacing: 0.09em;
+        text-transform: uppercase;
+    }
+
+    .gallery-heading h3 {
+        margin: 0 0 1rem;
+
+        color: #ffffff;
+
+        font-size: clamp(1.65rem, 3vw, 2.2rem);
+        line-height: 1.2;
+    }
+
+    .gallery-description {
+        max-width: 760px;
+        margin: 0;
+
+        color: #a9bbcc;
+
+        line-height: 1.7;
+    }
+
+    /* =====================================================
+       IMAGE LAYOUT
+       ===================================================== */
+
+    .gallery-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr);
+        gap: 1.75rem;
+    }
+
+    .gallery-card {
+        min-width: 0;
+        margin: 0;
+
+        overflow: hidden;
+
+        border: 1px solid #27435a;
+        border-radius: 14px;
+
+        background: #071522;
+
+        box-shadow: 0 16px 35px rgba(0, 0, 0, 0.18);
+    }
+
+    /* =====================================================
+       IMAGE PRESENTATION
+       ===================================================== */
+
+    .gallery-card a {
+        display: block;
+
+        padding: 0.65rem;
+
+        background: #0b1725;
+    }
+
+    .gallery-card a:focus-visible {
+        outline: 2px solid #ff8a00;
+        outline-offset: -2px;
+    }
+
+    .gallery-card img {
+        display: block;
+
+        width: 100%;
+        height: auto;
+
+        border-radius: 8px;
+    }
+
+    .gallery-card figcaption {
+        padding: 1.1rem 1.3rem 1.3rem;
+
+        color: #a9bbcc;
+
+        font-size: 0.88rem;
+        line-height: 1.65;
+    }
+
+    /* =====================================================
+       MOBILE
+       ===================================================== */
+
+    @media (max-width: 620px) {
+        .gallery-card a {
+            padding: 0.35rem;
+        }
+
+        .gallery-card figcaption {
+            padding: 1rem;
+        }
+    }
+</style>

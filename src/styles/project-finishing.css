@@ -1,0 +1,63 @@
+
+/* =========================================================
+   PROJECT PAGE FINISHING STYLES
+
+   Shared presentation for project-page introductions,
+   closing navigation, and footers.
+
+   Individual case-study sections retain their existing
+   layouts and typography.
+   ========================================================= */
+
+/* HERO — CENTER CONTENT */
+
+.hero {
+    text-align: center;
+}
+
+.hero h1,
+.hero-subtitle,
+.hero .eyebrow {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.hero-breadcrumbs,
+.hero-tags {
+    justify-content: center;
+}
+
+/* Center the hero's standalone back link where present. */
+
+.hero .back-link {
+    display: inline-block;
+}
+
+/* METRICS — CENTER CARD CONTENT */
+
+.metrics {
+    text-align: center;
+}
+
+/* PAGE ENDING */
+
+.project-end {
+    text-align: center;
+}
+
+.project-end h2 {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.project-end-links {
+    justify-content: center;
+}
+
+/* FOOTER */
+
+footer {
+    justify-content: center;
+    text-align: center;
+    flex-wrap: wrap;
+}

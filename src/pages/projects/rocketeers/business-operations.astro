@@ -3,6 +3,10 @@
    PAGE METADATA
    ========================================================= */
 
+import SiteHeader from "../../../components/SiteHeader.astro";
+import SiteFooter from "../../../components/SiteFooter.astro";
+import SkillLinks from "../../../components/SkillLinks.astro";
+
 const title =
     "Business & Marketplace Operations | Rocketeers | Konstantinos Zafiropoulos";
 
@@ -20,11 +24,11 @@ const metrics = [
     },
     {
         value: "3,361",
-        label: "Unique positive feedback",
+        label: "Positive feedback score",
     },
     {
-        value: "807",
-        label: "Store followers",
+        value: "0",
+        label: "Negative feedback",
     },
 ];
 ---
@@ -41,8 +45,6 @@ const metrics = [
 
         <meta name="description" content={description} />
 
-        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-
         <title>{title}</title>
     </head>
 
@@ -52,17 +54,7 @@ const metrics = [
                  PRIMARY NAVIGATION
                  ================================================= -->
 
-            <nav aria-label="Primary navigation">
-                <a class="wordmark" href="/" aria-label="Homepage">
-                    KZ<span>.</span>
-                </a>
-
-                <div class="nav-links">
-                    <a href="/#projects">Projects</a>
-                    <a href="/#about">About</a>
-                    <a href="/#contact">Contact</a>
-                </div>
-            </nav>
+            <SiteHeader />
 
             <!-- =================================================
                  HERO
@@ -90,14 +82,17 @@ const metrics = [
                     operations, seller performance, and day-to-day execution.
                 </p>
 
-                <div class="hero-tags">
-                    <span>Marketplace Operations</span>
-                    <span>E-commerce</span>
-                    <span>Business Ownership</span>
-                    <span>Customer Experience</span>
-                    <span>Pricing</span>
-                    <span>Inventory</span>
-                </div>
+                <SkillLinks
+                    variant="hero"
+                    skills={[
+                        "marketplace-operations",
+                        "ecommerce-operations",
+                        "business-ownership",
+                        "customer-operations",
+                        "pricing-operations",
+                        "inventory-management",
+                    ]}
+                />
             </header>
 
             <!-- =================================================
@@ -154,7 +149,7 @@ const metrics = [
                  SECTION 02 — BUSINESS MODEL
                  ================================================= -->
 
-            <section class="case-section">
+            <section class="case-section wide-section">
                 <div class="section-label">
                     <p class="eyebrow">02 — Business model</p>
                 </div>
@@ -427,7 +422,7 @@ const metrics = [
 
                         <article>
                             <strong>3,361</strong>
-                            <span>unique positive feedback score</span>
+                            <span>positive feedback score</span>
                         </article>
                     </div>
 
@@ -488,8 +483,8 @@ const metrics = [
                         </article>
 
                         <article>
-                            <strong>807</strong>
-                            <span> eBay store followers </span>
+                            <strong>7 years</strong>
+                            <span> operating the business </span>
                         </article>
                     </div>
 
@@ -631,91 +626,21 @@ const metrics = [
                         </div>
 
                         <div>
-                            <strong> 807 </strong>
+                            <strong> 1 </strong>
 
-                            <span> followers </span>
+                            <span> neutral feedback entry </span>
                         </div>
                     </div>
                 </div>
             </section>
 
             <!-- =================================================
-                 SECTION 10 — VISUAL EVIDENCE
+                 SECTION 10 — SKILLS DEMONSTRATED
                  ================================================= -->
 
             <section class="case-section">
                 <div class="section-label">
-                    <p class="eyebrow">10 — Evidence</p>
-                </div>
-
-                <div class="section-content">
-                    <h2>
-                        The final case study will include genuine marketplace
-                        evidence.
-                    </h2>
-
-                    <p class="lead">
-                        The public version will use sanitized screenshots and
-                        examples from the real operation rather than recreated
-                        demo material.
-                    </p>
-
-                    <div class="screenshot-grid">
-                        <div class="screenshot-placeholder">
-                            <span>01</span>
-
-                            <strong> Marketplace storefront </strong>
-
-                            <p>
-                                Sanitized view of the real Rocketeers eBay
-                                presence and catalogue.
-                            </p>
-                        </div>
-
-                        <div class="screenshot-placeholder">
-                            <span>02</span>
-
-                            <strong> Seller performance </strong>
-
-                            <p>
-                                Evidence of feedback history and marketplace
-                                performance.
-                            </p>
-                        </div>
-
-                        <div class="screenshot-placeholder">
-                            <span>03</span>
-
-                            <strong> Listings & variations </strong>
-
-                            <p>
-                                Example showing how product variations were
-                                structured operationally.
-                            </p>
-                        </div>
-
-                        <div class="screenshot-placeholder">
-                            <span>04</span>
-
-                            <strong> Operational systems </strong>
-
-                            <p>
-                                Supporting evidence connecting the business to
-                                the pricing and financial systems built around
-                                it.
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- =================================================
-                 SECTION 11 — SKILLS DEMONSTRATED
-                 ================================================= -->
-
-            <section class="case-section">
-                <div class="section-label">
-                    <p class="eyebrow">11 — Skills demonstrated</p>
+                    <p class="eyebrow">10 — Skills demonstrated</p>
                 </div>
 
                 <div class="section-content">
@@ -724,20 +649,22 @@ const metrics = [
                         and operational execution.
                     </h2>
 
-                    <div class="skills-list">
-                        <span>Marketplace Operations</span>
-                        <span>E-commerce</span>
-                        <span>Business Ownership</span>
-                        <span>Customer Operations</span>
-                        <span>Pricing</span>
-                        <span>Inventory Management</span>
-                        <span>Order Management</span>
-                        <span>Seller Performance</span>
-                        <span>Dispute Resolution</span>
-                        <span>Process Improvement</span>
-                        <span>Commercial Decision-Making</span>
-                        <span>Operational Scaling</span>
-                    </div>
+                    <SkillLinks
+                        skills={[
+                            "marketplace-operations",
+                            "ecommerce-operations",
+                            "business-ownership",
+                            "customer-operations",
+                            "pricing-operations",
+                            "inventory-management",
+                            "order-management",
+                            "seller-performance",
+                            "dispute-resolution",
+                            "process-improvement",
+                            "decision-making",
+                            "operational-scaling",
+                        ]}
+                    />
                 </div>
             </section>
 
@@ -782,13 +709,7 @@ const metrics = [
              FOOTER
              =================================================== -->
 
-        <footer>
-            <span>
-                © {new Date().getFullYear()} Konstantinos Zafiropoulos
-            </span>
-
-            <span> Built with Astro · Git/GitHub · VS Code · Netlify </span>
-        </footer>
+        <SiteFooter />
     </body>
 </html>
 
@@ -1446,64 +1367,6 @@ const metrics = [
     }
 
     /* =========================================================
-       SCREENSHOT PLACEHOLDERS
-       ========================================================= */
-
-    .screenshot-grid {
-        display: grid;
-
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-
-        gap: 1rem;
-
-        margin-top: 2.5rem;
-    }
-
-    .screenshot-placeholder {
-        min-height: 210px;
-
-        padding: 1.5rem;
-
-        border: 1px dashed #4d4337;
-        border-radius: 12px;
-
-        background: linear-gradient(
-            135deg,
-            rgba(255, 138, 0, 0.04),
-            rgba(22, 141, 255, 0.015)
-        );
-    }
-
-    .screenshot-placeholder > span {
-        display: block;
-
-        margin-bottom: 2rem;
-
-        color: var(--orange);
-
-        font-size: 0.72rem;
-        font-weight: 800;
-    }
-
-    .screenshot-placeholder strong {
-        display: block;
-
-        margin-bottom: 0.6rem;
-
-        color: white;
-    }
-
-    .screenshot-placeholder p {
-        margin-bottom: 0;
-
-        color: #91a6b8;
-
-        font-size: 0.85rem;
-
-        line-height: 1.5;
-    }
-
-    /* =========================================================
        SKILLS
        ========================================================= */
 
@@ -1657,5 +1520,127 @@ const metrics = [
         .systems-grid a:hover {
             transform: none;
         }
+    }
+
+    /* =========================================================
+   FULL-WIDTH WORKFLOW SECTIONS
+
+   Gives process diagrams more horizontal space while
+   preserving the existing layout of all other sections.
+   ========================================================= */
+
+    .wide-section {
+        display: block;
+    }
+
+    .wide-section .section-label {
+        text-align: center;
+    }
+
+    .wide-section .section-content {
+        width: 100%;
+        max-width: none;
+    }
+
+    .wide-section .section-content > h2,
+    .wide-section .section-content > p {
+        max-width: 850px;
+        margin-left: auto;
+        margin-right: auto;
+        text-align: center;
+    }
+
+    /* Keep the diagram centered and make its cards readable. */
+
+    .wide-section .business-flow,
+    .wide-section .workflow {
+        width: 100%;
+        max-width: 1100px;
+        margin: 2.5rem auto 0;
+        gap: 0.75rem;
+    }
+
+    .wide-section .flow-step,
+    .wide-section .workflow-step {
+        min-width: 0;
+        padding: 1.25rem;
+    }
+
+    /* Stack the diagram before its cards become too narrow. */
+
+    @media (max-width: 1100px) {
+        .wide-section .business-flow,
+        .wide-section .workflow {
+            grid-template-columns: 1fr;
+            max-width: 680px;
+        }
+
+        .wide-section .flow-arrow,
+        .wide-section .workflow-arrow {
+            transform: rotate(90deg);
+        }
+    }
+
+    /* =========================================================
+   PROJECT PAGE FINISHING STYLES
+
+   Shared presentation for project-page introductions,
+   closing navigation, and footers.
+
+   Individual case-study sections retain their existing
+   layouts and typography.
+   ========================================================= */
+
+    /* HERO — CENTER CONTENT */
+
+    .hero {
+        text-align: center;
+    }
+
+    .hero h1,
+    .hero-subtitle,
+    .hero .eyebrow {
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .hero-breadcrumbs,
+    .hero-tags {
+        justify-content: center;
+    }
+
+    /* Center the hero's standalone back link where present. */
+
+    .hero .back-link {
+        display: inline-block;
+    }
+
+    /* METRICS — CENTER CARD CONTENT */
+
+    .metrics {
+        text-align: center;
+    }
+
+    /* PAGE ENDING */
+
+    .project-end {
+        text-align: center;
+    }
+
+    .project-end h2 {
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .project-end-links {
+        justify-content: center;
+    }
+
+    /* FOOTER */
+
+    footer {
+        justify-content: center;
+        text-align: center;
+        flex-wrap: wrap;
     }
 </style>

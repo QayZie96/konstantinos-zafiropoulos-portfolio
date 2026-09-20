@@ -3,10 +3,16 @@
    PAGE METADATA
    ========================================================= */
 
-const title = "Konstantinos Zafiropoulos | Operations, Automation, Data & Web";
+import SiteHeader from "../components/SiteHeader.astro";
+import SiteFooter from "../components/SiteFooter.astro";
+import SkillLinks from "../components/SkillLinks.astro";
+import SkillTagList from "../components/SkillTagList.astro";
+
+const title =
+    "Konstantinos Zafiropoulos | Operations, AI Automation, Data & Web";
 
 const description =
-    "Portfolio of Konstantinos Zafiropoulos — marketplace operations, automation, data analysis, web development, and practical systems.";
+    "Portfolio of Konstantinos Zafiropoulos — marketplace operations, AI workflow implementation, Excel/VBA, data analysis, and web development.";
 ---
 
 <html lang="en">
@@ -21,8 +27,6 @@ const description =
 
         <meta name="description" content={description} />
 
-        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-
         <title>{title}</title>
     </head>
 
@@ -32,17 +36,7 @@ const description =
                  PRIMARY NAVIGATION
                  ================================================= -->
 
-            <nav aria-label="Primary navigation">
-                <a class="wordmark" href="/" aria-label="Homepage">
-                    KZ<span>.</span>
-                </a>
-
-                <div class="nav-links">
-                    <a href="#projects">Projects</a>
-                    <a href="#about">About</a>
-                    <a href="#contact">Contact</a>
-                </div>
-            </nav>
+            <SiteHeader />
 
             <!-- =================================================
                  HERO
@@ -60,8 +54,8 @@ const description =
 
                     <p class="intro">
                         A portfolio of real projects spanning marketplace
-                        operations, Excel/VBA, web development, analytics, and
-                        practical AI implementation.
+                        operations, Excel/VBA, AI workflow implementation, data,
+                        and web development.
                     </p>
 
                     <div class="hero-actions">
@@ -168,13 +162,7 @@ const description =
                             </a>
                         </div>
 
-                        <!--
-                            The entire visual panel is clickable and
-                            leads to the Rocketeers overview.
-
-                            This is a temporary visual until genuine
-                            Rocketeers imagery is added.
-                        -->
+                        <!-- The entire visual panel links to the Rocketeers overview. -->
 
                         <a
                             class="rocketeers-visual rocketeers-visual-link"
@@ -256,8 +244,8 @@ const description =
                                 </div>
 
                                 <div>
-                                    <strong>807</strong>
-                                    <span>followers</span>
+                                    <strong>0</strong>
+                                    <span>negative feedback</span>
                                 </div>
                             </div>
 
@@ -268,10 +256,8 @@ const description =
                              02 — MARKETPLACE REPRICING ENGINE
                              ===================================== -->
 
-                        <a
+                        <article
                             class="rocketeers-card card-repricing"
-                            href="/projects/rocketeers/repricing/"
-                            aria-label="View the Marketplace Repricing Engine case study"
                         >
                             <div class="card-top">
                                 <span class="card-number blue"> 02 </span>
@@ -285,13 +271,10 @@ const description =
                             </div>
 
                             <h4>
-                                Marketplace Repricing Engine
-                                <span
-                                    class="inline-arrow blue"
-                                    aria-hidden="true"
-                                >
-                                    →
-                                </span>
+                                <a class="card-title-link" href="/projects/rocketeers/repricing/">
+                                    Marketplace Repricing Engine
+                                    <span class="inline-arrow blue" aria-hidden="true">→</span>
+                                </a>
                             </h4>
 
                             <p>
@@ -302,23 +285,17 @@ const description =
                                 workflows.
                             </p>
 
-                            <div class="tags">
-                                <span>Excel</span>
-                                <span>Pricing Logic</span>
-                                <span>Process Scaling</span>
-                            </div>
+                            <SkillTagList skills={["excel", "pricing-operations", "operational-scaling"]} />
 
-                            <div class="view-link">View case study ↗</div>
-                        </a>
+                            <a class="view-link" href="/projects/rocketeers/repricing/">View case study ↗</a>
+                        </article>
 
                         <!-- =====================================
                              03 — FINANCIAL & OPERATIONS TRACKER
                              ===================================== -->
 
-                        <a
+                        <article
                             class="rocketeers-card card-finance"
-                            href="/projects/rocketeers/financial-tracker/"
-                            aria-label="View the Financial and Operations Tracker case study"
                         >
                             <div class="card-top">
                                 <span class="card-number green"> 03 </span>
@@ -332,13 +309,10 @@ const description =
                             </div>
 
                             <h4>
-                                Financial & Operations Tracker
-                                <span
-                                    class="inline-arrow green"
-                                    aria-hidden="true"
-                                >
-                                    →
-                                </span>
+                                <a class="card-title-link" href="/projects/rocketeers/financial-tracker/">
+                                    Financial & Operations Tracker
+                                    <span class="inline-arrow green" aria-hidden="true">→</span>
+                                </a>
                             </h4>
 
                             <p>
@@ -348,20 +322,12 @@ const description =
                                 across the growing operation.
                             </p>
 
-                            <!--
-                                Financial totals are intentionally not
-                                displayed here until the newer workbook
-                                has been reconciled and verified.
-                            -->
+                            <!-- Historical financial totals are covered on the case study, not presented as lifetime figures. -->
 
-                            <div class="tags">
-                                <span>Excel</span>
-                                <span>Commercial Analytics</span>
-                                <span>Operational Reporting</span>
-                            </div>
+                            <SkillTagList skills={["excel", "commercial-analysis", "operational-reporting"]} />
 
-                            <div class="view-link">View case study ↗</div>
-                        </a>
+                            <a class="view-link" href="/projects/rocketeers/financial-tracker/">View case study ↗</a>
+                        </article>
                     </div>
                 </section>
 
@@ -388,29 +354,39 @@ const description =
                              RAME
                              ===================================== -->
 
-                        <article class="other-project-card">
+                        <article
+                            class="other-project-card project-link"
+                        >
                             <div class="project-visual rame-visual">
-                                <span>RAME</span>
+                                <div class="storefront-icon" aria-hidden="true">
+                                    <span class="storefront-awning">
+                                        <i></i>
+                                        <i></i>
+                                        <i></i>
+                                    </span>
+                                    <span class="storefront-base"></span>
+                                </div>
                             </div>
 
                             <div class="other-project-body">
-                                <h4>Rame</h4>
+                                <h4>
+                                    <a class="card-title-link" href="/projects/rame/">
+                                        RAMÉ Creative Space
+                                        <span class="inline-arrow blue" aria-hidden="true">→</span>
+                                    </a>
+                                </h4>
 
                                 <p>
-                                    A real e-commerce business website currently
-                                    being developed for an active commercial
-                                    project, covering frontend design, site
-                                    structure, deployment, and practical web
-                                    development.
+                                    An in-progress client store built with
+                                    WordPress, WooCommerce, Elementor, and
+                                    targeted CSS—covering responsive pages,
+                                    custom-order inquiries, side-cart styling,
+                                    and practical site maintenance.
                                 </p>
 
-                                <div class="tags">
-                                    <span>E-commerce</span>
-                                    <span>Web Development</span>
-                                    <span>Frontend</span>
-                                </div>
+                                <SkillTagList skills={["wordpress", "woocommerce", "elementor", "theme-customization"]} />
 
-                                <div class="card-status">Coming Soon</div>
+                                <a class="view-link" href="/projects/rame/">View case study ↗</a>
                             </div>
                         </article>
 
@@ -430,16 +406,21 @@ const description =
                             </div>
 
                             <div class="other-project-body">
-                                <h4>Data Analysis Project</h4>
+                                <h4>
+                                    Chess Analytics: What Influences Game
+                                    Outcomes?
+                                </h4>
 
                                 <p>
-                                    A focused analytics project using SQL,
-                                    Python, and Power BI to investigate
-                                    real-world data and communicate meaningful
-                                    findings.
+                                    An exploratory analysis of 20,058 online
+                                    chess games, examining relationships between
+                                    player ratings, opening choices, game
+                                    duration, and results. Currently in
+                                    development.
                                 </p>
 
-                                <div class="tags">
+                                <p class="planned-stack-label">Planned stack</p>
+                                <div class="tags" aria-label="Planned Chess Analytics stack">
                                     <span>SQL</span>
                                     <span>Python</span>
                                     <span>Power BI</span>
@@ -453,10 +434,8 @@ const description =
                              AI JOB DISCOVERY & OUTREACH AUTOMATION
                              ===================================== -->
 
-                        <a
+                        <article
                             class="other-project-card project-link"
-                            href="/projects/ai-job-outreach/"
-                            aria-label="View the AI Job Discovery and Outreach Automation case study"
                         >
                             <div class="project-visual ai-visual">
                                 <div class="ai-circle" aria-hidden="true">
@@ -466,42 +445,32 @@ const description =
 
                             <div class="other-project-body">
                                 <h4>
-                                    AI Job Discovery & Outreach Automation
-                                    <span
-                                        class="inline-arrow blue"
-                                        aria-hidden="true"
-                                    >
-                                        →
-                                    </span>
+                                    <a class="card-title-link" href="/projects/ai-job-outreach/">
+                                        AI Job Discovery & Outreach Automation
+                                        <span class="inline-arrow blue" aria-hidden="true">→</span>
+                                    </a>
                                 </h4>
 
                                 <p>
-                                    A Python automation that discovers job
-                                    vacancies across three APIs, uses Google
-                                    Gemini to evaluate suitability and generate
-                                    personalized outreach drafts, and organizes
-                                    qualifying results in Google Sheets.
+                                    An end-to-end Python workflow combining
+                                    three job APIs with Gemini-based relevance
+                                    assessment, structured prompts, reusable
+                                    validation, and human-reviewed outreach
+                                    drafts in Google Sheets.
                                 </p>
 
-                                <div class="tags">
-                                    <span>Python</span>
-                                    <span>Gemini</span>
-                                    <span>APIs</span>
-                                    <span>Automation</span>
-                                </div>
+                                <SkillTagList skills={["python", "google-gemini", "prompt-design", "ai-workflow-implementation"]} />
 
-                                <div class="view-link">View case study ↗</div>
+                                <a class="view-link" href="/projects/ai-job-outreach/">View case study ↗</a>
                             </div>
-                        </a>
+                        </article>
 
                         <!-- =====================================
                              GYM PROGRESS SYSTEM
                              ===================================== -->
 
-                        <a
+                        <article
                             class="other-project-card project-link"
-                            href="/projects/gym-progress/"
-                            aria-label="View the Gym Progress System case study"
                         >
                             <div class="project-visual gym-visual">
                                 <span aria-hidden="true"> KG </span>
@@ -509,13 +478,10 @@ const description =
 
                             <div class="other-project-body">
                                 <h4>
-                                    Gym Progress System
-                                    <span
-                                        class="inline-arrow blue"
-                                        aria-hidden="true"
-                                    >
-                                        →
-                                    </span>
+                                    <a class="card-title-link" href="/projects/gym-progress/">
+                                        Gym Progress System
+                                        <span class="inline-arrow blue" aria-hidden="true">→</span>
+                                    </a>
                                 </h4>
 
                                 <p>
@@ -524,15 +490,11 @@ const description =
                                     diagnostics, and performance trends.
                                 </p>
 
-                                <div class="tags">
-                                    <span>Excel</span>
-                                    <span>VBA</span>
-                                    <span>Analytics</span>
-                                </div>
+                                <SkillTagList skills={["excel", "vba", "data-visualisation"]} />
 
-                                <div class="view-link">View case study ↗</div>
+                                <a class="view-link" href="/projects/gym-progress/">View case study ↗</a>
                             </div>
-                        </a>
+                        </article>
                     </div>
                 </section>
             </section>
@@ -583,14 +545,94 @@ const description =
                     more reliable, and easier to scale.
                 </p>
 
+                <p>
+                    In my AI automation project, I designed a workflow that uses
+                    a language model for defined tasks, connects it to job data
+                    and spreadsheet outputs, and keeps final outreach decisions
+                    with a human reviewer. I focus on making AI useful in a
+                    repeatable process rather than treating a generated answer
+                    as a finished solution.
+                </p>
+
                 <!-- Professional focus areas -->
-                <div class="about-highlights">
-                    <span>Marketplace & Business Operations</span>
-                    <span>Excel / VBA</span>
-                    <span>Python & AI Automation</span>
-                    <span>Data Analysis</span>
-                    <span>Web Development</span>
+                <SkillLinks
+                    variant="highlight"
+                    skills={[
+                        "marketplace-operations",
+                        "excel",
+                        "vba",
+                        "ai-workflow-implementation",
+                        "python",
+                        "wordpress",
+                        "operational-reporting",
+                        "responsive-web-design",
+                    ]}
+                />
+            </section>
+            <!-- =================================================
+                  SKILLS — CAPABILITIES SHOWN IN THE PROJECTS
+                  ================================================= -->
+
+            <section
+                id="skills"
+                class="section skills"
+                aria-labelledby="skills-title"
+            >
+                <p class="eyebrow">03 — Skills</p>
+                <h2 id="skills-title">Skills put into practice.</h2>
+                <p class="section-lead">
+                    A snapshot of what my completed projects demonstrate. I am
+                    continuing to develop my Python, SQL, and analytical skills.
+                </p>
+
+                <div class="skills-grid">
+                    <article class="skill-group">
+                        <h3><a href="/skills/#umbrella-operations-ecommerce">Operations &amp; e-commerce</a></h3>
+                        <p>
+                            Marketplace management, digital inventory, pricing,
+                            order fulfilment, customer issue resolution, seller
+                            performance, and process design.
+                        </p>
+                        <a href="/projects/rocketeers/">See Rocketeers ↗</a>
+                    </article>
+                    <article class="skill-group">
+                        <h3><a href="/skills/#umbrella-excel-vba-analytics">Excel, VBA &amp; analytics</a></h3>
+                        <p>
+                            Operational workbooks, formulas, reporting, data
+                            organisation, chart automation, and interactive
+                            workbook interfaces.
+                        </p>
+                        <a href="/projects/gym-progress/">See Gym Progress ↗</a>
+                    </article>
+                    <article class="skill-group">
+                        <h3><a href="/skills/#umbrella-ai-automation">AI implementation &amp; automation</a></h3>
+                        <p>
+                            Applying LLMs to defined workflow steps, prompt
+                            design, structured outputs, API integration,
+                            validation and caching, and human review. Practical
+                            implementation experience, not model training.
+                        </p>
+                        <a href="/projects/ai-job-outreach/"
+                            >See AI automation ↗</a
+                        >
+                    </article>
+                    <article class="skill-group">
+                        <h3><a href="/skills/#umbrella-python-data-web">Python, data &amp; web</a></h3>
+                        <p>
+                            Python scripting, API data handling, SQLite caching,
+                            Google Sheets integration, WordPress/WooCommerce
+                            development, and building a responsive Astro
+                            portfolio. SQL and Power BI are areas I am
+                            developing through Chess Analytics.
+                        </p>
+                        <a href="/projects/rame/">See web project ↗</a>
+                    </article>
                 </div>
+
+                <a class="skills-page-link" href="/skills/">
+                    Explore all skills and project evidence
+                    <span aria-hidden="true">→</span>
+                </a>
             </section>
 
             <!-- =================================================
@@ -602,13 +644,14 @@ const description =
                 class="section contact"
                 aria-labelledby="contact-title"
             >
-                <p class="eyebrow">03 — Contact</p>
+                <p class="eyebrow">04 — Contact</p>
 
                 <h2 id="contact-title">Let’s connect.</h2>
 
                 <p class="section-lead">
-                    Open to operations, marketplace, analyst, implementation,
-                    automation, and technical-operations opportunities.
+                    Open to marketplace and business operations, junior analyst,
+                    AI workflow implementation, automation, and
+                    technical-operations roles.
                 </p>
 
                 <p>
@@ -636,25 +679,7 @@ const description =
             </section>
         </main>
 
-        <!-- ===================================================
-             FOOTER
-             =================================================== -->
-
-        <footer>
-            <div class="footer-left">
-                <strong>KZ</strong>
-
-                <div>
-                    <span> Konstantinos Zafiropoulos </span>
-
-                    <small> Operations · Automation · Data · Web </small>
-                </div>
-            </div>
-
-            <div class="footer-right">
-                Built with Astro · Git/GitHub · VS Code · Netlify
-            </div>
-        </footer>
+        <SiteFooter />
     </body>
 </html>
 
@@ -740,6 +765,10 @@ const description =
     a:focus-visible {
         outline: 2px solid var(--orange);
         outline-offset: 4px;
+    }
+
+    section[id] {
+        scroll-margin-top: 5.5rem;
     }
 
     ::selection {
@@ -1291,6 +1320,18 @@ const description =
         margin-left: 0.35rem;
     }
 
+    .card-title-link {
+        color: inherit;
+        text-decoration: none;
+    }
+
+    .card-title-link:hover {
+        color: white;
+        text-decoration: underline;
+        text-decoration-thickness: 1px;
+        text-underline-offset: 0.2em;
+    }
+
     /* =========================================================
        ROCKETEERS CARD METRICS
        ========================================================= */
@@ -1354,12 +1395,33 @@ const description =
         text-transform: uppercase;
     }
 
+    .planned-stack-label {
+        margin: auto 0 -0.75rem;
+        padding-top: 1.2rem;
+        color: var(--subtle);
+        font-size: 0.63rem;
+        font-weight: 800;
+        letter-spacing: 0.07em;
+        text-transform: uppercase;
+    }
+
+    .planned-stack-label + .tags {
+        margin-top: 0;
+    }
+
     .view-link {
+        display: inline-block;
         margin-top: 1rem;
 
         color: var(--blue);
         font-size: 0.72rem;
         font-weight: 750;
+        text-decoration: none;
+    }
+
+    .view-link:hover {
+        color: white;
+        text-decoration: underline;
     }
 
     .card-business .view-link {
@@ -1460,15 +1522,67 @@ const description =
             #071523;
     }
 
-    .rame-visual span {
-        padding: 0.8rem 1rem;
+    .storefront-icon {
+        position: relative;
+        width: 76px;
+        height: 72px;
+        color: var(--blue);
+    }
 
-        color: white;
-        border: 1px solid #3a5871;
+    .storefront-awning {
+        position: absolute;
+        z-index: 1;
+        top: 8px;
+        left: 5px;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        width: 66px;
+        height: 25px;
+        overflow: hidden;
+        border: 3px solid currentColor;
+        border-radius: 5px 5px 10px 10px;
+    }
 
-        font-size: 1.3rem;
-        font-weight: 850;
-        letter-spacing: 0.08em;
+    .storefront-awning i {
+        border-right: 3px solid currentColor;
+        background: rgba(22, 141, 255, 0.16);
+    }
+
+    .storefront-awning i:last-child {
+        border-right: 0;
+    }
+
+    .storefront-base {
+        position: absolute;
+        right: 11px;
+        bottom: 5px;
+        left: 11px;
+        height: 43px;
+        border: 3px solid currentColor;
+        border-top: 0;
+        border-radius: 0 0 4px 4px;
+    }
+
+    .storefront-base::before,
+    .storefront-base::after {
+        content: "";
+        position: absolute;
+        bottom: 0;
+        border: 3px solid currentColor;
+        border-bottom: 0;
+    }
+
+    .storefront-base::before {
+        top: 12px;
+        left: 7px;
+        width: 18px;
+    }
+
+    .storefront-base::after {
+        top: 12px;
+        right: 7px;
+        width: 10px;
+        background: rgba(22, 141, 255, 0.16);
     }
 
     .bar-chart {
@@ -1679,7 +1793,8 @@ const description =
     footer {
         display: flex;
         align-items: center;
-        justify-content: space-between;
+        justify-content: center;
+        flex-wrap: wrap;
 
         gap: 2rem;
 
@@ -1688,11 +1803,13 @@ const description =
 
         border-top: 1px solid var(--border);
         color: var(--subtle);
+        text-align: center;
     }
 
     .footer-left {
         display: flex;
         align-items: center;
+        justify-content: center;
         gap: 1rem;
     }
 
@@ -1792,7 +1909,7 @@ const description =
         }
 
         footer {
-            align-items: flex-start;
+            align-items: center;
             flex-direction: column;
         }
     }
@@ -1825,6 +1942,97 @@ const description =
         .rocketeers-title-link:hover h3 span,
         .contact-links .text-link:hover {
             transform: none;
+        }
+    }
+
+    /* =========================================================
+        SKILLS — RECRUITER-FRIENDLY EVIDENCE CARDS
+        ========================================================= */
+
+    .skills {
+        text-align: center;
+    }
+
+    .skills h2,
+    .skills > .section-lead {
+        margin-inline: auto;
+    }
+
+    .skills-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 1rem;
+        max-width: 1050px;
+        margin: 2.5rem auto 0;
+        text-align: left;
+    }
+
+    .skill-group {
+        display: flex;
+        flex-direction: column;
+        padding: clamp(1.4rem, 3vw, 2rem);
+        border: 1px solid var(--border);
+        border-radius: 13px;
+        background: var(--bg-card);
+    }
+
+    .skill-group h3 {
+        font-size: 1.35rem;
+        line-height: 1.3;
+    }
+
+    .skill-group p {
+        color: var(--muted);
+        line-height: 1.7;
+    }
+
+    .skill-group a {
+        margin-top: auto;
+        padding-top: 1rem;
+        color: var(--blue-light);
+        font-weight: 700;
+        text-decoration-thickness: 1px;
+        text-underline-offset: 0.25em;
+    }
+
+    .skill-group h3 a {
+        color: inherit;
+    }
+
+    .skill-group h3 a:hover {
+        color: var(--blue-light);
+    }
+
+    .skills-page-link {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.6rem;
+        width: fit-content;
+        margin: 2rem auto 0;
+        color: var(--blue-light);
+        font-weight: 800;
+        text-decoration: none;
+    }
+
+    .skills-page-link:hover {
+        color: white;
+        text-decoration: underline;
+    }
+
+    @media (max-width: 650px) {
+        section[id] {
+            scroll-margin-top: 8rem;
+        }
+
+        .skills-grid {
+            grid-template-columns: 1fr;
+        }
+        .nav-links {
+            gap: 0.65rem;
+        }
+        .nav-links a {
+            font-size: 0.73rem;
         }
     }
 </style>

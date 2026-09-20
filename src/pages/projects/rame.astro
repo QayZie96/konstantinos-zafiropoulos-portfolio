@@ -1,0 +1,510 @@
+---
+import SiteHeader from "../../components/SiteHeader.astro";
+import SiteFooter from "../../components/SiteFooter.astro";
+import SkillLinks from "../../components/SkillLinks.astro";
+
+const title =
+    "RAMÉ Creative Space | WordPress & WooCommerce Client Project | Konstantinos Zafiropoulos";
+const description =
+    "An in-progress client e-commerce project developed with WordPress, WooCommerce, Elementor, Blocksy, plugins, and targeted CSS.";
+
+const projectFacts = [
+    { label: "Role", value: "WordPress & E-commerce Website Developer" },
+    { label: "Project", value: "Client e-commerce website" },
+    { label: "Stack", value: "WordPress · WooCommerce · Elementor" },
+    { label: "Status", value: "In progress" },
+];
+
+const highlights = [
+    {
+        number: "01",
+        title: "Brand-led homepage",
+        text: "Built a responsive homepage around the client's imagery, typography, palette, product messaging, calls to action, and value propositions.",
+    },
+    {
+        number: "02",
+        title: "Custom-order inquiries",
+        text: "Created a dedicated page and structured form for personalized products, covering practical details such as dimensions, colours, quantity, timing, and budget.",
+    },
+    {
+        number: "03",
+        title: "Branded side cart",
+        text: "Configured a WooCommerce side-cart plugin and used targeted CSS to align its hierarchy, product cards, quantity controls, and checkout actions with the RAMÉ identity.",
+    },
+    {
+        number: "04",
+        title: "Safer development workflow",
+        text: "Maintained a separate WordPress Studio copy for experimentation, plugin review, compatibility checks, backups, and troubleshooting away from the hosted installation.",
+    },
+];
+---
+
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="description" content={description} />
+        <title>{title}</title>
+    </head>
+
+    <body>
+        <main>
+            <SiteHeader />
+
+            <header class="hero">
+                <div class="breadcrumbs">
+                    <a href="/#projects">Projects</a>
+                    <span aria-hidden="true">→</span>
+                    <strong>RAMÉ Creative Space</strong>
+                </div>
+
+                <p class="eyebrow">Client project · WordPress · E-commerce</p>
+                <h1>RAMÉ Creative Space</h1>
+                <p class="hero-subtitle">
+                    Building a playful, responsive WooCommerce store for a
+                    creative 3D-printing brand.
+                </p>
+
+                <SkillLinks
+                    variant="hero"
+                    skills={[
+                        "wordpress",
+                        "woocommerce",
+                        "elementor",
+                        "theme-customization",
+                        "responsive-web-design",
+                    ]}
+                />
+            </header>
+
+            <section class="facts" aria-label="RAMÉ project information">
+                {projectFacts.map((fact) => (
+                    <article>
+                        <span>{fact.label}</span>
+                        <strong>{fact.value}</strong>
+                    </article>
+                ))}
+            </section>
+
+            <section class="case-section overview" aria-labelledby="rame-overview">
+                <div class="section-heading">
+                    <p class="eyebrow">01 — Overview</p>
+                    <h2 id="rame-overview">A real client storefront with a distinctive visual direction.</h2>
+                </div>
+
+                <div class="overview-grid">
+                    <div class="copy-card">
+                        <p class="lead">
+                            RAMÉ Creative Space is a creative brand offering
+                            3D-printed décor, lighting, gifts, digital designs,
+                            and custom-made products.
+                        </p>
+                        <p>
+                            I have been developing and adapting its WordPress
+                            and WooCommerce website to the client's visual style
+                            and functional requirements. My work combines
+                            Elementor page development, e-commerce
+                            configuration, plugin integration, targeted CSS,
+                            and practical website maintenance.
+                        </p>
+                        <p>
+                            The brand, products, and core visual identity belong
+                            to the client. My role is translating that direction
+                            into a coherent, usable online shop—not claiming to
+                            have built WooCommerce or the brand itself from
+                            scratch.
+                        </p>
+                    </div>
+
+                    <div class="brand-preview" aria-label="RAMÉ visual direction represented with colour and typography">
+                        <span class="preview-label">Visual direction</span>
+                        <strong>RAMÉ</strong>
+                        <p>Objects with a little too much personality.</p>
+                        <div class="swatches" aria-hidden="true">
+                            <span class="cream"></span>
+                            <span class="pink"></span>
+                            <span class="burgundy"></span>
+                            <span class="ink"></span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="case-section" aria-labelledby="rame-work">
+                <div class="section-heading centered-heading">
+                    <p class="eyebrow">02 — Selected work</p>
+                    <h2 id="rame-work">Four practical parts of the client experience.</h2>
+                    <p>
+                        The case study focuses on implemented or materially
+                        developed work, without presenting future ideas as
+                        finished features.
+                    </p>
+                </div>
+
+                <div class="highlight-grid">
+                    {highlights.map((highlight) => (
+                        <article>
+                            <span>{highlight.number}</span>
+                            <h3>{highlight.title}</h3>
+                            <p>{highlight.text}</p>
+                        </article>
+                    ))}
+                </div>
+            </section>
+
+            <section class="case-section" aria-labelledby="rame-challenge">
+                <div class="section-heading centered-heading">
+                    <p class="eyebrow">03 — Challenge & approach</p>
+                    <h2 id="rame-challenge">Keeping the personality without obscuring the shopping journey.</h2>
+                </div>
+
+                <div class="challenge-grid">
+                    <article>
+                        <h3>Expressive, but familiar</h3>
+                        <p>
+                            The client's playful stickers, soft palette, and
+                            product imagery needed to coexist with recognizable
+                            navigation and calls to action. I used configurable
+                            WordPress tools plus scoped styling to balance both.
+                        </p>
+                    </article>
+                    <article>
+                        <h3>Responsive hero presentation</h3>
+                        <p>
+                            A stretched background approach reduced image
+                            clarity and created cropping problems. The hero was
+                            rebuilt with an image widget and separate content
+                            elements for more controlled desktop and mobile
+                            behaviour.
+                        </p>
+                    </article>
+                    <article>
+                        <h3>Cohesive cart interaction</h3>
+                        <p>
+                            Instead of presenting a stock drawer detached from
+                            the rest of the site, I configured the side-cart
+                            plugin and styled its visible components to feel
+                            native to RAMÉ.
+                        </p>
+                    </article>
+                </div>
+            </section>
+
+            <section class="case-section status-section" aria-labelledby="rame-status">
+                <div class="section-heading centered-heading">
+                    <p class="eyebrow">04 — Current status</p>
+                    <h2 id="rame-status">A working foundation, still being refined.</h2>
+                    <p>
+                        The project has produced a customized storefront,
+                        branded cart interface, and structured route for custom
+                        inquiries. Development and final testing are ongoing.
+                    </p>
+                </div>
+
+                <div class="scope-grid">
+                    <article class="delivered">
+                        <h3>Materially developed</h3>
+                        <ul>
+                            <li>WordPress, WooCommerce, Elementor, and Blocksy customization</li>
+                            <li>Responsive branded homepage and shopping presentation</li>
+                            <li>Custom Orders page and inquiry-form layout</li>
+                            <li>Side-cart integration and targeted CSS styling</li>
+                            <li>Local WordPress Studio copy and maintenance workflow</li>
+                        </ul>
+                    </article>
+                    <article>
+                        <h3>Not claimed as complete</h3>
+                        <ul>
+                            <li>Workshop booking, subscriptions, and capacity management</li>
+                            <li>Full checkout or main Cart page redesign</li>
+                            <li>Production-validated payments and end-to-end form delivery</li>
+                            <li>Measured performance, conversion, traffic, or revenue improvements</li>
+                            <li>Final client domain and launch configuration</li>
+                        </ul>
+                    </article>
+                </div>
+            </section>
+
+            <section class="case-section skills-section" aria-labelledby="rame-skills">
+                <div class="section-heading centered-heading">
+                    <p class="eyebrow">05 — Skills demonstrated</p>
+                    <h2 id="rame-skills">Client-focused WordPress and e-commerce implementation.</h2>
+                    <p>Select any skill to see its evidence across the portfolio.</p>
+                </div>
+
+                <SkillLinks
+                    skills={[
+                        "wordpress",
+                        "woocommerce",
+                        "elementor",
+                        "theme-customization",
+                        "html-css",
+                        "responsive-web-design",
+                        "ecommerce-site-configuration",
+                        "plugin-integration",
+                        "inquiry-workflows",
+                        "wordpress-maintenance",
+                        "local-wordpress-development",
+                        "client-requirements",
+                        "iterative-development",
+                    ]}
+                />
+            </section>
+
+            <section class="project-end">
+                <p class="eyebrow">Portfolio</p>
+                <h2>Explore another completed case study.</h2>
+                <div class="project-links">
+                    <a href="/projects/ai-job-outreach/">AI automation <span aria-hidden="true">→</span></a>
+                    <a href="/projects/gym-progress/">Gym Progress <span aria-hidden="true">→</span></a>
+                    <a href="/#projects">All projects <span aria-hidden="true">→</span></a>
+                </div>
+            </section>
+        </main>
+
+        <SiteFooter />
+    </body>
+</html>
+
+<style>
+    :root {
+        --bg: #06111e;
+        --surface: #091b2b;
+        --surface-soft: #0c2236;
+        --border: #203f59;
+        --heading: #ffffff;
+        --text: #d8e4ee;
+        --muted: #9eb1c0;
+        --subtle: #7890a3;
+        --blue: #168dff;
+        --blue-light: #65baff;
+        --orange: #ff8a00;
+        --page-width: 1240px;
+    }
+
+    * { box-sizing: border-box; }
+
+    html {
+        scroll-behavior: smooth;
+        background: var(--bg);
+    }
+
+    body {
+        min-height: 100vh;
+        margin: 0;
+        color: var(--text);
+        background:
+            radial-gradient(circle at 88% 5%, rgba(243, 205, 212, 0.09), transparent 28rem),
+            radial-gradient(circle at 12% 35%, rgba(22, 141, 255, 0.05), transparent 30rem),
+            var(--bg);
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    main,
+    footer {
+        width: min(100%, var(--page-width));
+        margin-inline: auto;
+        padding-inline: clamp(1.4rem, 5vw, 4.5rem);
+    }
+
+    a { color: inherit; text-underline-offset: 0.25em; }
+    a:focus-visible { outline: 2px solid var(--orange); outline-offset: 4px; }
+    h1, h2, h3, p { margin-top: 0; }
+
+    h1,
+    h2 {
+        color: var(--heading);
+        font-family: Georgia, "Times New Roman", serif;
+        font-weight: 400;
+        letter-spacing: -0.05em;
+    }
+
+    h1 {
+        margin-bottom: 1.25rem;
+        font-size: clamp(3.6rem, 8vw, 7rem);
+        line-height: 0.94;
+    }
+
+    h2 {
+        margin-bottom: 1rem;
+        font-size: clamp(2.3rem, 5vw, 4rem);
+        line-height: 1.02;
+    }
+
+    h3 { color: var(--heading); font-size: 1.25rem; }
+
+    .eyebrow {
+        margin-bottom: 1rem;
+        color: var(--orange);
+        font-size: 0.75rem;
+        font-weight: 800;
+        letter-spacing: 0.09em;
+        text-transform: uppercase;
+    }
+
+    .hero {
+        padding: clamp(4.5rem, 9vw, 7rem) 0 clamp(3.5rem, 7vw, 5rem);
+        text-align: center;
+    }
+
+    .breadcrumbs {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 0.6rem;
+        margin-bottom: 3rem;
+        color: var(--subtle);
+        font-size: 0.8rem;
+    }
+
+    .breadcrumbs a { text-decoration: none; }
+    .breadcrumbs a:hover { color: white; }
+    .breadcrumbs strong { color: #f3cdd4; }
+
+    .hero-subtitle {
+        max-width: 760px;
+        margin-inline: auto;
+        color: var(--muted);
+        font-size: clamp(1.1rem, 2vw, 1.35rem);
+        line-height: 1.65;
+    }
+
+    .hero :global(.skill-links) { justify-content: center; }
+
+    .facts {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 0.8rem;
+        padding-bottom: clamp(4rem, 8vw, 6rem);
+    }
+
+    .facts article,
+    .highlight-grid article,
+    .challenge-grid article,
+    .scope-grid article,
+    .copy-card {
+        border: 1px solid var(--border);
+        border-radius: 13px;
+        background: rgba(9, 27, 43, 0.82);
+    }
+
+    .facts article { padding: 1.2rem; text-align: center; }
+    .facts span { display: block; margin-bottom: 0.55rem; color: var(--subtle); font-size: 0.7rem; font-weight: 800; letter-spacing: 0.07em; text-transform: uppercase; }
+    .facts strong { color: white; font-size: 0.9rem; line-height: 1.45; }
+
+    .case-section {
+        padding: clamp(4.5rem, 9vw, 7rem) 0;
+        border-top: 1px solid rgba(32, 63, 89, 0.8);
+    }
+
+    .section-heading { max-width: 830px; }
+    .centered-heading { margin-inline: auto; text-align: center; }
+    .section-heading > p:last-child { color: var(--muted); line-height: 1.7; }
+
+    .overview-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1.15fr) minmax(280px, 0.85fr);
+        gap: 1rem;
+        margin-top: 2.2rem;
+    }
+
+    .copy-card { padding: clamp(1.4rem, 3vw, 2.2rem); }
+    .copy-card p { color: var(--muted); line-height: 1.75; }
+    .copy-card p:last-child { margin-bottom: 0; }
+    .copy-card .lead { color: #e3edf5; font-size: 1.08rem; }
+
+    .brand-preview {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 340px;
+        padding: 2rem;
+        border: 1px solid #ded0ad;
+        border-radius: 13px;
+        background: #fff6cf;
+        color: #111113;
+        text-align: center;
+    }
+
+    .brand-preview .preview-label { margin-bottom: 2rem; color: #5d2a37; font-size: 0.7rem; font-weight: 850; letter-spacing: 0.1em; text-transform: uppercase; }
+    .brand-preview strong { font-size: clamp(3rem, 7vw, 5.5rem); letter-spacing: -0.08em; }
+    .brand-preview p { max-width: 300px; margin: 0.6rem 0 2rem; font-weight: 700; }
+    .swatches { display: flex; gap: 0.55rem; }
+    .swatches span { width: 28px; height: 28px; border: 1px solid rgba(17, 17, 19, 0.2); border-radius: 50%; }
+    .swatches .cream { background: #fff3c4; }
+    .swatches .pink { background: #f3cdd4; }
+    .swatches .burgundy { background: #5d2a37; }
+    .swatches .ink { background: #111113; }
+
+    .highlight-grid,
+    .challenge-grid,
+    .scope-grid {
+        display: grid;
+        gap: 1rem;
+        margin-top: 2.2rem;
+    }
+
+    .highlight-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .challenge-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .scope-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+    .highlight-grid article,
+    .challenge-grid article,
+    .scope-grid article { padding: clamp(1.35rem, 3vw, 2rem); }
+    .highlight-grid article > span { display: block; margin-bottom: 1.5rem; color: var(--orange); font-size: 0.78rem; font-weight: 850; }
+    .highlight-grid p,
+    .challenge-grid p { margin-bottom: 0; color: var(--muted); line-height: 1.7; }
+    .challenge-grid { text-align: center; }
+    .scope-grid h3 { text-align: center; }
+    .scope-grid ul { margin: 1.2rem 0 0; padding-left: 1.2rem; color: var(--muted); line-height: 1.7; }
+    .scope-grid li + li { margin-top: 0.55rem; }
+    .scope-grid .delivered { border-color: rgba(38, 213, 162, 0.48); }
+
+    .skills-section { text-align: center; }
+    .skills-section :global(.skill-links) { justify-content: center; max-width: 980px; margin-inline: auto; }
+
+    .project-end { padding: clamp(4.5rem, 9vw, 7rem) 0; border-top: 1px solid rgba(32, 63, 89, 0.8); text-align: center; }
+    .project-end h2 { margin-inline: auto; }
+    .project-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.8rem 1.5rem; margin-top: 1.6rem; }
+    .project-links a { color: var(--blue-light); font-weight: 750; text-decoration: none; }
+    .project-links a:hover { color: white; text-decoration: underline; }
+
+    footer {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 0.45rem 1.5rem;
+        padding-top: 1.7rem;
+        padding-bottom: 1.7rem;
+        border-top: 1px solid var(--border);
+        color: var(--subtle);
+        font-size: 0.74rem;
+        text-align: center;
+    }
+
+    footer a { color: #a9ccec; }
+
+    @media (max-width: 880px) {
+        .facts,
+        .challenge-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        .overview-grid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 620px) {
+        .hero { padding-top: 4rem; }
+        .facts,
+        .highlight-grid,
+        .challenge-grid,
+        .scope-grid { grid-template-columns: 1fr; }
+        .brand-preview { min-height: 280px; }
+        .case-section { text-align: center; }
+        .copy-card { text-align: left; }
+        .scope-grid { text-align: left; }
+        .scope-grid h3 { text-align: left; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        html { scroll-behavior: auto; }
+    }
+</style>

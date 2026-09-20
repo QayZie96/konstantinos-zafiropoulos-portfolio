@@ -1,0 +1,91 @@
+<footer class="site-footer">
+    <div class="footer-identity">
+        <strong aria-hidden="true">KZ<span>.</span></strong>
+        <div>
+            <span>Konstantinos Zafiropoulos</span>
+            <small>Operations · AI automation · Data · Web</small>
+        </div>
+    </div>
+
+    <div class="footer-meta">
+        <span>© {new Date().getFullYear()}</span>
+        <span aria-hidden="true">·</span>
+        <span>
+            Built with <a href="/skills/#astro">Astro</a>,
+            <a href="/skills/#git-github">Git &amp; GitHub</a>, and
+            <a href="/skills/#netlify">Netlify</a>
+        </span>
+    </div>
+</footer>
+
+<style>
+    .site-footer {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 1rem 2rem;
+        width: min(100%, 1240px);
+        margin-inline: auto;
+        padding: 1.7rem clamp(1.4rem, 5vw, 4.5rem);
+        border-top: 1px solid rgba(32, 63, 89, 0.82);
+        color: #7890a3;
+        font-size: 0.74rem;
+        line-height: 1.5;
+        text-align: center;
+    }
+
+    .footer-identity {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.8rem;
+    }
+
+    .footer-identity > strong {
+        color: #ffffff;
+        font-size: 1.25rem;
+        letter-spacing: -0.08em;
+    }
+
+    .footer-identity > strong span {
+        color: #ff8a00;
+    }
+
+    .footer-identity div {
+        display: grid;
+        justify-items: start;
+        text-align: left;
+    }
+
+    .footer-identity div > span {
+        color: #d9e4ec;
+        font-size: 0.82rem;
+    }
+
+    .footer-meta {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 0.35rem;
+    }
+
+    a {
+        color: #a9ccec;
+        text-underline-offset: 0.22em;
+    }
+
+    a:hover { color: #ffffff; }
+    a:focus-visible { outline: 2px solid #ff8a00; outline-offset: 3px; }
+
+    @media (max-width: 560px) {
+        .site-footer,
+        .footer-meta {
+            flex-direction: column;
+            gap: 0.45rem;
+        }
+
+        .footer-meta > span[aria-hidden="true"] { display: none; }
+    }
+</style>

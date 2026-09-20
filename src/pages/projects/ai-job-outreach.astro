@@ -1,9 +1,12 @@
-
 ---
 /* =========================================================
    AI JOB DISCOVERY & OUTREACH AUTOMATION
    Portfolio case study
    ========================================================= */
+
+import SiteHeader from "../../components/SiteHeader.astro";
+import SiteFooter from "../../components/SiteFooter.astro";
+import SkillLinks from "../../components/SkillLinks.astro";
 
 const title =
     "AI Job Discovery & Outreach Automation | Konstantinos Zafiropoulos";
@@ -30,15 +33,9 @@ const metrics = [
     },
 ];
 
-/*
- * Replace these placeholders with the actual public links
- * from your completed assessment.
- *
- * Keep the links hidden until you have entered the correct URLs.
- */
-
 const githubUrl = "https://github.com/QayZie96/ai-job-outreach-automation";
-const dashboardUrl = "https://docs.google.com/spreadsheets/d/1HuyvIww3t2x2ta-_hHnoeIT8t0M2MFtA6XQFL-ikbA0/edit?usp=sharing";
+const dashboardUrl =
+    "https://docs.google.com/spreadsheets/d/1HuyvIww3t2x2ta-_hHnoeIT8t0M2MFtA6XQFL-ikbA0/edit?usp=sharing";
 
 const hasGithub = githubUrl.startsWith("https://");
 const hasDashboard = dashboardUrl.startsWith("https://");
@@ -51,13 +48,8 @@ const hasDashboard = dashboardUrl.startsWith("https://");
 
     <head>
         <meta charset="utf-8" />
-        <meta
-            name="viewport"
-            content="width=device-width, initial-scale=1"
-        />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta name="description" content={description} />
-        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-
         <title>{title}</title>
     </head>
 
@@ -67,17 +59,7 @@ const hasDashboard = dashboardUrl.startsWith("https://");
                  NAVIGATION
                  ================================================= -->
 
-            <nav aria-label="Primary navigation">
-                <a class="wordmark" href="/" aria-label="Homepage">
-                    KZ<span>.</span>
-                </a>
-
-                <div class="nav-links">
-                    <a href="/#projects">Projects</a>
-                    <a href="/#about">About</a>
-                    <a href="/#contact">Contact</a>
-                </div>
-            </nav>
+            <SiteHeader />
 
             <!-- =================================================
                  HERO
@@ -107,20 +89,23 @@ const hasDashboard = dashboardUrl.startsWith("https://");
                 </p>
 
                 <p class="hero-context">
-                    Built for a practical AI automation hiring assessment.
-                    The solution automates repetitive job research and
-                    message drafting while keeping the final outreach
-                    decision under human control.
+                    Built for a practical AI automation hiring assessment. The
+                    solution automates repetitive job research and message
+                    drafting while keeping the final outreach decision under
+                    human control.
                 </p>
 
-                <div class="hero-tags">
-                    <span>Python</span>
-                    <span>Google Gemini</span>
-                    <span>REST APIs</span>
-                    <span>SQLite</span>
-                    <span>Google Sheets</span>
-                    <span>PowerShell</span>
-                </div>
+                <SkillLinks
+                    variant="hero"
+                    skills={[
+                        "python",
+                        "google-gemini",
+                        "rest-api-integration",
+                        "sqlite",
+                        "google-sheets-api",
+                        "powershell",
+                    ]}
+                />
 
                 <div class="hero-actions">
                     {
@@ -181,30 +166,29 @@ const hasDashboard = dashboardUrl.startsWith("https://");
 
                 <div class="section-content">
                     <h2>
-                        Job research is repetitive. Personalization
-                        takes time.
+                        Job research is repetitive. Personalization takes time.
                     </h2>
 
                     <p class="lead">
-                        The assessment called for a workflow that could
-                        discover executive and administrative support
-                        vacancies, evaluate their suitability, and prepare
-                        personalized outreach without relying on LinkedIn.
+                        The assessment called for a workflow that could discover
+                        executive and administrative support vacancies, evaluate
+                        their suitability, and prepare personalized outreach
+                        without relying on LinkedIn.
                     </p>
 
                     <p>
                         Finding a vacancy is only the beginning. Each posting
                         needs to be checked for remote-work arrangements,
                         language requirements, and role relevance before
-                        preparing a message that accurately reflects both
-                        the vacancy and the sender's background.
+                        preparing a message that accurately reflects both the
+                        vacancy and the sender's background.
                     </p>
 
                     <p>
                         I built a modular Python workflow to automate those
                         repetitive steps and deliver the results in a
-                        spreadsheet that the intended user could review
-                        without opening the Python application.
+                        spreadsheet that the intended user could review without
+                        opening the Python application.
                     </p>
                 </div>
             </section>
@@ -213,20 +197,18 @@ const hasDashboard = dashboardUrl.startsWith("https://");
                  SECTION 02 — WORKFLOW ARCHITECTURE
                  ================================================= -->
 
-            <section id="workflow" class="case-section">
+            <section id="workflow" class="case-section architecture-section">
                 <div class="section-label">
                     <p class="eyebrow">02 — Architecture</p>
                 </div>
 
                 <div class="section-content">
-                    <h2>
-                        From three job APIs to one reviewable dashboard.
-                    </h2>
+                    <h2>From three job APIs to one reviewable dashboard.</h2>
 
                     <p class="lead">
-                        The workflow separates discovery, filtering,
-                        AI evaluation, message generation, and storage
-                        into distinct stages.
+                        The workflow separates discovery, filtering, AI
+                        evaluation, message generation, and storage into
+                        distinct stages.
                     </p>
 
                     <div class="workflow">
@@ -234,14 +216,12 @@ const hasDashboard = dashboardUrl.startsWith("https://");
                             <span>01 / DISCOVERY</span>
                             <strong>Retrieve vacancies</strong>
                             <p>
-                                Collect job postings from Arbeitnow,
-                                Remotive, and Adzuna.
+                                Collect job postings from Arbeitnow, Remotive,
+                                and Adzuna.
                             </p>
                         </div>
 
-                        <div class="workflow-arrow" aria-hidden="true">
-                            ↓
-                        </div>
+                        <div class="workflow-arrow" aria-hidden="true">↓</div>
 
                         <div class="workflow-step">
                             <span>02 / PROCESSING</span>
@@ -252,43 +232,37 @@ const hasDashboard = dashboardUrl.startsWith("https://");
                             </p>
                         </div>
 
-                        <div class="workflow-arrow" aria-hidden="true">
-                            ↓
-                        </div>
+                        <div class="workflow-arrow" aria-hidden="true">↓</div>
 
                         <div class="workflow-step">
                             <span>03 / VALIDATION</span>
                             <strong>Check cache & evaluate</strong>
                             <p>
                                 Reuse previous validation results where
-                                appropriate or ask Gemini to evaluate
-                                new and changed vacancies.
+                                appropriate or ask Gemini to evaluate new and
+                                changed vacancies.
                             </p>
                         </div>
 
-                        <div class="workflow-arrow" aria-hidden="true">
-                            ↓
-                        </div>
+                        <div class="workflow-arrow" aria-hidden="true">↓</div>
 
                         <div class="workflow-step">
                             <span>04 / GENERATION</span>
                             <strong>Draft personalized outreach</strong>
                             <p>
-                                Generate a message using the job posting,
-                                an editable prompt, and a sender profile.
+                                Generate a message using the job posting, an
+                                editable prompt, and a sender profile.
                             </p>
                         </div>
 
-                        <div class="workflow-arrow" aria-hidden="true">
-                            ↓
-                        </div>
+                        <div class="workflow-arrow" aria-hidden="true">↓</div>
 
                         <div class="workflow-step final-step">
                             <span>05 / OUTPUT</span>
                             <strong>Update Google Sheets</strong>
                             <p>
-                                Append qualifying vacancies and outreach
-                                drafts for human review.
+                                Append qualifying vacancies and outreach drafts
+                                for human review.
                             </p>
                         </div>
                     </div>
@@ -297,9 +271,9 @@ const hasDashboard = dashboardUrl.startsWith("https://");
                         <strong>Human-in-the-loop design</strong>
                         <p>
                             The workflow does not automatically contact
-                            employers or submit job applications. The
-                            intended user reviews the posting and generated
-                            message before deciding whether to proceed.
+                            employers or submit job applications. The intended
+                            user reviews the posting and generated message
+                            before deciding whether to proceed.
                         </p>
                     </div>
                 </div>
@@ -316,15 +290,14 @@ const hasDashboard = dashboardUrl.startsWith("https://");
 
                 <div class="section-content">
                     <h2>
-                        Three independent sources, one consistent
-                        data structure.
+                        Three independent sources, one consistent data
+                        structure.
                     </h2>
 
                     <p class="lead">
-                        Each source returns jobs in a different format.
-                        I implemented normalization functions so the rest
-                        of the pipeline could process all vacancies
-                        consistently.
+                        Each source returns jobs in a different format. I
+                        implemented normalization functions so the rest of the
+                        pipeline could process all vacancies consistently.
                     </p>
 
                     <div class="source-grid">
@@ -332,8 +305,8 @@ const hasDashboard = dashboardUrl.startsWith("https://");
                             <span>API 01</span>
                             <strong>Arbeitnow</strong>
                             <p>
-                                Paginated job discovery with safeguards
-                                against repeated pagination URLs.
+                                Paginated job discovery with safeguards against
+                                repeated pagination URLs.
                             </p>
                         </article>
 
@@ -358,16 +331,16 @@ const hasDashboard = dashboardUrl.startsWith("https://");
 
                     <p>
                         The preliminary filtering stage removes duplicate
-                        listings and excludes job titles outside the
-                        target categories before making AI requests.
-                        This reduces unnecessary model calls.
+                        listings and excludes job titles outside the target
+                        categories before making AI requests. This reduces
+                        unnecessary model calls.
                     </p>
 
                     <p>
                         Because job-board listings may contain incomplete
-                        descriptions or geographical restrictions, the
-                        workflow does not assume that a remote listing
-                        is automatically suitable for every applicant.
+                        descriptions or geographical restrictions, the workflow
+                        does not assume that a remote listing is automatically
+                        suitable for every applicant.
                     </p>
                 </div>
             </section>
@@ -383,13 +356,13 @@ const hasDashboard = dashboardUrl.startsWith("https://");
 
                 <div class="section-content">
                     <h2>
-                        Gemini evaluates actual job requirements,
-                        not just job titles.
+                        Gemini evaluates actual job requirements, not just job
+                        titles.
                     </h2>
 
                     <p class="lead">
-                        Candidate vacancies are evaluated in batches of
-                        20 against three conditions.
+                        Candidate vacancies are evaluated in batches of 20
+                        against three conditions.
                     </p>
 
                     <div class="criteria-grid">
@@ -397,10 +370,9 @@ const hasDashboard = dashboardUrl.startsWith("https://");
                             <span>01</span>
                             <strong>Remote suitability</strong>
                             <p>
-                                The available posting must clearly indicate
-                                that remote work is permitted. On-site,
-                                hybrid, and unclear arrangements are
-                                excluded.
+                                The available posting must clearly indicate that
+                                remote work is permitted. On-site, hybrid, and
+                                unclear arrangements are excluded.
                             </p>
                         </article>
 
@@ -408,9 +380,9 @@ const hasDashboard = dashboardUrl.startsWith("https://");
                             <span>02</span>
                             <strong>English-language suitability</strong>
                             <p>
-                                The role must be workable professionally
-                                in English without another mandatory
-                                professional language.
+                                The role must be workable professionally in
+                                English without another mandatory professional
+                                language.
                             </p>
                         </article>
 
@@ -419,35 +391,34 @@ const hasDashboard = dashboardUrl.startsWith("https://");
                             <strong>Role relevance</strong>
                             <p>
                                 Responsibilities must genuinely involve
-                                executive or administrative support rather
-                                than an unrelated specialist position.
+                                executive or administrative support rather than
+                                an unrelated specialist position.
                             </p>
                         </article>
                     </div>
 
                     <p>
-                        Gemini returns structured results containing
-                        Boolean decisions, confidence values, and short
-                        explanations. The program matches the returned
-                        evaluations to the original vacancies using
-                        their job indexes.
+                        Gemini returns structured results containing Boolean
+                        decisions, confidence values, and short explanations.
+                        The program matches the returned evaluations to the
+                        original vacancies using their job indexes.
                     </p>
 
                     <p>
-                        Validation rules are stored in an editable prompt
-                        file. They can be updated without rewriting the
-                        underlying Python evaluation logic.
+                        Validation rules are stored in an editable prompt file.
+                        They can be updated without rewriting the underlying
+                        Python evaluation logic.
                     </p>
 
                     <div class="callout">
                         <strong>AI classification is not definitive</strong>
                         <p>
-                            During testing, the model incorrectly classified
-                            a position with an Italian-language requirement
-                            as English-suitable. I refined the validation
-                            prompt to address this issue. Model decisions
-                            remain AI-assisted assessments rather than
-                            guaranteed verification of job suitability.
+                            During testing, the model incorrectly classified a
+                            position with an Italian-language requirement as
+                            English-suitable. I refined the validation prompt to
+                            address this issue. Model decisions remain
+                            AI-assisted assessments rather than guaranteed
+                            verification of job suitability.
                         </p>
                     </div>
                 </div>
@@ -463,15 +434,13 @@ const hasDashboard = dashboardUrl.startsWith("https://");
                 </div>
 
                 <div class="section-content">
-                    <h2>
-                        Personalization grounded in real job information.
-                    </h2>
+                    <h2>Personalization grounded in real job information.</h2>
 
                     <p class="lead">
-                        Once a vacancy passes validation, Gemini generates
-                        a first-contact message using the actual job
-                        posting, a configurable sender profile, and an
-                        editable outreach prompt.
+                        Once a vacancy passes validation, Gemini generates a
+                        first-contact message using the actual job posting, a
+                        configurable sender profile, and an editable outreach
+                        prompt.
                     </p>
 
                     <div class="feature-list">
@@ -491,9 +460,9 @@ const hasDashboard = dashboardUrl.startsWith("https://");
                             <div>
                                 <strong>Editable prompts and profiles</strong>
                                 <p>
-                                    Message instructions and sender
-                                    information are stored separately
-                                    from the Python application logic.
+                                    Message instructions and sender information
+                                    are stored separately from the Python
+                                    application logic.
                                 </p>
                             </div>
                         </div>
@@ -504,8 +473,8 @@ const hasDashboard = dashboardUrl.startsWith("https://");
                                 <strong>Grounded professional claims</strong>
                                 <p>
                                     The prompt prohibits inventing
-                                    qualifications, prior experience,
-                                    software skills, or achievements.
+                                    qualifications, prior experience, software
+                                    skills, or achievements.
                                 </p>
                             </div>
                         </div>
@@ -515,20 +484,19 @@ const hasDashboard = dashboardUrl.startsWith("https://");
                             <div>
                                 <strong>Human approval</strong>
                                 <p>
-                                    The generated text is a draft for
-                                    review, not an automatically sent
-                                    message.
+                                    The generated text is a draft for review,
+                                    not an automatically sent message.
                                 </p>
                             </div>
                         </div>
                     </div>
 
                     <p>
-                        The individual-applicant mode was implemented
-                        and demonstrated end to end. An additional
-                        business-outreach configuration was prepared,
-                        but it requires genuine business and service
-                        information before it can generate messages.
+                        The individual-applicant mode was implemented and
+                        demonstrated end to end. An additional business-outreach
+                        configuration was prepared, but it requires genuine
+                        business and service information before it can generate
+                        messages.
                     </p>
                 </div>
             </section>
@@ -543,41 +511,39 @@ const hasDashboard = dashboardUrl.startsWith("https://");
                 </div>
 
                 <div class="section-content">
-                    <h2>
-                        Solving repeated AI validation with SQLite caching.
-                    </h2>
+                    <h2>Solving repeated AI validation with SQLite caching.</h2>
 
                     <p class="lead">
                         Re-evaluating unchanged jobs during every scheduled
-                        execution would waste model requests. I introduced
-                        a persistent SQLite cache to reuse previous
-                        validation results.
+                        execution would waste model requests. I introduced a
+                        persistent SQLite cache to reuse previous validation
+                        results.
                     </p>
 
                     <p>
-                        Each cache entry contains a job identifier,
-                        a fingerprint of the validation inputs, the
-                        previous result, and an update timestamp.
-                        The fingerprint accounts for job details,
-                        the validation prompt, and the model identifier.
+                        Each cache entry contains a job identifier, a
+                        fingerprint of the validation inputs, the previous
+                        result, and an update timestamp. The fingerprint
+                        accounts for job details, the validation prompt, and the
+                        model identifier.
                     </p>
 
                     <p>
-                        When relevant job information or validation
-                        instructions change, the previous result is
-                        invalidated and a new evaluation is required.
+                        When relevant job information or validation instructions
+                        change, the previous result is invalidated and a new
+                        evaluation is required.
                     </p>
 
                     <div class="comparison">
                         <article>
                             <span>Initial repeated run</span>
                             <strong>33 / 69</strong>
-                            <p>Previously evaluated jobs retrieved from cache</p>
+                            <p>
+                                Previously evaluated jobs retrieved from cache
+                            </p>
                         </article>
 
-                        <div class="comparison-arrow" aria-hidden="true">
-                            →
-                        </div>
+                        <div class="comparison-arrow" aria-hidden="true">→</div>
 
                         <article class="comparison-highlight">
                             <span>Final diagnostic</span>
@@ -586,32 +552,28 @@ const hasDashboard = dashboardUrl.startsWith("https://");
                         </article>
                     </div>
 
-                    <h3>
-                        The underlying problem: inconsistent Adzuna URLs.
-                    </h3>
+                    <h3>The underlying problem: inconsistent Adzuna URLs.</h3>
 
                     <p>
-                        Investigation showed that the same Adzuna vacancy
-                        could appear with different tracking parameters
-                        or URL paths, preventing the original cache from
-                        recognizing previously evaluated jobs.
+                        Investigation showed that the same Adzuna vacancy could
+                        appear with different tracking parameters or URL paths,
+                        preventing the original cache from recognizing
+                        previously evaluated jobs.
                     </p>
 
                     <p>
-                        I updated the cache to identify Adzuna listings
-                        using their underlying numeric job IDs and
-                        migrated the existing records. The final
-                        diagnostic returned 69 cache hits and zero
-                        misses for the tested candidate set.
+                        I updated the cache to identify Adzuna listings using
+                        their underlying numeric job IDs and migrated the
+                        existing records. The final diagnostic returned 69 cache
+                        hits and zero misses for the tested candidate set.
                     </p>
 
                     <div class="callout">
                         <strong>What the result means</strong>
                         <p>
-                            This was a successful diagnostic against
-                            previously evaluated jobs, not a claim
-                            that every future run will achieve a
-                            100% cache-hit rate. New or modified
+                            This was a successful diagnostic against previously
+                            evaluated jobs, not a claim that every future run
+                            will achieve a 100% cache-hit rate. New or modified
                             vacancies still require fresh evaluation.
                         </p>
                     </div>
@@ -629,14 +591,14 @@ const hasDashboard = dashboardUrl.startsWith("https://");
 
                 <div class="section-content">
                     <h2>
-                        Scheduled execution with a spreadsheet
-                        as the user interface.
+                        Scheduled execution with a spreadsheet as the user
+                        interface.
                     </h2>
 
                     <p class="lead">
-                        The system is configured to run daily using
-                        Windows Task Scheduler and deliver qualifying
-                        results to a Google Sheets dashboard.
+                        The system is configured to run daily using Windows Task
+                        Scheduler and deliver qualifying results to a Google
+                        Sheets dashboard.
                     </p>
 
                     <div class="output-grid">
@@ -644,10 +606,10 @@ const hasDashboard = dashboardUrl.startsWith("https://");
                             <span>Automation</span>
                             <strong>Windows Task Scheduler</strong>
                             <p>
-                                A PowerShell launcher activates the
-                                project's Python environment,
-                                executes the workflow, captures logs,
-                                and reports the execution outcome.
+                                A PowerShell launcher activates the project's
+                                Python environment, executes the workflow,
+                                captures logs, and reports the execution
+                                outcome.
                             </p>
                         </article>
 
@@ -655,9 +617,9 @@ const hasDashboard = dashboardUrl.startsWith("https://");
                             <span>Storage</span>
                             <strong>SQLite</strong>
                             <p>
-                                Persistent validation results allow
-                                subsequent runs to avoid unnecessary
-                                evaluations of unchanged vacancies.
+                                Persistent validation results allow subsequent
+                                runs to avoid unnecessary evaluations of
+                                unchanged vacancies.
                             </p>
                         </article>
 
@@ -665,9 +627,8 @@ const hasDashboard = dashboardUrl.startsWith("https://");
                             <span>Output</span>
                             <strong>Google Sheets</strong>
                             <p>
-                                The dashboard contains job details,
-                                source URLs, descriptions, and
-                                personalized outreach drafts.
+                                The dashboard contains job details, source URLs,
+                                descriptions, and personalized outreach drafts.
                             </p>
                         </article>
 
@@ -676,27 +637,25 @@ const hasDashboard = dashboardUrl.startsWith("https://");
                             <strong>Google Apps Script</strong>
                             <p>
                                 Dashboard formatting improves readability
-                                through consistent column widths,
-                                text wrapping, alternating rows,
-                                filters, and a frozen header.
+                                through consistent column widths, text wrapping,
+                                alternating rows, filters, and a frozen header.
                             </p>
                         </article>
                     </div>
 
                     <p>
                         The Task Scheduler manual execution test completed
-                        successfully, with 70 previously evaluated
-                        candidates reused from cache and no unnecessary
-                        outreach messages generated. At the time of
-                        the documented assessment, the first unattended
-                        daily trigger had not yet been independently
-                        verified.
+                        successfully, with 70 previously evaluated candidates
+                        reused from cache and no unnecessary outreach messages
+                        generated. Daily scheduling was configured; the
+                        documented validation covered the manual scheduler run
+                        rather than a later unattended trigger.
                     </p>
 
                     <p>
-                        Because the scheduler and cache run locally,
-                        the Windows computer must be available for
-                        the automation to execute.
+                        Because the scheduler and cache run locally, the Windows
+                        computer must be available for the automation to
+                        execute.
                     </p>
                 </div>
             </section>
@@ -712,15 +671,14 @@ const hasDashboard = dashboardUrl.startsWith("https://");
 
                 <div class="section-content">
                     <h2>
-                        A working end-to-end demonstration with real
-                        vacancy data.
+                        A working end-to-end demonstration with real vacancy
+                        data.
                     </h2>
 
                     <p class="lead">
-                        The workflow successfully discovered, evaluated,
-                        and saved a qualifying Remote Office Assistant
-                        vacancy from Coalition Technologies through
-                        Remotive.
+                        The workflow successfully discovered, evaluated, and
+                        saved a qualifying Remote Office Assistant vacancy from
+                        Coalition Technologies through Remotive.
                     </p>
 
                     <div class="result-card">
@@ -742,23 +700,21 @@ const hasDashboard = dashboardUrl.startsWith("https://");
                         </div>
 
                         <p>
-                            The Google Sheets output contains the job
-                            details, description, source URL, and a
-                            personalized outreach draft.
+                            The Google Sheets output contains the job details,
+                            description, source URL, and a personalized outreach
+                            draft.
                         </p>
                     </div>
 
                     <p>
-                        Subsequent testing confirmed early duplicate
-                        prevention, persistent validation caching,
-                        and successful manual execution through
-                        Windows Task Scheduler.
+                        Subsequent testing confirmed early duplicate prevention,
+                        persistent validation caching, and successful manual
+                        execution through Windows Task Scheduler.
                     </p>
 
                     <p>
-                        No fictional vacancies were added to the
-                        demonstration dashboard to inflate the
-                        number of successful results.
+                        No fictional vacancies were added to the demonstration
+                        dashboard to inflate the number of successful results.
                     </p>
                 </div>
             </section>
@@ -774,8 +730,7 @@ const hasDashboard = dashboardUrl.startsWith("https://");
 
                 <div class="section-content">
                     <h2>
-                        Working automation, with clear operational
-                        boundaries.
+                        Working automation, with clear operational boundaries.
                     </h2>
 
                     <div class="feature-list">
@@ -796,8 +751,8 @@ const hasDashboard = dashboardUrl.startsWith("https://");
                                 <strong>Incomplete job information</strong>
                                 <p>
                                     Some providers return abbreviated
-                                    descriptions, limiting the detail
-                                    available for validation and outreach.
+                                    descriptions, limiting the detail available
+                                    for validation and outreach.
                                 </p>
                             </div>
                         </div>
@@ -808,8 +763,8 @@ const hasDashboard = dashboardUrl.startsWith("https://");
                                 <strong>AI reliability</strong>
                                 <p>
                                     Language, relevance, and remote-work
-                                    classification can be incorrect.
-                                    Human verification remains important.
+                                    classification can be incorrect. Human
+                                    verification remains important.
                                 </p>
                             </div>
                         </div>
@@ -819,9 +774,9 @@ const hasDashboard = dashboardUrl.startsWith("https://");
                             <div>
                                 <strong>Local execution</strong>
                                 <p>
-                                    Scheduling depends on the Windows
-                                    computer being available. The SQLite
-                                    validation cache is also stored locally.
+                                    Scheduling depends on the Windows computer
+                                    being available. The SQLite validation cache
+                                    is also stored locally.
                                 </p>
                             </div>
                         </div>
@@ -831,9 +786,9 @@ const hasDashboard = dashboardUrl.startsWith("https://");
                             <div>
                                 <strong>Human-controlled outreach</strong>
                                 <p>
-                                    The system generates drafts rather
-                                    than contacting employers or
-                                    submitting applications automatically.
+                                    The system generates drafts rather than
+                                    contacting employers or submitting
+                                    applications automatically.
                                 </p>
                             </div>
                         </div>
@@ -851,27 +806,30 @@ const hasDashboard = dashboardUrl.startsWith("https://");
                 </div>
 
                 <div class="section-content">
-                    <h2>
-                        Connecting AI with a practical operations
-                        workflow.
-                    </h2>
+                    <h2>Connecting AI with a practical operations workflow.</h2>
 
-                    <div class="skills-list">
-                        <span>Python</span>
-                        <span>REST API Integration</span>
-                        <span>Google Gemini</span>
-                        <span>Prompt Engineering</span>
-                        <span>Structured AI Outputs</span>
-                        <span>SQLite</span>
-                        <span>Data Normalization</span>
-                        <span>Deduplication</span>
-                        <span>Workflow Automation</span>
-                        <span>Google Sheets API</span>
-                        <span>Google Apps Script</span>
-                        <span>PowerShell</span>
-                        <span>Debugging</span>
-                        <span>Documentation</span>
-                    </div>
+                    <SkillLinks
+                        skills={[
+                            "python",
+                            "rest-api-integration",
+                            "google-gemini",
+                            "prompt-design",
+                            "structured-ai-outputs",
+                            "sqlite",
+                            "data-normalization",
+                            "deduplication",
+                            "workflow-automation",
+                            "google-sheets-api",
+                            "google-apps-script",
+                            "powershell",
+                            "debugging",
+                            "documentation",
+                            "output-validation",
+                            "human-oversight",
+                            "caching",
+                            "task-scheduling",
+                        ]}
+                    />
                 </div>
             </section>
 
@@ -882,9 +840,7 @@ const hasDashboard = dashboardUrl.startsWith("https://");
             <section class="project-end">
                 <p class="eyebrow">Explore more</p>
 
-                <h2>
-                    Automation built around practical problems.
-                </h2>
+                <h2>Automation built around practical problems.</h2>
 
                 <div class="project-end-links">
                     {
@@ -911,34 +867,18 @@ const hasDashboard = dashboardUrl.startsWith("https://");
                         )
                     }
 
-                    <a href="/projects/rocketeers/">
-                        Rocketeers overview →
-                    </a>
+                    <a href="/projects/rocketeers/"> Rocketeers overview → </a>
 
                     <a href="/projects/gym-progress/">
                         Gym Progress System →
                     </a>
 
-                    <a href="/#projects">
-                        All projects →
-                    </a>
+                    <a href="/#projects"> All projects → </a>
                 </div>
             </section>
         </main>
 
-        <!-- ===================================================
-             FOOTER
-             =================================================== -->
-
-        <footer>
-            <span>
-                © {new Date().getFullYear()} Konstantinos Zafiropoulos
-            </span>
-
-            <span>
-                Built with Astro · Git/GitHub · VS Code · Netlify
-            </span>
-        </footer>
+        <SiteFooter />
     </body>
 </html>
 
@@ -964,8 +904,13 @@ const hasDashboard = dashboardUrl.startsWith("https://");
         background: var(--bg);
 
         font-family:
-            Inter, ui-sans-serif, system-ui, -apple-system,
-            BlinkMacSystemFont, "Segoe UI", sans-serif;
+            Inter,
+            ui-sans-serif,
+            system-ui,
+            -apple-system,
+            BlinkMacSystemFont,
+            "Segoe UI",
+            sans-serif;
     }
 
     /* =========================================================
@@ -1111,8 +1056,7 @@ const hasDashboard = dashboardUrl.startsWith("https://");
        ========================================================= */
 
     .hero {
-        padding: clamp(4rem, 9vw, 7rem) 0
-            clamp(3rem, 6vw, 5rem);
+        padding: clamp(4rem, 9vw, 7rem) 0 clamp(3rem, 6vw, 5rem);
     }
 
     .breadcrumbs {
@@ -1466,11 +1410,7 @@ const hasDashboard = dashboardUrl.startsWith("https://");
         border-radius: 13px;
 
         background:
-            linear-gradient(
-                135deg,
-                rgba(38, 213, 162, 0.06),
-                transparent
-            ),
+            linear-gradient(135deg, rgba(38, 213, 162, 0.06), transparent),
             var(--bg-card);
     }
 
@@ -1653,5 +1593,144 @@ const hasDashboard = dashboardUrl.startsWith("https://");
         .button:hover {
             transform: none;
         }
+    }
+
+    /* =========================================================
+   AI ARCHITECTURE — WIDER TWO-COLUMN WORKFLOW
+
+   Expands only the architecture section.
+   Reuses the existing five workflow cards and their text.
+   ========================================================= */
+
+    .architecture-section {
+        display: block;
+    }
+
+    .architecture-section .section-label {
+        text-align: center;
+    }
+
+    .architecture-section .section-content {
+        width: 100%;
+        max-width: none;
+    }
+
+    .architecture-section .section-content > h2,
+    .architecture-section .section-content > p {
+        max-width: 850px;
+        margin-left: auto;
+        margin-right: auto;
+        text-align: center;
+    }
+
+    /* The existing workflow container becomes a two-column grid. */
+
+    .architecture-section .workflow {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 1.25rem;
+        width: 100%;
+        max-width: 1100px;
+        margin: 2.5rem auto;
+        align-items: stretch;
+    }
+
+    /* Keep the existing workflow cards readable. */
+
+    .architecture-section .workflow-step {
+        min-width: 0;
+        width: 100%;
+        height: 100%;
+        padding: 1.5rem;
+    }
+
+    /* The final output card spans both columns. */
+
+    .architecture-section .workflow-step:last-child {
+        grid-column: 1 / -1;
+    }
+
+    /* Hide the old between-card arrows.
+   We will use the grid's visual ordering instead. */
+
+    .architecture-section .workflow-arrow {
+        display: none;
+    }
+
+    /* Mobile: restore a straightforward vertical sequence. */
+
+    @media (max-width: 700px) {
+        .architecture-section .workflow {
+            grid-template-columns: 1fr;
+        }
+
+        .architecture-section .workflow-step:last-child {
+            grid-column: auto;
+        }
+    }
+
+    /* =========================================================
+   AI CASE STUDY — CENTERED INTRODUCTION AND ENDING
+   ========================================================= */
+
+    .hero {
+        text-align: center;
+    }
+
+    .hero h1,
+    .hero-subtitle,
+    .hero .eyebrow {
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .hero-breadcrumbs,
+    .hero-tags,
+    .hero-actions {
+        justify-content: center;
+    }
+
+    .metrics {
+        text-align: center;
+    }
+
+    /* Center the skills section without affecting the
+   alignment of ordinary case-study paragraphs. */
+
+    .case-section:has(.skills-list) .section-label,
+    .case-section:has(.skills-list) .section-content {
+        text-align: center;
+    }
+
+    .case-section:has(.skills-list) .section-content > h2 {
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .case-section:has(.skills-list) .skills-list {
+        justify-content: center;
+    }
+
+    /* Closing navigation. */
+
+    .project-end {
+        text-align: center;
+    }
+
+    .project-end h2 {
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .project-end-links {
+        justify-content: center;
+    }
+
+    /* Footer. */
+
+    footer {
+        justify-content: center;
+        text-align: center;
+        flex-wrap: wrap;
     }
 </style>
