@@ -1,0 +1,128 @@
+---
+const pathname = Astro.url.pathname;
+const onSkillsPage = pathname.startsWith("/skills");
+const onProjectPage = pathname.startsWith("/projects");
+---
+
+<header class="site-header">
+    <nav class="site-nav" aria-label="Primary navigation">
+        <a class="wordmark" href="/" aria-label="Konstantinos Zafiropoulos — homepage">
+            KZ<span aria-hidden="true">.</span>
+        </a>
+
+        <div class="nav-links">
+            <a href="/#projects" aria-current={onProjectPage ? "location" : undefined}>Projects</a>
+            <a href="/skills/" aria-current={onSkillsPage ? "page" : undefined}>Skills</a>
+            <a href="/#about">About</a>
+            <a href="/#contact">Contact</a>
+        </div>
+    </nav>
+</header>
+
+<style>
+    .site-header {
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        border-bottom: 1px solid rgba(48, 82, 111, 0.72);
+        background: rgba(5, 16, 28, 0.94);
+        backdrop-filter: blur(14px);
+    }
+
+    .site-nav {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1.25rem;
+        min-height: 64px;
+    }
+
+    .wordmark {
+        flex: 0 0 auto;
+        color: #ffffff;
+        font-size: 1.32rem;
+        font-weight: 850;
+        letter-spacing: -0.08em;
+        text-decoration: none;
+    }
+
+    .wordmark span {
+        color: #ff8a00;
+    }
+
+    .nav-links {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: clamp(0.8rem, 2.8vw, 2.5rem);
+    }
+
+    .nav-links a {
+        position: relative;
+        padding: 0.35rem 0;
+        color: #a9bac9;
+        font-size: 0.88rem;
+        text-decoration: none;
+        transition: color 0.2s ease;
+    }
+
+    .nav-links a::after {
+        content: "";
+        position: absolute;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        height: 2px;
+        border-radius: 2px;
+        background: #168dff;
+        transform: scaleX(0);
+        transform-origin: center;
+        transition: transform 0.2s ease;
+    }
+
+    .nav-links a:hover,
+    .nav-links a[aria-current] {
+        color: #ffffff;
+    }
+
+    .nav-links a:hover::after,
+    .nav-links a[aria-current]::after {
+        transform: scaleX(1);
+    }
+
+    a:focus-visible {
+        outline: 2px solid #ff8a00;
+        outline-offset: 4px;
+        border-radius: 3px;
+    }
+
+    @media (max-width: 560px) {
+        .site-nav {
+            align-items: flex-start;
+            padding: 0.65rem 0;
+        }
+
+        .wordmark {
+            padding-top: 0.28rem;
+        }
+
+        .nav-links {
+            display: grid;
+            grid-template-columns: repeat(2, auto);
+            gap: 0.18rem 1.05rem;
+        }
+
+        .nav-links a {
+            min-height: 44px;
+            display: inline-flex;
+            align-items: center;
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .nav-links a,
+        .nav-links a::after {
+            transition: none;
+        }
+    }
+</style>

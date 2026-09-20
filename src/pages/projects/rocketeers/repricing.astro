@@ -2,7 +2,10 @@
 /* =========================================================
    PAGE METADATA
    ========================================================= */
-
+import ProjectGallery from "../../../components/ProjectGallery.astro";
+import SiteHeader from "../../../components/SiteHeader.astro";
+import SiteFooter from "../../../components/SiteFooter.astro";
+import SkillLinks from "../../../components/SkillLinks.astro";
 const title =
     "Marketplace Repricing Engine | Rocketeers | Konstantinos Zafiropoulos";
 
@@ -41,8 +44,6 @@ const metrics = [
 
         <meta name="description" content={description} />
 
-        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-
         <title>{title}</title>
     </head>
 
@@ -52,17 +53,7 @@ const metrics = [
            PRIMARY NAVIGATION
            =================================================== -->
 
-            <nav aria-label="Primary navigation">
-                <a class="wordmark" href="/" aria-label="Homepage">
-                    KZ<span>.</span>
-                </a>
-
-                <div class="nav-links">
-                    <a href="/#projects">Projects</a>
-                    <a href="/#about">About</a>
-                    <a href="/#contact">Contact</a>
-                </div>
-            </nav>
+            <SiteHeader />
 
             <!-- ===================================================
            HERO
@@ -87,14 +78,17 @@ const metrics = [
                     thousands of product variations.
                 </p>
 
-                <div class="hero-tags">
-                    <span>Excel</span>
-                    <span>Web Queries</span>
-                    <span>Pricing Logic</span>
-                    <span>eBay FileExchange</span>
-                    <span>Process Scaling</span>
-                    <span>Data Quality</span>
-                </div>
+                <SkillLinks
+                    variant="hero"
+                    skills={[
+                        "excel",
+                        "web-queries",
+                        "pricing-operations",
+                        "ebay-fileexchange",
+                        "operational-scaling",
+                        "data-quality",
+                    ]}
+                />
             </header>
 
             <!-- ===================================================
@@ -150,6 +144,33 @@ const metrics = [
                         PlayStation, Xbox, and Switch so repricing could be
                         handled as a repeatable process.
                     </p>
+                </div>
+            </section>
+
+            <!-- =====================================================
+     PROJECT VISUALS — REPRICING ENGINE
+     ===================================================== -->
+
+            <section class="case-section">
+                <div class="section-label">
+                    <p class="eyebrow">Project visuals</p>
+                </div>
+
+                <div class="section-content">
+                    <ProjectGallery
+                        title="The marketplace repricing workbook"
+                        description="A presentation visual based on the surviving Excel pricing system."
+                        images={[
+                            {
+                                src: "/images/projects/rocketeers/repricing.webp",
+                                width: 1563,
+                                height: 692,
+                                alt: "Excel repricing matrix with product variations and color-coded marketplace prices.",
+                                caption:
+                                    "Edited view of the repricing matrix illustrating how product variations and prices were organized into repeatable bulk-update workflows.",
+                            },
+                        ]}
+                    />
                 </div>
             </section>
 
@@ -652,73 +673,12 @@ const metrics = [
             </section>
 
             <!-- ===================================================
-           SECTION 10 — VISUAL EVIDENCE
+           SECTION 10 — SKILLS DEMONSTRATED
            =================================================== -->
 
             <section class="case-section">
                 <div class="section-label">
-                    <p class="eyebrow">10 — Evidence</p>
-                </div>
-
-                <div class="section-content">
-                    <h2>
-                        The final case study will show the real workbook
-                        workflow.
-                    </h2>
-
-                    <p class="lead">
-                        Rather than creating a fake demo, the public
-                        presentation will use a sanitized copy of the surviving
-                        production workbook.
-                    </p>
-
-                    <div class="screenshot-grid">
-                        <div class="screenshot-placeholder">
-                            <span>01</span>
-                            <strong>Market-data import</strong>
-                            <p>
-                                Genuine workbook view showing external
-                                marketplace pricing.
-                            </p>
-                        </div>
-
-                        <div class="screenshot-placeholder">
-                            <span>02</span>
-                            <strong>Zomba example</strong>
-                            <p>
-                                End-to-end example from imported value to final
-                                variation prices.
-                            </p>
-                        </div>
-
-                        <div class="screenshot-placeholder">
-                            <span>03</span>
-                            <strong>Pricing table</strong>
-                            <p>
-                                Commercial pricing and margin logic used by the
-                                workflow.
-                            </p>
-                        </div>
-
-                        <div class="screenshot-placeholder">
-                            <span>04</span>
-                            <strong>FileExchange output</strong>
-                            <p>
-                                Matching ordered price blocks with marketplace
-                                variation rows.
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- ===================================================
-           SECTION 11 — SKILLS DEMONSTRATED
-           =================================================== -->
-
-            <section class="case-section">
-                <div class="section-label">
-                    <p class="eyebrow">11 — Skills demonstrated</p>
+                    <p class="eyebrow">10 — Skills demonstrated</p>
                 </div>
 
                 <div class="section-content">
@@ -727,20 +687,22 @@ const metrics = [
                         one Excel formula.
                     </h2>
 
-                    <div class="skills-list">
-                        <span>Excel</span>
-                        <span>Pricing Operations</span>
-                        <span>Marketplace Operations</span>
-                        <span>Web Queries</span>
-                        <span>Data Transformation</span>
-                        <span>Commercial Decision-Making</span>
-                        <span>Process Design</span>
-                        <span>Variation Management</span>
-                        <span>Bulk Updates</span>
-                        <span>Data Quality</span>
-                        <span>Error Reduction</span>
-                        <span>Operational Scaling</span>
-                    </div>
+                    <SkillLinks
+                        skills={[
+                            "excel",
+                            "pricing-operations",
+                            "marketplace-operations",
+                            "web-queries",
+                            "data-transformation",
+                            "decision-making",
+                            "process-improvement",
+                            "variation-management",
+                            "bulk-marketplace-updates",
+                            "data-quality",
+                            "error-reduction",
+                            "operational-scaling",
+                        ]}
+                    />
                 </div>
             </section>
 
@@ -762,12 +724,13 @@ const metrics = [
                         <span aria-hidden="true">→</span>
                     </a>
 
-                    <!--
-            Financial tracker page will be linked here once built.
-          -->
-                    <span class="future-link">
-                        Financial & Operations Tracker — coming next
-                    </span>
+                    <a
+                        class="text-link"
+                        href="/projects/rocketeers/financial-tracker/"
+                    >
+                        Financial & Operations Tracker
+                        <span aria-hidden="true">→</span>
+                    </a>
                 </div>
             </section>
         </main>
@@ -776,13 +739,7 @@ const metrics = [
          FOOTER
          ===================================================== -->
 
-        <footer>
-            <span>
-                © {new Date().getFullYear()} Konstantinos Zafiropoulos
-            </span>
-
-            <span> Built with Astro · Git/GitHub · VS Code · Netlify </span>
-        </footer>
+        <SiteFooter />
     </body>
 </html>
 
@@ -1544,64 +1501,6 @@ const metrics = [
     }
 
     /* =========================================================
-     SCREENSHOT PLACEHOLDERS
-     ========================================================= */
-
-    .screenshot-grid {
-        display: grid;
-
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-
-        gap: 1rem;
-
-        margin-top: 2.5rem;
-    }
-
-    .screenshot-placeholder {
-        min-height: 210px;
-
-        padding: 1.5rem;
-
-        border: 1px dashed #315372;
-        border-radius: 12px;
-
-        background: linear-gradient(
-            135deg,
-            rgba(22, 141, 255, 0.05),
-            rgba(255, 138, 0, 0.015)
-        );
-    }
-
-    .screenshot-placeholder > span {
-        display: block;
-
-        margin-bottom: 2rem;
-
-        color: var(--orange);
-
-        font-size: 0.72rem;
-        font-weight: 800;
-    }
-
-    .screenshot-placeholder strong {
-        display: block;
-
-        margin-bottom: 0.6rem;
-
-        color: white;
-    }
-
-    .screenshot-placeholder p {
-        margin-bottom: 0;
-
-        color: #91a6b8;
-
-        font-size: 0.85rem;
-
-        line-height: 1.5;
-    }
-
-    /* =========================================================
      SKILLS
      ========================================================= */
 
@@ -1644,12 +1543,6 @@ const metrics = [
         margin-left: 0.35rem;
 
         color: var(--orange);
-    }
-
-    .future-link {
-        color: var(--subtle);
-
-        font-size: 0.8rem;
     }
 
     /* =========================================================
@@ -1753,5 +1646,127 @@ const metrics = [
         html {
             scroll-behavior: auto;
         }
+    }
+
+    /* =========================================================
+   FULL-WIDTH WORKFLOW SECTIONS
+
+   Gives process diagrams more horizontal space while
+   preserving the existing layout of all other sections.
+   ========================================================= */
+
+    .wide-section {
+        display: block;
+    }
+
+    .wide-section .section-label {
+        text-align: center;
+    }
+
+    .wide-section .section-content {
+        width: 100%;
+        max-width: none;
+    }
+
+    .wide-section .section-content > h2,
+    .wide-section .section-content > p {
+        max-width: 850px;
+        margin-left: auto;
+        margin-right: auto;
+        text-align: center;
+    }
+
+    /* Keep the diagram centered and make its cards readable. */
+
+    .wide-section .business-flow,
+    .wide-section .workflow {
+        width: 100%;
+        max-width: 1100px;
+        margin: 2.5rem auto 0;
+        gap: 0.75rem;
+    }
+
+    .wide-section .flow-step,
+    .wide-section .workflow-step {
+        min-width: 0;
+        padding: 1.25rem;
+    }
+
+    /* Stack the diagram before its cards become too narrow. */
+
+    @media (max-width: 1100px) {
+        .wide-section .business-flow,
+        .wide-section .workflow {
+            grid-template-columns: 1fr;
+            max-width: 680px;
+        }
+
+        .wide-section .flow-arrow,
+        .wide-section .workflow-arrow {
+            transform: rotate(90deg);
+        }
+    }
+
+    /* =========================================================
+   PROJECT PAGE FINISHING STYLES
+
+   Shared presentation for project-page introductions,
+   closing navigation, and footers.
+
+   Individual case-study sections retain their existing
+   layouts and typography.
+   ========================================================= */
+
+    /* HERO — CENTER CONTENT */
+
+    .hero {
+        text-align: center;
+    }
+
+    .hero h1,
+    .hero-subtitle,
+    .hero .eyebrow {
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .hero-breadcrumbs,
+    .hero-tags {
+        justify-content: center;
+    }
+
+    /* Center the hero's standalone back link where present. */
+
+    .hero .back-link {
+        display: inline-block;
+    }
+
+    /* METRICS — CENTER CARD CONTENT */
+
+    .metrics {
+        text-align: center;
+    }
+
+    /* PAGE ENDING */
+
+    .project-end {
+        text-align: center;
+    }
+
+    .project-end h2 {
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .project-end-links {
+        justify-content: center;
+    }
+
+    /* FOOTER */
+
+    footer {
+        justify-content: center;
+        text-align: center;
+        flex-wrap: wrap;
     }
 </style>

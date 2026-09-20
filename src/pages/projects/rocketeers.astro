@@ -3,6 +3,11 @@
    PAGE METADATA
    ========================================================= */
 
+import ProjectGallery from "../../components/ProjectGallery.astro";
+import SiteHeader from "../../components/SiteHeader.astro";
+import SiteFooter from "../../components/SiteFooter.astro";
+import SkillLinks from "../../components/SkillLinks.astro";
+
 const title =
   "Rocketeers | Marketplace Business & Operations | Konstantinos Zafiropoulos";
 
@@ -23,8 +28,8 @@ const metrics = [
     label: "Negative feedback",
   },
   {
-    value: "807",
-    label: "Store followers",
+    value: "20+",
+    label: "Countries served",
   },
 ];
 ---
@@ -41,8 +46,6 @@ const metrics = [
 
     <meta name="description" content={description} />
 
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-
     <title>{title}</title>
   </head>
 
@@ -52,17 +55,7 @@ const metrics = [
                  PRIMARY NAVIGATION
                  ================================================= -->
 
-      <nav aria-label="Primary navigation">
-        <a class="wordmark" href="/" aria-label="Homepage">
-          KZ<span>.</span>
-        </a>
-
-        <div class="nav-links">
-          <a href="/#projects">Projects</a>
-          <a href="/#about">About</a>
-          <a href="/#contact">Contact</a>
-        </div>
-      </nav>
+      <SiteHeader />
 
       <!-- =================================================
                  HERO
@@ -88,14 +81,17 @@ const metrics = [
           process improvement.
         </p>
 
-        <div class="hero-tags">
-          <span>Marketplace Operations</span>
-          <span>E-commerce</span>
-          <span>Business Ownership</span>
-          <span>Excel</span>
-          <span>Pricing</span>
-          <span>Analytics</span>
-        </div>
+        <SkillLinks
+          variant="hero"
+          skills={[
+            "marketplace-operations",
+            "ecommerce-operations",
+            "business-ownership",
+            "excel",
+            "pricing-operations",
+            "commercial-analysis",
+          ]}
+        />
       </header>
 
       <!-- =================================================
@@ -143,6 +139,33 @@ const metrics = [
             dedicated systems for repricing, financial tracking, and operational
             control.
           </p>
+        </div>
+      </section>
+
+      <!-- =====================================================
+     PROJECT VISUALS — HISTORICAL STOREFRONT
+     ===================================================== -->
+
+      <section class="case-section">
+        <div class="section-label">
+          <p class="eyebrow">Project visuals</p>
+        </div>
+
+        <div class="section-content">
+          <ProjectGallery
+            title="The Rocketeers storefront"
+            description="An edited presentation visual based on an archived view of the Rocketeers eBay storefront."
+            images={[
+              {
+                src: "/images/projects/rocketeers/storefront.webp",
+                width: 1520,
+                height: 698,
+                alt: "Historical Rocketeers eBay storefront showing its Rocket League branding and multi-platform product offering.",
+                caption:
+                  "Historical storefront presentation based on the archived eBay store. This edited visual illustrates the business's branding and marketplace presence.",
+              },
+            ]}
+          />
         </div>
       </section>
 
@@ -273,18 +296,11 @@ const metrics = [
 
               <div class="project-metrics">
                 <div>
-                  <strong>$55.6K</strong>
-                  <span>recorded turnover</span>
+                  <strong>2017–19</strong><span>surviving records</span>
                 </div>
-
+                <div><strong>Excel</strong><span>monthly reporting</span></div>
                 <div>
-                  <strong>4,154</strong>
-                  <span>orders</span>
-                </div>
-
-                <div>
-                  <strong>6,372</strong>
-                  <span>products sold</span>
+                  <strong>3</strong><span>product platforms tracked</span>
                 </div>
               </div>
 
@@ -391,7 +407,7 @@ const metrics = [
 
             <article>
               <strong>3,361</strong>
-              <span>unique positive feedback</span>
+              <span>positive feedback score</span>
             </article>
 
             <article>
@@ -482,71 +498,12 @@ const metrics = [
       </section>
 
       <!-- =================================================
-                 SECTION 06 — EVIDENCE
+                 SECTION 06 — SKILLS
                  ================================================= -->
 
       <section class="case-section">
         <div class="section-label">
-          <p class="eyebrow">06 — Evidence</p>
-        </div>
-
-        <div class="section-content">
-          <h2>
-            The portfolio will continue adding genuine evidence from the
-            operation.
-          </h2>
-
-          <p class="lead">
-            The project pages are based on surviving business records,
-            marketplace data, and operational workbooks. Public evidence will be
-            sanitized before being shown.
-          </p>
-
-          <div class="evidence-grid">
-            <div class="evidence-placeholder">
-              <span>01</span>
-
-              <strong> Marketplace storefront </strong>
-
-              <p>Sanitized evidence of the Rocketeers marketplace presence.</p>
-            </div>
-
-            <div class="evidence-placeholder">
-              <span>02</span>
-
-              <strong> Seller performance </strong>
-
-              <p>
-                Feedback and account-performance evidence from the operation.
-              </p>
-            </div>
-
-            <div class="evidence-placeholder">
-              <span>03</span>
-
-              <strong> Pricing system </strong>
-
-              <p>Real workbook evidence from the repricing workflow.</p>
-            </div>
-
-            <div class="evidence-placeholder">
-              <span>04</span>
-
-              <strong> Financial tracking </strong>
-
-              <p>Sanitized operating and financial records from the tracker.</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- =================================================
-                 SECTION 07 — SKILLS
-                 ================================================= -->
-
-      <section class="case-section">
-        <div class="section-label">
-          <p class="eyebrow">07 — Skills demonstrated</p>
+          <p class="eyebrow">06 — Skills demonstrated</p>
         </div>
 
         <div class="section-content">
@@ -555,20 +512,22 @@ const metrics = [
             work.
           </h2>
 
-          <div class="skills-list">
-            <span>Marketplace Operations</span>
-            <span>E-commerce</span>
-            <span>Business Ownership</span>
-            <span>Customer Operations</span>
-            <span>Excel</span>
-            <span>Pricing</span>
-            <span>Inventory Management</span>
-            <span>Process Improvement</span>
-            <span>Commercial Analysis</span>
-            <span>Seller Performance</span>
-            <span>Operational Scaling</span>
-            <span>Decision-Making</span>
-          </div>
+          <SkillLinks
+            skills={[
+              "marketplace-operations",
+              "ecommerce-operations",
+              "business-ownership",
+              "customer-operations",
+              "excel",
+              "pricing-operations",
+              "inventory-management",
+              "process-improvement",
+              "commercial-analysis",
+              "seller-performance",
+              "operational-scaling",
+              "decision-making",
+            ]}
+          />
         </div>
       </section>
 
@@ -621,13 +580,7 @@ const metrics = [
              FOOTER
              =================================================== -->
 
-    <footer>
-      <span>
-        © {new Date().getFullYear()} Konstantinos Zafiropoulos
-      </span>
-
-      <span> Built with Astro · Git/GitHub · VS Code · Netlify </span>
-    </footer>
+    <SiteFooter />
   </body>
 </html>
 
@@ -1312,64 +1265,6 @@ const metrics = [
   }
 
   /* =========================================================
-       EVIDENCE
-       ========================================================= */
-
-  .evidence-grid {
-    display: grid;
-
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-
-    gap: 1rem;
-
-    margin-top: 2.5rem;
-  }
-
-  .evidence-placeholder {
-    min-height: 210px;
-
-    padding: 1.5rem;
-
-    border: 1px dashed #315372;
-    border-radius: 12px;
-
-    background: linear-gradient(
-      135deg,
-      rgba(22, 141, 255, 0.04),
-      rgba(255, 138, 0, 0.018)
-    );
-  }
-
-  .evidence-placeholder > span {
-    display: block;
-
-    margin-bottom: 2rem;
-
-    color: var(--orange);
-
-    font-size: 0.72rem;
-    font-weight: 800;
-  }
-
-  .evidence-placeholder strong {
-    display: block;
-
-    margin-bottom: 0.6rem;
-
-    color: white;
-  }
-
-  .evidence-placeholder p {
-    margin-bottom: 0;
-
-    color: #91a6b8;
-
-    font-size: 0.85rem;
-
-    line-height: 1.5;
-  }
-
-  /* =========================================================
        SKILLS
        ========================================================= */
 
@@ -1536,5 +1431,124 @@ const metrics = [
     .project-card:hover {
       transform: none;
     }
+  }
+
+  /* =========================================================
+   MVP IMPROVEMENTS — ROCK ETEERS PROJECT CARDS
+
+   Allow the three case studies to use the full page width.
+   Keep their introductory heading centered above the cards.
+   ========================================================= */
+
+  .projects-section {
+    display: block;
+  }
+
+  .projects-section .section-label {
+    text-align: center;
+  }
+
+  .projects-section .section-content {
+    max-width: none;
+    width: 100%;
+  }
+
+  .projects-section .section-content > h2,
+  .projects-section .section-content > p {
+    max-width: 850px;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+  }
+
+  .projects-section .project-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1.25rem;
+  }
+
+  .projects-section .project-card {
+    min-width: 0;
+    min-height: 420px;
+    padding: clamp(1.25rem, 2vw, 2rem);
+  }
+
+  @media (max-width: 1000px) {
+    .projects-section .project-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .projects-section .project-card {
+      min-height: auto;
+    }
+  }
+
+  /* =========================================================
+   MVP IMPROVEMENTS — CENTERED ROCK ETEERS HERO
+   ========================================================= */
+
+  .hero {
+    text-align: center;
+  }
+
+  .hero-breadcrumbs,
+  .hero-tags {
+    justify-content: center;
+  }
+
+  .hero h1,
+  .hero-subtitle {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .hero .eyebrow {
+    text-align: center;
+  }
+
+  .metrics {
+    text-align: center;
+  }
+
+  /* =========================================================
+   MVP IMPROVEMENTS — CENTERED PAGE ENDING
+   ========================================================= */
+
+  /* Center the Skills demonstrated section. */
+  .case-section:has(.skills-list) .section-label {
+    text-align: center;
+  }
+
+  .case-section:has(.skills-list) .section-content {
+    text-align: center;
+  }
+
+  .case-section:has(.skills-list) .section-content > h2 {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .case-section:has(.skills-list) .skills-list {
+    justify-content: center;
+  }
+
+  /* Center the closing project navigation. */
+  .project-end {
+    text-align: center;
+  }
+
+  .project-end h2 {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .project-end-links {
+    justify-content: center;
+  }
+
+  /* Center footer content without changing the desktop layout. */
+  footer {
+    justify-content: center;
+    text-align: center;
+    flex-wrap: wrap;
   }
 </style>

@@ -1,0 +1,227 @@
+---
+import { getSkill, projects } from "../data/skills";
+
+interface Props {
+    skills: string[];
+    variant?: "hero" | "list" | "highlight";
+    class?: string;
+}
+
+const {
+    skills: skillIds,
+    variant = "list",
+    class: className = variant === "hero" ? "hero-tags" : variant === "highlight" ? "about-highlights" : "skills-list",
+} = Astro.props;
+
+const entries = skillIds.map(getSkill);
+---
+
+<div class:list={[className, "skill-links", `skill-links--${variant}`]} data-skill-links>
+    {entries.map((skill) => (
+        <details class="skill-disclosure">
+            <summary>{skill.label}</summary>
+            <div class="skill-dropdown">
+                <p>{skill.description}</p>
+                <strong>Demonstrated in</strong>
+                <ul>
+                    {skill.projects.map((projectId) => (
+                        <li>
+                            <a href={projects[projectId].href}>
+                                {projects[projectId].title}
+                                <span aria-hidden="true">→</span>
+                            </a>
+                        </li>
+                    ))}
+                </ul>
+                <a class="skill-profile" href={`/skills/#${skill.id}`}>
+                    View full skill profile
+                    <span aria-hidden="true">↗</span>
+                </a>
+            </div>
+        </details>
+    ))}
+</div>
+
+<style>
+    .skill-links {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: flex-start;
+        gap: 0.65rem;
+    }
+
+    .skill-links--hero {
+        justify-content: center;
+        margin-top: 1.6rem;
+    }
+
+    .skill-links--list {
+        justify-content: center;
+        margin-top: 2.2rem;
+    }
+
+    .skill-disclosure {
+        min-width: 0;
+    }
+
+    .skill-disclosure[open] {
+        flex-basis: 100%;
+    }
+
+    .skill-disclosure summary {
+        padding: 0.58rem 0.78rem;
+        border: 1px solid #284b69;
+        border-radius: 7px;
+        background: rgba(9, 27, 43, 0.92);
+        color: #c8d8e6;
+        font-size: 0.78rem;
+        font-weight: 650;
+        line-height: 1.2;
+        cursor: pointer;
+        list-style: none;
+        transition: border-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
+    }
+
+    .skill-disclosure summary::-webkit-details-marker {
+        display: none;
+    }
+
+    .skill-disclosure summary:hover,
+    .skill-disclosure[open] summary {
+        border-color: #168dff;
+        color: #ffffff;
+        transform: translateY(-1px);
+    }
+
+    .skill-disclosure summary::after {
+        content: "+";
+        margin-left: 0.45rem;
+        color: #65baff;
+        font-weight: 800;
+    }
+
+    .skill-disclosure[open] summary::after {
+        content: "−";
+    }
+
+    .skill-dropdown {
+        width: 100%;
+        margin-top: 0.7rem;
+        padding: 1rem;
+        border: 1px solid rgba(22, 141, 255, 0.5);
+        border-radius: 10px;
+        background: rgba(7, 23, 38, 0.98);
+        box-shadow: 0 18px 40px rgba(0, 0, 0, 0.2);
+        text-align: left;
+    }
+
+    .skill-dropdown p {
+        max-width: 760px;
+        margin: 0 0 1rem;
+        color: #aebfcd;
+        font-size: 0.86rem;
+        line-height: 1.65;
+    }
+
+    .skill-dropdown strong {
+        display: block;
+        margin-bottom: 0.55rem;
+        color: #ffffff;
+        font-size: 0.72rem;
+        letter-spacing: 0.07em;
+        text-transform: uppercase;
+    }
+
+    .skill-dropdown ul {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.55rem 1rem;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+    }
+
+    .skill-dropdown li a,
+    .skill-profile {
+        color: #b9d9f7;
+        font-size: 0.82rem;
+        font-weight: 700;
+        text-decoration: none;
+    }
+
+    .skill-dropdown li a:hover,
+    .skill-profile:hover {
+        color: #ffffff;
+        text-decoration: underline;
+    }
+
+    .skill-profile {
+        display: inline-flex;
+        gap: 0.4rem;
+        margin-top: 1rem;
+        padding-top: 0.85rem;
+        border-top: 1px solid rgba(40, 75, 105, 0.7);
+    }
+
+    .skill-links--highlight {
+        justify-content: center;
+        margin-top: 1.65rem;
+    }
+
+    .skill-links--highlight .skill-disclosure summary {
+        border: 1px solid rgba(40, 80, 120, 0.8);
+        border-radius: 999px;
+        background: rgba(8, 25, 42, 0.65);
+        color: #c5d5e4;
+        font-size: 0.8rem;
+    }
+
+    .skill-links summary:focus-visible,
+    .skill-links a:focus-visible {
+        outline: 2px solid #ff8a00;
+        outline-offset: 3px;
+    }
+
+    @media (max-width: 620px) {
+        .skill-disclosure[open] {
+            width: 100%;
+        }
+
+        .skill-dropdown ul {
+            display: grid;
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .skill-disclosure summary {
+            transition: none;
+        }
+    }
+</style>
+
+<script>
+    const closeSiblingSkills = (event: Event) => {
+        const opened = event.target;
+        if (!(opened instanceof HTMLDetailsElement) || !opened.open) return;
+        if (!opened.classList.contains("skill-disclosure")) return;
+
+        const group = opened.closest("[data-skill-links]");
+        group?.querySelectorAll<HTMLDetailsElement>(".skill-disclosure[open]")
+            .forEach((detail) => {
+                if (detail !== opened) detail.open = false;
+            });
+    };
+
+    document.addEventListener("toggle", closeSiblingSkills, true);
+
+    document.addEventListener("keydown", (event) => {
+        if (event.key !== "Escape") return;
+        const opened = document.querySelector<HTMLDetailsElement>(
+            ".skill-disclosure[open]",
+        );
+        if (!opened) return;
+
+        opened.open = false;
+        opened.querySelector<HTMLElement>("summary")?.focus();
+    });
+</script>

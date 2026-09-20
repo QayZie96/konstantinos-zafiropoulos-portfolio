@@ -2,7 +2,10 @@
 /* =========================================================
    PAGE METADATA
    ========================================================= */
-
+import ProjectGallery from "../../components/ProjectGallery.astro";
+import SiteHeader from "../../components/SiteHeader.astro";
+import SiteFooter from "../../components/SiteFooter.astro";
+import SkillLinks from "../../components/SkillLinks.astro";
 const title =
   "Gym Progress System | Excel & VBA Case Study | Konstantinos Zafiropoulos";
 
@@ -37,14 +40,9 @@ const metrics = [
   <head>
     <meta charset="utf-8" />
 
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1"
-    />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <meta name="description" content={description} />
-
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 
     <title>{title}</title>
   </head>
@@ -55,17 +53,7 @@ const metrics = [
            PRIMARY NAVIGATION
            =================================================== -->
 
-      <nav aria-label="Primary navigation">
-        <a class="wordmark" href="/" aria-label="Homepage">
-          KZ<span>.</span>
-        </a>
-
-        <div class="nav-links">
-          <a href="/#projects">Projects</a>
-          <a href="/#about">About</a>
-          <a href="/#contact">Contact</a>
-        </div>
-      </nav>
+      <SiteHeader />
 
       <!-- ===================================================
            HERO
@@ -81,16 +69,19 @@ const metrics = [
         <p class="hero-subtitle">
           A custom Excel and VBA system for turning workout history into clear,
           useful progression data through dynamic charts, historical mappings,
-          diagnostics, and automated analysis.
+          and automated analysis.
         </p>
 
-        <div class="hero-tags">
-          <span>Excel</span>
-          <span>VBA</span>
-          <span>Data Quality</span>
-          <span>Analytics</span>
-          <span>Automation</span>
-        </div>
+        <SkillLinks
+          variant="hero"
+          skills={[
+            "excel",
+            "vba",
+            "data-quality",
+            "data-visualisation",
+            "excel-automation",
+          ]}
+        />
       </header>
 
       <!-- ===================================================
@@ -127,8 +118,8 @@ const metrics = [
           </p>
 
           <p>
-            Instead of treating the workbook as a collection of static cells,
-            I designed it as a system with reusable logic, dynamic charting,
+            Instead of treating the workbook as a collection of static cells, I
+            designed it as a system with reusable logic, dynamic charting,
             historical-data handling, automated calculations, and diagnostic
             checks.
           </p>
@@ -137,6 +128,41 @@ const metrics = [
             The goal was to make performance trends visible quickly while
             keeping weekly data entry simple enough to use consistently.
           </p>
+        </div>
+      </section>
+
+      <!-- =====================================================
+     PROJECT VISUALS — GYM PROGRESS SYSTEM
+     ===================================================== -->
+
+      <section class="case-section">
+        <div class="section-label">
+          <p class="eyebrow">Project visuals</p>
+        </div>
+
+        <div class="section-content">
+          <ProjectGallery
+            title="Training analytics dashboards"
+            description="Edited presentation visuals based on the Excel training dashboard, showing historical strength trends, weekly volume and exercise-level analysis."
+            images={[
+              {
+                src: "/images/projects/gym-progress/dashboard-1.webp",
+                width: 1548,
+                height: 701,
+                alt: "Gym Progress dashboard with weekly training metrics, historical strength trends and recorded training volume.",
+                caption:
+                  "Dashboard overview illustrating the system's weekly summary, historical strength trends and current training-volume reporting.",
+              },
+              {
+                src: "/images/projects/gym-progress/dashboard-2.webp",
+                width: 1551,
+                height: 835,
+                alt: "Gym Progress dashboard showing workout volume distribution and highest recorded exercise volumes.",
+                caption:
+                  "Additional dashboard view illustrating workout-level volume distribution and the exercises contributing the highest recorded volume.",
+              },
+            ]}
+          />
         </div>
       </section>
 
@@ -150,7 +176,9 @@ const metrics = [
         </div>
 
         <div class="section-content">
-          <h2>Workout data is easy to collect and surprisingly hard to read.</h2>
+          <h2>
+            Workout data is easy to collect and surprisingly hard to read.
+          </h2>
 
           <p class="lead">
             Raw workout logs can show what happened, but they do not
@@ -207,9 +235,9 @@ const metrics = [
           <h2>A structured workbook rather than a collection of worksheets.</h2>
 
           <p class="lead">
-            The system is organised around six workout sheets, a historical
-            data layer, reusable chart logic, and VBA procedures that connect
-            the pieces together.
+            The system is organised around six workout sheets, a historical data
+            layer, reusable chart logic, and VBA procedures that connect the
+            pieces together.
           </p>
 
           <div class="operations-grid">
@@ -311,8 +339,8 @@ const metrics = [
                 <h3>Readable data labels</h3>
 
                 <p>
-                  Labels combine weight and repetition information so key
-                  points can be interpreted without constantly reading axes.
+                  Labels combine weight and repetition information so key points
+                  can be interpreted without constantly reading axes.
                 </p>
               </div>
             </article>
@@ -330,7 +358,7 @@ const metrics = [
         </div>
 
         <div class="section-content">
-          <h2>From individual lifts to a portfolio-level view of training.</h2>
+          <h2>From individual lifts to a system-level view of training.</h2>
 
           <p class="lead">
             A separate overall-progress system aggregates exercise performance
@@ -371,11 +399,13 @@ const metrics = [
         </div>
 
         <div class="section-content">
-          <h2>Analytics are only useful when the underlying data can be trusted.</h2>
+          <h2>
+            Analytics are only useful when the underlying data can be trusted.
+          </h2>
 
           <p class="lead">
-            As the workbook became more complex, data-quality checks became a
-            core part of the project rather than an afterthought.
+            As the workbook became more complex, identifying data-quality issues
+            became an important part of maintaining reliable analysis.
           </p>
 
           <div class="diagnostic-list">
@@ -456,75 +486,49 @@ const metrics = [
           <h2>VBA turns the workbook into an interactive tool.</h2>
 
           <p class="lead">
-            VBA handles the repetitive logic behind chart creation,
-            navigation, analysis, diagnostics, and interface behaviour.
+            VBA handles repetitive logic behind chart creation, navigation,
+            analysis, and interface behaviour.
           </p>
 
-          <div class="skills-list">
-            <span>Dynamic chart generation</span>
-            <span>Exercise selection</span>
-            <span>Historical mappings</span>
-            <span>Trend calculations</span>
-            <span>Workbook diagnostics</span>
-            <span>Dashboard updates</span>
-            <span>Shape / button logic</span>
-            <span>Data validation</span>
-          </div>
+          <SkillLinks
+            skills={[
+              "data-visualisation",
+              "interface-design",
+              "data-modelling",
+              "operational-reporting",
+              "dashboards",
+              "vba",
+            ]}
+          />
         </div>
       </section>
 
       <!-- ===================================================
-           SECTION 09 — VISUAL EVIDENCE
+           SECTION 09 — SKILLS DEMONSTRATED
            =================================================== -->
 
       <section class="case-section">
         <div class="section-label">
-          <p class="eyebrow">09 — Visual evidence</p>
-        </div>
-
-        <div class="section-content">
-          <h2>Real workbook screenshots will live here.</h2>
-
-          <p class="lead">
-            This section is intentionally prepared for genuine project
-            screenshots rather than decorative mockups.
-          </p>
-
-          <div class="screenshot-placeholder">
-            <span>Screenshot area</span>
-
-            <p>
-              Exercise charts, dashboard views, workbook layout, and diagnostic
-              output can be added here once the final screenshots are selected.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      <!-- ===================================================
-           SECTION 10 — SKILLS DEMONSTRATED
-           =================================================== -->
-
-      <section class="case-section">
-        <div class="section-label">
-          <p class="eyebrow">10 — Skills demonstrated</p>
+          <p class="eyebrow">09 — Skills demonstrated</p>
         </div>
 
         <div class="section-content">
           <h2>Technical implementation shaped by a real usability problem.</h2>
 
-          <div class="skills-list">
-            <span>Excel</span>
-            <span>VBA</span>
-            <span>Data modelling</span>
-            <span>Data visualisation</span>
-            <span>Automation</span>
-            <span>Debugging</span>
-            <span>Data quality</span>
-            <span>UI design</span>
-            <span>System architecture</span>
-            <span>Iterative development</span>
-          </div>
+          <SkillLinks
+            skills={[
+              "excel",
+              "vba",
+              "data-modelling",
+              "data-visualisation",
+              "excel-automation",
+              "debugging",
+              "data-quality",
+              "interface-design",
+              "system-architecture",
+              "iterative-development",
+            ]}
+          />
         </div>
       </section>
 
@@ -544,17 +548,7 @@ const metrics = [
       </section>
     </main>
 
-    <!-- =====================================================
-         FOOTER
-         ===================================================== -->
-
-    <footer>
-      <span>
-        © {new Date().getFullYear()} Konstantinos Zafiropoulos
-      </span>
-
-      <span>Built with Astro</span>
-    </footer>
+    <SiteFooter />
   </body>
 </html>
 
@@ -703,10 +697,7 @@ const metrics = [
 
   h1,
   h2 {
-    font-family:
-      Georgia,
-      "Times New Roman",
-      serif;
+    font-family: Georgia, "Times New Roman", serif;
 
     font-weight: 400;
 
@@ -757,10 +748,7 @@ const metrics = [
      ========================================================= */
 
   .hero {
-    padding:
-      clamp(5rem, 10vw, 8rem)
-      0
-      clamp(3.5rem, 7vw, 5.5rem);
+    padding: clamp(5rem, 10vw, 8rem) 0 clamp(3.5rem, 7vw, 5.5rem);
   }
 
   .back-link {
@@ -867,9 +855,7 @@ const metrics = [
 
     gap: clamp(2rem, 7vw, 6rem);
 
-    padding:
-      clamp(4.5rem, 9vw, 7.5rem)
-      0;
+    padding: clamp(4.5rem, 9vw, 7.5rem) 0;
 
     border-top: 1px solid var(--color-border);
   }
@@ -1140,59 +1126,11 @@ const metrics = [
   }
 
   /* =========================================================
-     SCREENSHOT PLACEHOLDER
-     ========================================================= */
-
-  .screenshot-placeholder {
-    margin-top: 2.5rem;
-
-    padding:
-      clamp(2rem, 5vw, 4rem);
-
-    border: 1px dashed #31506f;
-    border-radius: 14px;
-
-    background:
-      linear-gradient(
-        135deg,
-        rgba(42, 167, 255, 0.055),
-        rgba(255, 138, 0, 0.02)
-      );
-  }
-
-  .screenshot-placeholder > span {
-    display: block;
-
-    margin-bottom: 0.75rem;
-
-    color: var(--color-orange);
-
-    font-size: 0.75rem;
-    font-weight: 700;
-
-    letter-spacing: 0.08em;
-
-    text-transform: uppercase;
-  }
-
-  .screenshot-placeholder p {
-    max-width: 580px;
-
-    margin-bottom: 0;
-
-    color: #94a8ba;
-
-    line-height: 1.6;
-  }
-
-  /* =========================================================
      PROJECT END
      ========================================================= */
 
   .project-end {
-    padding:
-      clamp(5rem, 10vw, 8rem)
-      0;
+    padding: clamp(5rem, 10vw, 8rem) 0;
 
     border-top: 1px solid var(--color-border);
   }
@@ -1307,5 +1245,68 @@ const metrics = [
     html {
       scroll-behavior: auto;
     }
+  }
+
+  /* =========================================================
+   PROJECT PAGE FINISHING STYLES
+
+   Shared presentation for project-page introductions,
+   closing navigation, and footers.
+
+   Individual case-study sections retain their existing
+   layouts and typography.
+   ========================================================= */
+
+  /* HERO — CENTER CONTENT */
+
+  .hero {
+    text-align: center;
+  }
+
+  .hero h1,
+  .hero-subtitle,
+  .hero .eyebrow {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .hero-breadcrumbs,
+  .hero-tags {
+    justify-content: center;
+  }
+
+  /* Center the hero's standalone back link where present. */
+
+  .hero .back-link {
+    display: inline-block;
+  }
+
+  /* METRICS — CENTER CARD CONTENT */
+
+  .metrics {
+    text-align: center;
+  }
+
+  /* PAGE ENDING */
+
+  .project-end {
+    text-align: center;
+  }
+
+  .project-end h2 {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .project-end-links {
+    justify-content: center;
+  }
+
+  /* FOOTER */
+
+  footer {
+    justify-content: center;
+    text-align: center;
+    flex-wrap: wrap;
   }
 </style>

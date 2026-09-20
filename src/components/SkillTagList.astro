@@ -1,0 +1,53 @@
+---
+import { getSkill } from "../data/skills";
+
+interface Props {
+    skills: string[];
+    label?: string;
+}
+
+const { skills: skillIds, label = "Skills demonstrated" } = Astro.props;
+const entries = skillIds.map(getSkill);
+---
+
+<div class="skill-tag-list" aria-label={label}>
+    {entries.map((skill) => (
+        <a href={`/skills/#${skill.id}`}>{skill.label}</a>
+    ))}
+</div>
+
+<style>
+    .skill-tag-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.45rem;
+        margin-top: auto;
+        padding-top: 1.2rem;
+    }
+
+    .skill-tag-list a {
+        padding: 0.42rem 0.6rem;
+        border: 1px solid #213e58;
+        border-radius: 6px;
+        background: #0a2034;
+        color: #c0d1de;
+        font-size: 0.68rem;
+        line-height: 1.2;
+        text-decoration: none;
+        transition: border-color 0.2s ease, color 0.2s ease;
+    }
+
+    .skill-tag-list a:hover {
+        border-color: #168dff;
+        color: #ffffff;
+    }
+
+    .skill-tag-list a:focus-visible {
+        outline: 2px solid #ff8a00;
+        outline-offset: 3px;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .skill-tag-list a { transition: none; }
+    }
+</style>

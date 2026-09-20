@@ -2,25 +2,28 @@
 /* =========================================================
    PAGE METADATA
    ========================================================= */
-
+import ProjectGallery from "../../../components/ProjectGallery.astro";
+import SiteHeader from "../../../components/SiteHeader.astro";
+import SiteFooter from "../../../components/SiteFooter.astro";
+import SkillLinks from "../../../components/SkillLinks.astro";
 const title =
     "Financial & Operations Tracker | Rocketeers | Konstantinos Zafiropoulos";
 
 const description =
-    "Case study of the Excel-based financial and operations tracker used to monitor Rocketeers marketplace performance.";
+    "Historical case study of the Excel financial and operations tracker used at Rocketeers. Surviving workbook records cover December 2017 to December 2019, not lifetime business totals.";
 
 const metrics = [
     {
         value: "$55.6K",
-        label: "Recorded eBay turnover",
+        label: "Historical eBay turnover (2017–2019)",
     },
     {
         value: "4,154",
-        label: "Customer orders",
+        label: "Historical customer orders",
     },
     {
         value: "6,372",
-        label: "Products sold",
+        label: "Historical products sold",
     },
     {
         value: "25",
@@ -41,8 +44,6 @@ const metrics = [
 
         <meta name="description" content={description} />
 
-        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-
         <title>{title}</title>
     </head>
 
@@ -52,17 +53,7 @@ const metrics = [
            PRIMARY NAVIGATION
            =================================================== -->
 
-            <nav aria-label="Primary navigation">
-                <a class="wordmark" href="/" aria-label="Homepage">
-                    KZ<span>.</span>
-                </a>
-
-                <div class="nav-links">
-                    <a href="/#projects">Projects</a>
-                    <a href="/#about">About</a>
-                    <a href="/#contact">Contact</a>
-                </div>
-            </nav>
+            <SiteHeader />
 
             <!-- ===================================================
            HERO
@@ -90,14 +81,33 @@ const metrics = [
                     and approximate profitability.
                 </p>
 
-                <div class="hero-tags">
-                    <span>Excel</span>
-                    <span>Commercial Operations</span>
-                    <span>Marketplace Analytics</span>
-                    <span>Sales Tracking</span>
-                    <span>Inventory Tracking</span>
-                    <span>Operational Reporting</span>
+                <!-- Clearly distinguish the historical workbook from lifetime business metrics. -->
+                <div class="history-notice" role="note">
+                    <strong
+                        >Historical workbook snapshot · December 2017–December
+                        2019</strong
+                    >
+                    <p>
+                        This surviving file documents part of the business's
+                        history, not Rocketeers' full financial performance.
+                        Rocketeers operated until January 2024 and sold more
+                        than 23,000 items over its lifetime. The figures below
+                        refer only to the historical records represented in this
+                        case study.
+                    </p>
                 </div>
+
+                <SkillLinks
+                    variant="hero"
+                    skills={[
+                        "excel",
+                        "commercial-operations",
+                        "commercial-analysis",
+                        "sales-tracking",
+                        "inventory-management",
+                        "operational-reporting",
+                    ]}
+                />
             </header>
 
             <!-- ===================================================
@@ -154,6 +164,33 @@ const metrics = [
                 </div>
             </section>
 
+            <!-- =====================================================
+     PROJECT VISUALS — FINANCIAL TRACKER
+     ===================================================== -->
+
+            <section class="case-section">
+                <div class="section-label">
+                    <p class="eyebrow">Project visuals</p>
+                </div>
+
+                <div class="section-content">
+                    <ProjectGallery
+                        title="Inside the Financial & Operations Tracker"
+                        description="An edited presentation of the surviving Excel workbook, illustrating its original commercial reporting structure."
+                        images={[
+                            {
+                                src: "/images/projects/rocketeers/financial.webp",
+                                width: 1590,
+                                height: 648,
+                                alt: "Financial Tracker spreadsheet showing sales summaries, estimated profitability, platform balances, inventory and expenses.",
+                                caption:
+                                    "Edited workbook visual illustrating the historical financial and operational tracking system. Figures shown belong to the surviving historical records, not Rocketeers' complete lifetime performance.",
+                            },
+                        ]}
+                    />
+                </div>
+            </section>
+
             <!-- ===================================================
            SECTION 02 — SCOPE
            =================================================== -->
@@ -165,8 +202,8 @@ const metrics = [
 
                 <div class="section-content">
                     <h2>
-                        The surviving workbook documents 25 months of real
-                        marketplace activity.
+                        The surviving workbook records cover a historical
+                        portion of the business.
                     </h2>
 
                     <p class="lead">
@@ -205,10 +242,11 @@ const metrics = [
                         <strong>Important scope note</strong>
 
                         <p>
-                            These figures represent surviving eBay-focused
-                            finance records, not the full lifetime performance
-                            of Rocketeers and not all platforms used during the
-                            business's history.
+                            The figures on this page describe a historical
+                            eBay-focused workbook extract. They are neither
+                            full-lifetime Rocketeers totals nor an all-platform
+                            financial statement. The business continued
+                            operating after the period shown here.
                         </p>
                     </div>
                 </div>
@@ -368,7 +406,7 @@ const metrics = [
 
                 <div class="section-content">
                     <h2>
-                        The surviving records document a substantial period of
+                        Historical workbook figures show a documented period of
                         marketplace activity.
                     </h2>
 
@@ -405,14 +443,19 @@ const metrics = [
                     </div>
 
                     <div class="important-note">
-                        <strong>Profit methodology</strong>
+                        <strong
+                            >Historical figures and profit methodology</strong
+                        >
 
                         <p>
-                            Approximate operating profit should be interpreted
-                            cautiously because the workbook and calculation
-                            methodology evolved over time. Turnover, order
-                            count, and product volume are cleaner historical
-                            metrics.
+                            These are figures documented from the surviving
+                            historical workbook, not independently recovered
+                            lifetime eBay totals. Approximate operating profit
+                            is an internal workbook measure, not an audited
+                            net-profit figure; its calculation methodology
+                            evolved over time. Historical turnover, order count,
+                            and product volume are presented separately from
+                            lifetime activity.
                         </p>
                     </div>
                 </div>
@@ -700,7 +743,7 @@ const metrics = [
                             <span>04</span>
 
                             <div>
-                                <strong>Total Profits apprx</strong>
+                                <strong>Approximate Operating Profit</strong>
                                 <p>
                                     Approximate operating profit after
                                     acquisition cost, marketplace fees, and
@@ -713,7 +756,9 @@ const metrics = [
                             <span>05</span>
 
                             <div>
-                                <strong>Total Outcome no inv</strong>
+                                <strong
+                                    >Cash Position Excluding Inventory</strong
+                                >
                                 <p>
                                     Monetary position excluding estimated
                                     in-game inventory value.
@@ -764,77 +809,12 @@ const metrics = [
             </section>
 
             <!-- ===================================================
-           SECTION 11 — VISUAL EVIDENCE
-           =================================================== -->
-
-            <section class="case-section">
-                <div class="section-label">
-                    <p class="eyebrow">11 — Evidence</p>
-                </div>
-
-                <div class="section-content">
-                    <h2>
-                        The final public version will use real workbook
-                        evidence.
-                    </h2>
-
-                    <p class="lead">
-                        The original finance workbook should remain private,
-                        while a sanitized presentation layer can show the
-                        operating model and verified historical metrics.
-                    </p>
-
-                    <div class="screenshot-grid">
-                        <div class="screenshot-placeholder">
-                            <span>01</span>
-                            <strong>Monthly performance</strong>
-
-                            <p>
-                                Authentic source-sheet view showing sales and
-                                operating performance.
-                            </p>
-                        </div>
-
-                        <div class="screenshot-placeholder">
-                            <span>02</span>
-                            <strong>Platform breakdown</strong>
-
-                            <p>
-                                PC, PS4, and Xbox tracking from the surviving
-                                workbook.
-                            </p>
-                        </div>
-
-                        <div class="screenshot-placeholder">
-                            <span>03</span>
-                            <strong>Inventory & trading</strong>
-
-                            <p>
-                                Source view showing the relationship between
-                                trading, inventory, and monetary position.
-                            </p>
-                        </div>
-
-                        <div class="screenshot-placeholder">
-                            <span>04</span>
-                            <strong>Performance summary</strong>
-
-                            <p>
-                                A sanitized portfolio chart or dashboard built
-                                from the surviving historical records.
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- ===================================================
            SECTION 12 — SKILLS DEMONSTRATED
            =================================================== -->
 
             <section class="case-section">
                 <div class="section-label">
-                    <p class="eyebrow">12 — Skills demonstrated</p>
+                    <p class="eyebrow">11 — Skills demonstrated</p>
                 </div>
 
                 <div class="section-content">
@@ -843,18 +823,20 @@ const metrics = [
                         information.
                     </h2>
 
-                    <div class="skills-list">
-                        <span>Excel</span>
-                        <span>Commercial Operations</span>
-                        <span>Marketplace Analytics</span>
-                        <span>Sales Tracking</span>
-                        <span>Inventory Tracking</span>
-                        <span>Revenue Monitoring</span>
-                        <span>Channel Analysis</span>
-                        <span>Basic Financial Analysis</span>
-                        <span>Operational Reporting</span>
-                        <span>Business Ownership</span>
-                    </div>
+                    <SkillLinks
+                        skills={[
+                            "excel",
+                            "commercial-operations",
+                            "commercial-analysis",
+                            "sales-tracking",
+                            "inventory-management",
+                            "revenue-monitoring",
+                            "channel-analysis",
+                            "financial-analysis",
+                            "operational-reporting",
+                            "business-ownership",
+                        ]}
+                    />
                 </div>
             </section>
 
@@ -891,13 +873,7 @@ const metrics = [
          FOOTER
          ===================================================== -->
 
-        <footer>
-            <span>
-                © {new Date().getFullYear()} Konstantinos Zafiropoulos
-            </span>
-
-            <span> Built with Astro · Git/GitHub · VS Code · Netlify </span>
-        </footer>
+        <SiteFooter />
     </body>
 </html>
 
@@ -1162,6 +1138,35 @@ const metrics = [
         background: #081f2a;
 
         font-size: 0.74rem;
+    }
+
+    /* =========================================================
+       HISTORICAL DATA NOTICE — visible immediately before the metrics
+       ========================================================= */
+    .history-notice {
+        max-width: 850px;
+        margin: 2rem 0 0;
+        padding: 1.25rem 1.5rem;
+        border: 1px solid rgba(38, 213, 162, 0.5);
+        border-left: 4px solid var(--green);
+        border-radius: 12px;
+        background: linear-gradient(
+            115deg,
+            rgba(38, 213, 162, 0.08),
+            rgba(22, 141, 255, 0.025)
+        );
+    }
+    .history-notice strong {
+        display: block;
+        margin-bottom: 0.5rem;
+        color: #e8fff7;
+        font-size: 0.94rem;
+    }
+    .history-notice p {
+        margin: 0;
+        color: var(--muted);
+        line-height: 1.65;
+        font-size: 0.92rem;
     }
 
     /* =========================================================
@@ -1770,64 +1775,6 @@ const metrics = [
     }
 
     /* =========================================================
-     SCREENSHOT PLACEHOLDERS
-     ========================================================= */
-
-    .screenshot-grid {
-        display: grid;
-
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-
-        gap: 1rem;
-
-        margin-top: 2.5rem;
-    }
-
-    .screenshot-placeholder {
-        min-height: 210px;
-
-        padding: 1.5rem;
-
-        border: 1px dashed #315372;
-        border-radius: 12px;
-
-        background: linear-gradient(
-            135deg,
-            rgba(38, 213, 162, 0.04),
-            rgba(22, 141, 255, 0.02)
-        );
-    }
-
-    .screenshot-placeholder > span {
-        display: block;
-
-        margin-bottom: 2rem;
-
-        color: var(--orange);
-
-        font-size: 0.72rem;
-        font-weight: 800;
-    }
-
-    .screenshot-placeholder strong {
-        display: block;
-
-        margin-bottom: 0.6rem;
-
-        color: white;
-    }
-
-    .screenshot-placeholder p {
-        margin-bottom: 0;
-
-        color: #91a6b8;
-
-        font-size: 0.85rem;
-
-        line-height: 1.5;
-    }
-
-    /* =========================================================
      SKILLS
      ========================================================= */
 
@@ -1982,5 +1929,68 @@ const metrics = [
         html {
             scroll-behavior: auto;
         }
+    }
+
+    /* =========================================================
+   PROJECT PAGE FINISHING STYLES
+
+   Shared presentation for project-page introductions,
+   closing navigation, and footers.
+
+   Individual case-study sections retain their existing
+   layouts and typography.
+   ========================================================= */
+
+    /* HERO — CENTER CONTENT */
+
+    .hero {
+        text-align: center;
+    }
+
+    .hero h1,
+    .hero-subtitle,
+    .hero .eyebrow {
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .hero-breadcrumbs,
+    .hero-tags {
+        justify-content: center;
+    }
+
+    /* Center the hero's standalone back link where present. */
+
+    .hero .back-link {
+        display: inline-block;
+    }
+
+    /* METRICS — CENTER CARD CONTENT */
+
+    .metrics {
+        text-align: center;
+    }
+
+    /* PAGE ENDING */
+
+    .project-end {
+        text-align: center;
+    }
+
+    .project-end h2 {
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .project-end-links {
+        justify-content: center;
+    }
+
+    /* FOOTER */
+
+    footer {
+        justify-content: center;
+        text-align: center;
+        flex-wrap: wrap;
     }
 </style>
