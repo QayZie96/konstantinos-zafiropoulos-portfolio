@@ -6,7 +6,13 @@
 import ProjectGallery from "../../components/ProjectGallery.astro";
 import SiteHeader from "../../components/SiteHeader.astro";
 import SiteFooter from "../../components/SiteFooter.astro";
+import SeoHead from "../../components/SeoHead.astro";
 import SkillLinks from "../../components/SkillLinks.astro";
+import RocketeersPerformance from "../../components/RocketeersPerformance.astro";
+import {
+  rocketeersFeedbackMetrics,
+  rocketeersHeadlineMetrics,
+} from "../../data/rocketeers";
 
 const title =
   "Rocketeers | Marketplace Business & Operations | Konstantinos Zafiropoulos";
@@ -14,24 +20,7 @@ const title =
 const description =
   "Overview of Rocketeers — a digital marketplace business and the operational systems built around it.";
 
-const metrics = [
-  {
-    value: "23K+",
-    label: "Items sold",
-  },
-  {
-    value: "6,455",
-    label: "Seller feedback entries",
-  },
-  {
-    value: "0",
-    label: "Negative feedback",
-  },
-  {
-    value: "20+",
-    label: "Countries served",
-  },
-];
+const metrics = rocketeersHeadlineMetrics;
 ---
 
 <html lang="en">
@@ -40,13 +29,7 @@ const metrics = [
          ===================================================== -->
 
   <head>
-    <meta charset="utf-8" />
-
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-
-    <meta name="description" content={description} />
-
-    <title>{title}</title>
+    <SeoHead {title} {description} type="article" />
   </head>
 
   <body>
@@ -142,6 +125,20 @@ const metrics = [
         </div>
       </section>
 
+      <!-- =================================================
+                 PERFORMANCE EVIDENCE
+                 ================================================= -->
+
+      <section class="case-section performance-section">
+        <div class="section-label">
+          <p class="eyebrow">Performance evidence</p>
+        </div>
+
+        <div class="section-content">
+          <RocketeersPerformance />
+        </div>
+      </section>
+
       <!-- =====================================================
      PROJECT VISUALS — HISTORICAL STOREFRONT
      ===================================================== -->
@@ -217,13 +214,13 @@ const metrics = [
                 </div>
 
                 <div>
-                  <strong>6,455</strong>
-                  <span>feedback entries</span>
+                  <strong>$219.8K</strong>
+                  <span>documented USD sales</span>
                 </div>
 
                 <div>
                   <strong>0</strong>
-                  <span>negative feedback</span>
+                  <span>negative feedback on final live profile</span>
                 </div>
               </div>
 
@@ -395,30 +392,20 @@ const metrics = [
           <h2>Operational quality showed up in customer feedback.</h2>
 
           <p class="lead">
-            Across the account history, Rocketeers accumulated 6,455 seller
-            feedback entries with zero negative feedback and one neutral entry.
+            The final live seller profile showed 6,454 positive feedback
+            entries, one neutral entry, and zero negative feedback. Historical
+            negative records present in the export were subsequently revised.
           </p>
 
           <div class="feedback-grid">
-            <article>
-              <strong>6,455</strong>
-              <span>seller feedback entries</span>
-            </article>
-
-            <article>
-              <strong>3,361</strong>
-              <span>positive feedback score</span>
-            </article>
-
-            <article>
-              <strong>0</strong>
-              <span>negative feedback</span>
-            </article>
-
-            <article>
-              <strong>1</strong>
-              <span>neutral feedback</span>
-            </article>
+            {
+              rocketeersFeedbackMetrics.map((metric) => (
+                <article>
+                  <strong>{metric.value}</strong>
+                  <span>{metric.label}</span>
+                </article>
+              ))
+            }
           </div>
 
           <p>
@@ -478,10 +465,10 @@ const metrics = [
 
             <article>
               <span>Customer operations</span>
-              <strong>Thousands served</strong>
+              <strong>6,944 buyer IDs</strong>
               <p>
-                More transactions meant more exceptions, questions, disputes,
-                and operational risk.
+                Documented buyers created repeat business alongside more
+                exceptions, questions, disputes, and operational risk.
               </p>
             </article>
           </div>
@@ -523,6 +510,8 @@ const metrics = [
               "inventory-management",
               "process-improvement",
               "commercial-analysis",
+              "data-visualisation",
+              "operational-reporting",
               "seller-performance",
               "operational-scaling",
               "decision-making",
@@ -1095,6 +1084,27 @@ const metrics = [
     margin: 2.5rem 0;
   }
 
+  /* Larger cards make the operating model readable without forcing six narrow columns. */
+  .operating-flow {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    max-width: 980px;
+    margin: 2.5rem auto;
+    gap: 1rem;
+  }
+
+  .operating-flow .flow-arrow {
+    display: none;
+  }
+
+  .operating-flow .flow-step {
+    min-height: 130px;
+    padding: 1.25rem;
+  }
+
+  .operating-flow .flow-step strong {
+    font-size: 0.96rem;
+  }
+
   .flow-step {
     display: flex;
     flex-direction: column;
@@ -1375,6 +1385,13 @@ const metrics = [
 
     .feedback-grid {
       grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 720px) {
+    .operating-flow {
+      grid-template-columns: 1fr;
+      max-width: 560px;
     }
   }
 

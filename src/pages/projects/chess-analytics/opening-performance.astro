@@ -1,0 +1,253 @@
+---
+import SeoHead from "../../../components/SeoHead.astro";
+import SiteFooter from "../../../components/SiteFooter.astro";
+import SiteHeader from "../../../components/SiteHeader.astro";
+import "../../../styles/chess-dashboard.css";
+
+const title = "Opening Performance Dashboard | Chess Analytics | Konstantinos Zafiropoulos";
+const description = "Interactive opening-performance analysis across comparable opponents in a 500,000-game early-August 2026 Lichess sample.";
+---
+
+<html lang="en">
+    <head><SeoHead {title} {description} type="article" /></head>
+    <body>
+        <main>
+            <SiteHeader />
+            <div class="dashboard-shell" data-opening-dashboard>
+                <header class="dashboard-hero">
+                    <nav class="breadcrumbs" aria-label="Breadcrumb">
+                        <a href="/#projects">Projects</a><span aria-hidden="true">→</span>
+                        <a href="/projects/chess-analytics/">Chess Analytics</a><span aria-hidden="true">→</span>
+                        <strong>Opening Performance</strong>
+                    </nav>
+                    <p class="eyebrow">Interactive Astro dashboard</p>
+                    <h1>Opening Performance Explorer</h1>
+                    <p class="hero-lead">Compare opening outcomes by rating band, player colour, and speed for opponents separated by no more than 100 Elo.</p>
+                </header>
+
+                <section class="dashboard-panel filter-panel" aria-labelledby="opening-filters-title">
+                    <div class="filter-heading">
+                        <div><h2 id="opening-filters-title">Filter the analysis</h2><p>KPI cards and colour outcomes use all filtered observations; the table applies its own 100-observation minimum.</p></div>
+                        <button type="button" data-reset>Reset filters</button>
+                    </div>
+                    <div class="filters">
+                        <label>Opening<select data-filter="opening_name"><option value="">All openings</option></select></label>
+                        <label>Rating band<select data-filter="rating_band"><option value="">All rating bands</option></select></label>
+                        <label>Player colour<select data-filter="player_color"><option value="">All colours</option></select></label>
+                        <label>Speed category<select data-filter="speed_category"><option value="">All speeds</option></select></label>
+                    </div>
+                    <p class="status" role="status" aria-live="polite" data-status>Loading reviewed aggregate data…</p>
+                </section>
+
+                <section class="kpi-grid" aria-label="Filtered opening-performance metrics">
+                    <article class="kpi-card"><span>Player-Side Observations</span><strong data-kpi="games">—</strong></article>
+                    <article class="kpi-card accent"><span>Opening Wins</span><strong data-kpi="wins">—</strong></article>
+                    <article class="kpi-card"><span>Opening Draws</span><strong data-kpi="draws">—</strong></article>
+                    <article class="kpi-card"><span>Opening Losses</span><strong data-kpi="losses">—</strong></article>
+                    <article class="kpi-card accent"><span>Observed Win Rate</span><strong data-kpi="rate">—</strong></article>
+                </section>
+
+                <section class="dashboard-panel" aria-labelledby="outcomes-title">
+                    <div class="chart-heading"><h2 id="outcomes-title">Observed outcomes by player colour</h2><p>Orange represents wins, blue draws, and grey losses. Segment width is the share of filtered player-side observations.</p></div>
+                    <ul class="outcome-list" data-outcomes aria-live="polite"></ul>
+                </section>
+
+                <section class="dashboard-panel table-panel" aria-labelledby="comparison-title">
+                    <div class="chart-heading"><h2 id="comparison-title">Opening comparison</h2><p>Only displayed groups with at least 100 player-side observations after the active filters are included.</p></div>
+                    <p class="table-summary" data-table-summary aria-live="polite"></p>
+                    <div class="table-scroll">
+                        <table>
+                            <thead><tr><th>Opening</th><th>Rating band</th><th>Colour</th><th>Speed</th><th>Observations</th><th>Win rate</th><th>Draw rate</th><th>Loss rate</th></tr></thead>
+                            <tbody data-table-body></tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <p class="method-note">Each eligible game contributes two observations: one from White's perspective and one from Black's. The 764,194 unfiltered total therefore represents 382,097 unique games, not 764,194 games. Results are descriptive associations, not causal effects.</p>
+                <noscript><p class="empty-state">JavaScript is required to use the dashboard filters.</p></noscript>
+            </div>
+        </main>
+        <SiteFooter />
+
+        <script>
+            import { formatInteger, formatPercent, loadCompactRows, titleCase } from "../../../lib/chess-data";
+
+            type OpeningRow = {
+                opening_name: string;
+                eco_code: string;
+                rating_band: string;
+                player_color: string;
+                speed_category: string;
+                games: number;
+                wins: number;
+                draws: number;
+                losses: number;
+            };
+
+            type Totals = { games: number; wins: number; draws: number; losses: number };
+            type ComparisonRow = Totals & Pick<OpeningRow, "opening_name" | "rating_band" | "player_color" | "speed_category">;
+
+            const root = document.querySelector<HTMLElement>("[data-opening-dashboard]");
+
+            if (root) {
+                const status = root.querySelector<HTMLElement>("[data-status]")!;
+                const selects = Array.from(root.querySelectorAll<HTMLSelectElement>("[data-filter]"));
+                const ratingOrder = ["Below 800", "800-1199", "1200-1499", "1500-1799", "1800-2099", "2100+"];
+                const speedOrder = ["ultrabullet", "bullet", "blitz", "rapid", "classical", "correspondence"];
+                let rows: OpeningRow[] = [];
+
+                const sumRows = (source: OpeningRow[]): Totals => source.reduce(
+                    (total, row) => ({
+                        games: total.games + Number(row.games),
+                        wins: total.wins + Number(row.wins),
+                        draws: total.draws + Number(row.draws),
+                        losses: total.losses + Number(row.losses),
+                    }),
+                    { games: 0, wins: 0, draws: 0, losses: 0 },
+                );
+
+                const renderOutcomes = (filtered: OpeningRow[]) => {
+                    const list = root.querySelector<HTMLUListElement>("[data-outcomes]")!;
+                    list.replaceChildren();
+                    const colours = ["Black", "White"].filter((colour) => filtered.some((row) => row.player_color === colour));
+
+                    if (colours.length === 0) {
+                        const empty = document.createElement("li");
+                        empty.className = "empty-state";
+                        empty.textContent = "No observations match these filters.";
+                        list.append(empty);
+                        return;
+                    }
+
+                    colours.forEach((colour) => {
+                        const totals = sumRows(filtered.filter((row) => row.player_color === colour));
+                        const item = document.createElement("li");
+                        const heading = document.createElement("div");
+                        heading.className = "outcome-heading";
+                        heading.innerHTML = `<strong>${colour}</strong><span>${formatInteger(totals.games)} observations</span>`;
+                        const bar = document.createElement("div");
+                        bar.className = "stacked-bar";
+                        bar.setAttribute("role", "img");
+                        bar.setAttribute("aria-label", `${colour}: ${formatPercent(totals.wins, totals.games)} wins, ${formatPercent(totals.draws, totals.games)} draws, ${formatPercent(totals.losses, totals.games)} losses`);
+                        [totals.wins, totals.draws, totals.losses].forEach((value) => {
+                            const segment = document.createElement("span");
+                            segment.style.width = `${totals.games ? (value / totals.games) * 100 : 0}%`;
+                            bar.append(segment);
+                        });
+                        const values = document.createElement("div");
+                        values.className = "outcome-values";
+                        values.innerHTML = `<span>Wins ${formatInteger(totals.wins)}</span><span>Draws ${formatInteger(totals.draws)}</span><span>Losses ${formatInteger(totals.losses)}</span>`;
+                        item.append(heading, bar, values);
+                        list.append(item);
+                    });
+                };
+
+                const renderTable = (filtered: OpeningRow[]) => {
+                    const grouped = new Map<string, ComparisonRow>();
+                    filtered.forEach((row) => {
+                        const key = [row.opening_name, row.rating_band, row.player_color, row.speed_category].join("\u0001");
+                        const current = grouped.get(key) ?? {
+                            opening_name: row.opening_name,
+                            rating_band: row.rating_band,
+                            player_color: row.player_color,
+                            speed_category: row.speed_category,
+                            games: 0, wins: 0, draws: 0, losses: 0,
+                        };
+                        current.games += Number(row.games);
+                        current.wins += Number(row.wins);
+                        current.draws += Number(row.draws);
+                        current.losses += Number(row.losses);
+                        grouped.set(key, current);
+                    });
+
+                    const eligible = [...grouped.values()].filter((row) => row.games >= 100).sort((a, b) => b.games - a.games || a.opening_name.localeCompare(b.opening_name));
+                    const displayed = eligible.slice(0, 100);
+                    const body = root.querySelector<HTMLTableSectionElement>("[data-table-body]")!;
+                    const summary = root.querySelector<HTMLElement>("[data-table-summary]")!;
+                    body.replaceChildren();
+
+                    if (displayed.length === 0) {
+                        const tableRow = document.createElement("tr");
+                        const cell = document.createElement("td");
+                        cell.colSpan = 8;
+                        cell.className = "empty-state";
+                        cell.textContent = "No opening groups meet the 100-observation minimum with these filters.";
+                        tableRow.append(cell);
+                        body.append(tableRow);
+                        summary.textContent = "0 qualifying comparison groups.";
+                        return;
+                    }
+
+                    displayed.forEach((row) => {
+                        const tableRow = document.createElement("tr");
+                        [
+                            row.opening_name,
+                            row.rating_band,
+                            row.player_color,
+                            titleCase(row.speed_category),
+                            formatInteger(row.games),
+                            formatPercent(row.wins, row.games),
+                            formatPercent(row.draws, row.games),
+                            formatPercent(row.losses, row.games),
+                        ].forEach((value) => {
+                            const cell = document.createElement("td");
+                            cell.textContent = value;
+                            tableRow.append(cell);
+                        });
+                        body.append(tableRow);
+                    });
+
+                    summary.textContent = eligible.length > displayed.length
+                        ? `Showing the 100 largest of ${formatInteger(eligible.length)} qualifying groups.`
+                        : `${formatInteger(eligible.length)} qualifying comparison groups.`;
+                };
+
+                const update = () => {
+                    const active = Object.fromEntries(selects.map((select) => [select.dataset.filter!, select.value]));
+                    const filtered = rows.filter((row) => Object.entries(active).every(([field, value]) => !value || String(row[field as keyof OpeningRow]) === value));
+                    const totals = sumRows(filtered);
+                    root.querySelector<HTMLElement>("[data-kpi=games]")!.textContent = formatInteger(totals.games);
+                    root.querySelector<HTMLElement>("[data-kpi=wins]")!.textContent = formatInteger(totals.wins);
+                    root.querySelector<HTMLElement>("[data-kpi=draws]")!.textContent = formatInteger(totals.draws);
+                    root.querySelector<HTMLElement>("[data-kpi=losses]")!.textContent = formatInteger(totals.losses);
+                    root.querySelector<HTMLElement>("[data-kpi=rate]")!.textContent = formatPercent(totals.wins, totals.games);
+                    renderOutcomes(filtered);
+                    renderTable(filtered);
+                    status.textContent = totals.games ? `${formatInteger(totals.games)} player-side observations in the current view.` : "No observations match these filters.";
+                };
+
+                loadCompactRows<OpeningRow>(
+                    "/data/chess-analytics/opening-performance.v1.json",
+                    ["opening_name", "eco_code", "rating_band", "player_color", "speed_category", "games", "wins", "draws", "losses"],
+                ).then((loadedRows) => {
+                    rows = loadedRows;
+                    const optionOrders: Record<string, string[]> = {
+                        opening_name: [...new Set(rows.map((row) => row.opening_name))].sort((a, b) => a.localeCompare(b)),
+                        rating_band: ratingOrder,
+                        player_color: ["Black", "White"],
+                        speed_category: speedOrder,
+                    };
+                    selects.forEach((select) => {
+                        const field = select.dataset.filter!;
+                        optionOrders[field].forEach((value) => {
+                            if (!rows.some((row) => String(row[field as keyof OpeningRow]) === value)) return;
+                            const option = document.createElement("option");
+                            option.value = value;
+                            option.textContent = field === "speed_category" ? titleCase(value) : value;
+                            select.append(option);
+                        });
+                        select.addEventListener("change", update);
+                    });
+                    root.querySelector<HTMLButtonElement>("[data-reset]")!.addEventListener("click", () => {
+                        selects.forEach((select) => { select.value = ""; });
+                        update();
+                    });
+                    update();
+                }).catch((error: unknown) => {
+                    status.dataset.error = "true";
+                    status.textContent = error instanceof Error ? error.message : "The dashboard data could not be loaded.";
+                });
+            }
+        </script>
+    </body>
+</html>

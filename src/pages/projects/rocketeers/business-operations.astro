@@ -5,7 +5,13 @@
 
 import SiteHeader from "../../../components/SiteHeader.astro";
 import SiteFooter from "../../../components/SiteFooter.astro";
+import SeoHead from "../../../components/SeoHead.astro";
+import HorizontalBarChart from "../../../components/HorizontalBarChart.astro";
 import SkillLinks from "../../../components/SkillLinks.astro";
+import {
+    rocketeersFeedbackMetrics,
+    rocketeersSummary,
+} from "../../../data/rocketeers";
 
 const title =
     "Business & Marketplace Operations | Rocketeers | Konstantinos Zafiropoulos";
@@ -16,19 +22,19 @@ const description =
 const metrics = [
     {
         value: "23K+",
-        label: "Items sold",
+        label: "Items sold across the business",
     },
     {
-        value: "6,455",
-        label: "Seller feedback entries",
+        value: "6,944",
+        label: "Documented unique buyer IDs",
     },
     {
-        value: "3,361",
-        label: "Positive feedback score",
+        value: "42,982",
+        label: "Documented message records",
     },
     {
         value: "0",
-        label: "Negative feedback",
+        label: "Negative feedback on the final live profile",
     },
 ];
 ---
@@ -39,13 +45,7 @@ const metrics = [
          ===================================================== -->
 
     <head>
-        <meta charset="utf-8" />
-
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-
-        <meta name="description" content={description} />
-
-        <title>{title}</title>
+        <SeoHead {title} {description} type="article" />
     </head>
 
     <body>
@@ -399,31 +399,21 @@ const metrics = [
                     </h2>
 
                     <p class="lead">
-                        Across the history of the eBay account, Rocketeers
-                        accumulated 6,455 feedback entries with zero negative
-                        feedback and only one neutral feedback entry.
+                        The final live eBay profile showed 6,454 positive
+                        feedback entries, one neutral entry, and zero negative
+                        feedback. Historical negative records in the export
+                        were subsequently revised.
                     </p>
 
                     <div class="feedback-grid">
-                        <article>
-                            <strong>6,455</strong>
-                            <span>seller feedback entries</span>
-                        </article>
-
-                        <article>
-                            <strong>0</strong>
-                            <span>negative feedback</span>
-                        </article>
-
-                        <article>
-                            <strong>1</strong>
-                            <span>neutral feedback</span>
-                        </article>
-
-                        <article>
-                            <strong>3,361</strong>
-                            <span>positive feedback score</span>
-                        </article>
+                        {
+                            rocketeersFeedbackMetrics.map((metric) => (
+                                <article>
+                                    <strong>{metric.value}</strong>
+                                    <span>{metric.label}</span>
+                                </article>
+                            ))
+                        }
                     </div>
 
                     <p>
@@ -446,13 +436,74 @@ const metrics = [
                 </div>
             </section>
 
+            <HorizontalBarChart
+                title="Documented annual eBay volume"
+                description="Full-year item volume rose substantially as the operation, catalogue, and supporting processes scaled."
+                items={[
+                    { label: "2018", value: 2600, display: "2,600 items" },
+                    { label: "2019", value: 3262, display: "3,262 items" },
+                    { label: "2020", value: 7687, display: "7,687 items" },
+                    { label: "2021", value: 6175, display: "6,175 items" },
+                ]}
+                sourceNote="Full calendar years from the reviewed eBay transaction export. Partial 2017 and 2022 periods are excluded from this comparison."
+            />
+
             <!-- =================================================
-                 SECTION 06 — SCALE
+                 SECTION 06 — DOCUMENTED OPERATING EVIDENCE
                  ================================================= -->
 
             <section class="case-section">
                 <div class="section-label">
-                    <p class="eyebrow">06 — Scale</p>
+                    <p class="eyebrow">06 — Operating evidence</p>
+                </div>
+
+                <div class="section-content">
+                    <h2>The export shows the workload behind the storefront.</h2>
+
+                    <p class="lead">
+                        Transaction, customer-service, return, and dispute
+                        records provide a documented view of the operation
+                        through May 2022.
+                    </p>
+
+                    <div class="scale-grid">
+                        <article>
+                            <strong>{rocketeersSummary.activeSalesDays.toLocaleString("en-US")}</strong>
+                            <span> active sales days </span>
+                        </article>
+
+                        <article>
+                            <strong>{rocketeersSummary.messageRecords.toLocaleString("en-US")}</strong>
+                            <span> inbox and sent-message records </span>
+                        </article>
+
+                        <article>
+                            <strong>0.45%</strong>
+                            <span> seller-side return-case rate </span>
+                        </article>
+
+                        <article>
+                            <strong>0.24%</strong>
+                            <span> dispute-claim rate </span>
+                        </article>
+                    </div>
+
+                    <p>
+                        The communication export begins in September 2020, so
+                        the message count represents only part of the business's
+                        operating history. Return and dispute rates use exported
+                        sale rows as the available denominator.
+                    </p>
+                </div>
+            </section>
+
+            <!-- =================================================
+                 SECTION 07 — SCALE
+                 ================================================= -->
+
+            <section class="case-section">
+                <div class="section-label">
+                    <p class="eyebrow">07 — Scale</p>
                 </div>
 
                 <div class="section-content">
@@ -473,8 +524,8 @@ const metrics = [
                         </article>
 
                         <article>
-                            <strong>5,000+</strong>
-                            <span> customers served </span>
+                            <strong>6,944</strong>
+                            <span> documented unique buyer IDs </span>
                         </article>
 
                         <article>
@@ -498,12 +549,12 @@ const metrics = [
             </section>
 
             <!-- =================================================
-                 SECTION 07 — SYSTEMS THAT EMERGED
+                 SECTION 08 — SYSTEMS THAT EMERGED
                  ================================================= -->
 
             <section class="case-section">
                 <div class="section-label">
-                    <p class="eyebrow">07 — Systems built</p>
+                    <p class="eyebrow">08 — Systems built</p>
                 </div>
 
                 <div class="section-content">
@@ -550,12 +601,12 @@ const metrics = [
             </section>
 
             <!-- =================================================
-                 SECTION 08 — DECISION-MAKING
+                 SECTION 09 — DECISION-MAKING
                  ================================================= -->
 
             <section class="case-section">
                 <div class="section-label">
-                    <p class="eyebrow">08 — Decision-making</p>
+                    <p class="eyebrow">09 — Decision-making</p>
                 </div>
 
                 <div class="section-content">
@@ -585,12 +636,12 @@ const metrics = [
             </section>
 
             <!-- =================================================
-                 SECTION 09 — RESULTS
+                 SECTION 10 — RESULTS
                  ================================================= -->
 
             <section class="case-section">
                 <div class="section-label">
-                    <p class="eyebrow">09 — Results</p>
+                    <p class="eyebrow">10 — Results</p>
                 </div>
 
                 <div class="section-content">
@@ -614,15 +665,15 @@ const metrics = [
                         </div>
 
                         <div>
-                            <strong> 6,455 </strong>
+                            <strong> $219.8K </strong>
 
-                            <span> feedback entries </span>
+                            <span> documented eBay USD gross sales </span>
                         </div>
 
                         <div>
                             <strong> 0 </strong>
 
-                            <span> negative feedback </span>
+                            <span> negative feedback on final live profile </span>
                         </div>
 
                         <div>
@@ -635,12 +686,12 @@ const metrics = [
             </section>
 
             <!-- =================================================
-                 SECTION 10 — SKILLS DEMONSTRATED
+                 SECTION 11 — SKILLS DEMONSTRATED
                  ================================================= -->
 
             <section class="case-section">
                 <div class="section-label">
-                    <p class="eyebrow">10 — Skills demonstrated</p>
+                    <p class="eyebrow">11 — Skills demonstrated</p>
                 </div>
 
                 <div class="section-content">
@@ -663,6 +714,8 @@ const metrics = [
                             "process-improvement",
                             "decision-making",
                             "operational-scaling",
+                            "commercial-analysis",
+                            "operational-reporting",
                         ]}
                     />
                 </div>

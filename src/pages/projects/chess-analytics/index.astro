@@ -1,0 +1,124 @@
+---
+import ProjectGallery from "../../../components/ProjectGallery.astro";
+import SeoHead from "../../../components/SeoHead.astro";
+import SiteFooter from "../../../components/SiteFooter.astro";
+import SiteHeader from "../../../components/SiteHeader.astro";
+import SkillLinks from "../../../components/SkillLinks.astro";
+import "../../../styles/chess-case.css";
+
+const title = "Chess Analytics | Python, SQL & Power BI Case Study | Konstantinos Zafiropoulos";
+const description = "End-to-end analysis of 500,000 Lichess games using Python, DuckDB SQL, Power BI, and interactive browser dashboards.";
+
+const metrics = [
+    { value: "500K", label: "rated standard games sampled" },
+    { value: "118,787", label: "rating-upset eligible games" },
+    { value: "30,779", label: "observed lower-rated wins" },
+    { value: "382,097", label: "comparable-opponent games" },
+];
+---
+
+<html lang="en">
+    <head><SeoHead {title} {description} type="article" /></head>
+    <body>
+        <main>
+            <SiteHeader />
+            <div class="page-shell">
+                <header class="hero">
+                    <nav class="breadcrumbs" aria-label="Breadcrumb">
+                        <a href="/#projects">Projects</a><span aria-hidden="true">→</span><strong>Chess Analytics</strong>
+                    </nav>
+                    <p class="eyebrow">Data analysis · Python · DuckDB SQL · Power BI</p>
+                    <h1>Chess Analytics</h1>
+                    <p class="hero-subtitle">An end-to-end analytical project examining rating upsets and opening performance across the first 500,000 rated standard games in the official Lichess August 2026 archive.</p>
+
+                    <SkillLinks variant="hero" skills={["python", "sql", "duckdb", "power-bi", "data-analysis", "data-visualisation"]} />
+
+                    <div class="hero-actions">
+                        <a class="button" href="/projects/chess-analytics/rating-upsets/">Explore Rating Upsets →</a>
+                        <a class="button" href="/projects/chess-analytics/opening-performance/">Explore Opening Performance →</a>
+                        <a class="button" href="https://github.com/QayZie96/Chess-Analytics" target="_blank" rel="noopener noreferrer">View source on GitHub ↗</a>
+                    </div>
+                </header>
+
+                <section class="metrics" aria-label="Chess Analytics key metrics">
+                    {metrics.map((metric) => <article class="metric"><strong>{metric.value}</strong><span>{metric.label}</span></article>)}
+                </section>
+
+                <section class="case-section">
+                    <div class="section-label"><p class="eyebrow">01 — Questions</p></div>
+                    <div class="section-content">
+                        <h2>Two focused questions, tested on one bounded sample.</h2>
+                        <div class="objective-grid">
+                            <article class="info-card"><strong>Rating upsets</strong><p>How often does a lower-rated player win when the pre-game rating gap is at least 100 Elo?</p></article>
+                            <article class="info-card"><strong>Opening performance</strong><p>How do observed opening outcomes vary by rating, colour, and speed when opponents are similarly rated?</p></article>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="case-section">
+                    <div class="section-label"><p class="eyebrow">02 — Workflow</p></div>
+                    <div class="section-content">
+                        <h2>From a large PGN archive to validated, privacy-safe aggregates.</h2>
+                        <div class="workflow">
+                            <article class="step-card"><span>01</span><strong>Extract</strong><p>Python streamed the compressed archive into bounded, resumable batches.</p></article>
+                            <article class="step-card"><span>02</span><strong>Transform</strong><p>DuckDB SQL defined the eligible populations and aggregate counts.</p></article>
+                            <article class="step-card"><span>03</span><strong>Validate</strong><p>Python EDA and Power BI cross-checked totals, rates, filters, and definitions.</p></article>
+                            <article class="step-card"><span>04</span><strong>Publish</strong><p>Reviewed aggregate JSON powers the two static Astro dashboards.</p></article>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="case-section">
+                    <div class="section-label"><p class="eyebrow">03 — Explore</p></div>
+                    <div class="section-content">
+                        <h2>Two interactive browser dashboards.</h2>
+                        <p>These are Astro and JavaScript implementations built from reviewed aggregate data. They reproduce the analytical logic; they are not embedded Power BI reports.</p>
+                        <div class="dashboard-grid">
+                            <article class="dashboard-card"><h3>Rating Upsets</h3><p>Filter by speed, rating gap, and lower-rated-player band. Every rate is recalculated from summed numerator and denominator counts.</p><a href="/projects/chess-analytics/rating-upsets/">Open interactive dashboard →</a></article>
+                            <article class="dashboard-card"><h3>Opening Performance</h3><p>Filter openings, rating bands, player colour, and speed, with a dynamically thresholded comparison table.</p><a href="/projects/chess-analytics/opening-performance/">Open interactive dashboard →</a></article>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="case-section gallery-section">
+                    <ProjectGallery
+                        title="Original Power BI report"
+                        description="These screenshots show the original Power BI Desktop report used to validate the analysis. The interactive portfolio dashboards above are separate Astro implementations."
+                        images={[
+                            { src: "/images/projects/chess-analytics/rating-upsets-power-bi.webp", alt: "Power BI Rating Upsets report with KPI cards, filters, and three bar charts", caption: "Rating Upsets in Power BI Desktop: validated KPIs and weighted-rate comparisons by rating gap, speed, and lower-rated-player band.", width: 1920, height: 1080 },
+                            { src: "/images/projects/chess-analytics/opening-performance-power-bi.webp", alt: "Power BI Opening Performance Explorer with KPI cards, filters, outcome chart, and comparison table", caption: "Opening Performance Explorer in Power BI Desktop: player-side KPIs, colour outcomes, filters, and the 100-observation comparison rule.", width: 1920, height: 1080 },
+                        ]}
+                    />
+                </section>
+
+                <section class="case-section">
+                    <div class="section-label"><p class="eyebrow">04 — Findings</p></div>
+                    <div class="section-content">
+                        <h2>Validated descriptive findings.</h2>
+                        <div class="finding-grid">
+                            <article class="info-card"><strong>25.91%</strong><p>Observed upset rate across 118,787 eligible games.</p></article>
+                            <article class="info-card"><strong>35.41% → 11.06%</strong><p>Upset rate fell from the 100–199 Elo band to the 400+ band.</p></article>
+                            <article class="info-card"><strong>764,194</strong><p>Player-side opening observations, representing 382,097 unique games.</p></article>
+                            <article class="info-card"><strong>48.15%</strong><p>Unfiltered opening win rate across the comparable-opponent population.</p></article>
+                        </div>
+                        <div class="limitation"><strong>Interpretation boundary:</strong> the sample contains the first 500,000 games encountered in the August archive. It is not random or representative of the full month, all Lichess players, or chess generally. Results describe associations and do not establish causation.</div>
+                    </div>
+                </section>
+
+                <section class="case-section skills-section">
+                    <div class="section-label"><p class="eyebrow">05 — Evidence</p></div>
+                    <div class="section-content">
+                        <h2>Methods, code, and source context.</h2>
+                        <p>The public repository documents the workflow, definitions, SQL, Python validation, privacy controls, Power BI source, and aggregate browser-data schema.</p>
+                        <div class="project-links">
+                            <a class="button button-primary" href="https://github.com/QayZie96/Chess-Analytics" target="_blank" rel="noopener noreferrer">GitHub repository ↗</a>
+                            <a class="button" href="https://github.com/QayZie96/Chess-Analytics/tree/main/powerbi" target="_blank" rel="noopener noreferrer">Power BI source ↗</a>
+                            <a class="button" href="https://database.lichess.org/" target="_blank" rel="noopener noreferrer">Lichess Open Database ↗</a>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+        <SiteFooter />
+    </body>
+</html>

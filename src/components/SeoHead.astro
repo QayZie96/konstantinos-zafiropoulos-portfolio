@@ -1,0 +1,63 @@
+---
+interface Props {
+    title: string;
+    description: string;
+    type?: "website" | "article";
+}
+
+const { title, description, type = "website" } = Astro.props;
+const siteUrl = Astro.site ?? new URL("https://konstantinoszafiropoulos.netlify.app");
+const canonicalUrl = new URL(Astro.url.pathname, siteUrl);
+const isHomepage = Astro.url.pathname === "/";
+
+const structuredData = isHomepage
+    ? {
+          "@context": "https://schema.org",
+          "@type": "Person",
+          name: "Konstantinos Zafiropoulos",
+          url: canonicalUrl.href,
+          jobTitle: "Marketplace Operations, Automation and Data Professional",
+          knowsAbout: [
+              "Marketplace operations",
+              "E-commerce operations",
+              "Excel",
+              "VBA",
+              "Python",
+              "SQL",
+              "Power BI",
+              "Workflow automation",
+              "WordPress",
+          ],
+      }
+    : {
+          "@context": "https://schema.org",
+          "@type": type === "article" ? "CreativeWork" : "WebPage",
+          name: title,
+          description,
+          url: canonicalUrl.href,
+          author: {
+              "@type": "Person",
+              name: "Konstantinos Zafiropoulos",
+          },
+      };
+---
+
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="description" content={description} />
+<meta name="robots" content="index, follow" />
+<meta name="theme-color" content="#050d18" />
+<link rel="canonical" href={canonicalUrl} />
+
+<meta property="og:type" content={type} />
+<meta property="og:site_name" content="Konstantinos Zafiropoulos Portfolio" />
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+<meta property="og:url" content={canonicalUrl} />
+
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content={title} />
+<meta name="twitter:description" content={description} />
+
+<title>{title}</title>
+<script type="application/ld+json" set:html={JSON.stringify(structuredData)} />

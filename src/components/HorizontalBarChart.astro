@@ -1,0 +1,141 @@
+---
+interface Item {
+    label: string;
+    value: number;
+    display: string;
+    note?: string;
+}
+
+interface Props {
+    title: string;
+    description: string;
+    items: Item[];
+    sourceNote?: string;
+}
+
+const { title, description, items, sourceNote } = Astro.props;
+const maxValue = Math.max(...items.map((item) => item.value), 1);
+---
+
+<section class="bar-chart-card" aria-label={title}>
+    <header>
+        <p class="chart-kicker">Data snapshot</p>
+        <h2>{title}</h2>
+        <p>{description}</p>
+    </header>
+
+    <ul>
+        {items.map((item) => (
+            <li>
+                <div class="bar-label">
+                    <span>{item.label}</span>
+                    <strong>{item.display}</strong>
+                </div>
+                <div class="bar-track" aria-hidden="true">
+                    <span style={`--bar-width: ${(item.value / maxValue) * 100}%`}></span>
+                </div>
+                {item.note && <small>{item.note}</small>}
+            </li>
+        ))}
+    </ul>
+
+    {sourceNote && <p class="source-note">{sourceNote}</p>}
+</section>
+
+<style>
+    .bar-chart-card {
+        max-width: 980px;
+        margin: 0 auto clamp(4rem, 8vw, 7rem);
+        padding: clamp(1.35rem, 3vw, 2rem);
+        border: 1px solid #1d354a;
+        border-radius: 14px;
+        background: linear-gradient(145deg, rgba(10, 27, 43, 0.96), rgba(6, 18, 31, 0.96));
+    }
+
+    header {
+        max-width: 720px;
+        margin: 0 auto 1.75rem;
+        text-align: center;
+    }
+
+    .chart-kicker {
+        margin: 0 0 0.55rem;
+        color: #ff8a00;
+        font-size: 0.7rem;
+        font-weight: 800;
+        letter-spacing: 0.11em;
+        text-transform: uppercase;
+    }
+
+    h2 {
+        margin: 0 0 0.65rem;
+        color: #ffffff;
+        font-size: clamp(1.35rem, 2.5vw, 1.8rem);
+    }
+
+    header > p:last-child,
+    .source-note {
+        color: #a9bbcc;
+        line-height: 1.6;
+    }
+
+    ul {
+        display: grid;
+        gap: 1rem;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+    }
+
+    .bar-label {
+        display: flex;
+        justify-content: space-between;
+        gap: 1rem;
+        margin-bottom: 0.45rem;
+        color: #cbd8e3;
+        font-size: 0.85rem;
+    }
+
+    .bar-label strong {
+        flex: 0 0 auto;
+        color: #ffffff;
+    }
+
+    .bar-track {
+        height: 11px;
+        overflow: hidden;
+        border-radius: 999px;
+        background: #10283c;
+    }
+
+    .bar-track span {
+        display: block;
+        width: var(--bar-width);
+        min-width: 4px;
+        height: 100%;
+        border-radius: inherit;
+        background: linear-gradient(90deg, #168dff, #65baff);
+    }
+
+    small {
+        display: block;
+        margin-top: 0.35rem;
+        color: #71869a;
+        font-size: 0.7rem;
+    }
+
+    .source-note {
+        margin: 1.25rem 0 0;
+        padding-top: 1rem;
+        border-top: 1px solid rgba(29, 53, 74, 0.8);
+        font-size: 0.75rem;
+    }
+
+    @media (max-width: 560px) {
+        .bar-label {
+            align-items: flex-start;
+            flex-direction: column;
+            gap: 0.2rem;
+        }
+    }
+</style>

@@ -6,6 +6,7 @@
 
 import SiteHeader from "../../components/SiteHeader.astro";
 import SiteFooter from "../../components/SiteFooter.astro";
+import SeoHead from "../../components/SeoHead.astro";
 import SkillLinks from "../../components/SkillLinks.astro";
 
 const title =
@@ -47,10 +48,7 @@ const hasDashboard = dashboardUrl.startsWith("https://");
          ===================================================== -->
 
     <head>
-        <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <meta name="description" content={description} />
-        <title>{title}</title>
+        <SeoHead {title} {description} type="article" />
     </head>
 
     <body>

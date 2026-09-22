@@ -1,0 +1,184 @@
+---
+import SeoHead from "../../../components/SeoHead.astro";
+import SiteFooter from "../../../components/SiteFooter.astro";
+import SiteHeader from "../../../components/SiteHeader.astro";
+import "../../../styles/chess-dashboard.css";
+
+const title = "Rating Upsets Dashboard | Chess Analytics | Konstantinos Zafiropoulos";
+const description = "Interactive analysis of rating upsets across a 500,000-game early-August 2026 Lichess sample.";
+---
+
+<html lang="en">
+    <head><SeoHead {title} {description} type="article" /></head>
+    <body>
+        <main>
+            <SiteHeader />
+            <div class="dashboard-shell" data-upset-dashboard>
+                <header class="dashboard-hero">
+                    <nav class="breadcrumbs" aria-label="Breadcrumb">
+                        <a href="/#projects">Projects</a><span aria-hidden="true">→</span>
+                        <a href="/projects/chess-analytics/">Chess Analytics</a><span aria-hidden="true">→</span>
+                        <strong>Rating Upsets</strong>
+                    </nav>
+                    <p class="eyebrow">Interactive Astro dashboard</p>
+                    <h1>Rating Upsets</h1>
+                    <p class="hero-lead">Explore how often lower-rated players won across rating gaps, speed categories, and lower-rated-player bands.</p>
+                </header>
+
+                <section class="dashboard-panel filter-panel" aria-labelledby="filters-title">
+                    <div class="filter-heading">
+                        <div><h2 id="filters-title">Filter the analysis</h2><p>Every metric and chart updates from summed game counts.</p></div>
+                        <button type="button" data-reset>Reset filters</button>
+                    </div>
+                    <div class="filters">
+                        <label>Speed category<select data-filter="speed_category"><option value="">All speeds</option></select></label>
+                        <label>Rating-gap band<select data-filter="rating_gap_band"><option value="">All gaps</option></select></label>
+                        <label>Lower-rated band<select data-filter="lower_rated_player_band"><option value="">All rating bands</option></select></label>
+                    </div>
+                    <p class="status" role="status" aria-live="polite" data-status>Loading reviewed aggregate data…</p>
+                </section>
+
+                <section class="kpi-grid kpi-grid--three" aria-label="Filtered rating-upset metrics">
+                    <article class="kpi-card"><span>Eligible Games</span><strong data-kpi="eligible">—</strong></article>
+                    <article class="kpi-card"><span>Upset Games</span><strong data-kpi="upsets">—</strong></article>
+                    <article class="kpi-card accent"><span>Observed Upset Rate</span><strong data-kpi="rate">—</strong></article>
+                </section>
+
+                <div class="chart-grid">
+                    <section class="dashboard-panel">
+                        <div class="chart-heading"><h2>By rating-gap band</h2><p>Upsets divided by eligible games in each displayed band.</p></div>
+                        <ul class="dashboard-bars" data-chart="rating_gap_band" aria-live="polite"></ul>
+                    </section>
+                    <section class="dashboard-panel">
+                        <div class="chart-heading"><h2>By speed category</h2><p>Observed rates across the six Lichess speed categories.</p></div>
+                        <ul class="dashboard-bars" data-chart="speed_category" aria-live="polite"></ul>
+                    </section>
+                    <section class="dashboard-panel">
+                        <div class="chart-heading"><h2>By lower-rated player band</h2><p>Observed rates grouped by the lower-rated player's band.</p></div>
+                        <ul class="dashboard-bars" data-chart="lower_rated_player_band" aria-live="polite"></ul>
+                    </section>
+                </div>
+
+                <p class="method-note">An upset is a win by the lower-rated player against an opponent rated at least 100 Elo higher. Draws remain in the eligible-game denominator. Results are descriptive of this early-August sample, not all Lichess games.</p>
+                <noscript><p class="empty-state">JavaScript is required to use the dashboard filters.</p></noscript>
+            </div>
+        </main>
+        <SiteFooter />
+
+        <script>
+            import { formatInteger, formatPercent, loadCompactRows, titleCase } from "../../../lib/chess-data";
+
+            type UpsetRow = {
+                speed_category: string;
+                rating_gap_band: string;
+                lower_rated_player_band: string;
+                eligible_games: number;
+                upset_games: number;
+            };
+
+            const root = document.querySelector<HTMLElement>("[data-upset-dashboard]");
+
+            if (root) {
+                const status = root.querySelector<HTMLElement>("[data-status]")!;
+                const selects = Array.from(root.querySelectorAll<HTMLSelectElement>("[data-filter]"));
+                const orders: Record<string, string[]> = {
+                    speed_category: ["ultrabullet", "bullet", "blitz", "rapid", "classical", "correspondence"],
+                    rating_gap_band: ["100-199", "200-399", "400+"],
+                    lower_rated_player_band: ["Below 800", "800-1199", "1200-1499", "1500-1799", "1800-2099", "2100+"],
+                };
+                let rows: UpsetRow[] = [];
+
+                const sumRows = (source: UpsetRow[]) => source.reduce(
+                    (total, row) => ({
+                        eligible: total.eligible + Number(row.eligible_games),
+                        upsets: total.upsets + Number(row.upset_games),
+                    }),
+                    { eligible: 0, upsets: 0 },
+                );
+
+                const renderBars = (field: keyof Pick<UpsetRow, "speed_category" | "rating_gap_band" | "lower_rated_player_band">, filtered: UpsetRow[]) => {
+                    const list = root.querySelector<HTMLUListElement>(`[data-chart="${field}"]`)!;
+                    list.replaceChildren();
+                    const grouped = new Map<string, UpsetRow[]>();
+                    filtered.forEach((row) => {
+                        const key = String(row[field]);
+                        grouped.set(key, [...(grouped.get(key) ?? []), row]);
+                    });
+
+                    const values = orders[field].filter((value) => grouped.has(value));
+                    if (values.length === 0) {
+                        const empty = document.createElement("li");
+                        empty.className = "empty-state";
+                        empty.textContent = "No data matches these filters.";
+                        list.append(empty);
+                        return;
+                    }
+
+                    values.forEach((value) => {
+                        const totals = sumRows(grouped.get(value)!);
+                        const rate = totals.eligible ? (totals.upsets / totals.eligible) * 100 : 0;
+                        const item = document.createElement("li");
+                        const label = document.createElement("div");
+                        label.className = "bar-label";
+                        const name = document.createElement("span");
+                        name.textContent = field === "speed_category" ? titleCase(value) : value;
+                        const result = document.createElement("strong");
+                        result.textContent = formatPercent(totals.upsets, totals.eligible);
+                        label.append(name, result);
+                        const track = document.createElement("div");
+                        track.className = "bar-track";
+                        track.setAttribute("role", "progressbar");
+                        track.setAttribute("aria-label", `${name.textContent}: ${result.textContent}`);
+                        track.setAttribute("aria-valuemin", "0");
+                        track.setAttribute("aria-valuemax", "100");
+                        track.setAttribute("aria-valuenow", rate.toFixed(2));
+                        const bar = document.createElement("span");
+                        bar.style.setProperty("--bar-width", `${Math.min(rate, 100)}%`);
+                        track.append(bar);
+                        item.append(label, track);
+                        list.append(item);
+                    });
+                };
+
+                const update = () => {
+                    const active = Object.fromEntries(selects.map((select) => [select.dataset.filter!, select.value]));
+                    const filtered = rows.filter((row) => Object.entries(active).every(([field, value]) => !value || String(row[field as keyof UpsetRow]) === value));
+                    const totals = sumRows(filtered);
+                    root.querySelector<HTMLElement>("[data-kpi=eligible]")!.textContent = formatInteger(totals.eligible);
+                    root.querySelector<HTMLElement>("[data-kpi=upsets]")!.textContent = formatInteger(totals.upsets);
+                    root.querySelector<HTMLElement>("[data-kpi=rate]")!.textContent = formatPercent(totals.upsets, totals.eligible);
+                    renderBars("rating_gap_band", filtered);
+                    renderBars("speed_category", filtered);
+                    renderBars("lower_rated_player_band", filtered);
+                    status.textContent = totals.eligible ? `${formatInteger(totals.eligible)} eligible games in the current view.` : "No eligible games match these filters.";
+                };
+
+                loadCompactRows<UpsetRow>(
+                    "/data/chess-analytics/rating-upsets.v1.json",
+                    ["speed_category", "rating_gap_band", "lower_rated_player_band", "eligible_games", "upset_games"],
+                ).then((loadedRows) => {
+                    rows = loadedRows;
+                    selects.forEach((select) => {
+                        const field = select.dataset.filter!;
+                        orders[field].forEach((value) => {
+                            if (!rows.some((row) => String(row[field as keyof UpsetRow]) === value)) return;
+                            const option = document.createElement("option");
+                            option.value = value;
+                            option.textContent = field === "speed_category" ? titleCase(value) : value;
+                            select.append(option);
+                        });
+                        select.addEventListener("change", update);
+                    });
+                    root.querySelector<HTMLButtonElement>("[data-reset]")!.addEventListener("click", () => {
+                        selects.forEach((select) => { select.value = ""; });
+                        update();
+                    });
+                    update();
+                }).catch((error: unknown) => {
+                    status.dataset.error = "true";
+                    status.textContent = error instanceof Error ? error.message : "The dashboard data could not be loaded.";
+                });
+            }
+        </script>
+    </body>
+</html>
