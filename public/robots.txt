@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://konstantinoszafiropoulos.netlify.app/sitemap.xml
