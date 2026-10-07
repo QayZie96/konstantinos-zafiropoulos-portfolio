@@ -1,4 +1,6 @@
 ---
+import GoogleAnalytics from "./GoogleAnalytics.astro";
+
 interface Props {
     title: string;
     description: string;
@@ -9,47 +11,82 @@ const { title, description, type = "website" } = Astro.props;
 const siteUrl = Astro.site ?? new URL("https://konstantinoszafiropoulos.netlify.app");
 const canonicalUrl = new URL(Astro.url.pathname, siteUrl);
 const isHomepage = Astro.url.pathname === "/";
+const personId = new URL("/#person", siteUrl).href;
+const websiteId = new URL("/#website", siteUrl).href;
 
-const structuredData = isHomepage
-    ? {
-          "@context": "https://schema.org",
-          "@type": "Person",
-          name: "Konstantinos Zafiropoulos",
-          url: canonicalUrl.href,
-          jobTitle: "Marketplace Operations, Automation and Data Professional",
-          knowsAbout: [
-              "Marketplace operations",
-              "E-commerce operations",
-              "Excel",
-              "VBA",
-              "Python",
-              "SQL",
-              "Power BI",
-              "Workflow automation",
-              "WordPress",
-          ],
-      }
-    : {
-          "@context": "https://schema.org",
-          "@type": type === "article" ? "CreativeWork" : "WebPage",
-          name: title,
-          description,
-          url: canonicalUrl.href,
-          author: {
-              "@type": "Person",
-              name: "Konstantinos Zafiropoulos",
-          },
-      };
+const person = {
+    "@type": "Person",
+    "@id": personId,
+    name: "Konstantinos Zafiropoulos",
+    url: siteUrl.href,
+    jobTitle: "Marketplace Operations, Automation and Data Professional",
+    sameAs: [
+        "https://github.com/QayZie96",
+        "https://www.linkedin.com/in/konstantinos-zafeiropoulos-18011996/",
+    ],
+    knowsAbout: [
+        "Marketplace operations",
+        "E-commerce operations",
+        "Excel",
+        "VBA",
+        "Python",
+        "SQL",
+        "Power BI",
+        "Workflow automation",
+        "WordPress",
+    ],
+};
+
+const structuredData = {
+    "@context": "https://schema.org",
+    "@graph": [
+        person,
+        {
+            "@type": "WebSite",
+            "@id": websiteId,
+            name: "Konstantinos Zafiropoulos Portfolio",
+            url: siteUrl.href,
+            inLanguage: "en",
+            publisher: { "@id": personId },
+        },
+        isHomepage
+            ? {
+                  "@type": "ProfilePage",
+                  "@id": `${canonicalUrl.href}#page`,
+                  name: title,
+                  description,
+                  url: canonicalUrl.href,
+                  inLanguage: "en",
+                  isPartOf: { "@id": websiteId },
+                  mainEntity: { "@id": personId },
+              }
+            : {
+                  "@type": type === "article" ? "CreativeWork" : "WebPage",
+                  "@id": `${canonicalUrl.href}#page`,
+                  name: title,
+                  description,
+                  url: canonicalUrl.href,
+                  inLanguage: "en",
+                  isPartOf: { "@id": websiteId },
+                  author: { "@id": personId },
+              },
+    ],
+};
 ---
 
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <meta name="description" content={description} />
+<meta name="author" content="Konstantinos Zafiropoulos" />
 <meta name="robots" content="index, follow" />
 <meta name="theme-color" content="#050d18" />
 <link rel="canonical" href={canonicalUrl} />
+<link rel="icon" href="/favicon.ico" sizes="any" />
+<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+<link rel="sitemap" href="/sitemap.xml" />
 
 <meta property="og:type" content={type} />
+<meta property="og:locale" content="en_US" />
 <meta property="og:site_name" content="Konstantinos Zafiropoulos Portfolio" />
 <meta property="og:title" content={title} />
 <meta property="og:description" content={description} />
@@ -61,3 +98,4 @@ const structuredData = isHomepage
 
 <title>{title}</title>
 <script type="application/ld+json" set:html={JSON.stringify(structuredData)} />
+<GoogleAnalytics />

@@ -3,6 +3,7 @@ import type { APIRoute } from "astro";
 const routes = [
     "/",
     "/skills/",
+    "/privacy/",
     "/projects/rocketeers/",
     "/projects/rocketeers/business-operations/",
     "/projects/rocketeers/repricing/",

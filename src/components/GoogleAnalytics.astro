@@ -1,0 +1,69 @@
+---
+const measurementId = "G-S8MHHW0ZCH";
+---
+
+<!--
+    GA4 uses basic Consent Mode: no Google script or analytics request is
+    loaded until the visitor explicitly allows analytics.
+-->
+<script is:inline define:vars={{ measurementId }}>
+    (() => {
+        const consentKey = "kz-analytics-consent";
+        const consentEvent = "kz:analytics-consent";
+
+        window.dataLayer = window.dataLayer || [];
+        window.gtag = window.gtag || function () {
+            window.dataLayer.push(arguments);
+        };
+
+        window.gtag("consent", "default", {
+            ad_storage: "denied",
+            ad_user_data: "denied",
+            ad_personalization: "denied",
+            analytics_storage: "denied",
+        });
+
+        let started = false;
+
+        const readConsent = () => {
+            try {
+                return window.localStorage.getItem(consentKey);
+            } catch {
+                return null;
+            }
+        };
+
+        const startAnalytics = () => {
+            if (started) return;
+            started = true;
+
+            window.gtag("consent", "update", {
+                analytics_storage: "granted",
+            });
+            window.gtag("js", new Date());
+            window.gtag("config", measurementId, {
+                allow_google_signals: false,
+                allow_ad_personalization_signals: false,
+            });
+
+            const script = document.createElement("script");
+            script.async = true;
+            script.src = `https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(measurementId)}`;
+            document.head.appendChild(script);
+        };
+
+        window.addEventListener(consentEvent, (event) => {
+            if (event.detail === "granted") {
+                startAnalytics();
+            } else if (event.detail === "denied") {
+                window.gtag("consent", "update", {
+                    analytics_storage: "denied",
+                });
+            }
+        });
+
+        if (readConsent() === "granted") {
+            startAnalytics();
+        }
+    })();
+</script>

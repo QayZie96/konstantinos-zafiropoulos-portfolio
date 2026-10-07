@@ -1,3 +1,7 @@
+---
+import AnalyticsConsent from "./AnalyticsConsent.astro";
+---
+
 <footer class="site-footer">
     <div class="footer-identity">
         <strong aria-hidden="true">KZ<span>.</span></strong>
@@ -15,8 +19,12 @@
             <a href="/skills/#git-github">Git &amp; GitHub</a>, and
             <a href="/skills/#netlify">Netlify</a>
         </span>
+        <span aria-hidden="true">·</span>
+        <a href="/privacy/">Privacy</a>
     </div>
 </footer>
+
+<AnalyticsConsent />
 
 <style>
     .site-footer {

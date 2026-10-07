@@ -1,0 +1,191 @@
+<aside
+    class="consent-banner"
+    data-consent-banner
+    role="dialog"
+    aria-labelledby="consent-title"
+    aria-describedby="consent-description"
+    hidden
+>
+    <div>
+        <strong id="consent-title">Optional portfolio analytics</strong>
+        <p id="consent-description">
+            With your permission, this site uses Google Analytics to understand
+            which pages and projects are useful. Analytics stays off unless you
+            allow it. See the <a href="/privacy/">privacy notice</a>.
+        </p>
+    </div>
+    <div class="consent-actions">
+        <button type="button" class="allow" data-consent-allow>
+            Allow analytics
+        </button>
+        <button type="button" data-consent-decline>Decline</button>
+    </div>
+</aside>
+
+<button
+    type="button"
+    class="consent-settings"
+    data-consent-settings
+    aria-label="Change analytics privacy choice"
+    hidden
+>
+    Privacy choices
+</button>
+
+<script>
+    const consentKey = "kz-analytics-consent";
+    const consentEvent = "kz:analytics-consent";
+    const banner = document.querySelector<HTMLElement>("[data-consent-banner]");
+    const settings = document.querySelector<HTMLButtonElement>("[data-consent-settings]");
+    const allow = document.querySelector<HTMLButtonElement>("[data-consent-allow]");
+    const decline = document.querySelector<HTMLButtonElement>("[data-consent-decline]");
+
+    const readConsent = () => {
+        try {
+            return window.localStorage.getItem(consentKey);
+        } catch {
+            return null;
+        }
+    };
+
+    const saveConsent = (choice: "granted" | "denied") => {
+        try {
+            window.localStorage.setItem(consentKey, choice);
+        } catch {
+            // If storage is unavailable, analytics remains disabled on reload.
+        }
+    };
+
+    const clearAnalyticsCookies = () => {
+        document.cookie.split(";").forEach((cookie) => {
+            const name = cookie.split("=")[0]?.trim();
+            if (!name?.startsWith("_ga")) return;
+
+            document.cookie = `${name}=; Max-Age=0; path=/; SameSite=Lax`;
+            document.cookie = `${name}=; Max-Age=0; path=/; domain=${location.hostname}; SameSite=Lax`;
+        });
+    };
+
+    const showSavedState = () => {
+        const hasChoice = ["granted", "denied"].includes(readConsent() ?? "");
+        if (banner) banner.hidden = hasChoice;
+        if (settings) settings.hidden = !hasChoice;
+    };
+
+    allow?.addEventListener("click", () => {
+        saveConsent("granted");
+        window.dispatchEvent(new CustomEvent(consentEvent, { detail: "granted" }));
+        showSavedState();
+    });
+
+    decline?.addEventListener("click", () => {
+        const wasGranted = readConsent() === "granted";
+        saveConsent("denied");
+        window.dispatchEvent(new CustomEvent(consentEvent, { detail: "denied" }));
+        clearAnalyticsCookies();
+        showSavedState();
+
+        if (wasGranted) window.location.reload();
+    });
+
+    settings?.addEventListener("click", () => {
+        if (banner) banner.hidden = false;
+        settings.hidden = true;
+    });
+
+    showSavedState();
+</script>
+
+<style>
+    [hidden] {
+        display: none !important;
+    }
+
+    .consent-banner {
+        position: fixed;
+        right: clamp(1rem, 3vw, 2rem);
+        bottom: clamp(1rem, 3vw, 2rem);
+        z-index: 1000;
+        display: grid;
+        gap: 1rem;
+        width: min(520px, calc(100vw - 2rem));
+        padding: 1.15rem;
+        border: 1px solid #28445c;
+        border-radius: 12px;
+        background: #071522;
+        box-shadow: 0 18px 55px rgba(0, 0, 0, 0.42);
+        color: #dce6ee;
+        font: 400 0.9rem/1.55 Inter, ui-sans-serif, system-ui, sans-serif;
+        text-align: left;
+    }
+
+    .consent-banner strong {
+        display: block;
+        margin-bottom: 0.35rem;
+        color: #ffffff;
+        font-size: 1rem;
+    }
+
+    .consent-banner p {
+        margin: 0;
+    }
+
+    .consent-banner a {
+        color: #65baff;
+        text-underline-offset: 0.2em;
+    }
+
+    .consent-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.65rem;
+    }
+
+    .consent-actions button,
+    .consent-settings {
+        min-height: 42px;
+        padding: 0.65rem 0.9rem;
+        border: 1px solid #35617f;
+        border-radius: 7px;
+        background: #0a1c2c;
+        color: #e8eef5;
+        font: 700 0.82rem/1 ui-sans-serif, system-ui, sans-serif;
+        cursor: pointer;
+    }
+
+    .consent-actions .allow {
+        border-color: #168dff;
+        background: #168dff;
+        color: #ffffff;
+    }
+
+    .consent-actions button:hover,
+    .consent-settings:hover {
+        border-color: #65baff;
+    }
+
+    .consent-actions button:focus-visible,
+    .consent-settings:focus-visible {
+        outline: 2px solid #ff8a00;
+        outline-offset: 3px;
+    }
+
+    .consent-settings {
+        position: fixed;
+        right: 1rem;
+        bottom: 1rem;
+        z-index: 999;
+        min-height: 38px;
+        padding: 0.55rem 0.7rem;
+        background: #071522;
+        color: #a9ccec;
+        font-size: 0.72rem;
+    }
+
+    @media (max-width: 520px) {
+        .consent-actions {
+            display: grid;
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
