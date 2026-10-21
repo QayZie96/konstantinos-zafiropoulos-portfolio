@@ -268,7 +268,7 @@ export const skills = [
         id: "data-quality",
         label: "Data Quality",
         umbrella: "excel-vba-analytics",
-        description: "Checking mappings, numeric values, week headers, missing pairs, and bulk-update outputs before relying on results.",
+        description: "Checking mappings, values, gaps, and outputs before any result is relied on.",
         projects: ["repricing", "gym", "chess"],
     },
     {
@@ -282,7 +282,7 @@ export const skills = [
         id: "data-modelling",
         label: "Data Modelling",
         umbrella: "excel-vba-analytics",
-        description: "Organizing current and historical workout records so consistent calculations and chart views can be generated.",
+        description: "Structuring current and historical records so calculations and charts stay consistent.",
         projects: ["gym"],
     },
     {
@@ -324,7 +324,7 @@ export const skills = [
         id: "debugging",
         label: "Debugging",
         umbrella: "excel-vba-analytics",
-        description: "Tracing data, formula, macro, integration, and workflow failures across Excel and Python projects.",
+        description: "Tracing data, formula, macro, integration, and workflow failures to their root cause.",
         projects: ["gym", "aiOutreach"],
     },
     {
@@ -338,7 +338,7 @@ export const skills = [
         id: "system-architecture",
         label: "System Architecture",
         umbrella: "excel-vba-analytics",
-        description: "Separating source data, historical mappings, controls, calculations, and presentation layers into a maintainable system.",
+        description: "Separating sources, storage, logic, and presentation so each system stays maintainable as it grows.",
         projects: ["gym", "aiOutreach", "intelligence"],
     },
     {
@@ -387,14 +387,14 @@ export const skills = [
         id: "human-oversight",
         label: "Human Oversight",
         umbrella: "ai-automation",
-        description: "Keeping final outreach decisions and message approval with a person rather than sending automatically.",
+        description: "Designing automations where people make the final decision and every review is recorded.",
         projects: ["aiOutreach", "intelligence"],
     },
     {
         id: "deduplication",
         label: "Deduplication",
         umbrella: "ai-automation",
-        description: "Preventing repeated processing by normalizing vacancy records and checking previously saved jobs.",
+        description: "Stable identity keys, canonical URLs, and content fingerprints so repeated runs never create duplicates.",
         projects: ["aiOutreach"],
     },
     {
@@ -408,21 +408,21 @@ export const skills = [
         id: "workflow-automation",
         label: "Workflow Automation",
         umbrella: "ai-automation",
-        description: "Connecting data retrieval, filtering, AI evaluation, draft generation, storage, and scheduling into one workflow.",
+        description: "Connecting retrieval, filtering, evaluation, storage, review, and scheduling into workflows that run the same way every time.",
         projects: ["aiOutreach", "intelligence"],
     },
     {
         id: "python",
         label: "Python",
         umbrella: "python-data-web",
-        description: "Building modular data workflows for job automation and large-scale chess analysis, from transformation through validated outputs.",
+        description: "Modular data workflows, large-scale analysis, and deterministic generators backed by automated tests.",
         projects: ["aiOutreach", "chess", "mathWallpapers", "mandala"],
     },
     {
         id: "sql",
         label: "SQL",
         umbrella: "python-data-web",
-        description: "Writing analytical queries that aggregate chess outcomes by rating gap, opening, player colour, rating band, and speed category.",
+        description: "Writing analytical queries in DuckDB and transactional SQL in PostgreSQL, from chess aggregations to idempotent upserts.",
         projects: ["chess", "intelligence"],
     },
     {
@@ -464,7 +464,7 @@ export const skills = [
         id: "rest-api-integration",
         label: "REST API Integration",
         umbrella: "python-data-web",
-        description: "Retrieving job data from Arbeitnow, Remotive, and Adzuna and connecting external AI and spreadsheet services.",
+        description: "Reading public job boards, job APIs, and museum collection APIs, with paging, budgets, and failure handling.",
         projects: ["aiOutreach", "intelligence"],
     },
     {
@@ -478,14 +478,14 @@ export const skills = [
         id: "data-normalization",
         label: "Data Normalization",
         umbrella: "python-data-web",
-        description: "Converting different job-source schemas into one consistent internal record structure.",
+        description: "Mapping different provider formats into one consistent internal record structure.",
         projects: ["aiOutreach", "intelligence"],
     },
     {
         id: "google-sheets-api",
         label: "Google Sheets API",
         umbrella: "python-data-web",
-        description: "Checking saved vacancies and writing qualifying results to a structured Google Sheets dashboard.",
+        description: "Using Google Sheets as a review and reporting surface that stays in sync with the underlying data.",
         projects: ["aiOutreach", "intelligence"],
     },
     {
@@ -611,7 +611,7 @@ export const skills = [
         id: "documentation",
         label: "Documentation",
         umbrella: "python-data-web",
-        description: "Documenting setup, workflow decisions, limitations, and human-review boundaries for practical reuse.",
+        description: "Writing setup guides, design decisions, and operating notes that let others run and extend the work.",
         projects: ["aiOutreach", "intelligence", "mathWallpapers", "mandala"],
     },
     {

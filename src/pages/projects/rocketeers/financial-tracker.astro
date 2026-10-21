@@ -7,28 +7,31 @@ import SiteHeader from "../../../components/SiteHeader.astro";
 import SiteFooter from "../../../components/SiteFooter.astro";
 import SeoHead from "../../../components/SeoHead.astro";
 import SkillLinks from "../../../components/SkillLinks.astro";
+import ProcessFlow from "../../../components/ProcessFlow.astro";
+import TrackerInsights from "../../../components/TrackerInsights.astro";
+import CountUpNumbers from "../../../components/CountUpNumbers.astro";
 const title =
     "Financial & Operations Tracker | Rocketeers | Konstantinos Zafeiropoulos";
 
 const description =
-    "Historical case study of the Excel financial and operations tracker used at Rocketeers. Surviving workbook records cover December 2017 to December 2019, not lifetime business totals.";
+    "Case study of the Excel financial and operations tracker behind Rocketeers, with interactive views of its December 2017 – December 2019 records.";
 
 const metrics = [
     {
         value: "$55.6K",
-        label: "Historical eBay turnover (2017–2019)",
+        label: "eBay turnover, Dec 2017 – Dec 2019",
     },
     {
         value: "4,154",
-        label: "Historical customer orders",
+        label: "Customer orders",
     },
     {
         value: "6,372",
-        label: "Historical products sold",
+        label: "Products sold",
     },
     {
         value: "25",
-        label: "Populated months",
+        label: "Months tracked",
     },
 ];
 ---
@@ -76,19 +79,12 @@ const metrics = [
                     and approximate profitability.
                 </p>
 
-                <!-- Clearly distinguish the historical workbook from lifetime business metrics. -->
                 <div class="history-notice" role="note">
-                    <strong
-                        >Historical workbook snapshot · December 2017–December
-                        2019</strong
-                    >
+                    <strong>Workbook period · December 2017 – December 2019</strong>
                     <p>
-                        This surviving file documents part of the business's
-                        history, not Rocketeers' full financial performance.
-                        Rocketeers operated until January 2024 and sold more
-                        than 23,000 items over its lifetime. The figures below
-                        refer only to the historical records represented in this
-                        case study.
+                        The figures below come from this tracker. Across its
+                        full run to January 2024, Rocketeers sold more than
+                        23,000 items.
                     </p>
                 </div>
 
@@ -158,14 +154,12 @@ const metrics = [
                     </p>
 
                     <div class="history-notice" role="note">
-                        <strong>Validated against a broader eBay export</strong>
+                        <strong>Wider context</strong>
                         <p>
-                            A separate transaction export now documents 21,463
-                            eBay units, $219.8K in USD gross sales, and 6,944
-                            unique buyer IDs through May 2022. Those figures
-                            provide broader business context but do not replace
-                            the historical workbook calculations examined on
-                            this page.
+                            The eBay export through May 2022 records 21,463 units,
+                            $219.8K in USD gross sales and 6,944 unique buyers.
+                            The tracker covers the earlier, formative years in
+                            far more operational detail.
                         </p>
                     </div>
                 </div>
@@ -183,7 +177,7 @@ const metrics = [
                 <div class="section-content">
                     <ProjectGallery
                         title="Inside the Financial & Operations Tracker"
-                        description="An edited presentation of the surviving Excel workbook, illustrating its original commercial reporting structure."
+                        description="An edited presentation of the Excel workbook and its commercial reporting structure."
                         images={[
                             {
                                 src: "/images/projects/rocketeers/financial.webp",
@@ -191,7 +185,7 @@ const metrics = [
                                 height: 648,
                                 alt: "Financial Tracker spreadsheet showing sales summaries, estimated profitability, platform balances, inventory and expenses.",
                                 caption:
-                                    "Edited workbook visual illustrating the historical financial and operational tracking system. Figures shown belong to the surviving historical records, not Rocketeers' complete lifetime performance.",
+                                    "Edited workbook visual showing the financial and operational tracking system. Figures cover December 2017 – December 2019.",
                             },
                         ]}
                     />
@@ -209,19 +203,18 @@ const metrics = [
 
                 <div class="section-content">
                     <h2>
-                        The surviving workbook records cover a historical
-                        portion of the business.
+                        Two years of records, tracked month by month.
                     </h2>
 
                     <p class="lead">
-                        The available finance records cover approximately
-                        December 2017 through December 2019.
+                        The finance records run from December 2017 to December
+                        2019, with each platform tracked as its own channel.
                     </p>
 
                     <div class="scope-grid">
                         <article>
                             <strong>~30</strong>
-                            <span>worksheets in the surviving workbook</span>
+                            <span>worksheets in the workbook</span>
                         </article>
 
                         <article>
@@ -245,17 +238,6 @@ const metrics = [
                         </article>
                     </div>
 
-                    <div class="important-note">
-                        <strong>Important scope note</strong>
-
-                        <p>
-                            The figures on this page describe a historical
-                            eBay-focused workbook extract. They are neither
-                            full-lifetime Rocketeers totals nor an all-platform
-                            financial statement. The business continued
-                            operating after the period shown here.
-                        </p>
-                    </div>
                 </div>
             </section>
 
@@ -350,47 +332,19 @@ const metrics = [
                         then marketplace sales, and finally back into cash.
                     </p>
 
-                    <div class="flow">
-                        <div class="flow-step">
-                            <span>01</span>
-                            <strong>Cash</strong>
-                        </div>
-
-                        <div class="flow-arrow" aria-hidden="true">→</div>
-
-                        <div class="flow-step">
-                            <span>02</span>
-                            <strong>Keys / Credits</strong>
-                        </div>
-
-                        <div class="flow-arrow" aria-hidden="true">→</div>
-
-                        <div class="flow-step">
-                            <span>03</span>
-                            <strong>Inventory</strong>
-                        </div>
-
-                        <div class="flow-arrow" aria-hidden="true">→</div>
-
-                        <div class="flow-step">
-                            <span>04</span>
-                            <strong>Marketplace Listings</strong>
-                        </div>
-
-                        <div class="flow-arrow" aria-hidden="true">→</div>
-
-                        <div class="flow-step">
-                            <span>05</span>
-                            <strong>Customer Sales</strong>
-                        </div>
-
-                        <div class="flow-arrow" aria-hidden="true">→</div>
-
-                        <div class="flow-step">
-                            <span>06</span>
-                            <strong>Cash</strong>
-                        </div>
-                    </div>
+                    <ProcessFlow
+                        id="cash-loop"
+                        label="Rocketeers commercial loop"
+                        loopLabel="Cash from sales funded the next round of keys and credits"
+                        steps={[
+                            { title: "Cash", text: "Working capital from earlier sales." },
+                            { title: "Keys / Credits", text: "Converted into in-game purchasing power." },
+                            { title: "Inventory", text: "Items bought and traded into stock." },
+                            { title: "Listings", text: "Priced variations live on eBay." },
+                            { title: "Customer sales", text: "Orders fulfilled and delivered." },
+                            { title: "Cash", text: "Turnover less fees and costs." },
+                        ]}
+                    />
 
                     <p>
                         In-game trading also affected inventory composition,
@@ -413,8 +367,7 @@ const metrics = [
 
                 <div class="section-content">
                     <h2>
-                        Historical workbook figures show a documented period of
-                        marketplace activity.
+                        Two years of recorded trading, in numbers.
                     </h2>
 
                     <div class="performance-grid">
@@ -449,22 +402,11 @@ const metrics = [
                         </article>
                     </div>
 
-                    <div class="important-note">
-                        <strong
-                            >Historical figures and profit methodology</strong
-                        >
-
-                        <p>
-                            These are figures documented from the surviving
-                            historical workbook, not independently recovered
-                            lifetime eBay totals. Approximate operating profit
-                            is an internal workbook measure, not an audited
-                            net-profit figure; its calculation methodology
-                            evolved over time. Historical turnover, order count,
-                            and product volume are presented separately from
-                            lifetime activity.
-                        </p>
-                    </div>
+                    <p class="metric-definition">
+                        Approximate operating profit is the tracker's own
+                        measure: turnover less acquisition cost, marketplace
+                        fees and related operating costs.
+                    </p>
                 </div>
             </section>
 
@@ -480,74 +422,12 @@ const metrics = [
                 <div class="section-content">
                     <h2>2019 shows clear growth compared with 2018.</h2>
 
-                    <div class="year-grid">
-                        <article class="year-card">
-                            <span>2018</span>
+                    <p class="lead">
+                        Turnover rose 62% and approximate profit more than
+                        doubled in a single year.
+                    </p>
 
-                            <div>
-                                <strong>$20.7K</strong>
-                                <small>turnover</small>
-                            </div>
-
-                            <div>
-                                <strong>1,728</strong>
-                                <small>orders</small>
-                            </div>
-
-                            <div>
-                                <strong>2,604</strong>
-                                <small>products sold</small>
-                            </div>
-
-                            <div>
-                                <strong>$8.7K</strong>
-                                <small>approx. profit</small>
-                            </div>
-                        </article>
-
-                        <div class="growth-arrow" aria-hidden="true">→</div>
-
-                        <article class="year-card year-card-highlight">
-                            <span>2019</span>
-
-                            <div>
-                                <strong>$33.6K</strong>
-                                <small>turnover</small>
-                            </div>
-
-                            <div>
-                                <strong>2,362</strong>
-                                <small>orders</small>
-                            </div>
-
-                            <div>
-                                <strong>3,691</strong>
-                                <small>products sold</small>
-                            </div>
-
-                            <div>
-                                <strong>$18.0K</strong>
-                                <small>approx. profit</small>
-                            </div>
-                        </article>
-                    </div>
-
-                    <div class="growth-metrics">
-                        <div>
-                            <strong>+62%</strong>
-                            <span>turnover</span>
-                        </div>
-
-                        <div>
-                            <strong>+37%</strong>
-                            <span>orders</span>
-                        </div>
-
-                        <div>
-                            <strong>+42%</strong>
-                            <span>products sold</span>
-                        </div>
-                    </div>
+                    <TrackerInsights view="years" />
                 </div>
             </section>
 
@@ -571,49 +451,7 @@ const metrics = [
                         recorded turnover, followed by PC and Xbox.
                     </p>
 
-                    <div class="platform-grid">
-                        <article>
-                            <span>PC</span>
-                            <strong>$11.6K</strong>
-                            <small>turnover</small>
-
-                            <p>781 orders · 1,267 products</p>
-
-                            <div class="platform-bar">
-                                <span style="width: 35%"></span>
-                            </div>
-
-                            <small>~35% of 2019 turnover</small>
-                        </article>
-
-                        <article>
-                            <span>PS4</span>
-                            <strong>$13.3K</strong>
-                            <small>turnover</small>
-
-                            <p>992 orders · 1,669 products</p>
-
-                            <div class="platform-bar">
-                                <span style="width: 40%"></span>
-                            </div>
-
-                            <small>~40% of 2019 turnover</small>
-                        </article>
-
-                        <article>
-                            <span>Xbox</span>
-                            <strong>$8.7K</strong>
-                            <small>turnover</small>
-
-                            <p>589 orders · 755 products</p>
-
-                            <div class="platform-bar">
-                                <span style="width: 26%"></span>
-                            </div>
-
-                            <small>~26% of 2019 turnover</small>
-                        </article>
-                    </div>
+                    <TrackerInsights view="platforms" />
                 </div>
             </section>
 
@@ -874,6 +712,7 @@ const metrics = [
                     </a>
                 </div>
             </section>
+            <CountUpNumbers selector=".performance-grid strong, .scope-grid strong, .peak-grid article > strong, .peak-stats b" />
         </main>
 
         <!-- =====================================================
@@ -2000,5 +1839,16 @@ const metrics = [
         justify-content: center;
         text-align: center;
         flex-wrap: wrap;
+    }
+    /* =========================================================
+       INTERACTIVE ADDITIONS
+       ========================================================= */
+
+    .metric-definition {
+        margin-top: 1.25rem;
+        padding-left: 1rem;
+        border-left: 2px solid rgba(255, 138, 0, 0.65);
+        color: #8fa3b6 !important;
+        font-size: 0.85rem;
     }
 </style>

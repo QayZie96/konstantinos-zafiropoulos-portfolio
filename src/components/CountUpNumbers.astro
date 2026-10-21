@@ -1,0 +1,77 @@
+---
+/* =========================================================
+   COUNT-UP NUMBERS
+
+   Animates any element marked [data-countup] from zero to
+   the number already written in its text ("$55,621", "1.53",
+   "+62%", "23K+") when it scrolls into view. The final text
+   is always restored exactly, and nothing moves for visitors
+   who prefer reduced motion.
+
+   Pass `selector` to animate existing markup without editing it.
+   ========================================================= */
+
+interface Props {
+    selector?: string;
+}
+
+const { selector = "[data-countup]" } = Astro.props;
+---
+
+<span hidden data-countup-selector={selector}></span>
+
+<script>
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    const selectors = Array.from(document.querySelectorAll<HTMLElement>("[data-countup-selector]"))
+        .map((node) => node.dataset.countupSelector)
+        .filter(Boolean)
+        .join(", ");
+    const nodes = selectors ? document.querySelectorAll<HTMLElement>(selectors) : ([] as unknown as NodeListOf<HTMLElement>);
+
+    if (!reduce && "IntersectionObserver" in window) {
+        const animate = (node: HTMLElement) => {
+            const finalText = node.textContent ?? "";
+            const match = finalText.match(/^([^\d]*)([\d,]*\.?\d+)(.*)$/s);
+            if (!match) return;
+            const [, prefix, digits, suffix] = match;
+            const target = Number(digits.replace(/,/g, ""));
+            const decimals = digits.includes(".") ? digits.split(".")[1].length : 0;
+            const grouped = digits.includes(",");
+            if (!Number.isFinite(target)) return;
+
+            const format = (value: number) =>
+                grouped
+                    ? value.toLocaleString("en-US", { minimumFractionDigits: decimals, maximumFractionDigits: decimals })
+                    : value.toFixed(decimals);
+
+            const start = performance.now();
+            const duration = 1100;
+            const tick = (now: number) => {
+                const t = Math.min(1, (now - start) / duration);
+                const eased = 1 - (1 - t) ** 3;
+                node.textContent = `${prefix}${format(target * eased)}${suffix}`;
+                if (t < 1) requestAnimationFrame(tick);
+                else node.textContent = finalText;
+            };
+            requestAnimationFrame(tick);
+        };
+
+        const observer = new IntersectionObserver(
+            (entries) => {
+                for (const entry of entries) {
+                    if (!entry.isIntersecting) continue;
+                    observer.unobserve(entry.target);
+                    animate(entry.target as HTMLElement);
+                }
+            },
+            { threshold: 0.4 },
+        );
+
+        nodes.forEach((node) => {
+            // Leave numbers that are already on screen at load untouched.
+            if (node.getBoundingClientRect().top < window.innerHeight) return;
+            observer.observe(node);
+        });
+    }
+</script>

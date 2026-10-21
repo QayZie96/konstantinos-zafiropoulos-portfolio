@@ -8,6 +8,7 @@ import SiteFooter from "../../../components/SiteFooter.astro";
 import SeoHead from "../../../components/SeoHead.astro";
 import HorizontalBarChart from "../../../components/HorizontalBarChart.astro";
 import SkillLinks from "../../../components/SkillLinks.astro";
+import ProcessFlow from "../../../components/ProcessFlow.astro";
 import { rocketeersSummary } from "../../../data/rocketeers";
 const title =
     "Marketplace Repricing Engine | Rocketeers | Konstantinos Zafeiropoulos";
@@ -156,7 +157,7 @@ const metrics = [
                 <div class="section-content">
                     <ProjectGallery
                         title="The marketplace repricing workbook"
-                        description="A presentation visual based on the surviving Excel pricing system."
+                        description="A presentation visual based on the original Excel pricing system."
                         images={[
                             {
                                 src: "/images/projects/rocketeers/repricing.webp",
@@ -179,7 +180,7 @@ const metrics = [
                     { label: "Priced product variations", value: 10000, display: "10,000+" },
                     { label: "Prices refreshed per mature run", value: 16000, display: "16,000+" },
                 ]}
-                sourceNote="Operational scale documented from the production repricing workflow; values are presented as conservative minimums."
+                sourceNote="Minimum figures from the production repricing workflow."
             />
 
             <!-- ===================================================
@@ -195,15 +196,14 @@ const metrics = [
                     <h2>The pricing system supported a multi-platform catalogue.</h2>
 
                     <p class="lead">
-                        The later eBay export provides transaction-level evidence
-                        of the commercial environment in which the repricing
-                        workflow operated.
+                        The eBay export shows the size of the catalogue the engine
+                        kept priced.
                     </p>
 
                     <div class="scale-grid">
                         <article>
                             <strong>$219.8K</strong>
-                            <span>documented eBay USD gross sales</span>
+                            <span>eBay USD gross sales, 2017–22</span>
                         </article>
 
                         <article>
@@ -213,7 +213,7 @@ const metrics = [
 
                         <article>
                             <strong>42.2%</strong>
-                            <span>of documented USD sales from PC</span>
+                            <span>of USD sales from PC</span>
                         </article>
 
                         <article>
@@ -223,7 +223,7 @@ const metrics = [
                     </div>
 
                     <p>
-                        PC generated the largest documented USD share, followed
+                        PC generated the largest USD share, followed
                         by PlayStation and Xbox. Separate workbooks helped keep
                         pricing logic and product ordering aligned with each
                         platform's catalogue.
@@ -235,7 +235,7 @@ const metrics = [
            SECTION 02 — THE WORKFLOW
            =================================================== -->
 
-            <section class="case-section">
+            <section class="case-section wide-section" id="workflow">
                 <div class="section-label">
                     <p class="eyebrow">02 — Workflow</p>
                 </div>
@@ -244,77 +244,140 @@ const metrics = [
                     <h2>Market data in. Structured marketplace prices out.</h2>
 
                     <p class="lead">
-                        The system connected external market information, Excel
-                        pricing logic, commercial judgement, and eBay
-                        bulk-revision workflows.
+                        Six stages connected external market data, Excel
+                        pricing logic, commercial judgement and eBay bulk
+                        revisions.
                     </p>
 
-                    <!-- Workflow diagram -->
-                    <div class="workflow">
-                        <div class="workflow-step">
-                            <span>01</span>
-                            <strong>Market data</strong>
+                    <ProcessFlow
+                        id="repricing-flow"
+                        label="Repricing workflow"
+                        detailHint="Select a stage to walk through a worked example"
+                        steps={[
+                            { title: "Market data", text: "Pull reference prices into Excel." },
+                            { title: "Normalize", text: "Turn text price ranges into numbers." },
+                            { title: "Price", text: "Apply price tables, margin and judgement." },
+                            { title: "Order outputs", text: "Match the eBay variation order." },
+                            { title: "Bulk revise", text: "Load price blocks into FileExchange." },
+                            { title: "Review", text: "Check every response file." },
+                        ]}
+                    >
+                        <div class="pf-ex" slot="detail-1">
+                            <span class="pf-ex-label">Worked example · illustrative values</span>
                             <p>
-                                Import marketplace reference prices from
-                                external sources.
+                                Excel web queries refreshed category tables
+                                straight from the price sites. The PC workbook holds 42 connections: 39 to RL Insider
+                                and 3 to a second source.
                             </p>
+<pre class="pf-ex-code">Item      Colour           Market price (as imported)
+Octane    Titanium White   <em>2.3k - 2.8k</em>
+Octane    Black            <em>1.1k - 1.4k</em>
+Octane    Crimson          <em>600 - 800</em></pre>
                         </div>
 
-                        <div class="workflow-arrow" aria-hidden="true">→</div>
-
-                        <div class="workflow-step">
-                            <span>02</span>
-                            <strong>Normalize</strong>
+                        <div class="pf-ex" slot="detail-2">
+                            <span class="pf-ex-label">Worked example · illustrative values</span>
                             <p>
-                                Convert imported price ranges into usable
-                                numeric credit values.
+                                Imported prices arrive as text ranges. The
+                                Insider-Prices sheet splits each range and
+                                converts shorthand such as “2.3k” into a credit
+                                value the pricing model can use.
                             </p>
+                            <div class="pf-ex-chain">
+                                <div class="pf-ex-box"><small>Imported text</small><b>2.3k – 2.8k</b></div>
+                                <span class="pf-ex-op" aria-hidden="true">→</span>
+                                <div class="pf-ex-box"><small>Low / high</small><b>2,300 / 2,800</b></div>
+                                <span class="pf-ex-op" aria-hidden="true">→</span>
+                                <div class="pf-ex-box is-result"><small>Value used (upper range)</small><b>2,800 credits</b></div>
+                            </div>
                         </div>
 
-                        <div class="workflow-arrow" aria-hidden="true">→</div>
-
-                        <div class="workflow-step">
-                            <span>03</span>
-                            <strong>Price</strong>
+                        <div class="pf-ex" slot="detail-3">
+                            <span class="pf-ex-label">Worked example · illustrative values</span>
                             <p>
-                                Apply pricing tables, margin logic, and
-                                commercial judgement.
+                                The credit value is cross-referenced with the Key
+                                Prices tables to find a cost basis, then a margin
+                                tier sets the target. Scarce or hard-to-source
+                                items could still be adjusted by hand.
                             </p>
+                            <div class="pf-ex-chain">
+                                <div class="pf-ex-box"><small>Market value</small><b>2,800 cr</b></div>
+                                <span class="pf-ex-op" aria-hidden="true">×</span>
+                                <div class="pf-ex-box"><small>Cost per credit</small><b>$0.0045</b></div>
+                                <span class="pf-ex-op" aria-hidden="true">+</span>
+                                <div class="pf-ex-box"><small>Margin tier</small><b>30%</b></div>
+                                <span class="pf-ex-op" aria-hidden="true">=</span>
+                                <div class="pf-ex-box"><small>Target</small><b>$16.38</b></div>
+                                <span class="pf-ex-op" aria-hidden="true">→</span>
+                                <div class="pf-ex-box is-result"><small>Price point</small><b>$16.49</b></div>
+                            </div>
                         </div>
 
-                        <div class="workflow-arrow" aria-hidden="true">→</div>
-
-                        <div class="workflow-step">
-                            <span>04</span>
-                            <strong>Order outputs</strong>
+                        <div class="pf-ex" slot="detail-4">
+                            <span class="pf-ex-label">Worked example · illustrative prices</span>
                             <p>
-                                Produce prices in the same variation order used
-                                on eBay.
+                                Every output column follows the same colour
+                                order as the eBay listing, so a whole block of
+                                prices moves across in one paste.
                             </p>
+                            <ol class="pf-ex-swatches">
+                                <li><span>Black</span><b>$9.49</b></li>
+                                <li><span>Burnt Sienna</span><b>$4.99</b></li>
+                                <li><span>Cobalt</span><b>$5.49</b></li>
+                                <li><span>Crimson</span><b>$5.99</b></li>
+                                <li><span>Default</span><b>$2.99</b></li>
+                                <li><span>Forest Green</span><b>$4.99</b></li>
+                                <li><span>Grey</span><b>$4.49</b></li>
+                                <li><span>Lime</span><b>$4.99</b></li>
+                                <li><span>Orange</span><b>$4.99</b></li>
+                                <li><span>Pink</span><b>$5.49</b></li>
+                                <li><span>Purple</span><b>$5.49</b></li>
+                                <li><span>Saffron</span><b>$4.99</b></li>
+                                <li><span>Sky Blue</span><b>$5.99</b></li>
+                                <li><span>Titanium White</span><b>$16.49</b></li>
+                            </ol>
                         </div>
 
-                        <div class="workflow-arrow" aria-hidden="true">→</div>
-
-                        <div class="workflow-step">
-                            <span>05</span>
-                            <strong>Bulk revise</strong>
+                        <div class="pf-ex" slot="detail-5">
+                            <span class="pf-ex-label">Worked example · FileExchange format</span>
                             <p>
-                                Transfer ordered price blocks into eBay
-                                FileExchange.
+                                One parent row per listing, then one row per
+                                variation. The preserved dataset holds 1,283
+                                parent rows and 14,719 variation rows — 16,002
+                                in total.
                             </p>
+<pre class="pf-ex-code">*Action(SiteID=US|Country=US|Currency=USD),ItemID,Relationship,RelationshipDetails,StartPrice
+Revise,<em>&lt;item ID&gt;</em>,,,
+,,Variation,Color=Black,<em>9.49</em>
+,,Variation,Color=Burnt Sienna,<em>4.99</em>
+,,Variation,Color=Titanium White,<em>16.49</em></pre>
                         </div>
 
-                        <div class="workflow-arrow" aria-hidden="true">→</div>
-
-                        <div class="workflow-step">
-                            <span>06</span>
-                            <strong>Review</strong>
+                        <div class="pf-ex" slot="detail-6">
+                            <span class="pf-ex-label">From a preserved response file</span>
                             <p>
-                                Check response files for successful revisions,
-                                warnings, and failures.
+                                eBay returns a status for every uploaded row. One
+                                preserved response file reads:
+                            </p>
+                            <div class="pf-ex-status">
+                                <div class="pf-ex-stack" role="img" aria-label="246 success, 261 warning and 7 failure rows out of 514">
+                                    <span style="width: 47.86%; background: #26d5a2"></span>
+                                    <span style="width: 50.78%; background: #ffb347"></span>
+                                    <span style="width: 1.36%; background: #ff5b5b"></span>
+                                </div>
+                                <ul class="pf-ex-legend">
+                                    <li><i style="background: #26d5a2"></i><b>246</b> success</li>
+                                    <li><i style="background: #ffb347"></i><b>261</b> warning</li>
+                                    <li><i style="background: #ff5b5b"></i><b>7</b> failure</li>
+                                </ul>
+                            </div>
+                            <p>
+                                Warnings and failures were reviewed before the
+                                next run, so validation was built into every
+                                upload.
                             </p>
                         </div>
-                    </div>
+                    </ProcessFlow>
                 </div>
             </section>
 
@@ -333,16 +396,15 @@ const metrics = [
                     </h2>
 
                     <p class="lead">
-                        The surviving PC workbook contains real Excel web-query
-                        connections used to bring external market pricing into
-                        the workbook.
+                        The PC workbook pulls external market pricing in through
+                        Excel web-query connections.
                     </p>
 
                     <div class="evidence-grid">
                         <article>
                             <strong>42</strong>
                             <span
-                                >web-data connections in the surviving workbook</span
+                                >web-data connections in the PC workbook</span
                             >
                         </article>
 
@@ -537,15 +599,14 @@ const metrics = [
                         </article>
                     </div>
 
-                    <div class="important-note">
-                        <strong>Important:</strong>
+                    <div class="callout">
+                        <strong>Batch by design</strong>
 
                         <p>
-                            This was a highly structured bulk-repricing
-                            workflow, not real-time or fully automated
-                            repricing. Product matching and transfer into
-                            FileExchange still involved manual operational
-                            steps.
+                            Prices were refreshed in structured batches rather
+                            than in real time. Product matching and the
+                            FileExchange upload stayed hands-on, which kept a
+                            human check on every run.
                         </p>
                     </div>
                 </div>
@@ -674,56 +735,53 @@ const metrics = [
                     </h2>
 
                     <p class="lead">
-                        The surviving production workbook contains both
-                        legitimate missing values and some genuine historical
-                        errors.
+                        A workbook that grows with the business picks up the
+                        same maintenance debt as any production system.
                     </p>
 
                     <div class="diagnostic-list">
                         <div>
                             <span>01</span>
                             <p>
-                                Large numbers of <code>#N/A</code> results where particular
-                                item / colour combinations did not exist or external
-                                prices were unavailable.
+                                <code>#N/A</code> results wherever an item / colour
+                                combination did not exist or no market price
+                                was available.
                             </p>
                         </div>
 
                         <div>
                             <span>02</span>
                             <p>
-                                88 formulas containing literal <code>#REF!</code
-                                > references in historical sections.
+                                88 formulas with literal <code>#REF!</code> references
+                                in retired sections.
                             </p>
                         </div>
 
                         <div>
                             <span>03</span>
                             <p>
-                                Four broken defined names requiring review in
-                                any cleaned presentation copy.
+                                Four broken defined names left behind by earlier
+                                restructuring.
                             </p>
                         </div>
 
                         <div>
                             <span>04</span>
                             <p>
-                                External links and private local file paths that
-                                must be sanitized before public presentation.
+                                External links and local file paths tied to the
+                                original working environment.
                             </p>
                         </div>
                     </div>
 
-                    <div class="important-note">
-                        <strong>Portfolio approach</strong>
+                    <div class="callout">
+                        <strong>What I would do differently</strong>
 
                         <p>
-                            The original production logic should be preserved
-                            rather than hiding every historical imperfection.
-                            Cleaning the public copy means separating genuine
-                            operational behaviour from obsolete or private
-                            material — not rewriting the project into something
-                            it never was.
+                            Retire old sections instead of leaving them in
+                            place, document every defined name, and keep source
+                            connections in one register. The pricing logic held
+                            up; the housekeeping is what a rebuild would fix.
                         </p>
                     </div>
                 </div>

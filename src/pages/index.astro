@@ -127,8 +127,8 @@ const description =
                     <h2 id="projects-title">Featured Projects</h2>
 
                     <p class="section-intro">
-                        Real projects, real operating experience, and practical
-                        systems built around actual problems.
+                        A marketplace business I ran for seven years, and the
+                        systems I have built since.
                     </p>
                 </div>
 
@@ -263,7 +263,7 @@ const description =
 
                             <p>
                                 How Rocketeers was planned, launched, operated,
-                                and scaled — covering marketplace strategy,
+                                and scaled, covering marketplace strategy,
                                 sourcing, listings, pricing, inventory,
                                 fulfilment, customer experience, disputes, and
                                 seller performance.
@@ -457,9 +457,13 @@ const description =
                                 aria-label="View the AI Job Discovery and Outreach Automation case study"
                             ></a>
                             <div class="project-visual ai-visual">
-                                <div class="ai-circle" aria-hidden="true">
-                                    AI
-                                </div>
+                                <svg class="funnel-icon" viewBox="0 0 120 100" aria-hidden="true">
+                                    <path class="funnel-shape" d="M14 14 H106 L72 52 V82 L48 92 V52 Z" />
+                                    <circle class="funnel-drop d1" cx="34" cy="6" r="4" />
+                                    <circle class="funnel-drop d2" cx="60" cy="6" r="4" />
+                                    <circle class="funnel-drop d3" cx="86" cy="6" r="4" />
+                                    <circle class="funnel-out" cx="60" cy="96" r="4" />
+                                </svg>
                             </div>
 
                             <div class="other-project-body">
@@ -582,7 +586,7 @@ const description =
                                 <p>
                                     An in-progress client store built with
                                     WordPress, WooCommerce, Elementor, and
-                                    targeted CSS—covering responsive pages,
+                                    targeted CSS, covering responsive pages,
                                     custom-order inquiries, side-cart styling,
                                     and practical site maintenance.
                                 </p>
@@ -614,7 +618,10 @@ const description =
                             ></a>
 
                             <div class="project-visual data-visual">
-                                <div class="chess-icon" aria-hidden="true">♞</div>
+                                <div class="chess-icon" aria-hidden="true">
+                                    <span class="chess-ring"></span>
+                                    <span class="chess-knight">♞</span>
+                                </div>
                             </div>
 
                             <div class="other-project-body">
@@ -651,7 +658,12 @@ const description =
                                 aria-label="View the Gym Progress System case study"
                             ></a>
                             <div class="project-visual gym-visual">
-                                <span aria-hidden="true"> KG </span>
+                                <svg class="gym-icon" viewBox="0 0 140 90" aria-hidden="true">
+                                    <path class="gym-grid" d="M10 80 H130 M10 55 H130 M10 30 H130" />
+                                    <polyline class="gym-line" points="12,74 32,68 50,70 68,54 86,50 104,36 126,22" />
+                                    <circle class="gym-dot" cx="126" cy="22" r="5" />
+                                    <text class="gym-label" x="12" y="20">kg</text>
+                                </svg>
                             </div>
 
                             <div class="other-project-body">
@@ -701,7 +713,7 @@ const description =
                                 </svg>
                                 <span class="lab-copy">
                                     <strong>Mathematical OLED Wallpapers <span aria-hidden="true">→</span></strong>
-                                    <span>A deterministic Python engine for true-black attractor and flow-field wallpapers. Run its real presets live in your browser.</span>
+                                    <span>Volume 1: six true-black fractal wallpapers in 4K, built with a tested Python engine and JWildfire. Run the engines live in your browser.</span>
                                 </span>
                             </a>
 
@@ -754,7 +766,7 @@ const description =
                     </div>
                     <div>
                         <strong>Current focus</strong>
-                        <span>Python, AI-assisted workflows, data, and the web.</span>
+                        <span>Workflow automation, data, and e-commerce operations.</span>
                     </div>
                 </div>
 <p>
@@ -783,12 +795,12 @@ const description =
                 </p>
 
                 <p>
-                    In my AI automation project, I designed a workflow that uses
-                    a language model for defined tasks, connects it to job data
-                    and spreadsheet outputs, and keeps final outreach decisions
-                    with a human reviewer. I focus on making AI useful in a
-                    repeatable process rather than treating a generated answer
-                    as a finished solution.
+                    My recent automation work runs on Google Apps Script, n8n,
+                    and PostgreSQL: a job funnel that reads nine applicant
+                    tracking systems, and a pipeline that turns public museum
+                    archives into reviewable product evidence. Language models
+                    handle clearly defined steps, deduplication and validation
+                    keep the data clean, and people make the final calls.
                 </p>
 
                 <!-- Professional focus areas -->
@@ -853,10 +865,10 @@ const description =
                                 >AI implementation &amp; automation</a>
                         </h3>
                         <p>
-                            Applying LLMs to defined workflow steps, prompt
-                            design, structured outputs, API integration,
-                            validation, caching, and deliberate human review
-                            inside a reliable end-to-end process.
+                            Apps Script and n8n pipelines, API integration,
+                            deduplication, validation, and language models used
+                            for defined steps, with people making the final
+                            calls.
                         </p>
                         <a href="/projects/ai-job-outreach/"
                             >See AI automation ↗</a
@@ -868,11 +880,9 @@ const description =
                                 >Python, data &amp; web</a>
                         </h3>
                         <p>
-                            Python scripting, API data handling, SQLite caching,
-                            Google Sheets integration, WordPress/WooCommerce
-                            development, and building a responsive Astro
-                            portfolio, plus Python, SQL, Power BI, and
-                            interactive analysis through Chess Analytics.
+                            Python, SQL and PostgreSQL, API data handling,
+                            Power BI dashboards, WordPress and WooCommerce
+                            builds, and this responsive Astro site.
                         </p>
                         <a href="/projects/chess-analytics/">See Chess Analytics ↗</a>
                     </article>
@@ -2237,14 +2247,7 @@ const description =
             #071523;
     }
 
-    /* RAMÉ card borrows the client's sticker style */
-    .rame-visual {
-        background-color: #fffcef;
-        background-image:
-            linear-gradient(rgba(28, 20, 22, 0.07) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(28, 20, 22, 0.07) 1px, transparent 1px);
-        background-size: 22px 22px;
-    }
+    /* RAMÉ card keeps the client's wordmark on the shared dark panel */
 
     .rame-mini {
         position: relative;
@@ -2263,7 +2266,7 @@ const description =
         letter-spacing: 0.02em;
         -webkit-text-stroke: 2px #1c1416;
         paint-order: stroke fill;
-        text-shadow: 3px 3px 0 #1c1416;
+        text-shadow: 3px 3px 0 #000000, 0 0 24px rgba(244, 167, 207, 0.25);
     }
 
     .rame-mini-pill {
@@ -2320,6 +2323,7 @@ const description =
     }
 
     .chess-icon {
+        position: relative;
         display: grid;
         width: 76px;
         height: 76px;
@@ -2331,6 +2335,132 @@ const description =
         font-family: Georgia, "Times New Roman", serif;
         font-size: 2.65rem;
         line-height: 1;
+    }
+
+    .chess-ring {
+        position: absolute;
+        inset: -9px;
+        border: 1.5px dashed rgba(101, 186, 255, 0.45);
+        border-radius: 50%;
+        animation: icon-spin 16s linear infinite;
+    }
+
+    .chess-knight {
+        display: inline-block;
+        animation: knight-hop 3.2s ease-in-out infinite;
+    }
+
+    @keyframes knight-hop {
+        0%, 60%, 100% { transform: translate(0, 0) rotate(0deg); }
+        70% { transform: translate(3px, -9px) rotate(-8deg); }
+        82% { transform: translate(6px, 0) rotate(0deg); }
+        90% { transform: translate(3px, 0); }
+    }
+
+    @keyframes icon-spin {
+        to { transform: rotate(360deg); }
+    }
+
+    .funnel-icon {
+        width: 112px;
+        overflow: visible;
+    }
+
+    .funnel-shape {
+        fill: rgba(22, 141, 255, 0.08);
+        stroke: var(--blue-light);
+        stroke-width: 2.5;
+        stroke-linejoin: round;
+    }
+
+    .funnel-drop {
+        fill: var(--blue-light);
+        animation: funnel-drop 3s ease-in infinite;
+    }
+
+    .funnel-drop.d2 { animation-delay: 1s; }
+    .funnel-drop.d3 { animation-delay: 2s; }
+
+    .funnel-out {
+        fill: var(--orange);
+        animation: funnel-out 3s ease-out infinite;
+    }
+
+    @keyframes funnel-drop {
+        0% { opacity: 0; transform: translate(0, 0); }
+        15% { opacity: 1; }
+        55% { opacity: 1; transform: translate(0, 34px); }
+        70%, 100% { opacity: 0; transform: translate(0, 40px); }
+    }
+
+    .funnel-drop.d1 { animation-name: funnel-drop-left; }
+    .funnel-drop.d3 { animation-name: funnel-drop-right; }
+
+    @keyframes funnel-drop-left {
+        0% { opacity: 0; transform: translate(0, 0); }
+        15% { opacity: 1; }
+        55% { opacity: 1; transform: translate(22px, 36px); }
+        70%, 100% { opacity: 0; transform: translate(26px, 44px); }
+    }
+
+    @keyframes funnel-drop-right {
+        0% { opacity: 0; transform: translate(0, 0); }
+        15% { opacity: 1; }
+        55% { opacity: 1; transform: translate(-22px, 36px); }
+        70%, 100% { opacity: 0; transform: translate(-26px, 44px); }
+    }
+
+    @keyframes funnel-out {
+        0%, 60% { opacity: 0; transform: translateY(-8px); }
+        75% { opacity: 1; transform: translateY(0); }
+        100% { opacity: 0; transform: translateY(6px); }
+    }
+
+    .gym-icon {
+        width: 136px;
+        overflow: visible;
+    }
+
+    .gym-grid {
+        stroke: rgba(101, 186, 255, 0.14);
+        stroke-width: 1;
+    }
+
+    .gym-line {
+        fill: none;
+        stroke: var(--blue-light);
+        stroke-width: 3;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        stroke-dasharray: 160;
+        stroke-dashoffset: 160;
+        animation: gym-draw 4.5s ease-in-out infinite;
+    }
+
+    .gym-dot {
+        fill: var(--orange);
+        transform-box: fill-box;
+        transform-origin: center;
+        animation: gym-dot 4.5s ease-in-out infinite;
+    }
+
+    .gym-label {
+        fill: #edf4fa;
+        font-size: 15px;
+        font-weight: 850;
+    }
+
+    @keyframes gym-draw {
+        0% { stroke-dashoffset: 160; }
+        55%, 85% { stroke-dashoffset: 0; }
+        100% { stroke-dashoffset: 0; opacity: 0; }
+    }
+
+    @keyframes gym-dot {
+        0%, 50% { opacity: 0; transform: scale(0.3); }
+        60% { opacity: 1; transform: scale(1.35); }
+        70%, 88% { opacity: 1; transform: scale(1); }
+        100% { opacity: 0; transform: scale(1); }
     }
 
     .bar-chart {
@@ -2733,6 +2863,12 @@ const description =
             transform: none;
         }
 
+        .chess-ring,
+        .chess-knight,
+        .funnel-drop,
+        .funnel-out,
+        .gym-line,
+        .gym-dot,
         .toolbelt-track,
         .hero::before,
         .hero-accent,
@@ -2744,8 +2880,14 @@ const description =
             animation: none;
         }
 
-        .math-orbit path {
+        .math-orbit path,
+        .gym-line {
             stroke-dashoffset: 0;
+        }
+
+        .funnel-out,
+        .gym-dot {
+            opacity: 1;
         }
 
         .rame-mini,

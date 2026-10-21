@@ -6,8 +6,11 @@
 import SiteHeader from "../../../components/SiteHeader.astro";
 import SiteFooter from "../../../components/SiteFooter.astro";
 import SeoHead from "../../../components/SeoHead.astro";
-import HorizontalBarChart from "../../../components/HorizontalBarChart.astro";
 import SkillLinks from "../../../components/SkillLinks.astro";
+import ProcessFlow from "../../../components/ProcessFlow.astro";
+import OperationsActivity from "../../../components/OperationsActivity.astro";
+import ServiceQuality from "../../../components/ServiceQuality.astro";
+import CountUpNumbers from "../../../components/CountUpNumbers.astro";
 import {
     rocketeersFeedbackMetrics,
     rocketeersSummary,
@@ -26,11 +29,11 @@ const metrics = [
     },
     {
         value: "6,944",
-        label: "Documented unique buyer IDs",
+        label: "Unique buyers",
     },
     {
         value: "42,982",
-        label: "Documented message records",
+        label: "Messages in the account archive",
     },
     {
         value: "0",
@@ -167,60 +170,69 @@ const metrics = [
                         further stock.
                     </p>
 
-                    <div class="business-flow">
-                        <div class="flow-step">
-                            <span>01</span>
-                            <strong>Source</strong>
+                    <ProcessFlow
+                        id="business-loop"
+                        label="Rocketeers operating loop"
+                        detailHint="Select a stage to see it in numbers"
+                        loopLabel="Sales revenue was reinvested into new stock"
+                        steps={[
+                            { title: "Source", text: "Buy and trade digital inventory." },
+                            { title: "Price", text: "Set prices from market data and margin." },
+                            { title: "List", text: "Keep thousands of variations live." },
+                            { title: "Fulfil", text: "Deliver every order reliably." },
+                            { title: "Support", text: "Resolve questions, returns and cases." },
+                        ]}
+                    >
+                        <div class="pf-ex" slot="detail-1">
                             <p>
-                                Acquire digital inventory through purchasing and
-                                in-game trading.
+                                Stock came from direct purchases and in-game
+                                trading, first through keys and later through
+                                credits once the game's economy changed in late
+                                2019. Every conversion was tracked in the
+                                financial workbook.
+                            </p>
+                            <a class="pf-link" href="/projects/rocketeers/financial-tracker/">Financial & Operations Tracker →</a>
+                        </div>
+                        <div class="pf-ex" slot="detail-2">
+                            <div class="pf-ex-chain">
+                                <div class="pf-ex-box"><small>Live listings</small><b>1,000+</b></div>
+                                <div class="pf-ex-box"><small>Priced variations</small><b>10,000+</b></div>
+                                <div class="pf-ex-box is-result"><small>Prices refreshed per run</small><b>16,000+</b></div>
+                            </div>
+                            <p>
+                                Market prices moved quickly, so pricing ran as a
+                                repeatable batch workflow rather than by hand.
+                            </p>
+                            <a class="pf-link" href="/projects/rocketeers/repricing/">Marketplace Repricing Engine →</a>
+                        </div>
+                        <div class="pf-ex" slot="detail-3">
+                            <div class="pf-ex-chain">
+                                <div class="pf-ex-box"><small>Listing IDs with sales</small><b>1,240</b></div>
+                                <div class="pf-ex-box"><small>Platforms</small><b>PC · PS · Xbox · Switch</b></div>
+                            </div>
+                            <p>
+                                Variations followed one standard colour order
+                                across every listing, which kept large
+                                catalogues manageable and bulk edits safe.
                             </p>
                         </div>
-
-                        <div class="flow-arrow" aria-hidden="true">→</div>
-
-                        <div class="flow-step">
-                            <span>02</span>
-                            <strong>Price</strong>
-                            <p>
-                                Use market conditions, scarcity, and target
-                                margins to set selling prices.
-                            </p>
+                        <div class="pf-ex" slot="detail-4">
+                            <div class="pf-ex-chain">
+                                <div class="pf-ex-box"><small>Units sold (export)</small><b>21,463</b></div>
+                                <div class="pf-ex-box"><small>Active sales days</small><b>1,689</b></div>
+                                <div class="pf-ex-box is-result"><small>Average per sales day</small><b>12.7 units</b></div>
+                            </div>
+                            <p>April 2017 – May 2022, from the eBay transaction export.</p>
                         </div>
-
-                        <div class="flow-arrow" aria-hidden="true">→</div>
-
-                        <div class="flow-step">
-                            <span>03</span>
-                            <strong>List</strong>
-                            <p>
-                                Create and maintain marketplace listings across
-                                thousands of product variations.
-                            </p>
+                        <div class="pf-ex" slot="detail-5">
+                            <div class="pf-ex-chain">
+                                <div class="pf-ex-box"><small>Return requests</small><b>95 · 0.45%</b></div>
+                                <div class="pf-ex-box"><small>Disputes</small><b>50 · 0.24%</b></div>
+                                <div class="pf-ex-box is-result"><small>Item as described</small><b>4.99 / 5</b></div>
+                            </div>
+                            <p>Rates are measured against 21,203 exported sale lines.</p>
                         </div>
-
-                        <div class="flow-arrow" aria-hidden="true">→</div>
-
-                        <div class="flow-step">
-                            <span>04</span>
-                            <strong>Fulfil</strong>
-                            <p>
-                                Complete customer orders and transfer digital
-                                products reliably.
-                            </p>
-                        </div>
-
-                        <div class="flow-arrow" aria-hidden="true">→</div>
-
-                        <div class="flow-step">
-                            <span>05</span>
-                            <strong>Support</strong>
-                            <p>
-                                Handle customer questions, disputes, returns,
-                                and marketplace cases.
-                            </p>
-                        </div>
-                    </div>
+                    </ProcessFlow>
                 </div>
             </section>
 
@@ -237,8 +249,9 @@ const metrics = [
                     <h2>I owned the operation end to end.</h2>
 
                     <p class="lead">
-                        Rocketeers was not a narrow role. I was responsible for
-                        the full commercial and operational cycle.
+                        I was responsible for the full commercial and
+                        operational cycle, from sourcing stock to protecting
+                        seller performance.
                     </p>
 
                     <div class="ownership-grid">
@@ -312,8 +325,8 @@ const metrics = [
                     <h2>Marketplace operations became a daily discipline.</h2>
 
                     <p class="lead">
-                        Running the business consistently required more than
-                        simply posting items for sale.
+                        Running the business consistently took far more than
+                        posting items for sale.
                     </p>
 
                     <div class="execution-list">
@@ -401,8 +414,8 @@ const metrics = [
                     <p class="lead">
                         The final live eBay profile showed 6,454 positive
                         feedback entries, one neutral entry, and zero negative
-                        feedback. Historical negative records in the export
-                        were subsequently revised.
+                        feedback. Negatives recorded earlier in the
+                        account's history were later revised.
                     </p>
 
                     <div class="feedback-grid">
@@ -433,20 +446,28 @@ const metrics = [
                             marketplace performance.
                         </p>
                     </div>
+
+                    <ServiceQuality />
                 </div>
             </section>
 
-            <HorizontalBarChart
-                title="Documented annual eBay volume"
-                description="Full-year item volume rose substantially as the operation, catalogue, and supporting processes scaled."
-                items={[
-                    { label: "2018", value: 2600, display: "2,600 items" },
-                    { label: "2019", value: 3262, display: "3,262 items" },
-                    { label: "2020", value: 7687, display: "7,687 items" },
-                    { label: "2021", value: 6175, display: "6,175 items" },
-                ]}
-                sourceNote="Full calendar years from the reviewed eBay transaction export. Partial 2017 and 2022 periods are excluded from this comparison."
-            />
+            <section class="case-section wide-section activity-section">
+                <div class="section-label">
+                    <p class="eyebrow">Workload</p>
+                </div>
+
+                <div class="section-content">
+                    <h2>The order book, month by month.</h2>
+
+                    <p class="lead">
+                        Volume more than doubled in October 2020 and stayed high into
+                        early 2021. The calendar shows the workload the
+                        operation had to absorb.
+                    </p>
+
+                    <OperationsActivity />
+                </div>
+            </section>
 
             <!-- =================================================
                  SECTION 06 — DOCUMENTED OPERATING EVIDENCE
@@ -461,9 +482,8 @@ const metrics = [
                     <h2>The export shows the workload behind the storefront.</h2>
 
                     <p class="lead">
-                        Transaction, customer-service, return, and dispute
-                        records provide a documented view of the operation
-                        through May 2022.
+                        Transaction, message, return and dispute records cover
+                        the operation through May 2022.
                     </p>
 
                     <div class="scale-grid">
@@ -489,10 +509,9 @@ const metrics = [
                     </div>
 
                     <p>
-                        The communication export begins in September 2020, so
-                        the message count represents only part of the business's
-                        operating history. Return and dispute rates use exported
-                        sale rows as the available denominator.
+                        Messages are counted from September 2020, when the
+                        archive begins. Return and dispute rates are measured
+                        against 21,203 exported sale lines.
                     </p>
                 </div>
             </section>
@@ -525,7 +544,7 @@ const metrics = [
 
                         <article>
                             <strong>6,944</strong>
-                            <span> documented unique buyer IDs </span>
+                            <span> unique buyers </span>
                         </article>
 
                         <article>
@@ -667,7 +686,7 @@ const metrics = [
                         <div>
                             <strong> $219.8K </strong>
 
-                            <span> documented eBay USD gross sales </span>
+                            <span> eBay USD gross sales, 2017–22 </span>
                         </div>
 
                         <div>
@@ -756,6 +775,7 @@ const metrics = [
                     </a>
                 </div>
             </section>
+            <CountUpNumbers selector=".scale-grid strong, .results-grid strong, .feedback-grid strong" />
         </main>
 
         <!-- ===================================================

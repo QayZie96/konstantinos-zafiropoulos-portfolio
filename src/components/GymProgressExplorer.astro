@@ -170,7 +170,7 @@ const maxModuleLines = Math.max(...vbaModules.map((module) => module[2]));
             <strong>Definitions.</strong> Top-set weight = Set 1 weight (the
             workbook logs the heavier working set first). Estimated 1RM uses
             the Epley formula, <code>1RM = weight × (1 + reps ÷ 30)</code>,
-            on Set 1 — identical to the workbook procedure
+            on Set 1, matching the workbook procedure
             <code>PB_E1RMForWeek</code>. Volume = Set 1 weight × reps + Set 2
             weight × reps (<code>DB3_RecordVolume</code>).
         </p>
@@ -195,7 +195,7 @@ const maxModuleLines = Math.max(...vbaModules.map((module) => module[2]));
             <p class="gx-footnote">
                 First valid session vs latest valid session, W1–W33, exercises
                 with at least three sessions. Changes within ±0.5% count as
-                unchanged — the same rule as the workbook's “Overall progress”
+                unchanged, the same rule as the workbook's “Overall progress”
                 macro. Select a row to open it in the explorer.
             </p>
         </article>
@@ -277,10 +277,10 @@ const maxModuleLines = Math.max(...vbaModules.map((module) => module[2]));
             <section aria-labelledby="gx-charts-title">
                 <h4 id="gx-charts-title">4 dashboard charts</h4>
                 <ol class="gx-chart-list">
-                    <li>Historical strength trend — robust reconstruction</li>
-                    <li>Current weekly volume — recorded data</li>
-                    <li>Volume by workout — W31</li>
-                    <li>Highest recorded volume exercises — W31</li>
+                    <li>Historical strength trend (reconstructed)</li>
+                    <li>Current weekly volume (recorded)</li>
+                    <li>Volume by workout, W31</li>
+                    <li>Highest-volume exercises, W31</li>
                 </ol>
                 <figure class="gx-spark">
                     <div data-gx-spark></div>
@@ -1018,7 +1018,7 @@ const maxModuleLines = Math.max(...vbaModules.map((module) => module[2]));
         verifyText.innerHTML = "";
         el("strong", "", `${matches} of ${cache.length} weekly totals match`, verifyText);
         verifyText.append(
-            ` — recomputed in your browser from raw sets and compared with the values the workbook's VBA dashboard cached in its “Current weekly volume” chart. W31 by workout: ${workoutMatches} of 6 match.`,
+            `, recomputed in your browser from raw sets and compared with the values the workbook's VBA dashboard cached in its “Current weekly volume” chart. W31 by workout: ${workoutMatches} of 6 match.`,
         );
 
         /* ---------------- historical index sparkline ---------------- */

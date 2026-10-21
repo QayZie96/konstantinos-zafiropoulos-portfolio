@@ -8,31 +8,130 @@ const title =
     "Mathematical OLED Wallpapers | Python Generative Art | Konstantinos Zafeiropoulos";
 
 const description =
-    "A deterministic Python generator for mathematical OLED wallpapers: Clifford attractors and particle flow fields, validated JSON presets, workload budgets and 57 unit tests, with a live in-browser port.";
+    "Mathematical OLED Wallpapers Volume 1: six true-black wallpapers in native 4K, built with a deterministic Python engine (attractors, flow fields, fractal flames, Julia sets) and JWildfire, with 123 tests and a live in-browser playground.";
+
+const IMG = "/images/projects/math-wallpapers/";
 
 const projectFacts = [
     { label: "Type", value: "Personal generative-art project" },
-    { label: "Stack", value: "Python 3.11 · NumPy · Pillow" },
-    { label: "Engines", value: "Clifford attractor · Trigonometric flow field" },
-    { label: "Status", value: "Milestone 1 accepted · exploratory" },
+    { label: "Stack", value: "Python · NumPy · Pillow · JWildfire" },
+    { label: "Volume 1", value: "6 wallpapers · native 4K + phone" },
+    { label: "Status", value: "Release candidate · final sign-off" },
 ];
 
-const previews = [
+const volume = [
     {
-        src: "/images/projects/math-wallpapers/clifford-foundation-01-desktop.webp",
-        name: "Clifford Foundation 01",
-        preset: "presets/candidates/clifford_foundation_01.json",
-        alt: "Clifford attractor preview on a pure black background: blue and magenta point clouds form two sweeping folded lobes with dark internal cavities.",
-        meta: "seed 1729 · a −1.4 · b 1.6 · c 1.0 · d 0.7 · 100,000 points",
-        score: "68.5",
+        title: "Ethereal Silver",
+        slug: "ethereal-silver",
+        method: "Fractal-flame IFS · project's own Python renderer",
+        detail: "Three weighted maps (swirl, floored inversion, signed square root), seed 4108, 125.8 million samples per 1080p frame, transform-history colour.",
+        score: 87.45,
+        alt: "Two pale silver-blue vortices intertwine at the centre, wrapped by fine blue arcs and faint gold traces on black.",
     },
     {
-        src: "/images/projects/math-wallpapers/flow-foundation-01-desktop.webp",
-        name: "Flow Foundation 01",
-        preset: "presets/candidates/flow_foundation_01.json",
-        alt: "Particle flow-field preview on a pure black background: turquoise and amber trajectories circulate inside a diagonal grid of rounded diamond cells.",
-        meta: "seed 2718 · frequency 2.4 · phase 0.35 · step 0.025 · 400 × 250 points",
-        score: "64.5",
+        title: "Receding Choir",
+        slug: "receding-choir",
+        method: "Fractal flame · JWildfire 9.20",
+        detail: "Bubble, spherical and bipolar variations; violet membranes over green and silver chambers that recede into shadow.",
+        score: 85.6,
+        alt: "Rows of dark oval chambers with green and violet light recede diagonally across a smoky purple field.",
+    },
+    {
+        title: "Luminous Crossing",
+        slug: "luminous-crossing",
+        method: "Fractal flame · JWildfire 9.20",
+        detail: "spherical3D_wf and cylindrical variations; an orange bridge crossing bright blue and violet currents.",
+        score: 80.5,
+        alt: "A glowing orange band crosses the frame diagonally through tangled blue, pink and violet filaments.",
+    },
+    {
+        title: "Cyan Undertow",
+        slug: "cyan-undertow",
+        method: "Fractal flame · JWildfire 9.20",
+        detail: "Wedge and sec branches; red light clusters joined by thin cyan connections in a dark atmosphere.",
+        score: 81.85,
+        alt: "Scattered red glowing clusters connected by thin cyan threads drift across a near-black background.",
+    },
+    {
+        title: "JulianDisc",
+        slug: "juliandisc",
+        method: "Fractal flame · JWildfire 9.20",
+        detail: "julian (power 52) combined with disc; a crisp asymmetric fan of spectral filaments with open negative space.",
+        score: 83.1,
+        alt: "A thin, sculptural fan of green, gold and violet filaments curls upward on the right of a black frame.",
+    },
+    {
+        title: "Filigree Diadem",
+        slug: "filigree-diadem",
+        method: "Julia set · project's own Python renderer",
+        detail: "z → z² + c with c = −0.745 + 0.186i, distance-estimated light, teal recesses and warm gold rims.",
+        score: 84.2,
+        alt: "An upright, lace-like Julia-set jewel in teal and gold sits right of centre on a black field.",
+    },
+];
+
+const deliverables = [
+    { value: "6", label: "Native 3840 × 2160 masters" },
+    { value: "6", label: "1080 × 1920 phone companions" },
+    { value: "8", label: "Page mathematical-art booklet" },
+    { value: "€0", label: "Cloud rendering cost (free tier)" },
+];
+
+const timeline = [
+    {
+        date: "12 Oct",
+        branch: "m1-foundation",
+        title: "Engine foundation",
+        text: "Validated presets, seeded Clifford and flow-field engines, the compositor and CLI. The first two previews scored 68.5 and 64.5.",
+        thumb: "clifford-foundation-01-desktop.webp",
+    },
+    {
+        date: "12–13 Oct",
+        branch: "m2-artistic-exploration",
+        title: "Fourteen candidates, one rubric",
+        text: "Eight Clifford attractors and six flow fields, a new vortex-pair flow, softer trajectory ends and Pillow-based glow. Leads such as Tidal Lace 02 reached the high 70s.",
+        thumb: "tl-tidal-lace-02.webp",
+    },
+    {
+        date: "17 Oct",
+        branch: "art-directed-flow · domain-warped-flow",
+        title: "Stretching the flow field",
+        text: "Layered-veil and filament finishes for Tidal Lace, art-directed particle seeding with trajectory curation, and bounded domain warping, each with tests and written findings.",
+    },
+    {
+        date: "18 Oct",
+        branch: "autonomous-art-director",
+        title: "Density rendering",
+        text: "Experiment 03: smooth density accumulation and ribbon studies, settling on Nacre 02 at 1920 × 1080.",
+        thumb: "tl-nacre-02.webp",
+    },
+    {
+        date: "18 Oct",
+        branch: "autonomous-art-director-v2",
+        title: "A small digital studio",
+        text: "Experiment 04: twelve explorations including the first flame and Julia filigree sketches. Orison 05 rendered at 2560 × 1440.",
+        thumb: "tl-orison-05.webp",
+    },
+    {
+        date: "18 Oct",
+        branch: "flame-artistic-development",
+        title: "Developing the flame",
+        text: "Experiment 05: six refinements of the owner-preferred Flame 04, with subpixel deposition, multiscale density estimation and new tone controls. Encounter 05 and Interweave 02.",
+        thumb: "tl-encounter-05.webp",
+    },
+    {
+        date: "18 Oct",
+        branch: "exchange-quality-proof",
+        title: "Ethereal Silver and Filigree",
+        text: "Experiment 06 produced Ethereal Silver, the collection's highest-scoring piece, plus nine Julia filigree studies and six subject studies.",
+        thumb: "filigree-01-diadem-800.webp",
+    },
+    {
+        date: "19–21 Oct",
+        branch: "jwildfire-shortlist-refinement",
+        title: "Volume 1",
+        text: "Nine hand-picked JWildfire flames refined into 18 variants, rendered on GitHub Actions' free tier. Six works selected, mastered in native 4K, paired with phone crops, a booklet and a five-ZIP package.",
+        thumb: "v1-receding-choir.webp",
     },
 ];
 
@@ -49,29 +148,41 @@ const engineLimits = [
     { value: "5,000,000", label: "Max attractor iterations" },
     { value: "±3.0", label: "Clifford coefficient bounds" },
     { value: "250,000", label: "Max flow particles" },
-    { value: "5,000,000", label: "Max flow trajectory points" },
+    { value: "1,800 s", label: "Time bound per 4K cloud render" },
 ];
 
 const testFiles = [
-    { file: "test_presets.py", count: 17, focus: "Schema fields, UTF-8, malformed JSON, NaN, nesting and integer-size limits" },
-    { file: "test_attractors.py", count: 11, focus: "Same seed → identical points, recurrence check, coefficient and iteration bounds" },
-    { file: "test_flow_fields.py", count: 11, focus: "Normalised vector-field steps, finite output at parameter limits, workload caps" },
-    { file: "test_compositor.py", count: 11, focus: "True-black background, identical pixels for identical input, unsafe coordinates" },
-    { file: "test_cli.py", count: 7, focus: "validate/preview commands, no tracebacks, refuses to overwrite files" },
+    { file: "test_compositor.py", count: 25 },
+    { file: "test_presets.py", count: 22 },
+    { file: "test_flow_fields.py", count: 15 },
+    { file: "test_attractors.py", count: 11 },
+    { file: "test_cli.py", count: 10 },
+    { file: "test_filigree_study.py", count: 7 },
+    { file: "test_flame05.py", count: 6 },
+    { file: "test_subject_study.py", count: 6 },
+    { file: "test_art_director_experiment.py", count: 5 },
+    { file: "test_studio04.py", count: 5 },
+    { file: "test_exchange06.py", count: 4 },
+    { file: "test_volume1_expanded.py", count: 4 },
+    { file: "test_organic_motion.py", count: 3 },
 ];
 
-const codeExcerpt = `x, y = np.random.default_rng(seed).uniform(-0.5, 0.5, size=2)
-points = np.empty((iterations, 2), dtype=np.float64)
-
-for index in range(iterations):
-    next_x = math.sin(a * y) + c * math.cos(a * x)
-    next_y = math.sin(b * x) + d * math.cos(b * y)
-    if not math.isfinite(next_x) or not math.isfinite(next_y):
-        raise AttractorError(
-            f"attractor produced non-finite output at iteration {index}"
-        )
-    points[index] = (next_x, next_y)
-    x, y = next_x, next_y`;
+const codeExcerpt = `for step in range(steps + 30):
+    choices = rng.choice(3, count, p=cfg["weights"])
+    for index, trans in enumerate(cfg["transforms"]):
+        selected = choices == index
+        a, b, c, d, e, f, variation = trans
+        w = (a*z[selected].real + b*z[selected].imag + c) \\
+            + 1j*(d*z[selected].real + e*z[selected].imag + f)
+        if variation == "swirl":
+            angle = np.pi/2 - np.abs(w)**2
+            angle += cfg.get("swirl_shear", 0)*np.sin(w.real*2.1 + w.imag*0.7)
+            w *= np.exp(1j*angle)
+        elif variation == "spherical":
+            w /= np.maximum(np.abs(w)**2, 0.04)
+        elif variation == "julia":
+            w = np.sqrt(w)*rng.choice([-1, 1], selected.sum())
+        z[selected] = w`;
 ---
 
 <html lang="en">
@@ -99,17 +210,19 @@ for index in range(iterations):
                             <span class="h1-neon">OLED Wallpapers</span>
                         </h1>
                         <p class="hero-subtitle">
-                            A small offline Python engine that turns a seed and
-                            a handful of coefficients into true-black
-                            wallpapers. The attractor behind this text is the
-                            repository's own preset, re-computed live in your
-                            browser.
+                            True-black wallpapers grown from equations. What
+                            began as a seeded Python attractor engine is now
+                            Volume 1: six wallpapers mastered in native 4K,
+                            reached through eight rounds of exploration.
                         </p>
                         <p class="equation" aria-label="Clifford attractor recurrence">
                             <span>x′ = sin(a·y) + c·cos(a·x)</span>
                             <span>y′ = sin(b·x) + d·cos(b·y)</span>
                         </p>
-                        <a class="hero-cta" href="#playground">Open the playground <span aria-hidden="true">↓</span></a>
+                        <div class="hero-actions">
+                            <a class="hero-cta" href="#volume-1">See Volume 1 <span aria-hidden="true">↓</span></a>
+                            <a class="hero-ghost" href="#playground">Open the playground</a>
+                        </div>
                     </div>
                 </div>
 
@@ -117,9 +230,6 @@ for index in range(iterations):
                     variant="hero"
                     skills={[
                         "python",
-                        "generative-art",
-                        "canvas-graphics",
-                        "unit-testing",
                         "data-visualisation",
                         "output-validation",
                         "iterative-development",
@@ -137,13 +247,100 @@ for index in range(iterations):
                 ))}
             </section>
 
+            <section class="case-section" id="volume-1" aria-labelledby="mw-volume">
+                <div class="section-heading">
+                    <p class="eyebrow">01 — Volume 1</p>
+                    <h2 id="mw-volume">Six mathematical worlds.</h2>
+                    <p>
+                        Two pieces come from the project's own Python
+                        renderers; four are fractal flames chosen by hand from
+                        JWildfire's generators, refined and rendered natively.
+                        Switch between desktop and phone to see each
+                        composition reframed.
+                    </p>
+                </div>
+
+                <div class="v1-viewer">
+                    <div class="v1-stage" data-mode="desktop">
+                        <div class="v1-desktop">
+                            <img
+                                class="v1-main"
+                                src={`${IMG}v1-${volume[0].slug}.webp`}
+                                alt={volume[0].alt}
+                                width="1600"
+                                height="900"
+                                decoding="async"
+                            />
+                        </div>
+                        <div class="v1-phone" aria-hidden="true">
+                            <img
+                                class="v1-portrait"
+                                src={`${IMG}portrait-${volume[0].slug}.webp`}
+                                alt=""
+                                width="360"
+                                height="640"
+                                loading="lazy"
+                                decoding="async"
+                            />
+                        </div>
+                    </div>
+
+                    <div class="v1-info">
+                        <fieldset class="segmented v1-mode">
+                            <legend>View</legend>
+                            <label><input type="radio" name="v1-mode" value="desktop" checked /><span>Desktop 4K</span></label>
+                            <label><input type="radio" name="v1-mode" value="phone" /><span>Phone 9:16</span></label>
+                        </fieldset>
+                        <p class="v1-index" aria-live="polite">01 / 06</p>
+                        <h3 class="v1-title">{volume[0].title}</h3>
+                        <p class="v1-method">{volume[0].method}</p>
+                        <p class="v1-detail">{volume[0].detail}</p>
+                        <div class="v1-score">
+                            <span>Artistic Quality Score</span>
+                            <span class="bar"><i style={`--score: ${volume[0].score}%`}></i><b aria-hidden="true"></b></span>
+                            <strong class="v1-score-value">{volume[0].score.toFixed(2)}</strong>
+                        </div>
+                    </div>
+
+                    <div class="v1-thumbs" role="group" aria-label="Choose an artwork">
+                        {volume.map((art, i) => (
+                            <button
+                                type="button"
+                                class="v1-thumb"
+                                aria-pressed={i === 0 ? "true" : "false"}
+                                data-index={i}
+                                data-title={art.title}
+                                data-slug={art.slug}
+                                data-method={art.method}
+                                data-detail={art.detail}
+                                data-score={art.score}
+                                data-alt={art.alt}
+                            >
+                                <img src={`${IMG}v1-${art.slug}.webp`} alt="" width="1600" height="900" loading="lazy" decoding="async" />
+                                <span>{art.title}</span>
+                            </button>
+                        ))}
+                    </div>
+                </div>
+
+                <div class="deliverables">
+                    {deliverables.map((item) => (
+                        <article>
+                            <strong>{item.value}</strong>
+                            <span>{item.label}</span>
+                        </article>
+                    ))}
+                </div>
+            </section>
+
             <section class="case-section" id="playground" aria-labelledby="mw-playground">
                 <div class="section-heading">
-                    <p class="eyebrow">01 — Live playground</p>
-                    <h2 id="mw-playground">Run the engine yourself.</h2>
+                    <p class="eyebrow">02 — Live playground</p>
+                    <h2 id="mw-playground">Run the engines yourself.</h2>
                     <p>
-                        Both mathematical engines, ported line by line from <code>attractors.py</code>, <code>flow_fields.py</code> and <code>compositor.py</code> to browser JavaScript.
-                        Start from the repository's two real presets, change
+                        Four of the project's renderers, from the first Clifford
+                        attractor to Ethereal Silver and Filigree Diadem, running
+                        in your browser. Start from the real presets, change
                         anything, and download the result as a PNG.
                     </p>
                 </div>
@@ -153,17 +350,10 @@ for index in range(iterations):
                         <div class="stage" data-target="desktop">
                             <div class="device">
                                 <canvas class="wall-canvas" width="1280" height="720" role="img" aria-label="Generated wallpaper preview"></canvas>
-                                <img
-                                    class="compare-img"
-                                    src={previews[0].src}
-                                    alt=""
-                                    width="1280"
-                                    height="720"
-                                    hidden
-                                />
+                                <img class="compare-img" src={`${IMG}clifford-foundation-01-desktop.webp`} alt="" width="1280" height="720" hidden />
                                 <span class="compare-line" hidden></span>
-                                <span class="compare-tag compare-tag-js" hidden>Browser port</span>
-                                <span class="compare-tag compare-tag-py" hidden>Python PNG</span>
+                                <span class="compare-tag compare-tag-js" hidden>Live render</span>
+                                <span class="compare-tag compare-tag-py" hidden>Repository master</span>
                             </div>
                         </div>
                         <progress class="render-progress" max="100" value="0" aria-label="Render progress"></progress>
@@ -172,21 +362,23 @@ for index in range(iterations):
                         <div class="compare-box">
                             <label class="check">
                                 <input type="checkbox" class="compare-toggle" />
-                                <span>Compare with the Python PNG from the repository</span>
+                                <span>Compare with the repository's own render</span>
                             </label>
                             <label class="compare-slider-label" hidden>
                                 <span>Divider position</span>
                                 <input type="range" class="compare-slider" min="0" max="100" value="50" />
                             </label>
-                            <p class="compare-note">Available for the unmodified presets at desktop, 1280 px, with the repository palette.</p>
+                            <p class="compare-note">Available for the original presets.</p>
                         </div>
                     </div>
 
                     <form class="controls" aria-label="Wallpaper controls" onsubmit="return false">
-                        <fieldset class="segmented">
-                            <legend>Family</legend>
+                        <fieldset class="segmented family-picker">
+                            <legend>Engine</legend>
                             <label><input type="radio" name="family" value="strange_attractor" checked /><span>Clifford attractor</span></label>
                             <label><input type="radio" name="family" value="particle_flow_field" /><span>Flow field</span></label>
+                            <label><input type="radio" name="family" value="fractal_flame" /><span>Fractal flame</span></label>
+                            <label><input type="radio" name="family" value="julia_filigree" /><span>Julia filigree</span></label>
                         </fieldset>
 
                         <div class="preset-row">
@@ -218,7 +410,27 @@ for index in range(iterations):
                             <label class="slider"><span>Steps per particle <output data-for="steps">250</output></span><input type="range" data-key="steps" min="10" max="1000" step="10" value="250" /></label>
                         </div>
 
-                        <div class="two-col">
+                        <div class="param-group" data-family="fractal_flame" hidden>
+                            <label class="slider"><span>Steps per path (× 32,768 paths) <output data-for="flame_steps">360</output></span><input type="range" data-key="flame_steps" min="30" max="960" step="30" value="360" /></label>
+                            <label class="slider"><span>Rotation <output data-for="angle">0.20</output></span><input type="range" data-key="angle" min="-3.14" max="3.14" step="0.01" value="0.2" /></label>
+                            <label class="slider"><span>Exposure gain <output data-for="gain">2.23</output></span><input type="range" data-key="gain" min="0.8" max="4" step="0.01" value="2.23" /></label>
+                            <label class="slider"><span>Gold layer <output data-for="gold_gain">1.00</output></span><input type="range" data-key="gold_gain" min="0" max="1.6" step="0.01" value="1" /></label>
+                        </div>
+
+                        <div class="param-group" data-family="julia_filigree" hidden>
+                            <label class="select">
+                                <span>Filigree study</span>
+                                <select class="julia-select"></select>
+                            </label>
+                            <label class="slider"><span>c (real) <output data-for="c_re">-0.745</output></span><input type="range" data-key="c_re" min="-1.5" max="1.5" step="0.001" value="-0.745" /></label>
+                            <label class="slider"><span>c (imaginary) <output data-for="c_im">0.186</output></span><input type="range" data-key="c_im" min="-1.5" max="1.5" step="0.001" value="0.186" /></label>
+                            <label class="slider"><span>Rotation <output data-for="view_angle">-1.12</output></span><input type="range" data-key="view_angle" min="-3.14" max="3.14" step="0.01" value="-1.12" /></label>
+                            <label class="slider"><span>Span <output data-for="span">3.25</output></span><input type="range" data-key="span" min="0.5" max="5" step="0.05" value="3.25" /></label>
+                            <label class="slider"><span>Iterations <output data-for="julia_iterations">360</output></span><input type="range" data-key="julia_iterations" min="60" max="480" step="10" value="360" /></label>
+                            <label class="slider"><span>Halo falloff <output data-for="falloff">65</output></span><input type="range" data-key="falloff" min="20" max="140" step="1" value="65" /></label>
+                        </div>
+
+                        <div class="two-col palette-row">
                             <label class="select">
                                 <span>Palette</span>
                                 <select class="palette-select">
@@ -231,121 +443,100 @@ for index in range(iterations):
                             <label class="slider compact"><span>Glow <output data-for="glow">2</output></span><input type="range" data-key="glow" min="0" max="6" step="1" value="2" /></label>
                         </div>
 
-                        <fieldset class="segmented">
+                        <fieldset class="segmented target-picker">
                             <legend>Composition target</legend>
                             <label><input type="radio" name="target" value="desktop" checked /><span>Desktop 16:9</span></label>
                             <label><input type="radio" name="target" value="mobile" /><span>Phone 13:6</span></label>
                         </fieldset>
 
                         <label class="select">
-                            <span>Output size (longest side)</span>
-                            <select class="res-select">
-                                <option value="1280">1280 px (CLI default)</option>
-                                <option value="2048" class="large-res">2048 px (CLI maximum)</option>
-                            </select>
+                            <span>Output size (width)</span>
+                            <select class="res-select"></select>
                         </label>
 
                         <div class="action-row">
                             <button type="button" class="neon-btn download-btn">Download PNG</button>
-                            <button type="button" class="ghost-btn copy-btn">Copy preset JSON</button>
+                            <button type="button" class="ghost-btn copy-btn">Copy settings JSON</button>
                         </div>
 
                         <details class="json-panel">
-                            <summary>Preset JSON for this design</summary>
+                            <summary>Settings JSON for this design</summary>
                             <pre><code class="preset-json"></code></pre>
                         </details>
                     </form>
                 </div>
 
-                <div class="port-notes">
-                    <article>
-                        <h3>Exact: seeding</h3>
-                        <p>
-                            The page re-implements NumPy's <code>SeedSequence</code> and PCG64 generator, so a seed yields the same start
-                            points as <code>np.random.default_rng(seed)</code>.
-                        </p>
-                        <p class="rng-check" aria-live="polite">Checking the RNG port…</p>
-                    </article>
-                    <article>
-                        <h3>Faithful: the maths</h3>
-                        <p>
-                            Same recurrence, same normalised vector field, same
-                            bounding-box framing (12% / 9% margins), colour ramps,
-                            dimmed glow and stroke widths as the Python compositor.
-                        </p>
-                    </article>
-                    <article>
-                        <h3>Approximate: the pixels</h3>
-                        <p>
-                            JavaScript's <code>sin</code>/<code>cos</code> can
-                            differ from C's in the last bit, and the attractor is
-                            chaotic, so individual points drift while the shape
-                            stays the same. Canvas lines are anti-aliased; Pillow's
-                            are not. This is a port, not the Python engine.
-                        </p>
-                    </article>
-                </div>
+                <p class="port-line">
+                    Browser ports of the Python renderers, seeded exactly like
+                    NumPy; the full-resolution masters use far more samples, so
+                    fine grain differs. <span class="rng-check" aria-live="polite"></span>
+                </p>
             </section>
 
-            <section class="case-section" aria-labelledby="mw-previews">
+            <section class="case-section" aria-labelledby="mw-timeline">
                 <div class="section-heading">
-                    <p class="eyebrow">02 — Output from the Python engine</p>
-                    <h2 id="mw-previews">The two Milestone 1 previews.</h2>
+                    <p class="eyebrow">03 — Exploration timeline</p>
+                    <h2 id="mw-timeline">Ten days, ten branches.</h2>
                     <p>
-                        These are the repository's own exploratory renders
-                        (1280 × 720, produced by <code>mathwall preview</code>),
-                        converted to WebP for the web. They are explicitly not
-                        approved final artwork.
+                        Each direction lived on its own Git branch with written
+                        findings, so nothing was lost and every image can be
+                        traced back to the code and settings that made it.
                     </p>
                 </div>
 
-                <div class="preview-grid">
-                    {previews.map((preview) => (
-                        <figure class="preview-card">
-                            <div class="preview-frame">
-                                <a href={preview.src} target="_blank" rel="noopener">
-                                    <img
-                                        src={preview.src}
-                                        alt={preview.alt}
-                                        width="1280"
-                                        height="720"
-                                        loading="lazy"
-                                        decoding="async"
-                                    />
-                                </a>
-                            </div>
-                            <figcaption>
-                                <strong>{preview.name}</strong>
-                                <span class="mono">{preview.meta}</span>
-                                <span class="score">Manual AQS review: {preview.score}/100 · “Refine”</span>
-                            </figcaption>
-                        </figure>
+                <ol class="timeline">
+                    {timeline.map((item) => (
+                        <li class={item.thumb ? "has-thumb" : ""}>
+                            <span class="tl-dot" aria-hidden="true"></span>
+                            <article>
+                                <p class="tl-meta"><time>{item.date}</time> · <code>{item.branch}</code></p>
+                                <h3>{item.title}</h3>
+                                <p>{item.text}</p>
+                            </article>
+                            {item.thumb && (
+                                <figure class="tl-thumb">
+                                    <img src={`${IMG}${item.thumb}`} alt={`Output from the ${item.title} stage`} width="640" height="360" loading="lazy" decoding="async" />
+                                </figure>
+                            )}
+                        </li>
                     ))}
-                </div>
+                </ol>
             </section>
 
             <section class="case-section" aria-labelledby="mw-how">
                 <div class="section-heading">
-                    <p class="eyebrow">03 — How it works</p>
+                    <p class="eyebrow">04 — How it works</p>
                     <h2 id="mw-how">Presets in, deterministic pixels out.</h2>
                     <p>
-                        A design is a small JSON preset. The CLI validates it,
-                        generates points with a seeded engine, and the
-                        compositor frames and draws them on a true-black canvas.
+                        Every design is a saved recipe. The engines validate
+                        it, sample the mathematics with a seeded generator,
+                        and a separate finishing stage turns density into
+                        light on a true-black canvas.
                     </p>
                 </div>
 
                 <ol class="pipeline" aria-label="Generation pipeline">
-                    <li><span>1</span><strong>Preset JSON</strong><small>presets.py validates the schema</small></li>
-                    <li><span>2</span><strong>Seeded engine</strong><small>attractors.py · flow_fields.py</small></li>
-                    <li><span>3</span><strong>Compositor</strong><small>framing, colour ramp, glow</small></li>
-                    <li><span>4</span><strong>PNG</strong><small>exclusive write, never overwrites</small></li>
+                    <li><span>1</span><strong>Recipe JSON</strong><small>validated schema and limits</small></li>
+                    <li><span>2</span><strong>Seeded sampling</strong><small>attractor, flow, flame or Julia</small></li>
+                    <li><span>3</span><strong>Finishing</strong><small>density, colour history, glow</small></li>
+                    <li><span>4</span><strong>Master PNG</strong><small>hashed, never overwritten</small></li>
                 </ol>
 
                 <div class="how-grid">
+                    <article class="panel code-panel">
+                        <h3>The flame behind Ethereal Silver</h3>
+                        <p>
+                            From <code>experiments/flame05.py</code>: 32,768 paths
+                            each pick one of three affine-plus-nonlinear maps per
+                            step. Density and colour history are accumulated, then
+                            filtered and tone-mapped.
+                        </p>
+                        <pre class="code"><code>{codeExcerpt}</code></pre>
+                    </article>
+
                     <article class="panel">
-                        <h3>Validated presets</h3>
-                        <p>Every preset must carry these fields before anything is generated:</p>
+                        <h3>Validated recipes</h3>
+                        <p>Core presets must carry these fields before anything is generated:</p>
                         <dl class="rule-list">
                             {validationRules.map((rule) => (
                                 <div>
@@ -357,12 +548,11 @@ for index in range(iterations):
                     </article>
 
                     <article class="panel">
-                        <h3>Workload budgets</h3>
+                        <h3>Bounded workloads</h3>
                         <p>
-                            Each preset declares a <code>preview</code> and a <code>final</code> budget,
-                            and each engine applies
-                            its own tighter limits <em>before</em> allocating
-                            arrays, so a typo cannot ask for a billion points.
+                            Engines refuse oversized jobs before allocating memory,
+                            and cloud renders run with time limits and memory
+                            floors on an 8 GB runner.
                         </p>
                         <div class="limit-grid">
                             {engineLimits.map((limit) => (
@@ -372,30 +562,16 @@ for index in range(iterations):
                                 </div>
                             ))}
                         </div>
-                        <p class="small">
-                            The compositor separately caps previews at
-                            3840 × 2160 pixels and 1,000,000 drawn points.
-                        </p>
-                    </article>
-
-                    <article class="panel code-panel">
-                        <h3>The attractor, verbatim</h3>
-                        <p>
-                            From <code>src/mathwall/attractors.py</code>. A
-                            local NumPy generator seeds the start point; every
-                            step is checked for non-finite output.
-                        </p>
-                        <pre class="code"><code>{codeExcerpt}</code></pre>
                     </article>
 
                     <article class="panel">
-                        <h3>Determinism, by design</h3>
+                        <h3>Reproducible by design</h3>
                         <ul class="tick-list">
-                            <li>No global randomness: <code>np.random.default_rng(seed)</code> per call.</li>
-                            <li>Same preset and seed → identical points and identical pixels, asserted in tests.</li>
-                            <li>Untouched background pixels must be exactly <code>(0, 0, 0)</code> for OLED panels.</li>
-                            <li>Exact dependency versions locked in <code>uv.lock</code>.</li>
-                            <li>The CLI refuses to overwrite an existing file, including its own preset.</li>
+                            <li>Local <code>np.random.default_rng(seed)</code> generators, never global randomness.</li>
+                            <li>Every master ships with its recipe, SHA-256 hash and render log.</li>
+                            <li>Silver's 4K master keeps the exact maps, seed and camera, with 503 million samples.</li>
+                            <li>JWildfire masters use the exact selected <code>.flame</code> files at pinned version 9.20.</li>
+                            <li>Exports refuse to overwrite any existing file.</li>
                         </ul>
                     </article>
                 </div>
@@ -403,95 +579,84 @@ for index in range(iterations):
 
             <section class="case-section" aria-labelledby="mw-quality">
                 <div class="section-heading">
-                    <p class="eyebrow">04 — Tests & artistic review</p>
-                    <h2 id="mw-quality">57 tests for the code, a rubric for the art.</h2>
+                    <p class="eyebrow">05 — Tests & artistic review</p>
+                    <h2 id="mw-quality">123 tests for the code, a rubric for the art.</h2>
                     <p>
                         Correctness is automated with <code>unittest</code>.
-                        Artistic quality is not: it is judged by people
-                        against a written rubric.
+                        Every artwork is also scored against an eight-criterion
+                        Artistic Quality Score, from composition (20%) to OLED
+                        suitability (10%), with 85 as the bar for final art.
                     </p>
                 </div>
 
                 <div class="quality-grid">
                     <article class="panel">
-                        <h3>Unit tests by file</h3>
-                        <ul class="test-list">
-                            {testFiles.map((test) => (
-                                <li>
-                                    <div class="test-head">
-                                        <code>{test.file}</code>
-                                        <span>{test.count} tests</span>
-                                    </div>
-                                    <span class="test-bar" style={`--share: ${(test.count / 17) * 100}%`} aria-hidden="true"></span>
-                                    <p>{test.focus}</p>
-                                </li>
-                            ))}
-                        </ul>
-                    </article>
-
-                    <article class="panel">
-                        <h3>Artistic Quality Score (AQS)</h3>
-                        <p>
-                            The rubric in <code>docs/review-rubrics/artistic-quality-score.md</code> defines eight weighted criteria, from composition (20%)
-                            to OLED suitability (10%), with a final-art target of
-                            85/100 that stays advisory: the owner's explicit
-                            approval is always required.
-                        </p>
+                        <h3>Volume 1 scores</h3>
                         <div class="score-bars">
-                            <div>
-                                <span>Clifford Foundation 01</span>
-                                <span class="bar"><i style="--score: 68.5%"></i></span>
-                                <strong>68.5</strong>
-                            </div>
-                            <div>
-                                <span>Flow Foundation 01</span>
-                                <span class="bar"><i style="--score: 64.5%"></i></span>
-                                <strong>64.5</strong>
-                            </div>
+                            {volume.map((art) => (
+                                <div>
+                                    <span>{art.title}</span>
+                                    <span class="bar"><i style={`--score: ${art.score}%`}></i></span>
+                                    <strong>{art.score.toFixed(2)}</strong>
+                                </div>
+                            ))}
                             <div class="target">
-                                <span>Final-art target</span>
+                                <span>Final-art bar</span>
                                 <span class="bar"><i style="--score: 85%"></i></span>
                                 <strong>85</strong>
                             </div>
                         </div>
                         <p class="small">
-                            From <code>docs/reviews/m1-artistic-viability.md</code> (12 October 2026). Both previews: “Refine”, medium
-                            confidence.
+                            For scale: the first two previews in Milestone 1
+                            scored 68.5 and 64.5.
                         </p>
+                    </article>
+
+                    <article class="panel">
+                        <h3>Unit tests by file</h3>
+                        <ul class="test-list">
+                            {testFiles.map((test) => (
+                                <li>
+                                    <code>{test.file}</code>
+                                    <span class="test-bar" style={`--share: ${(test.count / 25) * 100}%`} aria-hidden="true"></span>
+                                    <span class="test-count">{test.count}</span>
+                                </li>
+                            ))}
+                        </ul>
                     </article>
                 </div>
             </section>
 
             <section class="case-section status-section" aria-labelledby="mw-status">
                 <div class="section-heading">
-                    <p class="eyebrow">05 — Current status</p>
-                    <h2 id="mw-status">A proven engine, art still in progress.</h2>
+                    <p class="eyebrow">06 — Current status</p>
+                    <h2 id="mw-status">Packaged and verified, ready for launch decisions.</h2>
                     <p>
-                        Milestone 1 was accepted as a technical and
-                        artistic-feasibility milestone only. The review found
-                        the Clifford direction promising and the current
-                        flow-field composition not commercially promising.
+                        Volume 1 is assembled: 18 PNGs, the booklet and a
+                        README, split into five ZIPs that each fit Etsy's
+                        20 MB upload limit. The listing is drafted; pricing and
+                        publication are the next calls.
                     </p>
                 </div>
 
                 <div class="scope-grid">
                     <article class="panel delivered">
-                        <h3>Built and tested</h3>
+                        <h3>Done</h3>
                         <ul>
-                            <li>Preset loader and validator with schema version 1</li>
-                            <li>Seeded Clifford attractor and trigonometric flow-field engines</li>
-                            <li>Deterministic compositor with points and lines styles</li>
-                            <li><code>mathwall validate</code> and <code>mathwall preview</code> CLI</li>
-                            <li>Two candidate presets, two previews, a review rubric and an M1 review</li>
+                            <li>Six artworks selected and mastered at 3840 × 2160</li>
+                            <li>Phone companions checked against 19.5:9 and 20:9 crops</li>
+                            <li>Eight-page booklet that rebuilds byte for byte</li>
+                            <li>Every ZIP verified by CRC and per-file SHA-256</li>
+                            <li>All cloud rendering inside GitHub's free allowance</li>
                         </ul>
                     </article>
                     <article class="panel">
-                        <h3>Not claimed</h3>
+                        <h3>Next</h3>
                         <ul>
-                            <li>Final-resolution exports or approved artwork</li>
-                            <li>A wallpaper collection or anything on sale</li>
-                            <li>Physical OLED testing</li>
-                            <li>Milestone 2 work, which has not been authorised yet</li>
+                            <li>Final sign-off on artwork, price and listing wording</li>
+                            <li>Publishing the Etsy listing</li>
+                            <li>Testing on physical OLED phones and monitors</li>
+                            <li>A motion edition: two loop studies so far, on hold</li>
                         </ul>
                     </article>
                 </div>
@@ -499,7 +664,7 @@ for index in range(iterations):
 
             <section class="case-section skills-section" aria-labelledby="mw-skills">
                 <div class="section-heading centered-heading">
-                    <p class="eyebrow">06 — Skills demonstrated</p>
+                    <p class="eyebrow">07 — Skills demonstrated</p>
                     <h2 id="mw-skills">Reproducible maths, careful limits.</h2>
                     <p>Select any skill to see its evidence across the portfolio.</p>
                 </div>
@@ -507,9 +672,6 @@ for index in range(iterations):
                 <SkillLinks
                     skills={[
                         "python",
-                        "generative-art",
-                        "canvas-graphics",
-                        "unit-testing",
                         "data-visualisation",
                         "output-validation",
                         "data-quality",
@@ -540,8 +702,48 @@ for index in range(iterations):
 
 <script>
     /* =========================================================
+       VOLUME 1 VIEWER
+       ========================================================= */
+
+    const viewer = document.querySelector<HTMLElement>(".v1-viewer");
+    if (viewer) {
+        const base = "/images/projects/math-wallpapers/";
+        const stage = viewer.querySelector<HTMLElement>(".v1-stage")!;
+        const main = viewer.querySelector<HTMLImageElement>(".v1-main")!;
+        const portrait = viewer.querySelector<HTMLImageElement>(".v1-portrait")!;
+        const thumbs = viewer.querySelectorAll<HTMLButtonElement>(".v1-thumb");
+        const set = (selector: string, text: string) => (viewer.querySelector(selector)!.textContent = text);
+
+        const show = (button: HTMLButtonElement) => {
+            const d = button.dataset;
+            thumbs.forEach((t) => t.setAttribute("aria-pressed", String(t === button)));
+            stage.classList.remove("is-swapping");
+            void stage.offsetWidth;
+            stage.classList.add("is-swapping");
+            main.src = `${base}v1-${d.slug}.webp`;
+            main.alt = d.alt ?? "";
+            portrait.src = `${base}portrait-${d.slug}.webp`;
+            set(".v1-index", `0${Number(d.index) + 1} / 06`);
+            set(".v1-title", d.title ?? "");
+            set(".v1-method", d.method ?? "");
+            set(".v1-detail", d.detail ?? "");
+            set(".v1-score-value", Number(d.score).toFixed(2));
+            viewer.querySelector<HTMLElement>(".v1-score i")!.style.setProperty("--score", `${d.score}%`);
+        };
+
+        thumbs.forEach((button) => button.addEventListener("click", () => show(button)));
+        viewer.querySelectorAll<HTMLInputElement>("input[name=v1-mode]").forEach((radio) => {
+            radio.addEventListener("change", () => {
+                if (!radio.checked) return;
+                stage.dataset.mode = radio.value;
+                viewer.querySelector(".v1-phone")!.setAttribute("aria-hidden", String(radio.value !== "phone"));
+                portrait.alt = radio.value === "phone" ? `${main.alt} Phone companion crop.` : "";
+            });
+        });
+    }
+
+    /* =========================================================
        NUMPY-COMPATIBLE SEEDING (SeedSequence + PCG64)
-       Mirrors np.random.default_rng(seed).uniform(low, high).
        ========================================================= */
 
     const mul32 = (a: number, b: number) => Math.imul(a, b) >>> 0;
@@ -622,31 +824,127 @@ for index in range(iterations):
         }
     }
 
+    // The same generator with the 128-bit state held in 16-bit limbs: identical
+    // output, fast enough for the millions of draws a flame needs.
+    const toLimbs = (big: bigint) => {
+        const limbs = new Float64Array(8);
+        for (let i = 0; i < 8; i++) limbs[i] = Number((big >> BigInt(16 * i)) & 0xffffn);
+        return limbs;
+    };
+
+    class FastPCG64 {
+        s: Float64Array;
+        incL: Float64Array;
+        m = toLimbs(PCG_MULT);
+        acc = new Float64Array(8);
+        hi = 0;
+        lo = 0;
+        constructor(seed: number) {
+            const ref = new PCG64(seed);
+            this.s = toLimbs(ref.state);
+            this.incL = toLimbs(ref.inc);
+        }
+        next64() {
+            const s = this.s, m = this.m, acc = this.acc, inc = this.incL;
+            for (let k = 0; k < 8; k++) acc[k] = inc[k];
+            for (let i = 0; i < 8; i++) {
+                const si = s[i];
+                if (si === 0) continue;
+                for (let j = 0; j < 8 - i; j++) acc[i + j] += si * m[j];
+            }
+            let carry = 0;
+            for (let k = 0; k < 8; k++) {
+                const v = acc[k] + carry;
+                const low = v % 65536;
+                s[k] = low;
+                carry = (v - low) / 65536;
+            }
+            let hi = ((s[7] * 65536 + s[6]) ^ (s[3] * 65536 + s[2])) >>> 0;
+            let lo = ((s[5] * 65536 + s[4]) ^ (s[1] * 65536 + s[0])) >>> 0;
+            const rot = s[7] >>> 10;
+            if (rot >= 32) {
+                const t = hi;
+                hi = lo;
+                lo = t;
+            }
+            const r = rot & 31;
+            if (r) {
+                const nh = ((hi >>> r) | (lo << (32 - r))) >>> 0;
+                const nl = ((lo >>> r) | (hi << (32 - r))) >>> 0;
+                hi = nh;
+                lo = nl;
+            }
+            this.hi = hi;
+            this.lo = lo;
+        }
+        random() {
+            this.next64();
+            return (this.hi * 2097152 + (this.lo >>> 11)) / 9007199254740992;
+        }
+    }
+
     /* =========================================================
-       PRESETS, PALETTES AND STATE
+       PRESETS AND STATE
        ========================================================= */
 
-    type Family = "strange_attractor" | "particle_flow_field";
+    type Family = "strange_attractor" | "particle_flow_field" | "fractal_flame" | "julia_filigree";
     type RGB = [number, number, number];
+    const IMG = "/images/projects/math-wallpapers/";
 
-    const PRESETS = {
-        strange_attractor: {
-            name: "Clifford Foundation 01",
-            seed: 1729,
-            params: { a: -1.4, b: 1.6, c: 1.0, d: 0.7, iterations: 100000 },
-            palette: "clifford",
-            glow: 2,
-            image: "/images/projects/math-wallpapers/clifford-foundation-01-desktop.webp",
-        },
-        particle_flow_field: {
-            name: "Flow Foundation 01",
-            seed: 2718,
-            params: { frequency: 2.4, phase: 0.35, step_size: 0.025, initial_extent: 1.6, particles: 400, steps: 250 },
-            palette: "flow",
-            glow: 1,
-            image: "/images/projects/math-wallpapers/flow-foundation-01-desktop.webp",
-        },
-    } as const;
+    const isSmallDevice = window.matchMedia("(max-width: 700px), (pointer: coarse)").matches;
+    const POINT_CAP = isSmallDevice ? 400000 : 2000000;
+
+    const PRESETS: Record<Family, { name: string; seed: number; params: Record<string, number>; palette: string; glow: number }> = {
+        strange_attractor: { name: "Clifford Foundation 01", seed: 1729, params: { a: -1.4, b: 1.6, c: 1.0, d: 0.7, iterations: 100000 }, palette: "clifford", glow: 2 },
+        particle_flow_field: { name: "Flow Foundation 01", seed: 2718, params: { frequency: 2.4, phase: 0.35, step_size: 0.025, initial_extent: 1.6, particles: 400, steps: 250 }, palette: "flow", glow: 1 },
+        fractal_flame: { name: "Ethereal Silver", seed: 4108, params: { flame_steps: isSmallDevice ? 120 : 360, angle: 0.2, gain: 2.23, gold_gain: 1 }, palette: "", glow: 0 },
+        julia_filigree: { name: "Filigree 01 · Diadem", seed: 0, params: {}, palette: "", glow: 0 },
+    };
+
+    // experiments/filigree_study_settings.json (shared values merged in).
+    const JULIA_SHARED = { iterations: 360, falloff: 65, gain: 1.5, color_frequency: 0.065, color_phase: -0.6, rhythm_frequency: 0.46 };
+    type JuliaView = { span: number; angle: number; center: [number, number]; offset: [number, number]; gain: number };
+    type JuliaCfg = typeof JULIA_SHARED & { name: string; c: [number, number]; views: JuliaView[]; cool: RGB; warm: RGB; key?: number[] };
+    const v = (span: number, angle: number, cx: number, cy: number, ox = 0, oy = 0, gain = 1): JuliaView => ({ span, angle, center: [cx, cy], offset: [ox, oy], gain });
+    const JULIA: JuliaCfg[] = [
+        { ...JULIA_SHARED, name: "01 · Diadem", c: [-0.745, 0.186], views: [v(3.25, -1.12, 0.66, 0.51)], cool: [27, 82, 98], warm: [231, 205, 151] },
+        { ...JULIA_SHARED, name: "02 · Scrollwork", c: [-0.8, 0.156], falloff: 85, color_frequency: 0.045, views: [v(3.25, 0.25, 0.64, 0.5)], cool: [26, 65, 83], warm: [218, 224, 215] },
+        { ...JULIA_SHARED, name: "03 · Verdigris", c: [-0.4, 0.6], falloff: 75, color_frequency: 0.05, views: [v(3.4, 0.72, 0.64, 0.52)], cool: [28, 71, 63], warm: [223, 211, 164] },
+        { ...JULIA_SHARED, name: "04 · Trefoil", c: [-0.123, 0.745], falloff: 72, color_frequency: 0.055, views: [v(3.35, 1.05, 0.64, 0.5)], cool: [35, 63, 72], warm: [229, 204, 161] },
+        { ...JULIA_SHARED, name: "05 · Archipelago", c: [0.285, 0.01], falloff: 95, color_frequency: 0.08, views: [v(3.1, -0.25, 0.63, 0.5)], cool: [60, 64, 84], warm: [234, 211, 189] },
+        { ...JULIA_SHARED, name: "06 · Suture", c: [-1.25, 0.05], falloff: 85, color_frequency: 0.045, views: [v(3.4, -0.95, 0.65, 0.5)], cool: [27, 54, 67], warm: [209, 219, 220] },
+        { ...JULIA_SHARED, name: "07 · Passage", c: [-0.745, 0.186], falloff: 105, color_frequency: 0.045, views: [v(0.95, 0.05, 0.65, 0.5, -0.75, 0.25)], cool: [22, 70, 83], warm: [227, 211, 177], key: [0.68, 0.47, 0.38, 0.42, 0.35] },
+        { ...JULIA_SHARED, name: "08 · Counterpoint", c: [-0.745, 0.186], falloff: 65, color_frequency: 0.06, views: [v(4.3, -0.1, 0.47, 0.69, 0, 0, 0.62), v(3.65, 1.3, 0.76, 0.32)], cool: [34, 76, 86], warm: [232, 207, 158] },
+        { ...JULIA_SHARED, name: "09 · Whorl", c: [-0.70176, -0.3842], falloff: 80, color_frequency: 0.05, views: [v(3.2, -0.6, 0.64, 0.5)], cool: [63, 49, 72], warm: [224, 215, 195] },
+    ];
+
+    const juliaParams = (cfg: JuliaCfg) => ({
+        c_re: cfg.c[0],
+        c_im: cfg.c[1],
+        view_angle: cfg.views[0].angle,
+        span: cfg.views[0].span,
+        julia_iterations: cfg.iterations,
+        falloff: cfg.falloff,
+    });
+
+    // Ethereal Silver's effective settings (exchange_ethereal_silver.json).
+    const SILVER = {
+        seed: 4108,
+        span: 4.4,
+        weights: [0.62, 0.28, 0.1],
+        transforms: [
+            [0.71, -0.37, 0.2, 0.37, 0.71, 0, "swirl"],
+            [0.45, 0.1, -0.7, -0.1, 0.45, 0.2, "spherical"],
+            [0.6, 0.2, 0.5, -0.2, 0.6, -0.3, "julia"],
+        ] as [number, number, number, number, number, number, string][],
+        gamma: 1.34,
+        toe: 0.041,
+        detail: 0.12,
+        minimum_sigma: 0.38,
+        maximum_sigma: 1.08,
+        arc_quiet: 0.58,
+        nexus_light: 0.08,
+    };
 
     const PALETTES: Record<string, { color: RGB; accent: RGB }> = {
         clifford: { color: [24, 126, 255], accent: [232, 60, 184] },
@@ -655,19 +953,32 @@ for index in range(iterations):
         ember: { color: [255, 64, 32], accent: [255, 214, 92] },
     };
 
+    const RES_OPTIONS: Record<Family, number[]> = {
+        strange_attractor: isSmallDevice ? [1280] : [1280, 2048],
+        particle_flow_field: isSmallDevice ? [1280] : [1280, 2048],
+        fractal_flame: isSmallDevice ? [960] : [960, 1280],
+        julia_filigree: isSmallDevice ? [800] : [800, 1280],
+    };
+    const DEFAULT_RES: Record<Family, number> = {
+        strange_attractor: 1280,
+        particle_flow_field: 1280,
+        fractal_flame: isSmallDevice ? 960 : 1280,
+        julia_filigree: 800,
+    };
+
     const COMPOSITION = { desktop: [3840, 2160], mobile: [1440, 3120] } as const;
     const MAX_SEED = 4294967295;
 
-    const isSmallDevice = window.matchMedia("(max-width: 700px), (pointer: coarse)").matches;
-    const POINT_CAP = isSmallDevice ? 400000 : 2000000;
-
     const state = {
         family: "strange_attractor" as Family,
-        seeds: { strange_attractor: 1729, particle_flow_field: 2718 } as Record<Family, number>,
+        seeds: { strange_attractor: 1729, particle_flow_field: 2718, fractal_flame: 4108, julia_filigree: 0 } as Record<Family, number>,
         params: {
             strange_attractor: { ...PRESETS.strange_attractor.params },
             particle_flow_field: { ...PRESETS.particle_flow_field.params },
+            fractal_flame: { ...PRESETS.fractal_flame.params },
+            julia_filigree: juliaParams(JULIA[0]),
         } as Record<Family, Record<string, number>>,
+        julia: 0,
         palette: "clifford",
         glow: 2,
         target: "desktop" as "desktop" | "mobile",
@@ -675,7 +986,7 @@ for index in range(iterations):
     };
 
     /* =========================================================
-       ENGINES (ports of attractors.py and flow_fields.py)
+       ATTRACTOR AND FLOW ENGINES (attractors.py, flow_fields.py)
        ========================================================= */
 
     const nextFrame = () => new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
@@ -683,7 +994,7 @@ for index in range(iterations):
 
     interface PointSet {
         pts: Float32Array;
-        trajectories: number; // 0 for a single attractor trajectory
+        trajectories: number;
         steps: number;
         min: [number, number];
         max: [number, number];
@@ -722,7 +1033,6 @@ for index in range(iterations):
     async function computeFlow(p: Record<string, number>, seed: number, particles: number, steps: number, token: number, onProgress: (f: number) => void): Promise<PointSet | null> {
         const rng = new PCG64(seed);
         const positions = new Float64Array(particles * 2);
-        // Row-major fill, exactly like uniform(size=(particle_count, 2)).
         for (let i = 0; i < particles * 2; i++) positions[i] = rng.uniform(-p.initial_extent, p.initial_extent);
         const { frequency, phase, step_size } = p;
         const pts = new Float32Array(particles * steps * 2);
@@ -762,10 +1072,6 @@ for index in range(iterations):
         return { pts, trajectories: particles, steps, min: [minX, minY], max: [maxX, maxY] };
     }
 
-    /* =========================================================
-       COMPOSITOR (port of compositor.py)
-       ========================================================= */
-
     function transformInPlace(set: PointSet, width: number, height: number, margin: number) {
         const eps = 2.220446049250313e-16;
         const spanX = Math.max(set.max[0] - set.min[0], eps);
@@ -781,7 +1087,7 @@ for index in range(iterations):
     }
 
     const lerpColor = (from: RGB, to: RGB, f: number): RGB => [0, 1, 2].map((k) => Math.round(from[k] + (to[k] - from[k]) * f)) as RGB;
-    const dim = (c: RGB): RGB => c.map((v) => Math.round(v * 0.28)) as RGB;
+    const dim = (c: RGB): RGB => c.map((x) => Math.round(x * 0.28)) as RGB;
 
     function boxBlur(src: Float32Array, w: number, h: number, r: number) {
         const tmp = new Float32Array(src.length);
@@ -805,7 +1111,6 @@ for index in range(iterations):
         }
     }
 
-    // Three box passes approximate Pillow's GaussianBlur(radius=sigma).
     function gaussianApprox(mask: Float32Array, w: number, h: number, sigma: number) {
         const n = 3;
         const ideal = Math.sqrt((12 * sigma * sigma) / n + 1);
@@ -822,7 +1127,6 @@ for index in range(iterations):
         for (let i = 3; i < data.length; i += 4) data[i] = 255;
         const pts = set.pts;
         const n = pts.length / 2;
-
         if (glow > 0) {
             const mask = new Float32Array(w * h);
             for (let i = 0; i < n; i++) {
@@ -841,8 +1145,6 @@ for index in range(iterations):
             }
             if (token !== renderToken) return;
         }
-
-        // np.array_split into min(32, n) groups, each with its own ramp colour.
         const groups = Math.min(32, n);
         const base = Math.floor(n / groups);
         const extra = n % groups;
@@ -895,7 +1197,7 @@ for index in range(iterations):
                 for (let s = 1; s < steps; s++) ctx.lineTo(pts[o + s * 2] + 0.5, pts[o + s * 2 + 1] + 0.5);
                 ctx.stroke();
                 if (performance.now() - lastPaint > 24) {
-                    onProgress(((isGlow ? 0 : glow > 0 ? 0.5 : 0) + (t / trajectories) * (glow > 0 ? 0.5 : 1)));
+                    onProgress((isGlow ? 0 : glow > 0 ? 0.5 : 0) + (t / trajectories) * (glow > 0 ? 0.5 : 1));
                     await nextFrame();
                     if (token !== renderToken) return false;
                     lastPaint = performance.now();
@@ -909,6 +1211,315 @@ for index in range(iterations):
     }
 
     /* =========================================================
+       FRACTAL FLAME (experiments/flame05.py: accumulate + finish)
+       ========================================================= */
+
+    class FlameSampler {
+        width: number;
+        height: number;
+        hist: Float32Array;
+        rng: FastPCG64;
+        count = 32768;
+        zr: Float64Array;
+        zi: Float64Array;
+        col: Float64Array;
+        choice: Uint8Array;
+        step = 0;
+        cdf: number[];
+        cosA: number;
+        sinA: number;
+        constructor(width: number, seed: number, angle: number) {
+            this.width = width;
+            this.height = Math.floor((width * 9) / 16);
+            this.hist = new Float32Array(this.width * this.height * 4);
+            this.rng = new FastPCG64(seed);
+            this.zr = new Float64Array(this.count);
+            this.zi = new Float64Array(this.count);
+            this.col = new Float64Array(this.count).fill(0.5);
+            this.choice = new Uint8Array(this.count);
+            // rng.uniform(-1, 1, count) for the real parts, then the imaginary parts.
+            for (let i = 0; i < this.count; i++) this.zr[i] = -1 + 2 * this.rng.random();
+            for (let i = 0; i < this.count; i++) this.zi[i] = -1 + 2 * this.rng.random();
+            const w = SILVER.weights;
+            const c0 = w[0], c1 = c0 + w[1], c2 = c1 + w[2];
+            this.cdf = [c0 / c2, c1 / c2, c2 / c2];
+            this.cosA = Math.cos(angle);
+            this.sinA = Math.sin(angle);
+        }
+        advance() {
+            const { count, zr, zi, col, choice, rng, cdf } = this;
+            for (let i = 0; i < count; i++) {
+                const u = rng.random();
+                choice[i] = u >= cdf[0] ? (u >= cdf[1] ? (u >= cdf[2] ? 3 : 2) : 1) : 0;
+            }
+            const tones = [0.12, 0.68, 0.95];
+            for (let t = 0; t < 3; t++) {
+                const [a, b, c, d, e, f, variation] = SILVER.transforms[t];
+                let bcnt = 0;
+                let buf = 0;
+                for (let i = 0; i < count; i++) {
+                    if (choice[i] !== t) continue;
+                    let wr = a * zr[i] + b * zi[i] + c;
+                    let wi = d * zr[i] + e * zi[i] + f;
+                    if (variation === "swirl") {
+                        const ang = Math.PI / 2 - (wr * wr + wi * wi);
+                        const ca = Math.cos(ang), sa = Math.sin(ang);
+                        const nr = wr * ca - wi * sa;
+                        wi = wr * sa + wi * ca;
+                        wr = nr;
+                    } else if (variation === "spherical") {
+                        const den = Math.max(wr * wr + wi * wi, 0.04);
+                        wr /= den;
+                        wi /= den;
+                    } else {
+                        const m = Math.hypot(wr, wi);
+                        const sr = Math.sqrt((m + wr) / 2);
+                        let si = Math.sqrt((m - wr) / 2);
+                        if (wi < 0) si = -si;
+                        // rng.choice([-1, 1]) -> integers(0, 2): buffered 32-bit Lemire draws.
+                        let word: number;
+                        if (bcnt === 0) {
+                            rng.next64();
+                            word = rng.lo;
+                            buf = rng.hi;
+                            bcnt = 1;
+                        } else {
+                            word = buf;
+                            bcnt = 0;
+                        }
+                        const sign = word >>> 31 ? 1 : -1;
+                        wr = sr * sign;
+                        wi = si * sign;
+                    }
+                    zr[i] = wr;
+                    zi[i] = wi;
+                    col[i] = (col[i] + tones[t]) * 0.5;
+                }
+            }
+            if (this.step++ < 30) return;
+            const { width, height, hist, cosA, sinA } = this;
+            const sc = height / SILVER.span, ox = width * 0.65, oy = height * 0.5;
+            for (let i = 0; i < count; i++) {
+                const qr = zr[i] * cosA - zi[i] * sinA;
+                const qi = zr[i] * sinA + zi[i] * cosA;
+                const X = qr * sc + ox, Y = oy - qi * sc;
+                const ix = Math.floor(X), iy = Math.floor(Y);
+                if (ix < 0 || ix >= width - 1 || iy < 0 || iy >= height - 1) continue;
+                const fx = X - ix, fy = Y - iy, h = col[i];
+                let wm = Math.min(1, Math.max(0, (h - 0.4) / 0.24));
+                wm = wm * wm * (3 - 2 * wm);
+                const p = (iy * width + ix) * 4;
+                const q = p + width * 4;
+                const w00 = (1 - fx) * (1 - fy), w10 = fx * (1 - fy), w01 = (1 - fx) * fy, w11 = fx * fy;
+                const hh = h * h;
+                hist[p] += w00; hist[p + 1] += w00 * h; hist[p + 2] += w00 * hh; hist[p + 3] += w00 * wm;
+                hist[p + 4] += w10; hist[p + 5] += w10 * h; hist[p + 6] += w10 * hh; hist[p + 7] += w10 * wm;
+                hist[q] += w01; hist[q + 1] += w01 * h; hist[q + 2] += w01 * hh; hist[q + 3] += w01 * wm;
+                hist[q + 4] += w11; hist[q + 5] += w11 * h; hist[q + 6] += w11 * hh; hist[q + 7] += w11 * wm;
+            }
+        }
+    }
+
+    function gaussian4(src: Float32Array, w: number, h: number, sigma: number) {
+        const radius = Math.max(1, Math.ceil(3 * sigma));
+        const k: number[] = [];
+        let sum = 0;
+        for (let x = -radius; x <= radius; x++) {
+            const value = Math.exp(-0.5 * (x / sigma) ** 2);
+            k.push(value);
+            sum += value;
+        }
+        for (let i = 0; i < k.length; i++) k[i] /= sum;
+        const tmp = new Float32Array(src.length);
+        const out = new Float32Array(src.length);
+        for (let y = 0; y < h; y++) {
+            for (let x = 0; x < w; x++) {
+                let a0 = 0, a1 = 0, a2 = 0, a3 = 0;
+                for (let j = -radius; j <= radius; j++) {
+                    const xx = x + j;
+                    if (xx < 0 || xx >= w) continue;
+                    const q = (y * w + xx) * 4, kw = k[j + radius];
+                    a0 += src[q] * kw; a1 += src[q + 1] * kw; a2 += src[q + 2] * kw; a3 += src[q + 3] * kw;
+                }
+                const o = (y * w + x) * 4;
+                tmp[o] = a0; tmp[o + 1] = a1; tmp[o + 2] = a2; tmp[o + 3] = a3;
+            }
+        }
+        for (let y = 0; y < h; y++) {
+            for (let x = 0; x < w; x++) {
+                let a0 = 0, a1 = 0, a2 = 0, a3 = 0;
+                for (let j = -radius; j <= radius; j++) {
+                    const yy = y + j;
+                    if (yy < 0 || yy >= h) continue;
+                    const q = (yy * w + x) * 4, kw = k[j + radius];
+                    a0 += tmp[q] * kw; a1 += tmp[q + 1] * kw; a2 += tmp[q + 2] * kw; a3 += tmp[q + 3] * kw;
+                }
+                const o = (y * w + x) * 4;
+                out[o] = a0; out[o + 1] = a1; out[o + 2] = a2; out[o + 3] = a3;
+            }
+        }
+        return out;
+    }
+
+    function flameFinish(hist: Float32Array, w: number, h: number, gain: number, goldGain: number) {
+        const N = w * h;
+        let total = 0;
+        for (let i = 0; i < N; i++) total += hist[i * 4];
+        const mean = total / w / h;
+        const sharp = gaussian4(hist, w, h, SILVER.minimum_sigma);
+        const soft = gaussian4(hist, w, h, SILVER.maximum_sigma);
+        const field = new Float32Array(N * 4);
+        for (let i = 0; i < N; i++) {
+            const mix = Math.exp(-sharp[i * 4] / Math.max(mean * 0.3, 1e-10));
+            for (let c = 0; c < 4; c++) field[i * 4 + c] = sharp[i * 4 + c] * (1 - mix) + soft[i * 4 + c] * mix;
+        }
+        const intensity = new Float64Array(N);
+        const occupied: number[] = [];
+        for (let i = 0; i < N; i++) {
+            const value = Math.log1p((field[i * 4] / Math.max(mean, 1e-10)) * 32);
+            intensity[i] = value;
+            if (value > 0) occupied.push(value);
+        }
+        let scale = 1;
+        if (occupied.length) {
+            const sorted = Float64Array.from(occupied).sort();
+            const pos = (sorted.length - 1) * 0.9985;
+            const lo = Math.floor(pos);
+            scale = lo + 1 < sorted.length ? sorted[lo] + (sorted[lo + 1] - sorted[lo]) * (pos - lo) : sorted[lo];
+        }
+        const out = new Uint8ClampedArray(N * 4);
+        for (let i = 0; i < N; i++) {
+            const density = field[i * 4];
+            const chroma = field[i * 4 + 1] / Math.max(density, 1e-10);
+            const relative = density / Math.max(mean, 1e-10);
+            let I = Math.pow(intensity[i] / Math.max(scale, 1e-10), SILVER.gamma);
+            I *= 1 - Math.exp(-relative / SILVER.toe);
+            const ratio = sharp[i * 4] / Math.max(soft[i * 4], 1e-10);
+            I *= 1 + SILVER.detail * Math.min(0.8, Math.max(-0.4, ratio - 1));
+            const px = i % w, py = Math.floor(i / w);
+            const x = (px / w - 0.7) * (w / h), y = py / h - 0.49;
+            let outer = Math.min(1, Math.max(0, (Math.sqrt(x * x + y * y) - 0.26) / 0.23));
+            outer = outer * outer * (3 - 2 * outer);
+            const blue = Math.min(1, Math.max(0, (0.52 - chroma) / 0.18));
+            const ang = 0.5 + 0.5 * Math.cos(Math.atan2(y, x) + 0.7);
+            I *= 1 - SILVER.arc_quiet * outer * blue * (0.38 + 0.62 * ang * ang);
+            I *= 1 + SILVER.nexus_light * Math.exp(-(((px / w - 0.555) / 0.075) ** 2) - ((py / h - 0.5) / 0.125) ** 2);
+            const warmD = Math.min(Math.max(field[i * 4 + 3], 0), density);
+            const coolD = Math.max(0, density - warmD);
+            const wf = warmD / Math.max(density, 1e-10);
+            const wl = Math.log1p((warmD / Math.max(mean, 1e-10)) * 32) / Math.max(scale, 1e-10);
+            const cl = Math.log1p((coolD / Math.max(mean, 1e-10)) * 32) / Math.max(scale, 1e-10);
+            const comb = Math.max(wl + cl, 1e-10);
+            const wc = Math.min(1, Math.max(0, wl)), cc = Math.min(1, Math.max(0, cl));
+            const gold = [244 + 5 * wc, 178 + 48 * wc, 85 + 88 * wc];
+            const bl = [18 + 50 * cc, 85 + 79 * cc, 149 + 52 * cc];
+            for (let ch = 0; ch < 3; ch++) {
+                let value = ((bl[ch] * cl * (1 - 0.35 * wf) + gold[ch] * wl * goldGain) / comb) * I * gain;
+                value = 255 * (1 - Math.exp(-Math.max(value, 0) / 255));
+                out[i * 4 + ch] = Math.floor(Math.min(254, Math.max(0, value)));
+            }
+            out[i * 4 + 3] = 255;
+        }
+        return out;
+    }
+
+    /* =========================================================
+       JULIA FILIGREE (experiments/filigree_study.py)
+       ========================================================= */
+
+    async function renderJulia(cfg: JuliaCfg, width: number, token: number, onProgress: (f: number) => void) {
+        const ss = 2;
+        const sw = width * ss;
+        const sh = Math.floor((sw * 9) / 16);
+        const N = sw * sh;
+        const dist = new Float32Array(N), esc = new Float32Array(N), logd = new Float32Array(N);
+        const act = new Uint8Array(N);
+        const rgb = new Uint8Array(N * 3);
+        const [cr, ci] = cfg.c;
+        // Lighting keeps the 800-pixel preview's derivative spacing at larger sizes.
+        const gradScale = ss * (width / 800);
+        let last = performance.now();
+        for (let vIndex = 0; vIndex < cfg.views.length; vIndex++) {
+            const view = cfg.views[vIndex];
+            const cosA = Math.cos(view.angle), sinA = Math.sin(view.angle);
+            const scale = sh / view.span;
+            for (let py = 0; py < sh; py++) {
+                const y = (sh * view.center[1] - py) / scale;
+                for (let px = 0; px < sw; px++) {
+                    const x = (px - sw * view.center[0]) / scale;
+                    let zr = x * cosA - y * sinA + view.offset[0];
+                    let zi = x * sinA + y * cosA + view.offset[1];
+                    let dr = 1, di = 0, d = 1e-8, e = 0, active = 1;
+                    for (let k = 0; k < cfg.iterations; k++) {
+                        const ndr = 2 * (zr * dr - zi * di);
+                        di = 2 * (zr * di + zi * dr);
+                        dr = ndr;
+                        const nzr = zr * zr - zi * zi + cr;
+                        zi = 2 * zr * zi + ci;
+                        zr = nzr;
+                        const r = Math.hypot(zr, zi);
+                        if (r > 32) {
+                            d = (0.5 * r * Math.log(r)) / Math.max(Math.hypot(dr, di), 1e-20);
+                            e = k + 1 - Math.log2(Math.max(1, Math.log2(r)));
+                            active = 0;
+                            break;
+                        }
+                    }
+                    const i = py * sw + px;
+                    dist[i] = d;
+                    esc[i] = e;
+                    act[i] = active;
+                    logd[i] = Math.log(d + 0.001);
+                }
+                if (performance.now() - last > 30) {
+                    onProgress(((vIndex + (py / sh) * 0.8) / cfg.views.length));
+                    await nextFrame();
+                    if (token !== renderToken) return null;
+                    last = performance.now();
+                }
+            }
+            const { cool, warm } = cfg;
+            for (let py = 0; py < sh; py++) {
+                for (let px = 0; px < sw; px++) {
+                    const i = py * sw + px;
+                    if (act[i]) continue;
+                    const band = Math.exp(-dist[i] * cfg.falloff);
+                    const gx = (px === 0 ? logd[i + 1] - logd[i] : px === sw - 1 ? logd[i] - logd[i - 1] : (logd[i + 1] - logd[i - 1]) / 2) * gradScale;
+                    const gy = (py === 0 ? logd[i + sw] - logd[i] : py === sh - 1 ? logd[i] - logd[i - sw] : (logd[i + sw] - logd[i - sw]) / 2) * gradScale;
+                    const norm = Math.sqrt(gx * gx + gy * gy + 0.02);
+                    const light = 0.35 + 0.65 * Math.max(0, (-gx * 0.5 - gy * 0.7 + 0.13) / norm);
+                    const rc = Math.cos(esc[i] * cfg.rhythm_frequency);
+                    const bs = 0.5 + 0.5 * Math.sin(esc[i] * cfg.color_frequency + cfg.color_phase);
+                    let f = band * (0.65 + 0.35 * rc * rc) * light * cfg.gain * view.gain;
+                    if (cfg.key) {
+                        const [kx, ky, sx, sy, amount] = cfg.key;
+                        f *= 1 - amount + amount * Math.exp(-(((px / sw - kx) / sx) ** 2) - ((py / sh - ky) / sy) ** 2);
+                    }
+                    for (let ch = 0; ch < 3; ch++) {
+                        const value = Math.floor(Math.min(240, Math.max(0, (cool[ch] + (warm[ch] - cool[ch]) * bs * bs) * f)));
+                        if (value > rgb[i * 3 + ch]) rgb[i * 3 + ch] = value;
+                    }
+                }
+            }
+        }
+        const h = Math.floor((width * 9) / 16);
+        const image = new ImageData(width, h);
+        const out = image.data;
+        for (let y = 0; y < h; y++) {
+            for (let x = 0; x < width; x++) {
+                const o = (y * width + x) * 4;
+                for (let ch = 0; ch < 3; ch++) {
+                    const a = ((y * 2) * sw + x * 2) * 3 + ch;
+                    out[o + ch] = (rgb[a] + rgb[a + 3] + rgb[a + sw * 3] + rgb[a + sw * 3 + 3] + 2) >> 2;
+                }
+                out[o + 3] = 255;
+            }
+        }
+        onProgress(1);
+        return image;
+    }
+
+    /* =========================================================
        UI WIRING
        ========================================================= */
 
@@ -919,11 +1530,14 @@ for index in range(iterations):
         const stage = root.querySelector<HTMLElement>(".stage")!;
         const progress = root.querySelector<HTMLProgressElement>(".render-progress")!;
         const status = root.querySelector<HTMLElement>(".render-status")!;
+        const seedRow = root.querySelector<HTMLElement>(".seed-row")!;
         const seedInput = root.querySelector<HTMLInputElement>(".seed-input")!;
         const seedError = root.querySelector<HTMLElement>(".seed-error")!;
         const presetName = root.querySelector<HTMLElement>(".preset-name")!;
+        const paletteRow = root.querySelector<HTMLElement>(".palette-row")!;
         const paletteSelect = root.querySelector<HTMLSelectElement>(".palette-select")!;
         const resSelect = root.querySelector<HTMLSelectElement>(".res-select")!;
+        const juliaSelect = root.querySelector<HTMLSelectElement>(".julia-select")!;
         const jsonCode = root.querySelector<HTMLElement>(".preset-json")!;
         const compareToggle = root.querySelector<HTMLInputElement>(".compare-toggle")!;
         const compareSlider = root.querySelector<HTMLInputElement>(".compare-slider")!;
@@ -932,18 +1546,21 @@ for index in range(iterations):
         const compareLine = root.querySelector<HTMLElement>(".compare-line")!;
         const compareTags = root.querySelectorAll<HTMLElement>(".compare-tag");
         const compareNote = root.querySelector<HTMLElement>(".compare-note")!;
+        const mobileRadio = root.querySelector<HTMLInputElement>("input[name=target][value=mobile]")!;
         const sliders = root.querySelectorAll<HTMLInputElement>("input[type=range][data-key]");
         let lastRender = { points: 0, ms: 0 };
 
+        JULIA.forEach((cfg, i) => juliaSelect.append(new Option(cfg.name, String(i))));
+
         if (isSmallDevice) {
-            root.querySelector<HTMLOptionElement>(".large-res")?.remove();
-            root.querySelectorAll<HTMLInputElement>('[data-key="iterations"]').forEach((el) => (el.max = String(POINT_CAP)));
+            root.querySelector<HTMLInputElement>('[data-key="iterations"]')!.max = String(POINT_CAP);
+            root.querySelector<HTMLInputElement>('[data-key="flame_steps"]')!.max = "240";
         }
 
         const formatValue = (key: string, value: number) => {
-            if (key === "iterations" || key === "particles" || key === "steps") return value.toLocaleString("en-GB");
+            if (["iterations", "particles", "steps", "flame_steps", "julia_iterations", "falloff"].includes(key)) return value.toLocaleString("en-GB");
             if (key === "glow") return String(value);
-            if (key === "step_size") return value.toFixed(3);
+            if (key === "step_size" || key === "c_re" || key === "c_im") return value.toFixed(3);
             if (key === "initial_extent") return value.toFixed(1);
             return value.toFixed(2);
         };
@@ -953,25 +1570,66 @@ for index in range(iterations):
             if (out) out.textContent = formatValue(key, value);
         };
 
+        const isClassic = () => state.family === "strange_attractor" || state.family === "particle_flow_field";
+
         const dims = (): [number, number] => {
+            if (!isClassic()) return [state.res, Math.floor((state.res * 9) / 16)];
             const [sw, sh] = COMPOSITION[state.target];
             const scale = state.res / Math.max(sw, sh);
             return [Math.max(1, Math.round(sw * scale)), Math.max(1, Math.round(sh * scale))];
         };
 
-        const isUnmodifiedPreset = () => {
-            const preset = PRESETS[state.family];
-            const params = state.params[state.family];
-            return (
-                state.seeds[state.family] === preset.seed &&
-                Object.entries(preset.params).every(([k, v]) => params[k] === v) &&
-                state.palette === preset.palette &&
-                state.glow === preset.glow
-            );
+        const currentJulia = (): JuliaCfg => {
+            const base = JULIA[state.julia];
+            const p = state.params.julia_filigree;
+            const views = base.views.map((view, i) => (i === 0 ? { ...view, angle: p.view_angle, span: p.span } : view));
+            return { ...base, c: [p.c_re, p.c_im], iterations: p.julia_iterations, falloff: p.falloff, views };
         };
 
-        const presetJson = () => {
+        const isUnmodifiedPreset = () => {
+            const params = state.params[state.family];
+            if (state.family === "julia_filigree") {
+                const ref = juliaParams(JULIA[state.julia]);
+                return Object.entries(ref).every(([k, value]) => params[k] === value);
+            }
+            const preset = PRESETS[state.family];
+            const sameParams = Object.entries(preset.params).every(([k, value]) => k === "flame_steps" || params[k] === value);
+            if (state.family === "fractal_flame") return sameParams && state.seeds.fractal_flame === preset.seed;
+            return sameParams && state.seeds[state.family] === preset.seed && state.palette === preset.palette && state.glow === preset.glow;
+        };
+
+        const displayName = () => {
+            const base = state.family === "julia_filigree" ? `Filigree ${JULIA[state.julia].name}` : PRESETS[state.family].name;
+            return isUnmodifiedPreset() ? base : `Modified from ${base}`;
+        };
+
+        const settingsJson = () => {
             const p = state.params[state.family];
+            if (state.family === "julia_filigree") {
+                const { name, ...cfg } = currentJulia();
+                return { study: name, supersampling: 2, ...cfg };
+            }
+            if (state.family === "fractal_flame") {
+                return {
+                    kind: "flame",
+                    seed: state.seeds.fractal_flame,
+                    span: SILVER.span,
+                    angle: p.angle,
+                    weights: SILVER.weights,
+                    transforms: SILVER.transforms,
+                    steps: p.flame_steps,
+                    gamma: SILVER.gamma,
+                    toe: SILVER.toe,
+                    gain: p.gain,
+                    detail: SILVER.detail,
+                    minimum_sigma: SILVER.minimum_sigma,
+                    maximum_sigma: SILVER.maximum_sigma,
+                    arc_quiet: SILVER.arc_quiet,
+                    nexus_light: SILVER.nexus_light,
+                    layered_color: true,
+                    gold_gain: p.gold_gain,
+                };
+            }
             const parameters =
                 state.family === "strange_attractor"
                     ? { system: "clifford", a: p.a, b: p.b, c: p.c, d: p.d }
@@ -983,28 +1641,39 @@ for index in range(iterations):
                 family: state.family,
                 seed: state.seeds[state.family],
                 parameters,
-                composition: {
-                    desktop: { width: 3840, height: 2160 },
-                    mobile: { width: 1440, height: 3120 },
-                },
+                composition: { desktop: { width: 3840, height: 2160 }, mobile: { width: 1440, height: 3120 } },
                 budgets: { preview: budget, final: Math.max(5000000, budget) },
             };
         };
 
+        const compareSource = (): string | null => {
+            if (!isUnmodifiedPreset()) return null;
+            if (state.family === "strange_attractor" && state.target === "desktop" && state.res === 1280) return `${IMG}clifford-foundation-01-desktop.webp`;
+            if (state.family === "particle_flow_field" && state.target === "desktop" && state.res === 1280) return `${IMG}flow-foundation-01-desktop.webp`;
+            if (state.family === "fractal_flame") return `${IMG}v1-ethereal-silver.webp`;
+            if (state.family === "julia_filigree" && state.julia === 0) return state.res === 800 ? `${IMG}filigree-01-diadem-800.webp` : `${IMG}v1-filigree-diadem.webp`;
+            return null;
+        };
+
         const updateCompare = () => {
-            const eligible = isUnmodifiedPreset() && state.target === "desktop" && state.res === 1280;
-            compareToggle.disabled = !eligible;
-            compareNote.textContent = eligible
-                ? "Drag the divider: left of it is this page's port, right of it is the repository's PNG."
-                : "Available for the unmodified presets at desktop, 1280 px, with the repository palette.";
-            const show = eligible && compareToggle.checked;
-            compareImg.src = PRESETS[state.family].image;
+            const source = compareSource();
+            compareToggle.disabled = !source;
+            compareNote.textContent = source
+                ? "Drag the divider: the live render is on the left, the repository's image on the right."
+                : "Available for the original presets: Clifford and Flow at 1280 px desktop, Ethereal Silver and Filigree Diadem.";
+            const show = !!source && compareToggle.checked;
+            if (source && compareImg.getAttribute("src") !== source) compareImg.src = source;
             compareImg.hidden = !show;
             compareLine.hidden = !show;
             compareTags.forEach((tag) => (tag.hidden = !show));
             compareSliderLabel.hidden = !show;
-            const pos = Number(compareSlider.value);
-            stage.style.setProperty("--split", `${pos}%`);
+            stage.style.setProperty("--split", `${compareSlider.value}%`);
+        };
+
+        const refreshMeta = () => {
+            presetName.textContent = displayName();
+            jsonCode.textContent = JSON.stringify(settingsJson(), null, 2);
+            updateCompare();
         };
 
         const syncControls = () => {
@@ -1020,20 +1689,28 @@ for index in range(iterations):
                 slider.value = String(value);
                 setOutput(key, value);
             });
+            seedRow.hidden = state.family === "julia_filigree";
             seedInput.value = String(state.seeds[state.family]);
             seedError.hidden = true;
+            paletteRow.hidden = !isClassic();
             paletteSelect.value = state.palette;
-            presetName.textContent = isUnmodifiedPreset() ? PRESETS[state.family].name : `Modified from ${PRESETS[state.family].name}`;
-            jsonCode.textContent = JSON.stringify(presetJson(), null, 2);
-            updateCompare();
+            juliaSelect.value = String(state.julia);
+            mobileRadio.disabled = !isClassic();
+            if (!isClassic()) {
+                state.target = "desktop";
+                root.querySelector<HTMLInputElement>("input[name=target][value=desktop]")!.checked = true;
+            }
+            resSelect.replaceChildren(
+                ...RES_OPTIONS[state.family].map((res) => new Option(`${res} px${res === DEFAULT_RES[state.family] ? " (default)" : ""}`, String(res))),
+            );
+            resSelect.value = String(state.res);
+            refreshMeta();
         };
 
         let debounce = 0;
         const scheduleRender = (delay = 140) => {
             window.clearTimeout(debounce);
-            presetName.textContent = isUnmodifiedPreset() ? PRESETS[state.family].name : `Modified from ${PRESETS[state.family].name}`;
-            jsonCode.textContent = JSON.stringify(presetJson(), null, 2);
-            updateCompare();
+            refreshMeta();
             debounce = window.setTimeout(render, delay);
         };
 
@@ -1052,55 +1729,95 @@ for index in range(iterations):
             const p = state.params[state.family];
             const seed = state.seeds[state.family];
             const palette = PALETTES[state.palette];
+            const ms = () => Math.round(performance.now() - t0).toLocaleString("en-GB");
             try {
-                let set: PointSet | null;
+                let summary = "";
                 if (state.family === "strange_attractor") {
                     const iterations = Math.min(p.iterations, POINT_CAP);
-                    set = await computeAttractor(p, seed, iterations, token, (f) => (progress.value = f * 35));
+                    const set = await computeAttractor(p, seed, iterations, token, (f) => (progress.value = f * 35));
                     if (!set) return;
                     transformInPlace(set, w, h, 0.12);
                     await drawPoints(ctx, set, w, h, palette.color, palette.accent, state.glow, token, (f) => (progress.value = 35 + f * 65));
-                } else {
-                    let particles = p.particles;
+                    summary = `${iterations.toLocaleString("en-GB")} points`;
+                } else if (state.family === "particle_flow_field") {
                     let steps = p.steps;
-                    if (particles * steps > POINT_CAP) steps = Math.max(1, Math.floor(POINT_CAP / particles));
-                    set = await computeFlow(p, seed, particles, steps, token, (f) => (progress.value = f * 35));
+                    if (p.particles * steps > POINT_CAP) steps = Math.max(1, Math.floor(POINT_CAP / p.particles));
+                    const set = await computeFlow(p, seed, p.particles, steps, token, (f) => (progress.value = f * 35));
                     if (!set) return;
                     transformInPlace(set, w, h, 0.09);
                     await drawLines(ctx, set, palette.color, palette.accent, state.glow, token, (f) => (progress.value = 35 + f * 65));
+                    summary = `${(p.particles * steps).toLocaleString("en-GB")} points`;
+                } else if (state.family === "fractal_flame") {
+                    const sampler = new FlameSampler(w, seed, p.angle);
+                    const total = p.flame_steps + 30;
+                    let previewed = false;
+                    let last = performance.now();
+                    while (sampler.step < total) {
+                        sampler.advance();
+                        if (performance.now() - last > 40) {
+                            progress.value = (sampler.step / total) * 88;
+                            if (!previewed && sampler.step > 30 + p.flame_steps * 0.3) {
+                                previewed = true;
+                                ctx.putImageData(new ImageData(flameFinish(sampler.hist, w, h, p.gain, p.gold_gain), w, h), 0, 0);
+                            }
+                            await nextFrame();
+                            if (token !== renderToken) return;
+                            last = performance.now();
+                        }
+                    }
+                    ctx.putImageData(new ImageData(flameFinish(sampler.hist, w, h, p.gain, p.gold_gain), w, h), 0, 0);
+                    summary = `${(32768 * p.flame_steps).toLocaleString("en-GB")} samples`;
+                } else {
+                    const image = await renderJulia(currentJulia(), w, token, (f) => (progress.value = f * 100));
+                    if (!image) return;
+                    ctx.putImageData(image, 0, 0);
+                    summary = `${(w * 2 * h * 2).toLocaleString("en-GB")} sample points`;
                 }
                 if (token !== renderToken) return;
-                const ms = Math.round(performance.now() - t0);
-                const points = set.pts.length / 2;
-                lastRender = { points, ms };
+                lastRender = { points: 0, ms: 0 };
                 progress.value = 100;
                 stage.classList.remove("is-rendering");
-                const capped = state.family === "strange_attractor" ? p.iterations > POINT_CAP : p.particles * p.steps > POINT_CAP;
-                status.textContent = `Rendered ${points.toLocaleString("en-GB")} points at ${w} × ${h} in ${ms.toLocaleString("en-GB")} ms${capped ? " (capped on this device)" : ""}.`;
+                const capped = state.family === "strange_attractor" ? p.iterations > POINT_CAP : state.family === "particle_flow_field" && p.particles * p.steps > POINT_CAP;
+                status.textContent = `Rendered ${summary} at ${w} × ${h} in ${ms()} ms${capped ? " (capped on this device)" : ""}.`;
             } catch (error) {
                 stage.classList.remove("is-rendering");
                 status.textContent = `Engine error: ${(error as Error).message}`;
             }
         }
 
-        // Family switch
         root.querySelectorAll<HTMLInputElement>("input[name=family]").forEach((radio) => {
             radio.addEventListener("change", () => {
                 if (!radio.checked) return;
                 state.family = radio.value as Family;
-                state.palette = PRESETS[state.family].palette;
-                state.glow = PRESETS[state.family].glow;
+                state.res = DEFAULT_RES[state.family];
+                if (isClassic()) {
+                    state.palette = PRESETS[state.family].palette;
+                    state.glow = PRESETS[state.family].glow;
+                }
                 syncControls();
                 scheduleRender(0);
             });
         });
 
         root.querySelector(".reset-preset")?.addEventListener("click", () => {
-            const preset = PRESETS[state.family];
-            state.params[state.family] = { ...preset.params };
-            state.seeds[state.family] = preset.seed;
-            state.palette = preset.palette;
-            state.glow = preset.glow;
+            if (state.family === "julia_filigree") {
+                state.params.julia_filigree = juliaParams(JULIA[state.julia]);
+            } else {
+                const preset = PRESETS[state.family];
+                state.params[state.family] = { ...preset.params };
+                state.seeds[state.family] = preset.seed;
+                if (isClassic()) {
+                    state.palette = preset.palette;
+                    state.glow = preset.glow;
+                }
+            }
+            syncControls();
+            scheduleRender(0);
+        });
+
+        juliaSelect.addEventListener("change", () => {
+            state.julia = Number(juliaSelect.value);
+            state.params.julia_filigree = juliaParams(JULIA[state.julia]);
             syncControls();
             scheduleRender(0);
         });
@@ -1112,7 +1829,7 @@ for index in range(iterations):
                 if (key === "glow") state.glow = value;
                 else state.params[state.family][key] = value;
                 setOutput(key, value);
-                scheduleRender();
+                scheduleRender(isClassic() ? 140 : 300);
             });
         });
 
@@ -1126,7 +1843,7 @@ for index in range(iterations):
             }
             seedError.hidden = true;
             state.seeds[state.family] = value;
-            scheduleRender(250);
+            scheduleRender(300);
         });
 
         root.querySelector(".random-seed")?.addEventListener("click", () => {
@@ -1164,42 +1881,41 @@ for index in range(iterations):
                 if (!blob) return;
                 const url = URL.createObjectURL(blob);
                 const link = document.createElement("a");
-                const slug = (presetJson().name as string).toLowerCase().replace(/[^a-z0-9]+/g, "-");
+                const slug = displayName().toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
                 link.href = url;
-                link.download = `${slug}-${state.target}-seed-${state.seeds[state.family]}.png`;
+                link.download = `${slug}-${canvas.width}x${canvas.height}.png`;
                 document.body.append(link);
                 link.click();
                 link.remove();
                 setTimeout(() => URL.revokeObjectURL(url), 4000);
-                status.textContent = `Saved ${canvas.width} × ${canvas.height} PNG (${lastRender.points.toLocaleString("en-GB")} points).`;
+                status.textContent = `Saved a ${canvas.width} × ${canvas.height} PNG.`;
             }, "image/png");
         });
 
         root.querySelector(".copy-btn")?.addEventListener("click", async () => {
-            const text = JSON.stringify(presetJson(), null, 2) + "\n";
+            const text = JSON.stringify(settingsJson(), null, 2) + "\n";
             try {
                 await navigator.clipboard.writeText(text);
-                status.textContent = "Preset JSON copied. It passes the repository's schema rules.";
+                status.textContent = "Settings JSON copied to the clipboard.";
             } catch {
                 root.querySelector<HTMLDetailsElement>(".json-panel")!.open = true;
-                status.textContent = "Clipboard unavailable: the preset JSON is shown below.";
+                status.textContent = "Clipboard unavailable: the settings are shown below.";
             }
         });
 
-        // RNG self-check against NumPy's documented output.
         const rngCheck = document.querySelector<HTMLElement>(".rng-check");
         if (rngCheck) {
             const value = new PCG64(12345).random();
-            const ok = value === 0.22733602246716966;
-            const start = new PCG64(1729);
-            const sx = start.uniform(-0.5, 0.5);
-            const sy = start.uniform(-0.5, 0.5);
-            rngCheck.innerHTML = `<span class="${ok ? "ok" : "bad"}">${ok ? "✓" : "✗"}</span> <code>default_rng(12345).random()</code> = <code>${value}</code>${ok ? ", matching NumPy's documentation" : ", which does NOT match NumPy"}. Seed 1729 starts at (${sx.toFixed(6)}, ${sy.toFixed(6)}).`;
+            const ok = value === 0.22733602246716966 && new FastPCG64(12345).random() === value;
+            rngCheck.innerHTML = ok
+                ? `<span class="ok">✓</span> <code>default_rng(12345).random()</code> = <code>${value}</code>, as in NumPy.`
+                : `<span class="bad">✗</span> RNG self-check failed.`;
         }
 
+        void lastRender;
+        state.res = DEFAULT_RES[state.family];
         syncControls();
 
-        // Render once the playground scrolls near the viewport.
         const io = new IntersectionObserver(
             (entries) => {
                 if (entries.some((e) => e.isIntersecting)) {
@@ -1226,7 +1942,6 @@ for index in range(iterations):
         let y = rng.uniform(-0.5, 0.5);
         const [a, b, c, d] = [-1.4, 1.6, 1.0, 0.7];
         const W = heroCanvas.width, H = heroCanvas.height;
-        // The attractor's extent is bounded by 1 + |c| and 1 + |d|.
         const sx = (W * 0.86) / 4, sy = (H * 0.86) / 3.4;
         const from: RGB = [24, 126, 255], to: RGB = [232, 60, 184];
         let drawn = 0;
@@ -1265,12 +1980,12 @@ for index in range(iterations):
         --orange: #ff8a00;
         --page-width: 1240px;
 
-        /* OLED personality, taken from the repository's preview palettes */
         --o-black: #000000;
         --o-blue: rgb(24, 126, 255);
         --o-magenta: rgb(232, 60, 184);
         --o-teal: rgb(20, 220, 188);
         --o-amber: rgb(255, 154, 46);
+        --o-silver: #cfe3f2;
         --o-line: rgba(255, 255, 255, 0.1);
         --o-mono: "Cascadia Code", "SFMono-Regular", Consolas, "Liberation Mono", monospace;
     }
@@ -1320,6 +2035,8 @@ for index in range(iterations):
 
     code { font-family: var(--o-mono); font-size: 0.88em; color: #bfe9ff; overflow-wrap: anywhere; }
 
+    [hidden] { display: none !important; }
+
     .eyebrow {
         margin-bottom: 1rem;
         color: var(--orange);
@@ -1330,10 +2047,10 @@ for index in range(iterations):
     }
 
     /* =========================================================
-       HERO — OLED BOARD
+       HERO
        ========================================================= */
 
-    .hero { padding: clamp(3rem, 6vw, 4.5rem) 0 clamp(3rem, 6vw, 4.5rem); }
+    .hero { padding: clamp(3rem, 6vw, 4.5rem) 0; }
 
     .breadcrumbs {
         display: flex;
@@ -1356,9 +2073,7 @@ for index in range(iterations):
         border: 1px solid rgba(255, 255, 255, 0.12);
         border-radius: 26px;
         background: var(--o-black);
-        box-shadow:
-            0 0 0 1px rgba(24, 126, 255, 0.15),
-            0 30px 80px -30px rgba(232, 60, 184, 0.35);
+        box-shadow: 0 0 0 1px rgba(24, 126, 255, 0.15), 0 30px 80px -30px rgba(232, 60, 184, 0.35);
     }
 
     .hero-canvas {
@@ -1374,7 +2089,7 @@ for index in range(iterations):
     .hero-copy {
         position: relative;
         z-index: 1;
-        max-width: 620px;
+        max-width: 580px;
         padding: clamp(2rem, 6vw, 4.5rem) clamp(1.25rem, 5vw, 4rem);
     }
 
@@ -1412,12 +2127,12 @@ for index in range(iterations):
     }
 
     .hero-subtitle {
-        max-width: 520px;
+        max-width: 500px;
         margin-bottom: 1.4rem;
         color: #c9d6e2;
         font-size: clamp(1rem, 2vw, 1.15rem);
         line-height: 1.65;
-        text-shadow: 0 1px 12px #000;
+        text-shadow: 0 1px 12px #000, 0 0 2px #000;
     }
 
     .equation {
@@ -1433,25 +2148,35 @@ for index in range(iterations):
         font-size: clamp(0.78rem, 2vw, 0.92rem);
     }
 
-    .hero-cta {
+    .hero-actions { display: flex; flex-wrap: wrap; gap: 0.7rem; }
+
+    .hero-cta,
+    .hero-ghost {
         display: block;
         width: fit-content;
         padding: 0.75rem 1.2rem;
         border-radius: 999px;
-        background: linear-gradient(90deg, var(--o-blue), var(--o-magenta));
         color: white;
         font-weight: 800;
         text-decoration: none;
-        box-shadow: 0 0 24px rgba(232, 60, 184, 0.45);
-        transition: transform 0.25s ease, box-shadow 0.25s ease;
+        transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
     }
 
+    .hero-cta {
+        background: linear-gradient(90deg, var(--o-blue), var(--o-magenta));
+        box-shadow: 0 0 24px rgba(232, 60, 184, 0.45);
+    }
+
+    .hero-ghost { border: 1px solid rgba(255, 255, 255, 0.3); background: rgba(0, 0, 0, 0.55); }
     .hero-cta:hover { transform: translateY(-3px); box-shadow: 0 0 34px rgba(232, 60, 184, 0.7); }
+    .hero-ghost:hover { transform: translateY(-3px); border-color: var(--o-teal); }
 
     @keyframes breathe {
         from { transform: translateY(-50%) scale(1) rotate(0deg); }
         to { transform: translateY(-50%) scale(1.06) rotate(-2.5deg); }
     }
+
+    .hero :global(.skill-links) { justify-content: flex-start; }
 
     /* =========================================================
        FACTS
@@ -1504,13 +2229,163 @@ for index in range(iterations):
         border: 1px solid var(--o-line);
         border-radius: 16px;
         background: rgba(0, 0, 0, 0.55);
-        transition: border-color 0.25s ease, transform 0.25s ease;
+        transition: border-color 0.25s ease;
     }
 
     .panel:hover { border-color: rgba(24, 126, 255, 0.55); }
     .panel p { color: var(--muted); line-height: 1.7; }
     .panel p:last-child { margin-bottom: 0; }
     .small { font-size: 0.85rem; }
+
+    /* =========================================================
+       VOLUME 1 VIEWER
+       ========================================================= */
+
+    .v1-viewer {
+        display: grid;
+        grid-template-columns: minmax(0, 1.7fr) minmax(260px, 0.8fr);
+        gap: clamp(1rem, 2.5vw, 1.8rem);
+        margin-top: 2.2rem;
+        padding: clamp(0.9rem, 2.5vw, 1.6rem);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 24px;
+        background: var(--o-black);
+        box-shadow: 0 30px 80px -40px rgba(207, 227, 242, 0.35);
+    }
+
+    .v1-stage {
+        position: relative;
+        display: grid;
+        place-items: center;
+        min-width: 0;
+        min-height: clamp(220px, 34vw, 470px);
+        border-radius: 16px;
+        background: #030304;
+    }
+
+    .v1-desktop { width: 100%; }
+
+    .v1-main {
+        display: block;
+        width: 100%;
+        height: auto;
+        border-radius: 12px;
+    }
+
+    .v1-phone {
+        position: absolute;
+        inset: 0;
+        display: grid;
+        place-items: center;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.4s ease;
+    }
+
+    .v1-portrait {
+        display: block;
+        width: auto;
+        height: min(92%, 440px);
+        max-width: 60%;
+        aspect-ratio: 9 / 16;
+        object-fit: cover;
+        border: 6px solid #1b1d24;
+        border-radius: 28px;
+        box-shadow: 0 0 0 1px #2a2d38, 0 20px 50px rgba(0, 0, 0, 0.7);
+        transform: rotate(-2deg);
+    }
+
+    .v1-stage[data-mode="phone"] .v1-desktop { opacity: 0; }
+    .v1-stage[data-mode="phone"] .v1-phone { opacity: 1; }
+    .v1-desktop { transition: opacity 0.4s ease; }
+
+    .v1-stage.is-swapping .v1-main,
+    .v1-stage.is-swapping .v1-portrait { animation: swap-in 0.6s ease both; }
+
+    @keyframes swap-in {
+        from { opacity: 0; transform: scale(1.02); }
+        to { opacity: 1; transform: scale(1); }
+    }
+
+    .v1-stage.is-swapping .v1-portrait { animation-name: swap-in-phone; }
+
+    @keyframes swap-in-phone {
+        from { opacity: 0; transform: rotate(-2deg) translateY(10px); }
+        to { opacity: 1; transform: rotate(-2deg) translateY(0); }
+    }
+
+    .v1-info { display: flex; flex-direction: column; gap: 0.6rem; min-width: 0; }
+    .v1-index { margin: 0.4rem 0 0; color: var(--subtle); font-family: var(--o-mono); font-size: 0.8rem; }
+    .v1-title { margin: 0; font-family: Georgia, "Times New Roman", serif; font-size: clamp(1.6rem, 3vw, 2.2rem); font-weight: 400; letter-spacing: -0.03em; }
+    .v1-method { margin: 0; color: var(--o-silver); font-size: 0.85rem; font-weight: 700; }
+    .v1-detail { margin: 0; color: var(--muted); font-size: 0.92rem; line-height: 1.65; }
+
+    .v1-score { display: grid; gap: 0.4rem; margin-top: auto; padding-top: 0.6rem; }
+    .v1-score > span:first-child { color: var(--subtle); font-size: 0.7rem; font-weight: 800; letter-spacing: 0.07em; text-transform: uppercase; }
+    .v1-score .bar { position: relative; height: 10px; border-radius: 999px; background: #15171d; }
+
+    .v1-score i {
+        display: block;
+        width: var(--score);
+        height: 100%;
+        border-radius: inherit;
+        background: linear-gradient(90deg, var(--o-blue), var(--o-silver));
+        transition: width 0.6s cubic-bezier(0.2, 0.7, 0.2, 1);
+    }
+
+    .v1-score b { position: absolute; top: -4px; bottom: -4px; left: 85%; width: 2px; background: var(--o-amber); }
+    .v1-score strong { color: white; font-family: var(--o-mono); font-size: 1.1rem; }
+
+    .v1-thumbs {
+        grid-column: 1 / -1;
+        display: grid;
+        grid-template-columns: repeat(6, minmax(0, 1fr));
+        gap: 0.6rem;
+    }
+
+    .v1-thumb {
+        display: grid;
+        gap: 0.35rem;
+        padding: 0;
+        border: 0;
+        background: none;
+        color: var(--muted);
+        font: inherit;
+        font-size: 0.74rem;
+        text-align: left;
+        cursor: pointer;
+    }
+
+    .v1-thumb img {
+        display: block;
+        width: 100%;
+        height: auto;
+        border: 2px solid transparent;
+        border-radius: 10px;
+        opacity: 0.6;
+        transition: opacity 0.25s ease, border-color 0.25s ease, transform 0.25s ease;
+    }
+
+    .v1-thumb:hover img { opacity: 1; transform: translateY(-2px); }
+    .v1-thumb[aria-pressed="true"] img { opacity: 1; border-color: var(--o-silver); }
+    .v1-thumb[aria-pressed="true"] { color: white; }
+
+    .deliverables {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 1rem;
+        margin-top: 1.2rem;
+    }
+
+    .deliverables article {
+        padding: 1rem 1.2rem;
+        border: 1px solid var(--o-line);
+        border-radius: 14px;
+        background: rgba(0, 0, 0, 0.5);
+    }
+
+    .deliverables strong { display: block; color: var(--o-silver); font-family: Georgia, serif; font-size: 2rem; font-weight: 400; }
+    .deliverables span { color: var(--muted); font-size: 0.82rem; }
 
     /* =========================================================
        PLAYGROUND
@@ -1537,9 +2412,7 @@ for index in range(iterations):
         min-height: clamp(240px, 38vw, 520px);
         padding: clamp(0.6rem, 2vw, 1.2rem);
         border-radius: 18px;
-        background:
-            radial-gradient(circle at 50% 40%, rgba(24, 126, 255, 0.08), transparent 70%),
-            #050507;
+        background: radial-gradient(circle at 50% 40%, rgba(24, 126, 255, 0.08), transparent 70%), #050507;
     }
 
     .device {
@@ -1553,26 +2426,14 @@ for index in range(iterations):
         transition: width 0.35s ease, border-radius 0.35s ease;
     }
 
-    .stage[data-target="mobile"] .device {
-        width: min(46%, 300px);
-        border-width: 6px;
-        border-radius: 30px;
-    }
+    .stage[data-target="mobile"] .device { width: min(46%, 300px); border-width: 6px; border-radius: 30px; }
 
     .wall-canvas,
-    .compare-img {
-        display: block;
-        width: 100%;
-        height: auto;
-    }
+    .compare-img { display: block; width: 100%; height: auto; }
 
     .stage.is-rendering .device { box-shadow: 0 0 0 1px rgba(20, 220, 188, 0.5), 0 0 30px rgba(20, 220, 188, 0.15); }
 
-    .compare-img {
-        position: absolute;
-        inset: 0;
-        clip-path: inset(0 0 0 var(--split));
-    }
+    .compare-img { position: absolute; inset: 0; height: 100%; object-fit: cover; clip-path: inset(0 0 0 var(--split)); }
 
     .compare-line {
         position: absolute;
@@ -1599,8 +2460,6 @@ for index in range(iterations):
     .compare-tag-js { left: 0.5rem; }
     .compare-tag-py { right: 0.5rem; }
 
-    [hidden] { display: none !important; }
-
     .render-progress {
         display: block;
         width: 100%;
@@ -1617,33 +2476,16 @@ for index in range(iterations):
     .render-progress::-webkit-progress-value { background: linear-gradient(90deg, var(--o-teal), var(--o-blue), var(--o-magenta)); }
     .render-progress::-moz-progress-bar { background: linear-gradient(90deg, var(--o-teal), var(--o-blue), var(--o-magenta)); }
 
-    .render-status {
-        margin: 0.6rem 0 0;
-        color: var(--muted);
-        font-family: var(--o-mono);
-        font-size: 0.78rem;
-    }
+    .render-status { margin: 0.6rem 0 0; color: var(--muted); font-family: var(--o-mono); font-size: 0.78rem; }
 
-    .compare-box {
-        margin-top: 1rem;
-        padding: 0.85rem 1rem;
-        border: 1px dashed rgba(255, 255, 255, 0.16);
-        border-radius: 12px;
-    }
-
+    .compare-box { margin-top: 1rem; padding: 0.85rem 1rem; border: 1px dashed rgba(255, 255, 255, 0.16); border-radius: 12px; }
     .compare-box .check { display: flex; align-items: center; gap: 0.6rem; color: white; font-size: 0.88rem; cursor: pointer; }
     .compare-box .check input { width: 18px; height: 18px; accent-color: var(--o-teal); }
     .compare-box .check:has(input:disabled) { opacity: 0.55; cursor: not-allowed; }
     .compare-slider-label { display: grid; gap: 0.3rem; margin-top: 0.7rem; color: var(--muted); font-size: 0.78rem; }
     .compare-note { margin: 0.5rem 0 0; color: var(--subtle); font-size: 0.78rem; line-height: 1.5; }
 
-    .controls {
-        display: flex;
-        flex-direction: column;
-        gap: 0.95rem;
-        min-width: 0;
-        color: var(--text);
-    }
+    .controls { display: flex; flex-direction: column; gap: 0.95rem; min-width: 0; color: var(--text); }
 
     .segmented {
         display: grid;
@@ -1687,20 +2529,16 @@ for index in range(iterations):
         box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.18);
     }
 
+    .segmented input:disabled + span { opacity: 0.35; }
+    .segmented label:has(input:disabled) { cursor: not-allowed; }
     .segmented input:focus-visible + span { outline: 2px solid var(--orange); outline-offset: 2px; }
 
     .preset-row,
     .seed-row,
-    .action-row {
-        display: flex;
-        flex-wrap: wrap;
-        align-items: center;
-        gap: 0.5rem;
-    }
+    .action-row { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; }
 
     .preset-row { justify-content: space-between; }
     .preset-name { color: white; font-weight: 750; font-size: 0.92rem; }
-
     .seed-row label { flex-basis: 100%; }
 
     .seed-input {
@@ -1742,14 +2580,12 @@ for index in range(iterations):
     .neon-btn:hover { transform: translateY(-1px); box-shadow: 0 0 26px rgba(232, 60, 184, 0.6); }
 
     .param-group { display: grid; gap: 0.65rem; }
-
     .slider { display: grid; gap: 0.25rem; }
     .slider > span { display: flex; justify-content: space-between; gap: 0.5rem; }
     .slider output { color: white; font-family: var(--o-mono); font-size: 0.8rem; letter-spacing: 0; text-transform: none; }
     .slider input { width: 100%; accent-color: var(--o-magenta); }
 
     .two-col { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); gap: 0.8rem; align-items: end; }
-
     .select { display: grid; gap: 0.3rem; }
 
     .select select {
@@ -1763,80 +2599,76 @@ for index in range(iterations):
         font-size: 0.85rem;
     }
 
-    .json-panel {
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        border-radius: 12px;
-        background: #07080b;
-    }
-
+    .json-panel { border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; background: #07080b; }
     .json-panel summary { padding: 0.7rem 0.9rem; color: var(--muted); font-size: 0.82rem; font-weight: 700; cursor: pointer; }
+    .json-panel pre { max-height: 260px; margin: 0; padding: 0 0.9rem 0.9rem; overflow: auto; font-size: 0.75rem; line-height: 1.5; }
 
-    .json-panel pre {
-        max-height: 260px;
-        margin: 0;
-        padding: 0 0.9rem 0.9rem;
-        overflow: auto;
-        font-size: 0.75rem;
-        line-height: 1.5;
-    }
-
-    .port-notes {
-        display: grid;
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 1rem;
-        margin-top: 1.4rem;
-    }
-
-    .port-notes article {
-        padding: 1.2rem 1.3rem;
-        border: 1px solid var(--o-line);
-        border-radius: 14px;
-        background: rgba(0, 0, 0, 0.45);
-    }
-
-    .port-notes h3 { margin-bottom: 0.5rem; font-size: 1rem; }
-    .port-notes article:nth-child(1) h3 { color: var(--o-teal); }
-    .port-notes article:nth-child(2) h3 { color: #8fc3ff; }
-    .port-notes article:nth-child(3) h3 { color: var(--o-amber); }
-    .port-notes p { margin-bottom: 0.6rem; color: var(--muted); font-size: 0.9rem; line-height: 1.65; }
-    .port-notes p:last-child { margin-bottom: 0; }
-    .rng-check { font-size: 0.8rem !important; }
+    .port-line { max-width: 900px; margin: 1rem 0 0; color: var(--subtle); font-size: 0.84rem; line-height: 1.6; }
+    .rng-check { display: inline; }
     .rng-check :global(.ok) { color: var(--o-teal); font-weight: 900; }
     .rng-check :global(.bad) { color: #ff6b81; font-weight: 900; }
 
     /* =========================================================
-       PREVIEWS
+       TIMELINE
        ========================================================= */
 
-    .preview-grid {
+    .timeline {
+        position: relative;
         display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 1.4rem;
-        margin-top: 2.2rem;
+        gap: 1.1rem;
+        margin: 2.4rem 0 0;
+        padding: 0 0 0 2rem;
+        list-style: none;
     }
 
-    .preview-card { margin: 0; }
+    .timeline::before {
+        content: "";
+        position: absolute;
+        top: 0.4rem;
+        bottom: 0.4rem;
+        left: 0.45rem;
+        width: 2px;
+        background: linear-gradient(var(--o-blue), var(--o-magenta) 50%, var(--o-silver));
+    }
 
-    .preview-frame {
-        overflow: hidden;
-        border: 1px solid rgba(255, 255, 255, 0.12);
+    .timeline li {
+        position: relative;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr);
+        gap: 1rem;
+        align-items: center;
+        padding: 1.1rem 1.3rem;
+        border: 1px solid var(--o-line);
         border-radius: 16px;
-        background: #000;
-        transition: transform 0.35s ease, box-shadow 0.35s ease;
+        background: rgba(0, 0, 0, 0.5);
+        transition: border-color 0.25s ease, transform 0.25s ease;
     }
 
-    .preview-card:nth-child(1) .preview-frame { box-shadow: 0 20px 50px -25px rgba(232, 60, 184, 0.6); }
-    .preview-card:nth-child(2) .preview-frame { box-shadow: 0 20px 50px -25px rgba(20, 220, 188, 0.6); }
-    .preview-card:hover .preview-frame { transform: translateY(-4px) rotate(-0.4deg); }
+    .timeline li.has-thumb { grid-template-columns: minmax(0, 1fr) minmax(0, 260px); }
+    .timeline li:hover { border-color: rgba(207, 227, 242, 0.45); transform: translateX(4px); }
 
-    .preview-frame a { display: block; }
-    .preview-frame img { display: block; width: 100%; height: auto; transition: transform 0.6s ease; }
-    .preview-card:hover img { transform: scale(1.04); }
+    .tl-dot {
+        position: absolute;
+        top: 1.45rem;
+        left: -1.95rem;
+        width: 14px;
+        height: 14px;
+        border: 2px solid #000;
+        border-radius: 50%;
+        background: var(--o-teal);
+        box-shadow: 0 0 12px var(--o-teal);
+    }
 
-    .preview-card figcaption { display: grid; gap: 0.3rem; margin-top: 0.9rem; }
-    .preview-card strong { color: white; }
-    .mono { color: var(--muted); font-family: var(--o-mono); font-size: 0.76rem; line-height: 1.5; }
-    .score { color: var(--o-amber); font-size: 0.82rem; font-weight: 700; }
+    .timeline li:last-child .tl-dot { background: var(--o-silver); box-shadow: 0 0 16px var(--o-silver); }
+
+    .tl-meta { margin-bottom: 0.35rem; color: var(--subtle); font-size: 0.78rem; }
+    .tl-meta time { color: var(--o-amber); font-weight: 800; }
+    .timeline h3 { margin-bottom: 0.4rem; font-size: 1.1rem; }
+    .timeline article p:last-child { margin: 0; color: var(--muted); font-size: 0.9rem; line-height: 1.65; }
+
+    .tl-thumb { margin: 0; overflow: hidden; border-radius: 10px; background: #000; }
+    .tl-thumb img { display: block; width: 100%; height: auto; transition: transform 0.6s ease; }
+    .timeline li:hover .tl-thumb img { transform: scale(1.06); }
 
     /* =========================================================
        HOW IT WORKS
@@ -1849,7 +2681,6 @@ for index in range(iterations):
         margin: 2.2rem 0 1.2rem;
         padding: 0;
         list-style: none;
-        counter-reset: none;
     }
 
     .pipeline li {
@@ -1913,12 +2744,7 @@ for index in range(iterations):
 
     .rule-list dd { margin: 0; color: var(--muted); }
 
-    .limit-grid {
-        display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 0.6rem;
-        margin-bottom: 1rem;
-    }
+    .limit-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.6rem; }
 
     .limit-grid div {
         padding: 0.8rem;
@@ -1930,7 +2756,7 @@ for index in range(iterations):
     .limit-grid strong { display: block; color: var(--o-teal); font-family: var(--o-mono); font-size: 1.05rem; }
     .limit-grid span { color: var(--muted); font-size: 0.78rem; }
 
-    .code-panel { min-width: 0; }
+    .code-panel { min-width: 0; grid-row: span 2; }
 
     .code {
         max-width: 100%;
@@ -1940,20 +2766,14 @@ for index in range(iterations):
         border: 1px solid rgba(255, 255, 255, 0.08);
         border-radius: 12px;
         background: #050608;
-        font-size: 0.74rem;
+        font-size: 0.72rem;
         line-height: 1.6;
     }
 
     .code code { color: #d6e9ff; overflow-wrap: normal; white-space: pre; }
 
     .tick-list { margin: 0; padding: 0; list-style: none; }
-
-    .tick-list li {
-        position: relative;
-        padding: 0.45rem 0 0.45rem 1.6rem;
-        color: var(--muted);
-        line-height: 1.6;
-    }
+    .tick-list li { position: relative; padding: 0.4rem 0 0.4rem 1.6rem; color: var(--muted); line-height: 1.6; }
 
     .tick-list li::before {
         content: "";
@@ -1971,24 +2791,30 @@ for index in range(iterations):
        QUALITY
        ========================================================= */
 
-    .test-list { display: grid; gap: 0.9rem; margin: 0; padding: 0; list-style: none; }
-    .test-head { display: flex; justify-content: space-between; gap: 0.6rem; flex-wrap: wrap; }
-    .test-head span { color: var(--o-teal); font-size: 0.82rem; font-weight: 800; }
-    .test-list p { margin: 0.35rem 0 0; font-size: 0.84rem; }
+    .test-list { display: grid; gap: 0.5rem; margin: 0; padding: 0; list-style: none; }
+
+    .test-list li {
+        display: grid;
+        grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr) 2rem;
+        gap: 0.7rem;
+        align-items: center;
+        font-size: 0.8rem;
+    }
+
+    .test-count { color: var(--o-teal); font-weight: 800; text-align: right; }
 
     .test-bar {
         display: block;
-        height: 4px;
-        margin-top: 0.35rem;
+        height: 6px;
         border-radius: 999px;
         background: linear-gradient(90deg, var(--o-teal), var(--o-blue)) 0 0 / var(--share) 100% no-repeat, #15171d;
     }
 
-    .score-bars { display: grid; gap: 0.8rem; margin: 1.2rem 0; }
+    .score-bars { display: grid; gap: 0.75rem; margin: 1.2rem 0; }
 
     .score-bars div {
         display: grid;
-        grid-template-columns: minmax(0, 1.2fr) minmax(0, 1.4fr) auto;
+        grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.4fr) auto;
         gap: 0.7rem;
         align-items: center;
         font-size: 0.85rem;
@@ -2001,7 +2827,7 @@ for index in range(iterations):
         width: var(--score);
         height: 100%;
         border-radius: inherit;
-        background: linear-gradient(90deg, var(--o-blue), var(--o-magenta));
+        background: linear-gradient(90deg, var(--o-blue), var(--o-silver));
         transform-origin: left center;
         animation: grow 1.4s cubic-bezier(0.2, 0.7, 0.2, 1) both;
     }
@@ -2021,14 +2847,8 @@ for index in range(iterations):
 
     .skills-section { text-align: center; }
     .skills-section :global(.skill-links) { justify-content: center; max-width: 980px; margin-inline: auto; }
-    .hero :global(.skill-links) { justify-content: flex-start; }
 
-    .project-end {
-        padding: clamp(4rem, 8vw, 6.5rem) 0;
-        border-top: 1px solid rgba(32, 63, 89, 0.8);
-        text-align: center;
-    }
-
+    .project-end { padding: clamp(4rem, 8vw, 6.5rem) 0; border-top: 1px solid rgba(32, 63, 89, 0.8); text-align: center; }
     .project-end h2 { margin-inline: auto; }
     .project-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.8rem 1.5rem; margin-top: 1.6rem; }
     .project-links a { color: var(--blue-light); font-weight: 750; text-decoration: none; }
@@ -2039,22 +2859,25 @@ for index in range(iterations):
        ========================================================= */
 
     @media (max-width: 980px) {
-        .playground { grid-template-columns: 1fr; }
-        .port-notes { grid-template-columns: 1fr; }
+        .playground,
+        .v1-viewer { grid-template-columns: 1fr; }
+        .v1-thumbs { grid-column: auto; }
     }
 
     @media (max-width: 880px) {
-        .facts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        .facts,
+        .deliverables { grid-template-columns: repeat(2, minmax(0, 1fr)); }
         .how-grid,
         .quality-grid,
-        .scope-grid,
-        .preview-grid { grid-template-columns: 1fr; }
+        .scope-grid { grid-template-columns: 1fr; }
+        .code-panel { grid-row: auto; }
         .pipeline { grid-template-columns: repeat(2, minmax(0, 1fr)); }
         .pipeline li:nth-child(2)::after { display: none; }
+        .timeline li.has-thumb { grid-template-columns: minmax(0, 1fr) minmax(0, 200px); }
     }
 
     @media (max-width: 620px) {
-        .facts { grid-template-columns: 1fr 1fr; gap: 0.6rem; }
+        .facts { gap: 0.6rem; }
         .fact { padding: 0.9rem; }
         .oled-board { min-height: 0; }
         .hero-canvas { top: auto; bottom: -4%; right: -30%; width: 140%; transform: none; opacity: 0.55; animation: none; }
@@ -2063,20 +2886,35 @@ for index in range(iterations):
         .rule-list div { grid-template-columns: 1fr; gap: 0.15rem; }
         .score-bars div { grid-template-columns: 1fr auto; }
         .score-bars .bar { grid-column: 1 / -1; grid-row: 2; }
+        .test-list li { grid-template-columns: minmax(0, 1fr) 2rem; }
+        .test-list .test-bar { grid-column: 1 / -1; grid-row: 2; }
         .stage[data-target="mobile"] .device { width: min(62%, 260px); }
+        .v1-thumbs { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+        .timeline { padding-left: 1.5rem; }
+        .timeline::before { left: 0.3rem; }
+        .tl-dot { left: -1.55rem; }
+        .timeline li.has-thumb { grid-template-columns: 1fr; }
+        .family-picker span { font-size: 0.76rem; }
     }
 
     @media (prefers-reduced-motion: reduce) {
         html { scroll-behavior: auto; }
         .hero-canvas,
-        .score-bars i { animation: none; }
+        .score-bars i,
+        .v1-stage.is-swapping .v1-main,
+        .v1-stage.is-swapping .v1-portrait { animation: none; }
         .fact,
         .panel,
-        .preview-frame,
-        .preview-frame img,
         .hero-cta,
+        .hero-ghost,
         .ghost-btn,
         .neon-btn,
-        .device { transition: none; }
+        .device,
+        .v1-phone,
+        .v1-desktop,
+        .v1-score i,
+        .v1-thumb img,
+        .timeline li,
+        .tl-thumb img { transition: none; }
     }
 </style>

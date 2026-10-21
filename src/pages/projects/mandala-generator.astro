@@ -479,7 +479,7 @@ const codeExcerpt = `def petal(inner, outer, half_angle, angle, curvature):
                         </ul>
                     </article>
                     <article class="card">
-                        <h3>Not claimed</h3>
+                        <h3>Still to come</h3>
                         <ul>
                             <li>PDF export (deferred)</li>
                             <li>Artistically approved or premium-ready pages</li>
@@ -1053,7 +1053,7 @@ const codeExcerpt = `def petal(inner, outer, half_angle, angle, curvature):
                 status.textContent = `Ready: ${regionCount.toLocaleString("en-GB")} enclosed regions detected. Pick a colour and click a region.`;
             } catch (error) {
                 sheet.classList.remove("is-loading");
-                status.textContent = `Could not load this page: ${(error as Error).message}`;
+                status.textContent = `Could not load this design: ${(error as Error).message}`;
             }
         }
 
