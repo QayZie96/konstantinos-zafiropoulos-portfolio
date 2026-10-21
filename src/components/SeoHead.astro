@@ -5,11 +5,20 @@ interface Props {
     title: string;
     description: string;
     type?: "website" | "article";
+    image?: string;
+    imageAlt?: string;
 }
 
-const { title, description, type = "website" } = Astro.props;
+const {
+    title,
+    description,
+    type = "website",
+    image = "/og-image.png",
+    imageAlt = "Konstantinos Zafiropoulos — Marketplace Operations, Automation, Data Analysis and Web Development portfolio",
+} = Astro.props;
 const siteUrl = Astro.site ?? new URL("https://konstantinoszafiropoulos.netlify.app");
 const canonicalUrl = new URL(Astro.url.pathname, siteUrl);
+const imageUrl = new URL(image, siteUrl);
 const isHomepage = Astro.url.pathname === "/";
 const personId = new URL("/#person", siteUrl).href;
 const websiteId = new URL("/#website", siteUrl).href;
@@ -91,10 +100,18 @@ const structuredData = {
 <meta property="og:title" content={title} />
 <meta property="og:description" content={description} />
 <meta property="og:url" content={canonicalUrl} />
+<meta property="og:image" content={imageUrl} />
+<meta property="og:image:secure_url" content={imageUrl} />
+<meta property="og:image:type" content="image/png" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:image:alt" content={imageAlt} />
 
-<meta name="twitter:card" content="summary" />
+<meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:title" content={title} />
 <meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={imageUrl} />
+<meta name="twitter:image:alt" content={imageAlt} />
 
 <title>{title}</title>
 <script type="application/ld+json" set:html={JSON.stringify(structuredData)} />
