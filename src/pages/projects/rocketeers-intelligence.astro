@@ -1,0 +1,1519 @@
+---
+/* =========================================================
+   MARKETPLACE PRODUCT OPPORTUNITY INTELLIGENCE
+   (Rocketeers Intelligence) — n8n + PostgreSQL case study
+
+   Facts come from the repository README, the SQL migration
+   db/migrations/001_core.sql, compose.yaml, the generator
+   scripts and the exported n8n workflows. Credentials,
+   hostnames, sheet IDs and .env values are deliberately
+   omitted. Sample rows in the labs are illustrative.
+   ========================================================= */
+
+import SiteHeader from "../../components/SiteHeader.astro";
+import SiteFooter from "../../components/SiteFooter.astro";
+import SeoHead from "../../components/SeoHead.astro";
+import SkillLinks from "../../components/SkillLinks.astro";
+
+const title =
+    "Marketplace Opportunity Intelligence | n8n & PostgreSQL | Konstantinos Zafeiropoulos";
+
+const description =
+    "An n8n and PostgreSQL pipeline that finds public-domain museum artwork for marketplace product niches, stores provider evidence and rights claims, and syncs human reviews from Google Sheets as append-only history.";
+
+const metrics = [
+    { value: "7", label: "PostgreSQL tables in the core migration" },
+    { value: "10", label: "Provider assets in the validated astronomy run" },
+    { value: "14", label: "Human-review events preserved as history" },
+    { value: "0", label: "Duplicate evidence keys after repeated runs" },
+];
+
+/* ---------- Workflow nodes (from the generator scripts) ---------- */
+const lanes = [
+    {
+        id: "adapter",
+        name: "Archive Adapter - AIC - PostgreSQL v0.1",
+        role: "Sub-workflow called by the test and orchestrator",
+        nodes: [
+            {
+                name: "Register Research Run",
+                kind: "postgres",
+                text: "Inserts the run with status 'running', or resets it if the same external run ID is replayed, and returns the run's UUID.",
+                code: `INSERT INTO runs (external_run_id, module, status, input, started_at, completed_at)
+VALUES ($1, 'asset_discovery_aic', 'running', $2::jsonb, now(), NULL)
+ON CONFLICT (external_run_id) DO UPDATE SET
+  status = 'running', input = EXCLUDED.input,
+  started_at = now(), completed_at = NULL, …
+RETURNING run_id, external_run_id;`,
+            },
+            {
+                name: "Search AIC Public Domain Artworks",
+                kind: "http",
+                text: "Calls the Art Institute of Chicago public search API with the niche's archive query, a public-domain filter, a result limit and a fixed field list.",
+                code: `GET https://api.artic.edu/api/v1/artworks/search
+  q = {archive_query}
+  query[term][is_public_domain] = true
+  limit = {limit}
+  fields = id,title,artist_display,date_display,place_of_origin,
+           artwork_type_title,image_id,is_public_domain,
+           copyright_notice,api_link`,
+            },
+            {
+                name: "Store AIC Source Event",
+                kind: "postgres",
+                text: "Stores the whole provider response once per request, with the request URL and parameters, linked to the run. Postgres generates a SHA-256 of the payload.",
+                code: `INSERT INTO source_events (
+  run_id, source_id, event_type, request_method, request_url,
+  request_params, response_status, raw_payload, captured_at)
+SELECT r.run_id, 'aic', 'api_response', 'GET', $2,
+       $3::jsonb, 200, $4::jsonb, now()
+FROM runs r WHERE r.external_run_id = $1
+RETURNING source_event_id, run_id;`,
+            },
+            {
+                name: "Prepare AIC Records",
+                kind: "code",
+                text: "Maps each artwork to the normalised contract: canonical record URL, IIIF image URL, provider rights claim and the evidence key that scopes this discovery to the niche.",
+                code: `const sourceObjectId = String(row.id);
+const sourceUrl = \`https://www.artic.edu/artworks/\${sourceObjectId}\`;
+const iiifUrl = row.image_id
+  ? \`https://www.artic.edu/iiif/2/\${row.image_id}\` : '';
+…
+evidence_key: \`\${input.niche_id}|AIC|\${sourceObjectId}\`,
+rights_status: row.is_public_domain === true
+  ? 'Public Domain' : 'Review Required',`,
+            },
+            {
+                name: "Upsert AIC Asset Discovery and Rights",
+                kind: "postgres",
+                text: "One statement with three chained CTEs: upsert the asset on its provider ID, upsert the discovery on its evidence key, upsert the rights claim per asset and source. Each is idempotent.",
+                code: `WITH asset_upsert AS (
+  INSERT INTO assets (…) VALUES (…)
+  ON CONFLICT (discovery_source_id, discovery_provider_asset_id)
+  DO UPDATE SET … RETURNING asset_id
+), discovery_upsert AS (
+  INSERT INTO asset_discoveries (…) SELECT … FROM asset_upsert
+  ON CONFLICT (evidence_key) DO UPDATE SET …
+), rights_upsert AS (
+  INSERT INTO asset_rights (…) SELECT … FROM asset_upsert
+  ON CONFLICT (asset_id, claim_source_id) DO UPDATE SET
+    verification_status = CASE
+      WHEN asset_rights.verification_status = 'independently_verified'
+        THEN asset_rights.verification_status
+      ELSE EXCLUDED.verification_status END, …
+)
+SELECT … FROM discovery_upsert d JOIN rights_upsert r USING (asset_id);`,
+            },
+            {
+                name: "Finalize AIC Research Run",
+                kind: "postgres",
+                text: "Marks the run succeeded, records how many asset rows were written and sets the completion time. The table's CHECK constraint forbids a running run with a completion time.",
+                code: `UPDATE runs SET
+  status = 'succeeded',
+  output_summary = jsonb_build_object('provider', 'aic',
+                                      'asset_rows', $2::integer),
+  completed_at = now()
+WHERE external_run_id = $1
+RETURNING run_id, status;`,
+            },
+            {
+                name: "Return Normalized AIC Contract",
+                kind: "code",
+                text: "Returns the same record shape the original Sheets-only adapter produced, plus the database IDs, so callers did not need to change.",
+                code: `return records.map((record, index) => ({
+  json: {
+    ...record.json,
+    db_asset_id: databaseRows[index]?.json?.asset_id,
+    db_asset_discovery_id: databaseRows[index]?.json?.asset_discovery_id,
+    db_asset_rights_id: databaseRows[index]?.json?.asset_rights_id,
+  },
+}));`,
+            },
+        ],
+    },
+    {
+        id: "test",
+        name: "TEST - AIC PostgreSQL Vertical Slice",
+        role: "Manual end-to-end validation run",
+        nodes: [
+            {
+                name: "Create Niche Record",
+                kind: "set",
+                text: "Defines the test niche: N001 \"Antique Astronomy\", archive query \"astronomy\", ten relevance terms and a timestamped run ID.",
+                code: `niche_id        = "N001"
+niche           = "Antique Astronomy"
+archive_query   = "astronomy"
+relevance_terms = "astronomy|celestial|constellation|zodiac|planet|
+                   moon|sun|star|comet|telescope"
+research_run_id = 'RUN-' + $now.toFormat('yyyyMMdd-HHmmss')`,
+            },
+            {
+                name: "Run AIC PostgreSQL Adapter",
+                kind: "subflow",
+                text: "Executes the adapter workflow above and receives the normalised records with their database IDs.",
+                code: `workflowId: "Archive Adapter - AIC - PostgreSQL v0.1"`,
+            },
+            {
+                name: "Apply Automated Relevance",
+                kind: "code",
+                text: "A deterministic first pass: Pass if any whole word of the title is a relevance term, otherwise Review. Nothing is rejected automatically.",
+                code: `automated_relevance: relevantTerms.some((term) =>
+  String(item.json.title || '').toLowerCase()
+    .split(/[^a-z0-9]+/).includes(term)
+) ? 'Pass' : 'Review',`,
+            },
+            {
+                name: "Persist Automated Relevance",
+                kind: "postgres",
+                text: "Writes the Pass/Review result onto the discovery row, keyed by its evidence key.",
+                code: `UPDATE asset_discoveries
+SET automated_relevance = $2, updated_at = now()
+WHERE evidence_key = $1
+RETURNING asset_discovery_id, evidence_key, automated_relevance;`,
+            },
+            {
+                name: "Sync AIC Evidence to Google Sheets",
+                kind: "sheets",
+                text: "Mirrors the rows into the existing review sheet, updating rows that match on evidence_key rather than appending duplicates.",
+                code: `operation: appendOrUpdate
+matchingColumns: ["evidence_key"]
+columns: niche_id, niche, source, source_object_id, title,
+         artist_display, date_display, …, evidence_key, …`,
+            },
+        ],
+    },
+    {
+        id: "sync",
+        name: "Sync AIC Human Reviews - Sheets to PostgreSQL",
+        role: "Brings reviewer decisions back into the database",
+        nodes: [
+            {
+                name: "Read Artwork Review Surface",
+                kind: "sheets",
+                text: "Reads the same review sheet the evidence was mirrored into.",
+                code: `operation: read
+(same document and sheet as "Store Artwork Evidence")`,
+            },
+            {
+                name: "Prepare AIC Human Review Events",
+                kind: "code",
+                text: "Turns each filled-in relevance_review and rights_review cell into a separate review event for that evidence key.",
+                code: `if (row.source !== 'Art Institute of Chicago' || !row.evidence_key) continue;
+const relevanceDecision = String(row.relevance_review || '').trim();
+if (relevanceDecision) reviews.push({ json: {
+  evidence_key: row.evidence_key, review_type: 'relevance',
+  decision: relevanceDecision, notes: null } });
+// …same for rights_review`,
+            },
+            {
+                name: "Persist AIC Human Review History",
+                kind: "postgres",
+                text: "Inserts a new review only if there is none yet or the decision or notes differ from the latest one, and links it to the review it supersedes. Re-running the sync inserts nothing.",
+                code: `WITH target AS (…evidence_key = $1),
+latest AS (SELECT … FROM human_reviews … WHERE review_type = $2
+           ORDER BY reviewed_at DESC, created_at DESC LIMIT 1),
+inserted AS (
+  INSERT INTO human_reviews (asset_discovery_id, review_type, decision,
+    notes, reviewed_by, reviewed_at, supersedes_review_id)
+  SELECT t.asset_discovery_id, $2, $3, $4,
+         'google_sheets_sync', now(), l.human_review_id
+  FROM target t LEFT JOIN latest l ON true
+  WHERE l.human_review_id IS NULL
+     OR l.decision IS DISTINCT FROM $3
+     OR l.notes IS DISTINCT FROM $4
+  RETURNING …, true AS inserted)
+SELECT * FROM inserted UNION ALL SELECT …, false AS inserted …;`,
+            },
+        ],
+    },
+];
+
+/* ---------- Schema (from db/migrations/001_core.sql) ---------- */
+const tables = [
+    {
+        id: "sources",
+        name: "sources",
+        why: "A registry of every provider the system may read, with its type, automation level, trust level, terms URL and capabilities. It is seeded with AIC, the Met, Google Trends and Openverse.",
+        refs: [],
+        cols: [
+            ["source_id", "text", "PK"],
+            ["source_name", "text", ""],
+            ["source_type", "text", "asset_provider · demand_signal · marketplace · discussion"],
+            ["enabled", "boolean", ""],
+            ["automation_level", "text", "automated · assisted · manual"],
+            ["trust_level", "text", "discovery_only · provider_claim · authoritative"],
+            ["terms_url", "text", ""],
+            ["capabilities", "jsonb", ""],
+            ["last_terms_reviewed_at", "timestamptz", ""],
+        ],
+    },
+    {
+        id: "runs",
+        name: "runs",
+        why: "One row per research run: module, input, status, warnings, errors and timings. The external run ID is unique, so replaying a run updates it instead of duplicating it.",
+        refs: [],
+        cols: [
+            ["run_id", "uuid", "PK"],
+            ["external_run_id", "text", "UNIQUE"],
+            ["module", "text", ""],
+            ["status", "text", "running · succeeded · partial · failed · cancelled"],
+            ["input · output_summary", "jsonb", ""],
+            ["warnings · errors", "jsonb", ""],
+            ["started_at · completed_at", "timestamptz", "CHECK running ⇒ no completed_at"],
+        ],
+    },
+    {
+        id: "source_events",
+        name: "source_events",
+        why: "The raw provider response, stored once per request rather than copied into every asset. A generated column hashes the payload, so identical responses are easy to spot.",
+        refs: ["runs", "sources"],
+        cols: [
+            ["source_event_id", "uuid", "PK"],
+            ["run_id", "uuid", "FK → runs"],
+            ["source_id", "text", "FK → sources"],
+            ["request_method · request_url", "text", ""],
+            ["request_params · response_headers", "jsonb", ""],
+            ["response_status", "integer", ""],
+            ["raw_payload", "jsonb", ""],
+            ["payload_sha256", "text", "GENERATED sha256(raw_payload)"],
+        ],
+    },
+    {
+        id: "assets",
+        name: "assets",
+        why: "One row per provider artwork. Discovery source and canonical source are separate, so an asset found through an aggregator such as Openverse can point to its authoritative museum record.",
+        refs: ["sources", "source_events"],
+        cols: [
+            ["asset_id", "uuid", "PK"],
+            ["discovery_source_id", "text", "FK → sources"],
+            ["discovery_provider_asset_id", "text", "UNIQUE with discovery_source_id"],
+            ["discovery_source_event_id", "uuid", "FK → source_events"],
+            ["canonical_source_id", "text", "FK → sources"],
+            ["canonical_provider_asset_id", "text", ""],
+            ["title · creator · creation_date · country", "text", ""],
+            ["original_record_url · image_url · iiif_url", "text", ""],
+            ["width · height", "integer", "CHECK > 0"],
+        ],
+    },
+    {
+        id: "asset_discoveries",
+        name: "asset_discoveries",
+        why: "The join between a run, its evidence and an asset for a specific niche. The evidence key lives here because it identifies a niche/source discovery, not a cross-provider entity.",
+        refs: ["assets", "runs", "source_events"],
+        cols: [
+            ["asset_discovery_id", "uuid", "PK"],
+            ["asset_id", "uuid", "FK → assets"],
+            ["run_id", "uuid", "FK → runs"],
+            ["source_event_id", "uuid", "FK → source_events"],
+            ["evidence_key", "text", "UNIQUE"],
+            ["niche_id · niche · archive_query", "text", ""],
+            ["automated_relevance", "text", "Pass · Review · Reject"],
+        ],
+    },
+    {
+        id: "asset_rights",
+        name: "asset_rights",
+        why: "The provider's licence and public-domain claim per asset and source. A claim is enough during discovery; verification_status records when stronger checking is needed for a shortlisted asset.",
+        refs: ["assets", "sources", "source_events"],
+        cols: [
+            ["asset_rights_id", "uuid", "PK"],
+            ["asset_id", "uuid", "FK → assets · UNIQUE with claim_source_id"],
+            ["claim_source_id", "text", "FK → sources"],
+            ["claim_source_event_id", "uuid", "FK → source_events"],
+            ["license_claim · license_uri", "text", ""],
+            ["public_domain_claim · commercial_use_claim", "boolean", ""],
+            ["verification_status", "text", "provider_claim_only · verification_required · independently_verified · rejected"],
+            ["verification_source_id", "text", "FK → sources"],
+        ],
+    },
+    {
+        id: "human_reviews",
+        name: "human_reviews",
+        why: "Append-only reviewer decisions on relevance, rights or shortlisting. Each new decision can point at the one it supersedes, so the full history stays auditable.",
+        refs: ["asset_discoveries", "human_reviews"],
+        cols: [
+            ["human_review_id", "uuid", "PK"],
+            ["asset_discovery_id", "uuid", "FK → asset_discoveries"],
+            ["review_type", "text", "relevance · rights · shortlist"],
+            ["decision · notes", "text", ""],
+            ["reviewed_by", "text", ""],
+            ["reviewed_at", "timestamptz", "INDEX with discovery + type"],
+            ["supersedes_review_id", "uuid", "FK → human_reviews"],
+        ],
+    },
+];
+
+const seeded = [
+    { id: "aic", name: "Art Institute of Chicago", type: "asset_provider", enabled: true, trust: "authoritative", note: "Initial PostgreSQL vertical slice" },
+    { id: "met", name: "The Metropolitan Museum of Art", type: "asset_provider", enabled: true, trust: "authoritative", note: "Existing adapter; migration deferred to the next milestone" },
+    { id: "openverse", name: "Openverse", type: "asset_provider", enabled: false, trust: "discovery_only", note: "Verify shortlisted assets at the original institution" },
+    { id: "google_trends", name: "Google Trends", type: "demand_signal", enabled: false, trust: "provider_claim", note: "Planned after the Met migration" },
+];
+
+const decisions = [
+    { k: "Source of truth", t: "PostgreSQL is authoritative", d: "Runs, raw evidence, assets, rights and reviews live in relational tables with foreign keys and CHECK constraints. Google Sheets is a synchronised review and reporting surface, not the database." },
+    { k: "Evidence", t: "Raw payload once per request", d: "The provider response is stored once in source_events with a generated SHA-256, instead of being copied into every asset row." },
+    { k: "Identity", t: "Evidence key ≠ entity resolution", d: "niche_id|AIC|object_id scopes a discovery to one niche and source. It deliberately does not claim two providers' records are the same artwork." },
+    { k: "Rights", t: "Claims first, verification later", d: "Provider public-domain claims are enough during discovery. A re-run can never downgrade a rights row that was independently verified." },
+    { k: "Reviews", t: "Append-only history", d: "Reviewer decisions are inserted, never overwritten, with a link to the decision they supersede. Re-syncing the same sheet changes nothing." },
+    { k: "Idempotency", t: "Every write is an upsert on a natural key", d: "external_run_id, (source, provider asset ID), evidence_key and (asset, claim source) are unique, so repeated executions converge instead of duplicating." },
+    { k: "Infrastructure", t: "Minimal, private Postgres", d: "Docker Compose runs postgres:17-alpine with a health check, a named volume, migrations mounted read-only and an internal-only network. Secrets come from an untracked .env." },
+    { k: "Safety", t: "No credentials in exports", d: "Workflow backups are n8n exports, which do not include credentials. Every workflow was exported inactive." },
+];
+---
+
+<html lang="en">
+    <head>
+        <SeoHead {title} {description} type="article" />
+    </head>
+
+    <body>
+        <main>
+            <SiteHeader />
+
+            <header class="hero">
+                <div class="breadcrumbs">
+                    <a href="/#projects">Projects</a>
+                    <span aria-hidden="true">→</span>
+                    <strong>Marketplace Opportunity Intelligence</strong>
+                </div>
+
+                <p class="eyebrow">n8n · PostgreSQL · Google Sheets · Data pipelines</p>
+
+                <h1>
+                    Marketplace Product{" "}
+                    <span class="accent">Opportunity Intelligence.</span>
+                </h1>
+
+                <p class="hero-lead">
+                    A research pipeline for marketplace product ideas: it
+                    searches public museum archives for public-domain artwork
+                    that fits a product niche, keeps the provider's raw evidence
+                    and rights claims, and routes every candidate through human
+                    review, with PostgreSQL as the source of truth.
+                </p>
+
+                <div class="hero-graph" aria-hidden="true">
+                    <svg viewBox="0 0 760 190" preserveAspectRatio="xMidYMid meet">
+                        <defs>
+                            <linearGradient id="rg-edge" x1="0" x2="1">
+                                <stop offset="0" stop-color="#168dff" />
+                                <stop offset="1" stop-color="#26d5a2" />
+                            </linearGradient>
+                        </defs>
+                        <path class="edge" d="M110 95 C 170 95, 170 95, 230 95" />
+                        <path class="edge" d="M330 95 C 390 95, 390 45, 450 45" />
+                        <path class="edge" d="M330 95 C 390 95, 390 145, 450 145" />
+                        <path class="edge" d="M550 45 C 610 45, 610 95, 650 95" />
+                        <path class="edge" d="M550 145 C 610 145, 610 95, 650 95" />
+                        <path class="edge back" d="M700 120 C 700 175, 400 185, 280 120" />
+                        <circle class="pulse p1" r="5"><animateMotion dur="3.2s" repeatCount="indefinite" path="M110 95 C 170 95, 170 95, 230 95" /></circle>
+                        <circle class="pulse p2" r="5"><animateMotion dur="3.2s" begin="0.8s" repeatCount="indefinite" path="M330 95 C 390 95, 390 45, 450 45" /></circle>
+                        <circle class="pulse p3" r="5"><animateMotion dur="3.2s" begin="1.2s" repeatCount="indefinite" path="M330 95 C 390 95, 390 145, 450 145" /></circle>
+                        <circle class="pulse p4" r="5"><animateMotion dur="3.2s" begin="1.8s" repeatCount="indefinite" path="M550 145 C 610 145, 610 95, 650 95" /></circle>
+                        <circle class="pulse back" r="4"><animateMotion dur="4.5s" begin="2.2s" repeatCount="indefinite" path="M700 120 C 700 175, 400 185, 280 120" /></circle>
+                        <g class="gnode"><rect x="10" y="70" width="100" height="50" rx="12" /><text x="60" y="92">Niche</text><text x="60" y="108" class="s">N001</text></g>
+                        <g class="gnode n8n"><rect x="230" y="70" width="100" height="50" rx="12" /><text x="280" y="92">n8n</text><text x="280" y="108" class="s">adapter</text></g>
+                        <g class="gnode api"><rect x="450" y="20" width="100" height="50" rx="12" /><text x="500" y="42">AIC API</text><text x="500" y="58" class="s">public domain</text></g>
+                        <g class="gnode pg"><rect x="450" y="120" width="100" height="50" rx="12" /><text x="500" y="142">PostgreSQL</text><text x="500" y="158" class="s">authoritative</text></g>
+                        <g class="gnode sheet"><rect x="650" y="70" width="100" height="50" rx="12" /><text x="700" y="92">Sheets</text><text x="700" y="108" class="s">human review</text></g>
+                    </svg>
+                </div>
+
+                <SkillLinks
+                    variant="hero"
+                    skills={[
+                        "workflow-automation",
+                        "n8n",
+                        "postgresql",
+                        "sql",
+                        "system-architecture",
+                        "rest-api-integration",
+                        "google-sheets-api",
+                        "human-oversight",
+                    ]}
+                />
+
+                <div class="hero-actions">
+                    <a class="button button-primary" href="#schema">Explore the data model ↓</a>
+                    <a class="button button-secondary" href="#workflow">Watch the pipeline run ↓</a>
+                </div>
+            </header>
+
+            <section class="metrics" aria-label="Validated results" data-count-group>
+                {metrics.map((m) => (
+                    <article class="metric-card">
+                        <strong data-count={m.value}>{m.value}</strong>
+                        <span>{m.label}</span>
+                    </article>
+                ))}
+            </section>
+
+            <!-- 01 — PROBLEM -->
+            <section class="case-section" aria-labelledby="r-why">
+                <div class="section-heading">
+                    <p class="eyebrow">01 — The problem</p>
+                    <h2 id="r-why">A spreadsheet was doing a database's job.</h2>
+                    <p>
+                        The first version was four n8n workflows (exported from
+                        n8n 2.40.7) that searched the Art Institute of Chicago
+                        and the Met and wrote straight into Google Sheets. It
+                        worked as an MVP, but there was no run history, no record
+                        of what a provider actually returned, and no way to
+                        audit a reviewer changing their mind.
+                    </p>
+                </div>
+
+                <div class="ba" data-ba>
+                    <div class="ba-toggle" role="group" aria-label="Compare architectures">
+                        <button type="button" class="seg" aria-pressed="true" data-ba-btn="before">Before: Sheets-only MVP</button>
+                        <button type="button" class="seg" aria-pressed="false" data-ba-btn="after">After: PostgreSQL slice</button>
+                    </div>
+                    <div class="ba-panels" aria-live="polite">
+                        <div class="ba-panel" data-ba-panel="before">
+                            <ul class="ba-list">
+                                <li><b>MVP 01</b> 18-node workflow: niche → AIC and Met searches → three Sheets writes</li>
+                                <li><b>Orchestrator v2</b> 12 nodes calling separate AIC and Met adapters</li>
+                                <li class="bad">Raw API responses discarded after mapping</li>
+                                <li class="bad">Relevance and rights decisions overwritten in place</li>
+                                <li class="bad">No run status, warnings or errors to query</li>
+                            </ul>
+                        </div>
+                        <div class="ba-panel" data-ba-panel="after" hidden>
+                            <ul class="ba-list">
+                                <li><b>runs</b> every execution registered, finalised and queryable</li>
+                                <li><b>source_events</b> raw payload stored once per request, hashed</li>
+                                <li><b>assets · discoveries · rights</b> idempotent upserts on natural keys</li>
+                                <li class="good">Sheets kept as the review surface people already use</li>
+                                <li class="good">Reviews flow back as append-only history</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 02 — WORKFLOW -->
+            <section id="workflow" class="case-section" aria-labelledby="r-flow">
+                <div class="section-heading">
+                    <p class="eyebrow">02 — The vertical slice</p>
+                    <h2 id="r-flow">Three n8n workflows, one round trip.</h2>
+                    <p>
+                        Press play to run the slice node by node, or select any
+                        node to read the real query or code behind it (connection
+                        details removed).
+                    </p>
+                </div>
+
+                <div class="flow" data-flow>
+                    <div class="flow-bar">
+                        <button type="button" class="ctl ctl-primary" data-flow-play>▶ Run the slice</button>
+                        <span class="flow-status" data-out="flowStatus" aria-live="polite">Idle</span>
+                    </div>
+                    {lanes.map((lane, li) => (
+                        <div class="lane" data-lane={lane.id}>
+                            <div class="lane-head">
+                                <strong>{lane.name}</strong>
+                                <span>{lane.role}</span>
+                            </div>
+                            <ol class="nodes">
+                                {lane.nodes.map((n, ni) => (
+                                    <li>
+                                        <button
+                                            type="button"
+                                            class={`node k-${n.kind}`}
+                                            data-node={`${li}-${ni}`}
+                                            aria-pressed={li === 0 && ni === 0 ? "true" : "false"}
+                                        >
+                                            <span class="node-kind">{n.kind}</span>
+                                            <span class="node-name">{n.name}</span>
+                                        </button>
+                                    </li>
+                                ))}
+                            </ol>
+                        </div>
+                    ))}
+                    <div class="node-detail" aria-live="polite">
+                        {lanes.map((lane, li) =>
+                            lane.nodes.map((n, ni) => (
+                                <div class="detail" data-detail={`${li}-${ni}`} hidden={!(li === 0 && ni === 0)}>
+                                    <div>
+                                        <span class="kicker">{lane.name}</span>
+                                        <h3>{n.name}</h3>
+                                        <p>{n.text}</p>
+                                    </div>
+                                    <pre class="code">{n.code}</pre>
+                                </div>
+                            )),
+                        )}
+                    </div>
+                </div>
+            </section>
+
+            <!-- 03 — SCHEMA -->
+            <section id="schema" class="case-section" aria-labelledby="r-schema">
+                <div class="section-heading">
+                    <p class="eyebrow">03 — Data model</p>
+                    <h2 id="r-schema">Seven tables, each with one job.</h2>
+                    <p>
+                        Select a table to see its columns and constraints from
+                        001_core.sql, the tables it references, and why it
+                        exists.
+                    </p>
+                </div>
+
+                <div class="schema" data-schema>
+                    <div class="schema-map">
+                        <svg class="schema-lines" aria-hidden="true"></svg>
+                        {tables.map((t, i) => (
+                            <button
+                                type="button"
+                                class={`tbl tbl-${t.id}`}
+                                data-table={t.id}
+                                data-refs={t.refs.join(" ")}
+                                aria-pressed={i === 4 ? "true" : "false"}
+                            >
+                                <span class="tbl-name">{t.name}</span>
+                                <span class="tbl-meta">{t.cols.length} column groups</span>
+                            </button>
+                        ))}
+                    </div>
+                    <div class="schema-detail" aria-live="polite">
+                        {tables.map((t, i) => (
+                            <div class="tdetail" data-tdetail={t.id} hidden={i !== 4}>
+                                <h3><code>{t.name}</code></h3>
+                                <p>{t.why}</p>
+                                {t.refs.length > 0 && (
+                                    <p class="refs">References: {t.refs.map((r) => <code>{r}</code>)}</p>
+                                )}
+                                <ul class="cols">
+                                    {t.cols.map(([c, type, note], j) => (
+                                        <li style={`--j:${j}`}>
+                                            <code class="c">{c}</code>
+                                            <span class="type">{type}</span>
+                                            {note && <span class={`note ${note.startsWith("PK") ? "pk" : note.startsWith("FK") ? "fk" : note.startsWith("UNIQUE") ? "uq" : ""}`}>{note}</span>}
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+                <p class="footnote">
+                    Every foreign key uses <code>ON DELETE RESTRICT</code>, so
+                    evidence cannot be deleted out from under the records that
+                    cite it.
+                </p>
+            </section>
+
+            <!-- 04 — IDEMPOTENCY LAB -->
+            <section class="case-section" aria-labelledby="r-idem">
+                <div class="section-heading">
+                    <p class="eyebrow">04 — Idempotency lab</p>
+                    <h2 id="r-idem">Run it twice. Nothing duplicates.</h2>
+                    <p>
+                        A simulation of the row counts the SQL above produces.
+                        The validated result in the README: ten assets, ten
+                        discoveries, ten rights claims and zero duplicate
+                        evidence keys after repeated executions. The run and
+                        source-event growth shown here follows from the queries
+                        (one new run ID and one stored response per execution).
+                    </p>
+                </div>
+
+                <div class="lab idem" data-idem>
+                    <div class="idem-controls">
+                        <button type="button" class="ctl ctl-primary" data-act="run">Run adapter (limit 10)</button>
+                        <button type="button" class="ctl" data-act="sync">Sync reviews from Sheets</button>
+                        <button type="button" class="ctl" data-act="change">Reviewer changes one decision</button>
+                        <button type="button" class="ctl" data-act="reset">Reset</button>
+                    </div>
+                    <div class="counters">
+                        {["runs", "source_events", "assets", "asset_discoveries", "asset_rights", "human_reviews"].map((t) => (
+                            <div class="counter" data-counter={t}>
+                                <code>{t}</code>
+                                <strong data-v>0</strong>
+                                <span data-delta></span>
+                            </div>
+                        ))}
+                    </div>
+                    <ol class="log" data-out="idemLog" aria-live="polite" aria-label="Simulated execution log"></ol>
+                </div>
+
+                <div class="lab keylab" data-keylab>
+                    <div>
+                        <h3>Build an evidence key</h3>
+                        <p>
+                            The key the upsert collides on, exactly as Prepare AIC
+                            Records builds it. Change the niche and the same
+                            artwork becomes a new, separate discovery.
+                        </p>
+                        <div class="key-inputs">
+                            <label>niche_id <input name="k_niche" value="N001" autocomplete="off" /></label>
+                            <label>AIC object id <input name="k_obj" value="100001" inputmode="numeric" autocomplete="off" /></label>
+                        </div>
+                    </div>
+                    <div class="key-out" aria-live="polite">
+                        <span class="kicker">evidence_key</span>
+                        <code class="key" data-out="key"></code>
+                        <span class="kicker">ON CONFLICT (evidence_key)</span>
+                        <strong data-out="keyVerdict"></strong>
+                        <p class="muted-note">Illustrative object ID. Keys already stored in this demo: <span data-out="keyStore"></span></p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 05 — REVIEW LOOP -->
+            <section class="case-section" aria-labelledby="r-review">
+                <div class="section-heading">
+                    <p class="eyebrow">05 — Human review loop</p>
+                    <h2 id="r-review">Reviewers use Sheets. History lives in Postgres.</h2>
+                    <p>
+                        Change a decision in the illustrative sheet row and sync.
+                        The browser applies the same rule as the review-sync
+                        query: insert only when the decision differs from the
+                        latest one, and link it to the review it supersedes.
+                    </p>
+                </div>
+
+                <div class="lab review" data-review>
+                    <div class="sheet" role="group" aria-label="Illustrative review sheet row">
+                        <div class="sheet-head">
+                            <span>evidence_key</span><span>title</span><span>automated</span><span>relevance_review</span><span>rights_review</span>
+                        </div>
+                        <div class="sheet-row">
+                            <code>N001|AIC|100001</code>
+                            <span>Celestial chart (sample)</span>
+                            <span class="pill pass">Pass</span>
+                            <label class="sr-only" for="rv-rel">Relevance review</label>
+                            <select id="rv-rel" name="rel"><option value="">(blank)</option><option selected>Approve</option><option>Reject</option></select>
+                            <label class="sr-only" for="rv-rights">Rights review</label>
+                            <select id="rv-rights" name="rights"><option value="">(blank)</option><option>Verified</option><option>Needs check</option></select>
+                        </div>
+                        <button type="button" class="ctl ctl-primary" data-sync>Sync to PostgreSQL</button>
+                    </div>
+                    <div class="history">
+                        <span class="kicker">human_reviews for this discovery</span>
+                        <ol data-out="history" aria-live="polite"></ol>
+                        <p class="sync-msg" data-out="syncMsg"></p>
+                    </div>
+                </div>
+
+                <div class="lab rights" data-rights>
+                    <div>
+                        <h3>Verified rights are never downgraded</h3>
+                        <p>
+                            The rights upsert keeps <code>independently_verified</code>{" "}
+                            when the adapter re-ingests the provider claim. Try it.
+                        </p>
+                        <div class="idem-controls">
+                            <button type="button" class="ctl" data-r="verify">Mark independently verified</button>
+                            <button type="button" class="ctl ctl-primary" data-r="rerun">Re-run adapter</button>
+                            <button type="button" class="ctl" data-r="reset">Reset</button>
+                        </div>
+                    </div>
+                    <div class="rights-out" aria-live="polite">
+                        <span class="kicker">asset_rights.verification_status</span>
+                        <strong data-out="rstatus">provider_claim_only</strong>
+                        <p data-out="rnote">Captured from the provider's public-domain claim.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 06 — RESULTS -->
+            <section class="case-section" aria-labelledby="r-results">
+                <div class="section-heading">
+                    <p class="eyebrow">06 — Validated results</p>
+                    <h2 id="r-results">The astronomy test, end to end.</h2>
+                    <p>
+                        Recorded in the repository README for the "Antique
+                        Astronomy" test input (archive query "astronomy").
+                    </p>
+                </div>
+
+                <div class="results" data-count-group>
+                    <article class="card res-card">
+                        <span class="kicker">Ingestion</span>
+                        <ul class="res-list">
+                            <li><strong data-count="10">10</strong> provider assets</li>
+                            <li><strong data-count="10">10</strong> discovery records</li>
+                            <li><strong data-count="10">10</strong> provider rights claims</li>
+                            <li><strong data-count="0">0</strong> duplicate evidence keys after repeated executions</li>
+                        </ul>
+                    </article>
+                    <article class="card res-card">
+                        <span class="kicker">Automated relevance</span>
+                        <div class="donut-wrap">
+                            <svg class="donut" viewBox="0 0 120 120" role="img" aria-label="4 Pass, 6 Review">
+                                <circle cx="60" cy="60" r="46" class="d-bg" />
+                                <circle cx="60" cy="60" r="46" class="d-review" pathLength="100" />
+                                <circle cx="60" cy="60" r="46" class="d-pass" pathLength="100" />
+                            </svg>
+                            <div class="donut-legend">
+                                <span><i class="lp"></i><b>4</b> Pass</span>
+                                <span><i class="lr"></i><b>6</b> Review</span>
+                            </div>
+                        </div>
+                    </article>
+                    <article class="card res-card">
+                        <span class="kicker">Human review events</span>
+                        <div class="stack" role="img" aria-label="14 review events: 4 Approve, 6 Reject, 4 rights decisions">
+                            <i class="s-approve" style="--f:4"></i>
+                            <i class="s-reject" style="--f:6"></i>
+                            <i class="s-rights" style="--f:4"></i>
+                        </div>
+                        <ul class="stack-legend">
+                            <li><i class="s-approve"></i>4 Approve</li>
+                            <li><i class="s-reject"></i>6 Reject</li>
+                            <li><i class="s-rights"></i>4 verified AIC rights decisions</li>
+                        </ul>
+                        <p class="total"><strong data-count="14">14</strong> preserved events</p>
+                    </article>
+                </div>
+            </section>
+
+            <!-- 07 — DECISIONS -->
+            <section class="case-section" aria-labelledby="r-dec">
+                <div class="section-heading">
+                    <p class="eyebrow">07 — Design decisions</p>
+                    <h2 id="r-dec">Choices that keep the evidence trustworthy.</h2>
+                </div>
+                <div class="dec-grid">
+                    {decisions.map((d) => (
+                        <article class="card dec">
+                            <span class="kicker">{d.k}</span>
+                            <h3>{d.t}</h3>
+                            <p>{d.d}</p>
+                        </article>
+                    ))}
+                </div>
+            </section>
+
+            <!-- 08 — SCOPE -->
+            <section class="case-section" aria-labelledby="r-scope">
+                <div class="section-heading">
+                    <p class="eyebrow">08 — Scope & next steps</p>
+                    <h2 id="r-scope">A deliberate foundation, not the finished product.</h2>
+                    <p>
+                        This slice covers source ingestion and human review
+                        only. Candidate generation, scoring, product development
+                        and a polished input UI are intentionally out of scope,
+                        and the original AIC adapter and modular orchestrator
+                        were left unchanged.
+                    </p>
+                </div>
+                <div class="sources">
+                    {seeded.map((s) => (
+                        <article class={`card src-card ${s.enabled ? "on" : "off"}`}>
+                            <div class="src-top">
+                                <code>{s.id}</code>
+                                <span class="state">{s.enabled ? "enabled" : "disabled"}</span>
+                            </div>
+                            <h3>{s.name}</h3>
+                            <p class="src-tags"><span>{s.type}</span><span>{s.trust}</span></p>
+                            <p>{s.note}</p>
+                        </article>
+                    ))}
+                </div>
+            </section>
+
+            <!-- 09 — SKILLS -->
+            <section class="case-section skills-section" aria-labelledby="r-skills">
+                <div class="section-heading centered">
+                    <p class="eyebrow">09 — Skills demonstrated</p>
+                    <h2 id="r-skills">Pipelines that stay auditable.</h2>
+                    <p>Select any skill to see where else it appears in the portfolio.</p>
+                </div>
+                <SkillLinks
+                    skills={[
+                        "workflow-automation",
+                        "n8n",
+                        "postgresql",
+                        "docker",
+                        "sql",
+                        "data-modelling",
+                        "system-architecture",
+                        "rest-api-integration",
+                        "data-normalization",
+                        "deduplication",
+                        "google-sheets-api",
+                        "human-oversight",
+                        "data-quality",
+                        "iterative-development",
+                        "documentation",
+                    ]}
+                />
+            </section>
+
+            <section class="project-end">
+                <p class="eyebrow">Explore more</p>
+                <h2>More automation case studies.</h2>
+                <div class="project-end-links">
+                    <a href="/projects/ai-job-outreach/">AI Job Discovery & Outreach →</a>
+                    <a href="/projects/rocketeers/">Rocketeers overview →</a>
+                    <a href="/#projects">All projects →</a>
+                </div>
+            </section>
+        </main>
+
+        <SiteFooter />
+    </body>
+</html>
+
+<script>
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const $ = <T extends Element = HTMLElement>(r: ParentNode, s: string) => r.querySelector(s) as T | null;
+    const $$ = <T extends Element = HTMLElement>(r: ParentNode, s: string) => Array.from(r.querySelectorAll(s)) as T[];
+    const setText = (r: ParentNode, k: string, v: string) => { const el = $(r, `[data-out="${k}"]`); if (el) el.textContent = v; };
+
+    /* Count-up */
+    const groups = $$(document, "[data-count-group]");
+    const run = (g: HTMLElement) => {
+        g.classList.add("is-in");
+        $$(g, "[data-count]").forEach((el) => {
+            const target = Number(el.dataset.count);
+            if (reduceMotion || !target) { el.textContent = String(target); return; }
+            const t0 = performance.now();
+            const tick = (now: number) => {
+                const p = Math.min(1, (now - t0) / 1000);
+                el.textContent = String(Math.round(target * (1 - Math.pow(1 - p, 3))));
+                if (p < 1) requestAnimationFrame(tick);
+            };
+            requestAnimationFrame(tick);
+        });
+    };
+    if ("IntersectionObserver" in window) {
+        const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { run(e.target as HTMLElement); io.unobserve(e.target); } }), { threshold: 0.3 });
+        groups.forEach((g) => io.observe(g));
+    } else groups.forEach(run);
+
+    /* Before / after */
+    const ba = $(document, "[data-ba]");
+    if (ba) {
+        $$<HTMLButtonElement>(ba, "[data-ba-btn]").forEach((b) => b.addEventListener("click", () => {
+            $$(ba, "[data-ba-btn]").forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
+            $$(ba, "[data-ba-panel]").forEach((p) => (p.hidden = p.dataset.baPanel !== b.dataset.baBtn));
+        }));
+    }
+
+    /* Workflow lanes */
+    const flow = $(document, "[data-flow]");
+    if (flow) {
+        const nodes = $$<HTMLButtonElement>(flow, "[data-node]");
+        const select = (key: string) => {
+            nodes.forEach((n) => n.setAttribute("aria-pressed", String(n.dataset.node === key)));
+            $$(flow, "[data-detail]").forEach((d) => (d.hidden = d.dataset.detail !== key));
+        };
+        nodes.forEach((n) => n.addEventListener("click", () => { stop(); select(n.dataset.node!); }));
+        const playBtn = $<HTMLButtonElement>(flow, "[data-flow-play]")!;
+        let timer: number | undefined;
+        let i = 0;
+        const stop = () => {
+            window.clearTimeout(timer); timer = undefined;
+            playBtn.textContent = "▶ Run the slice";
+        };
+        const step = () => {
+            nodes.forEach((n, j) => { n.classList.toggle("is-done", j < i); n.classList.toggle("is-live", j === i); });
+            const n = nodes[i];
+            select(n.dataset.node!);
+            setText(flow, "flowStatus", `Executing ${i + 1}/${nodes.length}: ${$(n, ".node-name")!.textContent}`);
+            i++;
+            if (i < nodes.length) timer = window.setTimeout(step, reduceMotion ? 400 : 1500);
+            else {
+                timer = window.setTimeout(() => {
+                    nodes.forEach((x) => { x.classList.remove("is-live"); x.classList.add("is-done"); });
+                    setText(flow, "flowStatus", "Round trip complete: run finalised, Sheets synced, reviews stored");
+                    stop();
+                }, 1200);
+            }
+        };
+        playBtn.addEventListener("click", () => {
+            if (timer) { stop(); setText(flow, "flowStatus", "Paused"); return; }
+            if (i >= nodes.length) { i = 0; nodes.forEach((x) => x.classList.remove("is-done", "is-live")); }
+            playBtn.textContent = "❚❚ Pause";
+            step();
+        });
+    }
+
+    /* Schema diagram: highlight references and draw FK lines */
+    const schema = $(document, "[data-schema]");
+    if (schema) {
+        const map = $(schema, ".schema-map")!;
+        const svg = $(schema, ".schema-lines") as unknown as SVGSVGElement;
+        const tbls = $$<HTMLButtonElement>(schema, "[data-table]");
+        const byId = (id: string) => tbls.find((t) => t.dataset.table === id);
+        let active = "asset_discoveries";
+        const draw = () => {
+            const box = map.getBoundingClientRect();
+            svg.setAttribute("viewBox", `0 0 ${box.width} ${box.height}`);
+            const paths: string[] = [];
+            tbls.forEach((t) => {
+                (t.dataset.refs || "").split(" ").filter(Boolean).forEach((r) => {
+                    const target = byId(r);
+                    if (!target || target === t) return;
+                    const a = t.getBoundingClientRect(), b = target.getBoundingClientRect();
+                    const x1 = a.left + a.width / 2 - box.left, y1 = a.top + a.height / 2 - box.top;
+                    const x2 = b.left + b.width / 2 - box.left, y2 = b.top + b.height / 2 - box.top;
+                    const hot = t.dataset.table === active || r === active;
+                    const mx = (x1 + x2) / 2;
+                    paths.push(`<path class="${hot ? "hot" : ""}" d="M${x1} ${y1} C ${mx} ${y1}, ${mx} ${y2}, ${x2} ${y2}" />`);
+                });
+            });
+            svg.innerHTML = paths.join("");
+        };
+        const select = (id: string) => {
+            active = id;
+            const refs = (byId(id)?.dataset.refs || "").split(" ");
+            tbls.forEach((t) => {
+                const tid = t.dataset.table!;
+                t.setAttribute("aria-pressed", String(tid === id));
+                const related = refs.includes(tid) || (t.dataset.refs || "").split(" ").includes(id);
+                t.classList.toggle("is-related", tid !== id && related);
+            });
+            $$(schema, "[data-tdetail]").forEach((d) => (d.hidden = d.dataset.tdetail !== id));
+            draw();
+        };
+        tbls.forEach((t) => t.addEventListener("click", () => select(t.dataset.table!)));
+        window.addEventListener("resize", draw);
+        select(active);
+        // Fonts or reveal motion can shift layout after load.
+        window.setTimeout(draw, 900);
+    }
+
+    /* Idempotency lab */
+    const idem = $(document, "[data-idem]");
+    if (idem) {
+        type Counts = Record<string, number>;
+        const zero = (): Counts => ({ runs: 0, source_events: 0, assets: 0, asset_discoveries: 0, asset_rights: 0, human_reviews: 0 });
+        let c = zero();
+        let ran = 0, synced = false, changed = 0;
+        const log = $(idem, '[data-out="idemLog"]')!;
+        const line = (t: string, tone = "") => {
+            const li = document.createElement("li"); li.textContent = t; if (tone) li.dataset.tone = tone;
+            log.prepend(li); while (log.children.length > 8) log.lastElementChild?.remove();
+        };
+        const paint = (prev: Counts) => {
+            $$(idem, "[data-counter]").forEach((el) => {
+                const k = el.dataset.counter!;
+                const d = c[k] - prev[k];
+                $(el, "[data-v]")!.textContent = String(c[k]);
+                const delta = $(el, "[data-delta]")!;
+                delta.textContent = d ? `+${d}` : ran || synced ? "±0" : "";
+                el.dataset.tone = d ? "grow" : ran || synced ? "same" : "";
+                el.classList.remove("bump"); void (el as HTMLElement).offsetWidth; el.classList.add("bump");
+            });
+        };
+        const act = (a: string) => {
+            const prev = { ...c };
+            if (a === "run") {
+                ran++;
+                c.runs++; c.source_events++;
+                if (ran === 1) { c.assets = 10; c.asset_discoveries = 10; c.asset_rights = 10; }
+                line(`Run ${ran}: RUN-… registered → 1 response stored → 10 rows upserted → ${ran === 1 ? "10 inserted" : "0 inserted, 10 updated in place"} → succeeded`, ran === 1 ? "ok" : "info");
+            } else if (a === "sync") {
+                if (!ran) { line("No discoveries yet: the sync finds no matching evidence_key rows", "warn"); return; }
+                if (!synced) { synced = true; c.human_reviews += 14; line("Sync: 10 relevance + 4 rights decisions → 14 inserted", "ok"); }
+                else if (changed) { c.human_reviews += 1; changed = 0; line("Sync: 1 decision differs from the latest → 1 inserted with supersedes_review_id; 13 unchanged", "ok"); }
+                else line("Sync: every decision matches the latest review → 0 inserted (inserted = false)", "info");
+            } else if (a === "change") {
+                if (!synced) { line("Sync once first so there is a review to change", "warn"); return; }
+                changed = 1; line("Sheet edit: one relevance_review changed from Reject to Approve (not yet synced)", "warn");
+            } else {
+                c = zero(); ran = 0; synced = false; changed = 0; log.replaceChildren();
+                line("Fresh database: migration applied, 4 sources seeded");
+            }
+            paint(prev);
+        };
+        $$<HTMLButtonElement>(idem, "[data-act]").forEach((b) => b.addEventListener("click", () => act(b.dataset.act!)));
+        line("Fresh database: migration applied, 4 sources seeded");
+    }
+
+    /* Evidence key builder */
+    const keylab = $(document, "[data-keylab]");
+    if (keylab) {
+        const niche = $<HTMLInputElement>(keylab, '[name="k_niche"]')!;
+        const obj = $<HTMLInputElement>(keylab, '[name="k_obj"]')!;
+        const stored = ["N001|AIC|100001", "N001|AIC|100002", "N001|AIC|100003"];
+        const render = () => {
+            const key = `${niche.value.trim()}|AIC|${String(obj.value.trim())}`;
+            setText(keylab, "key", key);
+            const hit = stored.includes(key);
+            const v = $(keylab, '[data-out="keyVerdict"]')!;
+            v.textContent = hit ? "DO UPDATE: existing discovery refreshed, no new row" : "INSERT: new discovery row for this niche";
+            v.dataset.tone = hit ? "same" : "grow";
+            setText(keylab, "keyStore", stored.join(", "));
+        };
+        keylab.addEventListener("input", render);
+        render();
+    }
+
+    /* Review history */
+    const review = $(document, "[data-review]");
+    if (review) {
+        type Rev = { id: number; type: string; decision: string; sup: number | null };
+        const hist: Rev[] = [];
+        let n = 0;
+        const list = $(review, '[data-out="history"]')!;
+        const paint = () => {
+            list.replaceChildren(...hist.slice().reverse().map((r) => {
+                const li = document.createElement("li");
+                li.innerHTML = `<code>#${r.id}</code> <b></b> <span></span>${r.sup ? ` <em>supersedes #${r.sup}</em>` : ""}`;
+                li.querySelector("b")!.textContent = r.type;
+                li.querySelector("span")!.textContent = r.decision;
+                return li;
+            }));
+        };
+        const latest = (type: string) => hist.filter((h) => h.type === type).at(-1);
+        $(review, "[data-sync]")!.addEventListener("click", () => {
+            let inserted = 0;
+            ([["relevance", "rel"], ["rights", "rights"]] as const).forEach(([type, name]) => {
+                const decision = $<HTMLSelectElement>(review, `[name="${name}"]`)!.value.trim();
+                if (!decision) return;
+                const last = latest(type);
+                if (!last || last.decision !== decision) {
+                    hist.push({ id: ++n, type, decision, sup: last ? last.id : null });
+                    inserted++;
+                }
+            });
+            setText(review, "syncMsg", inserted ? `${inserted} review event${inserted > 1 ? "s" : ""} inserted.` : "0 inserted: nothing changed since the last sync.");
+            paint();
+        });
+        setText(review, "syncMsg", "Nothing synced yet.");
+    }
+
+    /* Rights protection */
+    const rights = $(document, "[data-rights]");
+    if (rights) {
+        let status = "provider_claim_only";
+        const paint = (note: string) => {
+            setText(rights, "rstatus", status);
+            setText(rights, "rnote", note);
+            $(rights, '[data-out="rstatus"]')!.dataset.s = status;
+        };
+        $$<HTMLButtonElement>(rights, "[data-r]").forEach((b) => b.addEventListener("click", () => {
+            const r = b.dataset.r;
+            if (r === "verify") { status = "independently_verified"; paint("A reviewer confirmed the rights at the institution."); }
+            else if (r === "rerun") {
+                paint(status === "independently_verified"
+                    ? "Re-ingested claim arrived as provider_claim_only; the CASE expression kept independently_verified."
+                    : "Re-ingested claim: status refreshed to provider_claim_only.");
+            } else { status = "provider_claim_only"; paint("Captured from the provider's public-domain claim."); }
+        }));
+    }
+</script>
+
+<style>
+    :root {
+        --bg: #06111e;
+        --surface: #091b2b;
+        --surface-2: #0b2236;
+        --border: #1f3d57;
+        --text: #d8e4ee;
+        --muted: #9fb2c2;
+        --subtle: #7890a3;
+        --blue: #168dff;
+        --blue-light: #65baff;
+        --orange: #ff8a00;
+        --green: #26d5a2;
+        --amber: #ffc24d;
+        --red: #ff6b6b;
+        --violet: #a98bff;
+        --pg: #5aa2ff;
+        --mono: ui-monospace, "Cascadia Code", "SFMono-Regular", Consolas, monospace;
+        --page-width: 1240px;
+    }
+
+    * { box-sizing: border-box; }
+    [hidden] { display: none !important; }
+    html { scroll-behavior: smooth; background: var(--bg); }
+
+    body {
+        min-height: 100vh;
+        margin: 0;
+        color: var(--text);
+        background:
+            radial-gradient(circle at 12% 6%, rgba(38, 213, 162, 0.08), transparent 28rem),
+            radial-gradient(circle at 90% 10%, rgba(22, 141, 255, 0.13), transparent 30rem),
+            radial-gradient(circle at 80% 70%, rgba(169, 139, 255, 0.05), transparent 30rem),
+            var(--bg);
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    main, footer {
+        width: min(100%, var(--page-width));
+        margin-inline: auto;
+        padding-inline: clamp(1rem, 5vw, 4.5rem);
+    }
+
+    a { color: inherit; text-underline-offset: 0.25em; }
+    a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px solid var(--orange); outline-offset: 3px; }
+
+    h1, h2, h3, p { margin-top: 0; }
+    h1, h3 { color: #fff; }
+    h1 {
+        max-width: 1000px;
+        margin: 0 auto 1.4rem;
+        font-size: clamp(2.4rem, 6.4vw, 5.4rem);
+        line-height: 1;
+        letter-spacing: -0.05em;
+        overflow-wrap: anywhere;
+    }
+    h2 {
+        margin-bottom: 1rem;
+        color: #fff;
+        font-family: Georgia, "Times New Roman", serif;
+        font-size: clamp(2rem, 4.6vw, 3.6rem);
+        font-weight: 400;
+        line-height: 1.05;
+        letter-spacing: -0.045em;
+    }
+    h3 { font-size: 1.12rem; }
+    code, pre { font-family: var(--mono); }
+    p code, li code { color: var(--blue-light); font-size: 0.88em; }
+
+    .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+    .eyebrow { margin-bottom: 1rem; color: var(--orange); font-size: 0.75rem; font-weight: 800; letter-spacing: 0.09em; text-transform: uppercase; }
+    .kicker { display: block; margin-bottom: 0.45rem; color: var(--orange); font-size: 0.68rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase; }
+    .accent {
+        background: linear-gradient(90deg, var(--green), var(--blue-light) 55%, var(--blue));
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+    }
+    .muted-note { color: var(--subtle); font-size: 0.8rem; line-height: 1.55; }
+    .footnote { max-width: 860px; margin-top: 1.2rem; color: var(--subtle); font-size: 0.84rem; line-height: 1.65; }
+
+    .card {
+        padding: clamp(1.1rem, 2.5vw, 1.5rem);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        background: linear-gradient(160deg, rgba(14, 40, 62, 0.65), rgba(9, 27, 43, 0.85));
+        transition: border-color 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
+    }
+    .card:hover { border-color: rgba(38, 213, 162, 0.5); transform: translateY(-3px); box-shadow: 0 16px 40px rgba(0, 0, 0, 0.25); }
+    .card p { margin-bottom: 0; color: var(--muted); line-height: 1.65; font-size: 0.92rem; }
+
+    /* HERO */
+    .hero { padding: clamp(3rem, 7vw, 5.5rem) 0 clamp(2.5rem, 5vw, 4rem); text-align: center; }
+    .breadcrumbs { display: flex; justify-content: center; flex-wrap: wrap; gap: 0.6rem; margin-bottom: 2rem; color: var(--subtle); font-size: 0.8rem; }
+    .breadcrumbs a { text-decoration: none; }
+    .breadcrumbs a:hover { color: #fff; }
+    .breadcrumbs strong { color: var(--green); }
+    .hero-lead { max-width: 820px; margin: 0 auto; color: #dce6ee; font-size: clamp(1.02rem, 1.8vw, 1.2rem); line-height: 1.7; }
+
+    .hero-graph {
+        max-width: 860px;
+        margin: 2.2rem auto 0;
+        padding: 0.8rem;
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        background:
+            radial-gradient(circle, rgba(101, 186, 255, 0.12) 1px, transparent 1.5px) 0 0 / 18px 18px,
+            rgba(7, 21, 34, 0.75);
+    }
+    .hero-graph svg { display: block; width: 100%; height: auto; }
+    .edge { fill: none; stroke: url(#rg-edge); stroke-width: 2; stroke-dasharray: 5 6; opacity: 0.7; animation: dash 1.6s linear infinite; }
+    .edge.back { stroke: var(--orange); opacity: 0.45; }
+    .pulse { fill: var(--blue-light); filter: drop-shadow(0 0 6px var(--blue-light)); }
+    .pulse.back { fill: var(--orange); filter: drop-shadow(0 0 6px var(--orange)); }
+    .gnode rect { fill: #0b2236; stroke: #2b5375; stroke-width: 1.5; }
+    .gnode text { fill: #fff; font: 700 14px Inter, system-ui, sans-serif; text-anchor: middle; }
+    .gnode text.s { fill: var(--muted); font-size: 10.5px; font-weight: 500; }
+    .gnode.n8n rect { stroke: #ff6d5a; }
+    .gnode.pg rect { stroke: var(--pg); fill: rgba(90, 162, 255, 0.12); }
+    .gnode.api rect { stroke: var(--violet); }
+    .gnode.sheet rect { stroke: var(--green); fill: rgba(38, 213, 162, 0.08); }
+    @keyframes dash { to { stroke-dashoffset: -22; } }
+
+    .hero-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.75rem; margin-top: 2rem; }
+    .button {
+        display: inline-flex; align-items: center; justify-content: center;
+        min-height: 46px; padding: 0.8rem 1.2rem;
+        border: 1px solid var(--blue); border-radius: 9px;
+        color: #fff; font-size: 0.86rem; font-weight: 750; text-decoration: none;
+        transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+    }
+    .button:hover { transform: translateY(-2px); }
+    .button-primary { background: var(--blue); }
+    .button-secondary { background: rgba(7, 21, 34, 0.8); }
+    .button-secondary:hover { border-color: var(--green); }
+
+    .metrics { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1rem; padding-bottom: clamp(3.5rem, 7vw, 5rem); text-align: center; }
+    .metric-card { padding: 1.3rem 1rem; border: 1px solid var(--border); border-radius: 14px; background: rgba(9, 27, 43, 0.85); transition: transform 0.25s ease, border-color 0.25s ease; }
+    .metric-card:hover { transform: translateY(-3px); border-color: var(--green); }
+    .metric-card strong { display: block; margin-bottom: 0.45rem; color: var(--green); font-size: clamp(1.8rem, 3.4vw, 2.6rem); font-variant-numeric: tabular-nums; }
+    .metric-card span { color: var(--muted); font-size: 0.82rem; line-height: 1.45; }
+
+    .case-section { padding: clamp(4rem, 8vw, 6.5rem) 0; border-top: 1px solid rgba(31, 61, 87, 0.8); }
+    .section-heading { max-width: 820px; margin-bottom: 2.2rem; }
+    .section-heading > p:last-child { color: var(--muted); line-height: 1.75; }
+    .section-heading.centered { margin-inline: auto; text-align: center; }
+
+    .ctl {
+        min-height: 40px; padding: 0.55rem 0.95rem;
+        border: 1px solid #2b5375; border-radius: 9px;
+        background: var(--surface); color: #e6eef5;
+        font: inherit; font-size: 0.82rem; font-weight: 700; cursor: pointer;
+        transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+    }
+    .ctl:hover { transform: translateY(-1px); border-color: var(--blue-light); }
+    .ctl-primary { border-color: var(--blue); background: var(--blue); color: #fff; }
+
+    .code {
+        min-width: 0; max-width: 100%; margin: 0; padding: 1rem 1.1rem;
+        overflow-x: auto; border: 1px solid #1c3a55; border-radius: 12px;
+        background: #040c16; color: #bfe0ff; font-size: 0.74rem; line-height: 1.6; white-space: pre;
+    }
+
+    .lab { padding: clamp(1rem, 2.5vw, 1.6rem); border: 1px solid var(--border); border-radius: 20px; background: rgba(7, 21, 34, 0.75); }
+    .lab + .lab { margin-top: 1.2rem; }
+    .lab p { color: var(--muted); line-height: 1.65; font-size: 0.9rem; }
+
+    /* before / after */
+    .ba { max-width: 900px; }
+    .ba-toggle { display: inline-flex; flex-wrap: wrap; gap: 0.3rem; padding: 0.3rem; border: 1px solid var(--border); border-radius: 12px; background: rgba(4, 12, 22, 0.6); }
+    .seg { padding: 0.55rem 0.9rem; border: 0; border-radius: 9px; background: transparent; color: var(--muted); font: inherit; font-size: 0.84rem; font-weight: 700; cursor: pointer; transition: background 0.2s ease, color 0.2s ease; }
+    .seg[aria-pressed="true"] { background: var(--surface-2); color: #fff; box-shadow: inset 0 0 0 1px #2b5375; }
+    .ba-panel { margin-top: 1rem; animation: panel-in 0.35s ease both; }
+    .ba-list { display: grid; gap: 0.5rem; margin: 0; padding: 0; list-style: none; }
+    .ba-list li { padding: 0.8rem 1rem; border: 1px solid var(--border); border-left: 3px solid var(--blue); border-radius: 10px; background: rgba(9, 27, 43, 0.85); color: var(--muted); font-size: 0.9rem; line-height: 1.5; animation: row-in 0.35s ease both; }
+    .ba-list li:nth-child(2) { animation-delay: 0.05s; }
+    .ba-list li:nth-child(3) { animation-delay: 0.1s; }
+    .ba-list li:nth-child(4) { animation-delay: 0.15s; }
+    .ba-list li:nth-child(5) { animation-delay: 0.2s; }
+    .ba-list b { margin-right: 0.4rem; color: #fff; font-family: var(--mono); font-size: 0.82rem; }
+    .ba-list li.bad { border-left-color: var(--red); }
+    .ba-list li.good { border-left-color: var(--green); }
+
+    /* workflow */
+    .flow { padding: clamp(1rem, 2.5vw, 1.6rem); border: 1px solid var(--border); border-radius: 20px; background: rgba(7, 21, 34, 0.75); }
+    .flow-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 1rem; margin-bottom: 1.2rem; }
+    .flow-status { color: var(--muted); font-family: var(--mono); font-size: 0.78rem; }
+    .lane { margin-bottom: 1rem; }
+    .lane-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.3rem 0.8rem; margin-bottom: 0.5rem; }
+    .lane-head strong { color: #fff; font-size: 0.86rem; }
+    .lane-head span { color: var(--subtle); font-size: 0.76rem; }
+    .nodes { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 0; padding: 0; list-style: none; }
+    .nodes li { position: relative; display: flex; align-items: center; }
+    .node {
+        display: grid; gap: 0.15rem; min-width: 0; max-width: 220px;
+        padding: 0.55rem 0.75rem; border: 1px solid #2b5375; border-left: 3px solid var(--k);
+        border-radius: 10px; background: var(--surface); color: #e6eef5;
+        font: inherit; text-align: left; cursor: pointer;
+        transition: transform 0.2s ease, border-color 0.2s ease, background 0.25s ease, box-shadow 0.25s ease;
+    }
+    .node:hover { transform: translateY(-2px); }
+    .node-kind { color: var(--k); font-family: var(--mono); font-size: 0.62rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; }
+    .node-name { font-size: 0.78rem; font-weight: 650; line-height: 1.3; }
+    .k-postgres { --k: var(--pg); }
+    .k-http { --k: var(--violet); }
+    .k-code { --k: var(--amber); }
+    .k-set { --k: var(--orange); }
+    .k-subflow { --k: #ff6d5a; }
+    .k-sheets { --k: var(--green); }
+    .node[aria-pressed="true"] { border-color: var(--k); background: var(--surface-2); box-shadow: 0 0 0 3px rgba(101, 186, 255, 0.12); }
+    .node.is-live { border-color: var(--orange); box-shadow: 0 0 0 4px rgba(255, 138, 0, 0.18), 0 0 24px rgba(255, 138, 0, 0.25); transform: scale(1.04); }
+    .node.is-done { background: rgba(38, 213, 162, 0.07); }
+    .node.is-done .node-name::after { content: " ✓"; color: var(--green); }
+    .node-detail { margin-top: 1.2rem; }
+    .detail { display: grid; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); gap: 1.2rem; animation: panel-in 0.35s ease both; }
+    .detail p { color: var(--muted); line-height: 1.65; font-size: 0.92rem; }
+
+    /* schema */
+    .schema { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 1.2rem; align-items: start; }
+    .schema-map {
+        position: relative;
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        grid-template-areas:
+            "sources . runs"
+            ". events ."
+            "assets disc rights"
+            ". reviews .";
+        gap: 1.6rem 0.8rem;
+        padding: 1.4rem 1rem;
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        background:
+            radial-gradient(circle, rgba(101, 186, 255, 0.1) 1px, transparent 1.5px) 0 0 / 16px 16px,
+            rgba(7, 21, 34, 0.75);
+    }
+    .schema-lines { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+    .schema-lines :global(path) { fill: none; stroke: #2b5375; stroke-width: 1.5; stroke-dasharray: 4 5; transition: stroke 0.3s ease; }
+    .schema-lines :global(path.hot) { stroke: var(--green); stroke-width: 2; stroke-dasharray: none; filter: drop-shadow(0 0 4px rgba(38, 213, 162, 0.6)); }
+    .tbl {
+        position: relative; z-index: 1; display: grid; gap: 0.2rem;
+        padding: 0.7rem 0.6rem; border: 1px solid #2b5375; border-top: 3px solid var(--pg);
+        border-radius: 10px; background: #0a1d2e; color: #fff; font: inherit; text-align: center; cursor: pointer;
+        transition: transform 0.25s cubic-bezier(0.3, 1.4, 0.5, 1), border-color 0.2s ease, box-shadow 0.25s ease;
+    }
+    .tbl-name { font-family: var(--mono); font-size: 0.76rem; font-weight: 700; overflow-wrap: anywhere; }
+    .tbl-meta { color: var(--subtle); font-size: 0.64rem; }
+    .tbl:hover { transform: translateY(-3px) rotate(-1deg); }
+    .tbl[aria-pressed="true"] { border-color: var(--green); box-shadow: 0 0 0 4px rgba(38, 213, 162, 0.15); transform: scale(1.05); }
+    .tbl.is-related { border-color: var(--blue-light); }
+    .tbl-sources { grid-area: sources; }
+    .tbl-runs { grid-area: runs; }
+    .tbl-source_events { grid-area: events; }
+    .tbl-assets { grid-area: assets; }
+    .tbl-asset_discoveries { grid-area: disc; }
+    .tbl-asset_rights { grid-area: rights; }
+    .tbl-human_reviews { grid-area: reviews; border-top-color: var(--green); }
+    .schema-detail { padding: clamp(1rem, 2.5vw, 1.5rem); border: 1px solid var(--border); border-radius: 20px; background: rgba(7, 21, 34, 0.75); }
+    .tdetail { animation: panel-in 0.35s ease both; }
+    .tdetail h3 code { color: var(--green); font-size: 1.15rem; }
+    .tdetail p { color: var(--muted); line-height: 1.65; font-size: 0.9rem; }
+    .refs code { margin-left: 0.35rem; }
+    .cols { display: grid; gap: 0.35rem; margin: 0; padding: 0; list-style: none; }
+    .cols li {
+        display: flex; flex-wrap: wrap; align-items: center; gap: 0.35rem 0.6rem;
+        padding: 0.5rem 0.65rem; border: 1px solid #1c3a55; border-radius: 8px; background: #071628;
+        animation: row-in 0.35s ease both; animation-delay: calc(var(--j) * 40ms);
+    }
+    .cols .c { color: #e6eef5; font-size: 0.76rem; overflow-wrap: anywhere; }
+    .cols .type { color: var(--violet); font-family: var(--mono); font-size: 0.68rem; }
+    .cols .note { padding: 0.12rem 0.4rem; border-radius: 5px; background: rgba(120, 144, 163, 0.15); color: var(--muted); font-size: 0.66rem; overflow-wrap: anywhere; }
+    .cols .note.pk { background: rgba(255, 194, 77, 0.15); color: var(--amber); }
+    .cols .note.fk { background: rgba(101, 186, 255, 0.14); color: var(--blue-light); }
+    .cols .note.uq { background: rgba(38, 213, 162, 0.14); color: var(--green); }
+
+    /* idempotency */
+    .idem-controls { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1.1rem; }
+    .counters { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 0.6rem; }
+    .counter { display: grid; gap: 0.2rem; padding: 0.8rem 0.6rem; border: 1px solid #1c3a55; border-radius: 12px; background: #071628; text-align: center; transition: border-color 0.3s ease; }
+    .counter code { color: var(--muted); font-size: 0.66rem; overflow-wrap: anywhere; }
+    .counter strong { color: #fff; font-size: 1.7rem; font-variant-numeric: tabular-nums; }
+    .counter span { min-height: 1.1em; font-family: var(--mono); font-size: 0.72rem; }
+    .counter[data-tone="grow"] { border-color: var(--blue); }
+    .counter[data-tone="grow"] span { color: var(--blue-light); }
+    .counter[data-tone="same"] span { color: var(--green); }
+    .counter.bump strong { animation: bump 0.45s cubic-bezier(0.3, 1.6, 0.5, 1); }
+    @keyframes bump { 40% { transform: scale(1.18); } }
+    .log { display: grid; gap: 0.35rem; min-height: 120px; margin: 1rem 0 0; padding: 0.8rem; border: 1px solid #1c3a55; border-radius: 12px; background: #040c16; list-style: none; font-family: var(--mono); font-size: 0.72rem; line-height: 1.5; }
+    .log :global(li) { color: #b9cbd9; overflow-wrap: anywhere; animation: row-in 0.3s ease both; }
+    .log :global(li)::before { content: "› "; color: var(--subtle); }
+    .log :global(li[data-tone="ok"]) { color: var(--green); }
+    .log :global(li[data-tone="info"]) { color: var(--blue-light); }
+    .log :global(li[data-tone="warn"]) { color: var(--amber); }
+
+    .keylab, .rights { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 1.2rem; align-items: center; }
+    .key-inputs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.6rem; }
+    .lab label { display: grid; gap: 0.3rem; color: var(--muted); font-size: 0.76rem; font-weight: 650; }
+    .lab input, .lab select {
+        width: 100%; min-width: 0; padding: 0.5rem 0.6rem;
+        border: 1px solid #23476a; border-radius: 8px; background: #040c16; color: #e8f1f8;
+        font-family: var(--mono); font-size: 0.8rem;
+    }
+    .key-out, .rights-out { padding: 1rem 1.1rem; border: 1px solid #1c3a55; border-radius: 14px; background: #071628; }
+    .key { display: block; margin-bottom: 0.9rem; color: #ffd8a8; font-size: 1.05rem; overflow-wrap: anywhere; }
+    .key-out strong, .rights-out strong { display: block; font-family: var(--mono); font-size: 0.86rem; overflow-wrap: anywhere; }
+    .key-out strong[data-tone="grow"] { color: var(--blue-light); }
+    .key-out strong[data-tone="same"] { color: var(--green); }
+    .rights-out strong { color: var(--amber); font-size: 1rem; transition: color 0.3s ease; }
+    .rights-out strong[data-s="independently_verified"] { color: var(--green); }
+    .rights-out p { margin: 0.5rem 0 0; }
+
+    /* review */
+    .review { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr); gap: 1.2rem; }
+    .sheet { display: grid; gap: 0.6rem; min-width: 0; }
+    .sheet-head, .sheet-row { display: grid; grid-template-columns: 1.2fr 1.2fr 0.7fr 1fr 1fr; gap: 0.4rem; align-items: center; }
+    .sheet-head span { color: var(--subtle); font-family: var(--mono); font-size: 0.62rem; overflow-wrap: anywhere; }
+    .sheet-row { padding: 0.6rem; border: 1px solid rgba(38, 213, 162, 0.35); border-radius: 10px; background: rgba(38, 213, 162, 0.05); font-size: 0.78rem; }
+    .sheet-row code { color: #ffd8a8; font-size: 0.7rem; overflow-wrap: anywhere; }
+    .sheet-row > span { color: #e6eef5; overflow-wrap: anywhere; }
+    .sheet-row select { padding: 0.35rem; font-size: 0.72rem; }
+    .pill { justify-self: start; padding: 0.15rem 0.45rem; border-radius: 99px; font-size: 0.68rem; font-weight: 700; }
+    .pill.pass { background: rgba(38, 213, 162, 0.15); color: var(--green) !important; }
+    .sheet .ctl { justify-self: start; }
+    .history { min-width: 0; padding: 1rem; border: 1px solid #1c3a55; border-radius: 14px; background: #040c16; }
+    .history ol { display: grid; gap: 0.35rem; min-height: 70px; margin: 0; padding: 0; list-style: none; }
+    .history :global(li) { padding: 0.45rem 0.55rem; border-radius: 7px; background: #0a1d2e; color: #e6eef5; font-size: 0.76rem; animation: row-in 0.3s ease both; overflow-wrap: anywhere; }
+    .history :global(li code) { color: var(--subtle); }
+    .history :global(li b) { color: var(--blue-light); font-weight: 600; }
+    .history :global(li em) { color: var(--amber); font-style: normal; font-size: 0.7rem; }
+    .sync-msg { margin: 0.7rem 0 0; font-size: 0.8rem !important; }
+
+    /* results */
+    .results { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; }
+    .res-list { display: grid; gap: 0.7rem; margin: 0.4rem 0 0; padding: 0; list-style: none; color: var(--muted); font-size: 0.9rem; }
+    .res-list strong { display: inline-block; min-width: 2.2rem; color: var(--green); font-size: 1.5rem; font-variant-numeric: tabular-nums; }
+    .donut-wrap { display: flex; flex-wrap: wrap; align-items: center; gap: 1rem; }
+    .donut { width: 130px; height: 130px; transform: rotate(-90deg); }
+    .donut circle { fill: none; stroke-width: 14; }
+    .d-bg { stroke: #0f2b43; }
+    .d-review, .d-pass { stroke-dasharray: 0 100; transition: stroke-dasharray 1.2s cubic-bezier(0.2, 0.7, 0.2, 1); }
+    .d-review { stroke: var(--amber); }
+    .d-pass { stroke: var(--green); }
+    .is-in .d-review { stroke-dasharray: 100 0; }
+    .is-in .d-pass { stroke-dasharray: 40 60; }
+    .donut-legend { display: grid; gap: 0.5rem; color: var(--muted); font-size: 0.86rem; }
+    .donut-legend b { margin-right: 0.3rem; color: #fff; font-size: 1.2rem; }
+    .donut-legend i, .stack-legend i { display: inline-block; width: 10px; height: 10px; margin-right: 0.45rem; border-radius: 3px; }
+    .lp { background: var(--green); }
+    .lr { background: var(--amber); }
+    .stack { display: flex; height: 18px; margin: 0.6rem 0 0.9rem; border-radius: 99px; overflow: hidden; background: #0f2b43; }
+    .stack i { flex: var(--f) 0 0; transform: scaleX(0); transform-origin: left; transition: transform 1s cubic-bezier(0.2, 0.7, 0.2, 1); }
+    .is-in .stack i { transform: scaleX(1); }
+    .stack i:nth-child(2) { transition-delay: 0.2s; }
+    .stack i:nth-child(3) { transition-delay: 0.4s; }
+    .s-approve { background: var(--green); }
+    .s-reject { background: var(--red); }
+    .s-rights { background: var(--violet); }
+    .stack-legend { display: grid; gap: 0.35rem; margin: 0; padding: 0; list-style: none; color: var(--muted); font-size: 0.84rem; }
+    .total { margin-top: 0.9rem !important; color: var(--muted); }
+    .total strong { color: #fff; font-size: 1.5rem; }
+
+    .dec-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1rem; }
+    .dec h3 { margin-bottom: 0.5rem; font-size: 1.02rem; }
+
+    .sources { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1rem; }
+    .src-top { display: flex; justify-content: space-between; align-items: center; gap: 0.5rem; margin-bottom: 0.6rem; }
+    .src-top code { color: var(--blue-light); font-size: 0.8rem; }
+    .state { padding: 0.15rem 0.5rem; border-radius: 99px; font-size: 0.66rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; }
+    .on .state { background: rgba(38, 213, 162, 0.15); color: var(--green); }
+    .off .state { background: rgba(120, 144, 163, 0.18); color: var(--muted); }
+    .off { opacity: 0.85; border-style: dashed; }
+    .src-card h3 { margin-bottom: 0.5rem; font-size: 1rem; }
+    .src-tags { display: flex; flex-wrap: wrap; gap: 0.3rem; margin-bottom: 0.6rem !important; }
+    .src-tags span { padding: 0.15rem 0.45rem; border: 1px solid #2b5375; border-radius: 6px; font-family: var(--mono); font-size: 0.66rem; color: #cfdeea; }
+
+    .skills-section :global(.skill-links) { justify-content: center; max-width: 1000px; margin-inline: auto; }
+
+    .project-end { padding: clamp(4rem, 8vw, 6.5rem) 0; border-top: 1px solid rgba(31, 61, 87, 0.8); text-align: center; }
+    .project-end-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 1rem 2rem; margin-top: 2rem; }
+    .project-end-links a { color: #fff; font-size: 0.92rem; font-weight: 700; }
+    .project-end-links a:hover { color: var(--green); }
+
+    @keyframes panel-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+    @keyframes row-in { from { opacity: 0; transform: translateX(-8px); } to { opacity: 1; transform: none; } }
+
+    @media (max-width: 1060px) {
+        .dec-grid, .sources { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        .counters { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    }
+
+    @media (max-width: 860px) {
+        .metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        .detail, .schema, .keylab, .rights, .review, .results { grid-template-columns: minmax(0, 1fr); }
+    }
+
+    @media (max-width: 640px) {
+        .dec-grid, .sources { grid-template-columns: minmax(0, 1fr); }
+        .counters { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        .key-inputs { grid-template-columns: minmax(0, 1fr); }
+        .hero-actions .button { width: 100%; }
+        .node { max-width: none; }
+        .schema-map { gap: 1.2rem 0.4rem; padding: 1rem 0.6rem; }
+        .tbl-name { font-size: 0.66rem; }
+        .tbl-meta { display: none; }
+        .sheet-head { display: none; }
+        .sheet-row { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+        .sheet-row code, .sheet-row > span:first-of-type { grid-column: 1 / -1; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        html { scroll-behavior: auto; }
+        *, *::before, *::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; }
+        .pulse { display: none; }
+    }
+</style>

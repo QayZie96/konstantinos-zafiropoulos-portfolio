@@ -9,6 +9,7 @@ import SiteFooter from "../../components/SiteFooter.astro";
 import SeoHead from "../../components/SeoHead.astro";
 import SkillLinks from "../../components/SkillLinks.astro";
 import RocketeersPerformance from "../../components/RocketeersPerformance.astro";
+import RocketeersExplorer from "../../components/RocketeersExplorer.astro";
 import {
   rocketeersFeedbackMetrics,
   rocketeersHeadlineMetrics,
@@ -136,6 +137,20 @@ const metrics = rocketeersHeadlineMetrics;
 
         <div class="section-content">
           <RocketeersPerformance />
+        </div>
+      </section>
+
+      <!-- =================================================
+                 INTERACTIVE DATA EXPLORER
+                 ================================================= -->
+
+      <section class="case-section explorer-section" id="explorer">
+        <div class="section-label">
+          <p class="eyebrow">Data explorer</p>
+        </div>
+
+        <div class="section-content">
+          <RocketeersExplorer />
         </div>
       </section>
 
@@ -1567,5 +1582,18 @@ const metrics = rocketeersHeadlineMetrics;
     justify-content: center;
     text-align: center;
     flex-wrap: wrap;
+  }
+  /* =========================================================
+       INTERACTIVE EXPLORER — FULL-WIDTH SECTION
+       ========================================================= */
+
+  .explorer-section {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1.25rem;
+  }
+
+  .explorer-section .section-content {
+    max-width: none;
+    min-width: 0;
   }
 </style>

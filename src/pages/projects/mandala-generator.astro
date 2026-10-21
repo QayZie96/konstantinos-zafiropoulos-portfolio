@@ -1,0 +1,1995 @@
+---
+import SiteHeader from "../../components/SiteHeader.astro";
+import SiteFooter from "../../components/SiteFooter.astro";
+import SeoHead from "../../components/SeoHead.astro";
+import SkillLinks from "../../components/SkillLinks.astro";
+
+const title =
+    "Mandala & Coloring Puzzle Generator | Python Generative Geometry | Konstantinos Zafeiropoulos";
+
+const description =
+    "A deterministic Python generator for printable mathematical colouring pages: radial mandalas with embedded JSON recipes, safe exports and 55 tests. Colour the real SVG pages and run the generator in your browser.";
+
+/* Hero artwork: the version-1 recipe of presets/first-mandala.json,
+   computed at build time with the same polar-petal formulas. */
+function heroMandala() {
+    const symmetry = 12;
+    const layers = 4;
+    const complexity = 2;
+    const curvature = 0.75;
+    const spacing = 2.5;
+    let state = 20261010;
+    const uniform = (low: number, high: number) => {
+        state = Number((1664525n * BigInt(state) + 1013904223n) % 4294967296n);
+        return low + ((high - low) * state) / 4294967296;
+    };
+    const radius = 210 / 2 - 15 - 0.45;
+    const band = (radius - 10) / layers;
+    const step = (2 * Math.PI) / symmetry;
+    const petal = (inner: number, outer: number, half: number, angle: number, curve: number) => {
+        const pts: string[] = [];
+        const add = (side: number, sample: number) => {
+            const t = sample / 48;
+            const r = inner + (outer - inner) * t;
+            const theta = angle + side * half * Math.sin(Math.PI * t) ** (1.35 - 0.75 * curve);
+            pts.push(`${(r * Math.cos(theta)).toFixed(2)} ${(r * Math.sin(theta)).toFixed(2)}`);
+        };
+        for (let s = 0; s < 49; s += 2) add(1, s);
+        for (let s = 47; s > 0; s -= 2) add(-1, s);
+        return `M ${pts.join(" L ")} Z`;
+    };
+    const paths: { d: string; layer: number }[] = [];
+    const circles = [3.5, 9, radius];
+    for (let layer = 0; layer < layers; layer++) {
+        const start = 10 + layer * band + spacing / 2;
+        const end = 10 + (layer + 1) * band - spacing / 2;
+        const middle = (start + end) / 2;
+        let half = Math.min(step * 0.41, step / 2 - spacing / (2 * middle));
+        half *= uniform(0.9, 1.0);
+        const curve = Math.max(0, Math.min(1, curvature + uniform(-0.12, 0.12)));
+        const phase = ((layer % 2) * step) / 2 - Math.PI / 2;
+        for (let rep = 0; rep < symmetry; rep++) {
+            const angle = phase + rep * step;
+            paths.push({ d: petal(start, end, half, angle, curve), layer });
+            for (let detail = 1; detail < complexity; detail++) {
+                const inner = start + 2.4 * detail;
+                const outer = end - 2.4 * detail;
+                const width = half * (1 - 0.32 * detail);
+                if (outer - inner >= 6 && 2 * middle * Math.sin(width) >= 4) {
+                    paths.push({ d: petal(inner, outer, width, angle, curve), layer });
+                }
+            }
+        }
+        if (layer < layers - 1) circles.push(10 + (layer + 1) * band);
+    }
+    return { paths, circles };
+}
+
+const hero = heroMandala();
+
+const projectFacts = [
+    { label: "Type", value: "Personal generative-design project", tone: "saffron" },
+    { label: "Stack", value: "Python 3.11 · standard library only", tone: "sage" },
+    { label: "Output", value: "A4 / Letter SVG + JSON recipe", tone: "rose" },
+    { label: "Status", value: "Milestone 6 · awaiting human review", tone: "sky" },
+];
+
+const versions = [
+    {
+        version: "1.0.0",
+        name: "Sampled polar petals",
+        text: "Petal sides follow a powered sine profile in polar coordinates, sampled at 96 points per outline. A local 32-bit LCG varies width and curvature per band.",
+    },
+    {
+        version: "2.0.0",
+        name: "Floral redesign",
+        text: "Native SVG cubic Bézier curves: a central flower, staggered lotus contours, pointed arches and a scalloped border. Shared boundaries are drawn once.",
+    },
+    {
+        version: "3.0.0",
+        name: "Easy · Medium · Advanced",
+        text: "Designed difficulty profiles built from sector constructions: equal-circle lenses, star polygons, connected facets and fan tracery.",
+    },
+];
+
+const testFiles = [
+    { file: "test_difficulty.py", count: 13 },
+    { file: "test_ornamental.py", count: 10 },
+    { file: "test_mandala.py", count: 7 },
+    { file: "test_floral.py", count: 7 },
+    { file: "test_contact.py", count: 7 },
+    { file: "test_artifact_preservation.py", count: 4 },
+    { file: "test_export_robustness.py", count: 3 },
+    { file: "test_preview_svg.py", count: 3 },
+    { file: "test_project_setup.py", count: 1 },
+];
+
+const codeExcerpt = `def petal(inner, outer, half_angle, angle, curvature):
+    # At both ends sin(pi*t) is zero: the two sides meet at closed tips.
+    points = []
+    for side, samples in ((1, range(49)), (-1, range(47, 0, -1))):
+        for sample in samples:
+            t = sample / 48
+            radius = inner + (outer - inner) * t
+            profile = math.sin(math.pi * t) ** (1.35 - 0.75 * curvature)
+            theta = angle + side * half_angle * profile
+            points.append((radius * math.cos(theta), radius * math.sin(theta)))
+    return tuple(points)`;
+---
+
+<html lang="en">
+    <head>
+        <SeoHead {title} {description} type="article" />
+    </head>
+
+    <body>
+        <main>
+            <SiteHeader />
+
+            <header class="hero">
+                <div class="breadcrumbs">
+                    <a href="/#projects">Projects</a>
+                    <span aria-hidden="true">→</span>
+                    <strong>Mandala & Coloring Puzzle Generator</strong>
+                </div>
+
+                <div class="paper-board">
+                    <div class="hero-copy">
+                        <p class="board-eyebrow">Personal project · Python · Printable geometry</p>
+                        <h1>
+                            <span class="h1-small">Mathematical</span>
+                            <span class="h1-big">Mandala &amp; Coloring</span>
+                            <span class="h1-script">puzzle generator</span>
+                        </h1>
+                        <p class="hero-subtitle">
+                            A dependency-free Python tool that builds original,
+                            reproducible colouring pages from polar geometry.
+                            Every page carries the exact recipe that made it.
+                        </p>
+                        <div class="hero-actions">
+                            <a class="ink-btn" href="#colour">Colour a real page <span aria-hidden="true">↓</span></a>
+                            <a class="paper-btn" href="#generator">Try the generator</a>
+                        </div>
+                    </div>
+
+                    <figure class="hero-art" aria-label="A twelve-fold mandala drawn from the first-mandala recipe">
+                        <svg viewBox="-92 -92 184 184" role="img" aria-labelledby="hero-art-title">
+                            <title id="hero-art-title">Twelve-fold radial mandala from presets/first-mandala.json</title>
+                            <g class="hero-spin">
+                                {hero.circles.map((r, i) => (
+                                    <circle cx="0" cy="0" r={r.toFixed(2)} pathLength="1" style={`--i: ${i}`} />
+                                ))}
+                                {hero.paths.map((p, i) => (
+                                    <path d={p.d} pathLength="1" class={`layer-${p.layer}`} style={`--i: ${(i % 24) / 6 + p.layer}`} />
+                                ))}
+                            </g>
+                        </svg>
+                        <figcaption>seed 20261010 · symmetry 12 · layers 4</figcaption>
+                    </figure>
+                </div>
+
+                <SkillLinks
+                    variant="hero"
+                    skills={[
+                        "python",
+                        "generative-art",
+                        "computational-geometry",
+                        "svg",
+                        "system-architecture",
+                        "output-validation",
+                        "iterative-development",
+                        "documentation",
+                    ]}
+                />
+            </header>
+
+            <section class="facts" aria-label="Project information">
+                {projectFacts.map((fact) => (
+                    <article class={`fact tone-${fact.tone}`}>
+                        <span>{fact.label}</span>
+                        <strong>{fact.value}</strong>
+                    </article>
+                ))}
+            </section>
+
+            <section class="case-section" id="colour" aria-labelledby="mg-colour">
+                <div class="section-heading">
+                    <p class="eyebrow">01 — Colour it in</p>
+                    <h2 id="mg-colour">These are the real SVG pages.</h2>
+                    <p>
+                        Each design below is a file from the repository,
+                        loaded unchanged. Pick a colour and click or tap any
+                        region. The page detects every enclosed region in the
+                        line art, so you can test whether the outlines really
+                        close.
+                    </p>
+                </div>
+
+                <div class="colour-studio">
+                    <div class="design-picker" role="radiogroup" aria-label="Choose a design">
+                        <label><input type="radio" name="design" value="easy" checked /><span>Easy</span></label>
+                        <label><input type="radio" name="design" value="medium" /><span>Medium</span></label>
+                        <label><input type="radio" name="design" value="advanced" /><span>Advanced</span></label>
+                        <label><input type="radio" name="design" value="floral" /><span>Floral v2</span></label>
+                        <label><input type="radio" name="design" value="first" /><span>First mandala v1</span></label>
+                        <label><input type="radio" name="design" value="rosette" /><span>Rosette Garden 03</span></label>
+                        <label class="custom-design" hidden><input type="radio" name="design" value="custom" /><span>Your generated one</span></label>
+                    </div>
+
+                    <div class="studio-grid">
+                        <div class="sheet-wrap">
+                            <div class="sheet">
+                                <canvas
+                                    class="colour-canvas"
+                                    width="1000"
+                                    height="1000"
+                                    tabindex="0"
+                                    role="application"
+                                    aria-roledescription="colouring page"
+                                    aria-label="Colouring page. Click or tap a region to fill it. With the keyboard, use the arrow keys to move the cursor and Enter or Space to fill."
+                                ></canvas>
+                                <span class="kb-cursor" aria-hidden="true"></span>
+                                <span class="sheet-loading" aria-hidden="true">Detecting regions…</span>
+                            </div>
+                            <p class="colour-status" role="status" aria-live="polite">Loading the page…</p>
+                        </div>
+
+                        <div class="tools">
+                            <fieldset class="swatches">
+                                <legend>Colour</legend>
+                                <div class="swatch-grid"></div>
+                                <label class="custom-colour">
+                                    <span>Custom</span>
+                                    <input type="color" class="colour-input" value="#7a5cc8" />
+                                </label>
+                            </fieldset>
+
+                            <label class="check">
+                                <input type="checkbox" class="sym-toggle" checked />
+                                <span>Symmetric fill <small class="sym-order">(×8)</small></span>
+                            </label>
+
+                            <div class="tool-row">
+                                <button type="button" class="paper-btn small undo-btn" disabled>Undo</button>
+                                <button type="button" class="paper-btn small reset-btn">Reset</button>
+                                <button type="button" class="paper-btn small auto-btn">Auto-colour</button>
+                            </div>
+                            <div class="tool-row">
+                                <button type="button" class="ink-btn small save-btn">Download PNG</button>
+                                <a class="paper-btn small master-link" href="/images/projects/mandala-generator/mandala-easy.svg" target="_blank" rel="noopener">Open SVG master</a>
+                            </div>
+
+                            <div class="provenance">
+                                <p class="design-kind">Generator v3.0.0 · Easy</p>
+                                <p class="hash-check" aria-live="polite"></p>
+                                <details>
+                                    <summary>Recipe embedded in this SVG</summary>
+                                    <pre><code class="recipe-code"></code></pre>
+                                </details>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <p class="credit">
+                    Rosette Garden 03 is a fixed, hand-composed SVG rather than
+                    generator output. It adapts selected contours from <em>Four
+                    Ornamental Rosette Designs</em> (A. Panier, Cooper
+                    Hewitt, Smithsonian, 1921-6-445-16), documented in the
+                    repository as public domain / CC0, into an original
+                    composition.
+                </p>
+            </section>
+
+            <section class="case-section" id="generator" aria-labelledby="mg-generator">
+                <div class="section-heading">
+                    <p class="eyebrow">02 — Live generator</p>
+                    <h2 id="mg-generator">The version-1 generator, in your browser.</h2>
+                    <p>
+                        <code>geometry.py</code>, <code>config.py</code> and <code>svg.py</code> (version
+                        1.0.0) ported to
+                        JavaScript, with the same parameter ranges and the
+                        same validation messages. With the default recipe it
+                        reproduces <code>outputs/first-mandala.svg</code> byte
+                        for byte.
+                    </p>
+                </div>
+
+                <div class="gen-grid">
+                    <form class="gen-controls" aria-label="Generator controls" onsubmit="return false">
+                        <label class="slider"><span>Symmetry <output data-for="symmetry">12</output></span><input type="range" data-key="symmetry" min="6" max="16" step="1" value="12" /></label>
+                        <label class="slider"><span>Layers <output data-for="layers">4</output></span><input type="range" data-key="layers" min="2" max="5" step="1" value="4" /></label>
+                        <label class="slider"><span>Complexity <output data-for="complexity">2</output></span><input type="range" data-key="complexity" min="1" max="3" step="1" value="2" /></label>
+                        <label class="slider"><span>Curvature <output data-for="curvature">0.75</output></span><input type="range" data-key="curvature" min="0" max="1" step="0.05" value="0.75" /></label>
+                        <label class="slider"><span>Spacing (mm) <output data-for="spacing_mm">2.5</output></span><input type="range" data-key="spacing_mm" min="1.5" max="4" step="0.1" value="2.5" /></label>
+                        <div class="seed-row">
+                            <label for="mg-seed">Seed</label>
+                            <input id="mg-seed" class="seed-input" type="number" min="0" max="4294967295" step="1" value="20261010" inputmode="numeric" />
+                            <button type="button" class="paper-btn small random-seed">Random</button>
+                        </div>
+                        <label class="select">
+                            <span>Paper</span>
+                            <select class="page-select">
+                                <option value="A4">A4 (210 × 297 mm)</option>
+                                <option value="Letter">Letter (215.9 × 279.4 mm)</option>
+                            </select>
+                        </label>
+                        <p class="gen-error" role="alert" hidden></p>
+                        <div class="tool-row">
+                            <button type="button" class="ink-btn small gen-colour">Colour this design</button>
+                            <button type="button" class="paper-btn small gen-download">Download SVG</button>
+                        </div>
+                        <div class="tool-row">
+                            <button type="button" class="paper-btn small gen-verify">Verify against first-mandala.svg</button>
+                            <button type="button" class="paper-btn small gen-reset">Reset recipe</button>
+                        </div>
+                        <p class="verify-result" role="status" aria-live="polite"></p>
+                    </form>
+
+                    <figure class="gen-preview">
+                        <div class="gen-paper" aria-live="off"></div>
+                        <figcaption class="gen-caption">A4 page, 15 mm margin, 0.45 mm stroke</figcaption>
+                    </figure>
+
+                    <details class="gen-recipe">
+                        <summary>JSON recipe (also embedded in the SVG)</summary>
+                        <pre><code class="gen-json"></code></pre>
+                    </details>
+                </div>
+            </section>
+
+            <section class="case-section" aria-labelledby="mg-maths">
+                <div class="section-heading">
+                    <p class="eyebrow">03 — How the pages are built</p>
+                    <h2 id="mg-maths">Polar coordinates, rotations and closed regions.</h2>
+                    <p>
+                        Geometry, composition and SVG rendering are separate,
+                        small modules. Geometry is plain numbers and tuples,
+                        which is why it ports to JavaScript so directly.
+                    </p>
+                </div>
+
+                <div class="version-row">
+                    {versions.map((v) => (
+                        <article class="card">
+                            <span class="version-badge">v{v.version}</span>
+                            <h3>{v.name}</h3>
+                            <p>{v.text}</p>
+                        </article>
+                    ))}
+                </div>
+
+                <div class="maths-grid">
+                    <article class="card code-card">
+                        <h3>One closed petal</h3>
+                        <p>From <code>src/rocketeers/geometry.py</code>. Both sides meet where <code>sin(πt) = 0</code>, so every petal is a closed region.</p>
+                        <pre class="code"><code>{codeExcerpt}</code></pre>
+                    </article>
+
+                    <article class="card">
+                        <h3>Construction rules (v3)</h3>
+                        <ul class="dot-list">
+                            <li><strong>Rotation:</strong> each sector is repeated by θ = 2πj/N; reflection maps (x, y) to (x, −y) and flips an arc's sweep flag.</li>
+                            <li><strong>Vesica lenses:</strong> for axial endpoints a distance d apart, R = d/√3, so two equal circles meet exactly at the endpoints.</li>
+                            <li><strong>Star polygons:</strong> the valley radius of a skip-m star is r = R·cos(mπ/N) / cos((m−1)π/N); only outer chord portions are drawn.</li>
+                            <li><strong>Considered and rejected:</strong> rose curves, because repeated returns to the origin crowd the centre.</li>
+                        </ul>
+                        <p class="small">Summarised from <code>docs/mathematical-construction.md</code>.</p>
+                    </article>
+                </div>
+            </section>
+
+            <section class="case-section" aria-labelledby="mg-export">
+                <div class="section-heading">
+                    <p class="eyebrow">04 — Recipes, export and print</p>
+                    <h2 id="mg-export">Reproducible pages that never overwrite each other.</h2>
+                </div>
+
+                <div class="export-grid">
+                    <article class="card">
+                        <span class="icon-dot" aria-hidden="true">1</span>
+                        <h3>Recipe inside the art</h3>
+                        <p>
+                            Generator ID, version, seed and every parameter are
+                            written to a sorted JSON file and into the SVG's <code>&lt;metadata&gt;</code>.
+                            Loading a recipe
+                            requires exactly all fields, no more and no fewer.
+                        </p>
+                    </article>
+                    <article class="card">
+                        <span class="icon-dot" aria-hidden="true">2</span>
+                        <h3>Safe paired export</h3>
+                        <p>
+                            Artwork and recipe are written to exclusive staging
+                            files, then published as hard links that fail rather
+                            than replace an existing file. Artwork goes first,
+                            so a failure never leaves a recipe without its art.
+                        </p>
+                    </article>
+                    <article class="card">
+                        <span class="icon-dot" aria-hidden="true">3</span>
+                        <h3>Sized for paper</h3>
+                        <p>
+                            Real millimetre units: A4 or Letter, 12–25 mm
+                            margins, 0.3–0.7 mm black strokes on white. Recipes
+                            that leave petals under 5 mm wide, or bands under
+                            10 mm, are rejected. Print at 100%.
+                        </p>
+                    </article>
+                </div>
+            </section>
+
+            <section class="case-section" aria-labelledby="mg-tests">
+                <div class="section-heading">
+                    <p class="eyebrow">05 — Tests</p>
+                    <h2 id="mg-tests">55 tests, including byte-level history checks.</h2>
+                    <p>
+                        The suite checks validation, determinism, rigid
+                        transforms, equal-circle and star-chord intersections,
+                        arc flags, print margins and sampled crossings. It also
+                        pins SHA-256 hashes of the selected historical pages,
+                        which the colouring studio above re-checks in your
+                        browser.
+                    </p>
+                </div>
+
+                <div class="test-board">
+                    <ul class="test-bars" aria-label="Test methods per file">
+                        {testFiles.map((test) => (
+                            <li>
+                                <code>{test.file}</code>
+                                <span class="bar" aria-hidden="true"><i style={`--w: ${(test.count / 13) * 100}%`}></i></span>
+                                <strong>{test.count}</strong>
+                            </li>
+                        ))}
+                    </ul>
+                    <aside class="note-card">
+                        <p class="note-title">What the tests do not claim</p>
+                        <p>
+                            Sampling is not an exact topology proof, a full
+                            region-size analysis, or a guarantee for every
+                            parameter combination. No automated check judges
+                            artistic quality; human review and an actual-size
+                            test print are still required.
+                        </p>
+                    </aside>
+                </div>
+            </section>
+
+            <section class="case-section" aria-labelledby="mg-status">
+                <div class="section-heading">
+                    <p class="eyebrow">06 — Current status</p>
+                    <h2 id="mg-status">A working generator, with the art still under review.</h2>
+                    <p>
+                        The project moves one reviewed milestone at a time.
+                        The latest candidates are experiments waiting for a
+                        human decision, not a finished product.
+                    </p>
+                </div>
+
+                <div class="scope-grid">
+                    <article class="card delivered">
+                        <h3>Built</h3>
+                        <ul>
+                            <li>Deterministic radial generator, versions 1.0.0 – 3.0.0</li>
+                            <li>Easy, Medium and Advanced difficulty profiles</li>
+                            <li>Polygons-in-contact and geometric-ornamental prototypes</li>
+                            <li>Rosette Garden 01–03 with provenance files</li>
+                            <li>Exclusive SVG + JSON export and a PNG preview script</li>
+                        </ul>
+                    </article>
+                    <article class="card">
+                        <h3>Not claimed</h3>
+                        <ul>
+                            <li>PDF export (deferred)</li>
+                            <li>Artistically approved or premium-ready pages</li>
+                            <li>Physical test prints of the latest candidates</li>
+                            <li>Puzzles, a website or any marketplace listing</li>
+                        </ul>
+                    </article>
+                </div>
+            </section>
+
+            <section class="case-section skills-section" aria-labelledby="mg-skills">
+                <div class="section-heading centered-heading">
+                    <p class="eyebrow">07 — Skills demonstrated</p>
+                    <h2 id="mg-skills">Geometry you can print and reproduce.</h2>
+                    <p>Select any skill to see its evidence across the portfolio.</p>
+                </div>
+
+                <SkillLinks
+                    skills={[
+                        "python",
+                        "generative-art",
+                        "computational-geometry",
+                        "svg",
+                        "unit-testing",
+                        "canvas-graphics",
+                        "system-architecture",
+                        "output-validation",
+                        "data-quality",
+                        "debugging",
+                        "iterative-development",
+                        "documentation",
+                        "git-github",
+                        "html-css",
+                    ]}
+                />
+            </section>
+
+            <section class="project-end">
+                <p class="eyebrow">Portfolio</p>
+                <h2>Explore another project.</h2>
+                <div class="project-links">
+                    <a href="/projects/math-wallpapers/">Mathematical OLED Wallpapers <span aria-hidden="true">→</span></a>
+                    <a href="/projects/gym-progress/">Gym Progress <span aria-hidden="true">→</span></a>
+                    <a href="/#projects">All projects <span aria-hidden="true">→</span></a>
+                </div>
+            </section>
+        </main>
+
+        <SiteFooter />
+    </body>
+</html>
+
+<script>
+    /* =========================================================
+       VERSION-1 GENERATOR (port of geometry.py, config.py, svg.py)
+       ========================================================= */
+
+    type Recipe = {
+        complexity: number;
+        curvature: number;
+        generator_id: string;
+        generator_version: string;
+        layers: number;
+        margin_mm: number;
+        page_size: "A4" | "Letter";
+        seed: number;
+        spacing_mm: number;
+        stroke_mm: number;
+        symmetry: number;
+    };
+
+    const PAGE_SIZES = { A4: [210, 297], Letter: [215.9, 279.4] } as const;
+    const DEFAULT_RECIPE: Recipe = {
+        complexity: 2,
+        curvature: 0.75,
+        generator_id: "radial-mandala",
+        generator_version: "1.0.0",
+        layers: 4,
+        margin_mm: 15.0,
+        page_size: "A4",
+        seed: 20261010,
+        spacing_mm: 2.5,
+        stroke_mm: 0.45,
+        symmetry: 12,
+    };
+
+    function validateRecipe(c: Recipe): string | null {
+        if (!Number.isInteger(c.seed) || c.seed < 0 || c.seed > 4294967295) return "seed must be an integer from 0 to 4294967295";
+        const [w, h] = PAGE_SIZES[c.page_size];
+        const radius = Math.min(w, h) / 2 - c.margin_mm - c.stroke_mm;
+        const band = (radius - 10) / c.layers;
+        const middle = 10 + band / 2;
+        const half = Math.min((Math.PI / c.symmetry) * 0.82, Math.PI / c.symmetry - c.spacing_mm / (2 * middle));
+        if (2 * middle * Math.sin(half) * 0.9 < 5) return "This symmetry/layers/spacing combination leaves petals below 5 mm wide";
+        if (band - c.spacing_mm < 10) return "Layers and spacing must leave at least 10 mm of radial coloring space";
+        return null;
+    }
+
+    function petal(inner: number, outer: number, half: number, angle: number, curvature: number) {
+        const pts: [number, number][] = [];
+        const exponent = 1.35 - 0.75 * curvature;
+        const add = (side: number, sample: number) => {
+            const t = sample / 48;
+            const r = inner + (outer - inner) * t;
+            const theta = angle + side * half * Math.sin(Math.PI * t) ** exponent;
+            pts.push([r * Math.cos(theta), r * Math.sin(theta)]);
+        };
+        for (let s = 0; s < 49; s++) add(1, s);
+        for (let s = 47; s > 0; s--) add(-1, s);
+        return pts;
+    }
+
+    function generate(c: Recipe) {
+        let state = c.seed;
+        // Local 32-bit LCG, as in SeededRandom.
+        const uniform = (low: number, high: number) => {
+            state = Number((1664525n * BigInt(state) + 1013904223n) % 4294967296n);
+            return low + ((high - low) * state) / 4294967296;
+        };
+        const [w, h] = PAGE_SIZES[c.page_size];
+        const radius = Math.min(w, h) / 2 - c.margin_mm - c.stroke_mm;
+        const band = (radius - 10) / c.layers;
+        const petals: [number, number][][] = [];
+        const circles = [3.5, 9.0, radius];
+        const step = (2 * Math.PI) / c.symmetry;
+        for (let layer = 0; layer < c.layers; layer++) {
+            const start = 10 + layer * band + c.spacing_mm / 2;
+            const end = 10 + (layer + 1) * band - c.spacing_mm / 2;
+            const middle = (start + end) / 2;
+            let half = Math.min(step * 0.41, step / 2 - c.spacing_mm / (2 * middle));
+            half *= uniform(0.9, 1.0);
+            const curve = Math.max(0, Math.min(1, c.curvature + uniform(-0.12, 0.12)));
+            const phase = ((layer % 2) * step) / 2 - Math.PI / 2;
+            for (let rep = 0; rep < c.symmetry; rep++) {
+                const angle = phase + rep * step;
+                petals.push(petal(start, end, half, angle, curve));
+                for (let detail = 1; detail < c.complexity; detail++) {
+                    const inner = start + 2.4 * detail;
+                    const outer = end - 2.4 * detail;
+                    const width = half * (1 - 0.32 * detail);
+                    if (outer - inner >= 6 && 2 * middle * Math.sin(width) >= 4) petals.push(petal(inner, outer, width, angle, curve));
+                }
+            }
+            if (layer < c.layers - 1) circles.push(10 + (layer + 1) * band);
+        }
+        return { petals, circles, width: w, height: h };
+    }
+
+    // Python's f"{v:.5f}" keeps the sign of negative values that round to zero.
+    const f5 = (v: number) => {
+        const s = v.toFixed(5);
+        return (Object.is(v, -0) || v < 0) && s[0] !== "-" ? `-${s}` : s;
+    };
+
+    function recipeJson(c: Recipe) {
+        const floats = ["curvature", "margin_mm", "spacing_mm", "stroke_mm"];
+        const keys = Object.keys(DEFAULT_RECIPE).sort() as (keyof Recipe)[];
+        const body = keys
+            .map((k) => {
+                const v = c[k];
+                if (typeof v === "string") return `  "${k}": ${JSON.stringify(v)}`;
+                return `  "${k}": ${floats.includes(k) && Number.isInteger(v) ? v.toFixed(1) : String(v)}`;
+            })
+            .join(",\n");
+        return `{\n${body}\n}\n`;
+    }
+
+    function renderSvg(c: Recipe) {
+        const geo = generate(c);
+        const { width: w, height: h } = geo;
+        const lines = [
+            '<?xml version="1.0" encoding="utf-8"?>',
+            `<svg xmlns="http://www.w3.org/2000/svg" width="${w}mm" height="${h}mm" viewBox="0 0 ${w} ${h}" version="1.1">`,
+            "  <title>Rocketeers radial mandala</title>",
+            `  <metadata>${recipeJson(c)}</metadata>`,
+            `  <rect width="${w}" height="${h}" fill="white" />`,
+            `  <g transform="translate(${w / 2} ${h / 2})" fill="none" stroke="black" stroke-width="${c.stroke_mm}" stroke-linejoin="round" stroke-linecap="round">`,
+        ];
+        for (const r of geo.circles) lines.push(`    <circle cx="0" cy="0" r="${f5(r)}" />`);
+        for (const p of geo.petals) lines.push(`    <path d="M ${p.map(([x, y]) => `${f5(x)} ${f5(y)}`).join(" L ")} Z" />`);
+        lines.push("  </g>", "</svg>");
+        return lines.join("\n") + "\n";
+    }
+
+    async function sha256(text: string | ArrayBuffer) {
+        if (!crypto?.subtle) return null;
+        const bytes = typeof text === "string" ? new TextEncoder().encode(text) : text;
+        const digest = await crypto.subtle.digest("SHA-256", bytes);
+        return [...new Uint8Array(digest)].map((b) => b.toString(16).padStart(2, "0")).join("");
+    }
+
+    /* =========================================================
+       COLOURING STUDIO
+       ========================================================= */
+
+    type Design = { id: string; file?: string; text?: string; symmetry: number; sha?: string; kind: string };
+
+    const BASE = "/images/projects/mandala-generator/";
+    // Baselines pinned in tests/test_artifact_preservation.py.
+    const DESIGNS: Design[] = [
+        { id: "easy", file: "mandala-easy.svg", symmetry: 8, kind: "Generator v3.0.0 · Easy profile", sha: "27f0ec81397501a4501caeedeeb6875c3d2e087b262fa396e458e163746baa30" },
+        { id: "medium", file: "mandala-medium.svg", symmetry: 8, kind: "Generator v3.0.0 · Medium profile", sha: "240ec659906e3e822504c151abb2d4641e0f3c6f7de56f64f058187f7f6d2ebe" },
+        { id: "advanced", file: "mandala-advanced.svg", symmetry: 8, kind: "Generator v3.0.0 · Advanced profile", sha: "823af8cb163601b1cd1e6c6433f48d5e16ee18ed2412d2af7080ecc836665e16" },
+        { id: "floral", file: "floral-mandala.svg", symmetry: 10, kind: "Generator v2.0.0 · floral redesign", sha: "16c775135f664d401fcd1d40b3c99793ce500828686d368e59fef1aac18b4f00" },
+        { id: "first", file: "first-mandala.svg", symmetry: 12, kind: "Generator v1.0.0 · first mandala", sha: "24a4ad325d374cf0aebcfd111197cd07d47333d248c43ba3729d3051d0c77b5a" },
+        { id: "rosette", file: "rosette-garden-03.svg", symmetry: 4, kind: "Fixed artwork · Milestone 6C (not generator output)", sha: "71ae8214cd3235cdcfd55d362bc78bf898a7085d8bf1c8a68628053c23a1c969" },
+    ];
+
+    const PALETTE = [
+        ["Terracotta", "#e2725b"],
+        ["Saffron", "#f2b134"],
+        ["Butter", "#f7e08a"],
+        ["Sage", "#8fb996"],
+        ["Teal", "#2a9d8f"],
+        ["Sky", "#7cc4e8"],
+        ["Indigo", "#3d5a98"],
+        ["Lavender", "#b9a3e3"],
+        ["Rose", "#e07a9b"],
+        ["Blush", "#f6c1c7"],
+        ["Cocoa", "#8a5a44"],
+        ["Eraser", "#ffffff"],
+    ];
+
+    const studio = document.querySelector<HTMLElement>(".colour-studio");
+    const small = window.matchMedia("(max-width: 700px), (pointer: coarse)").matches;
+    const N = small ? 1000 : 1400;
+    let loadCustom: ((text: string, symmetry: number) => void) | null = null;
+
+    if (studio) {
+        const canvas = studio.querySelector<HTMLCanvasElement>(".colour-canvas")!;
+        const ctx = canvas.getContext("2d", { willReadFrequently: true })!;
+        const sheet = studio.querySelector<HTMLElement>(".sheet")!;
+        const cursor = studio.querySelector<HTMLElement>(".kb-cursor")!;
+        const status = studio.querySelector<HTMLElement>(".colour-status")!;
+        const undoBtn = studio.querySelector<HTMLButtonElement>(".undo-btn")!;
+        const symToggle = studio.querySelector<HTMLInputElement>(".sym-toggle")!;
+        const symOrder = studio.querySelector<HTMLElement>(".sym-order")!;
+        const kindEl = studio.querySelector<HTMLElement>(".design-kind")!;
+        const hashEl = studio.querySelector<HTMLElement>(".hash-check")!;
+        const recipeEl = studio.querySelector<HTMLElement>(".recipe-code")!;
+        const masterLink = studio.querySelector<HTMLAnchorElement>(".master-link")!;
+        const swatchGrid = studio.querySelector<HTMLElement>(".swatch-grid")!;
+        const colourInput = studio.querySelector<HTMLInputElement>(".colour-input")!;
+
+        canvas.width = N;
+        canvas.height = N;
+
+        let current = { name: "Terracotta", rgb: [226, 114, 91] as number[] };
+        const hexToRgb = (hex: string) => [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16));
+
+        // Swatches are radio buttons so they work with arrow keys.
+        PALETTE.forEach(([name, hex], i) => {
+            const label = document.createElement("label");
+            label.className = "swatch";
+            label.title = name;
+            label.style.setProperty("--c", hex);
+            label.innerHTML = `<input type="radio" name="swatch" value="${hex}" ${i === 0 ? "checked" : ""} aria-label="${name}"><span></span>`;
+            swatchGrid.append(label);
+            label.querySelector("input")!.addEventListener("change", () => {
+                current = { name, rgb: hexToRgb(hex) };
+            });
+        });
+        colourInput.addEventListener("input", () => {
+            swatchGrid.querySelectorAll<HTMLInputElement>("input").forEach((el) => (el.checked = false));
+            current = { name: `custom ${colourInput.value}`, rgb: hexToRgb(colourInput.value) };
+        });
+
+        let lineLayer: HTMLCanvasElement | null = null;
+        let labels = new Int32Array(0);
+        let offsets = new Int32Array(0);
+        let members = new Int32Array(0);
+        let regionCount = 0;
+        let colours = new Int32Array(0); // packed RGB, -1 = unfilled
+        let fill: ImageData | null = null;
+        let history: { label: number; prev: number }[][] = [];
+        let symmetry = 8;
+        let loadToken = 0;
+        let kx = N / 2;
+        let ky = N * 0.3;
+
+        const compose = () => {
+            if (!fill || !lineLayer) return;
+            ctx.globalCompositeOperation = "source-over";
+            ctx.putImageData(fill, 0, 0);
+            ctx.globalCompositeOperation = "multiply";
+            ctx.drawImage(lineLayer, 0, 0);
+            ctx.globalCompositeOperation = "source-over";
+        };
+
+        const paint = (label: number, packed: number) => {
+            if (!fill) return;
+            const d = fill.data;
+            const r = packed < 0 ? 255 : (packed >> 16) & 255;
+            const g = packed < 0 ? 255 : (packed >> 8) & 255;
+            const b = packed < 0 ? 255 : packed & 255;
+            for (let k = offsets[label]; k < offsets[label + 1]; k++) {
+                const o = members[k] * 4;
+                d[o] = r;
+                d[o + 1] = g;
+                d[o + 2] = b;
+            }
+        };
+
+        // Rasterise the SVG, then label every 4-connected region bounded by ink.
+        async function prepare(svgText: string, token: number) {
+            const doc = new DOMParser().parseFromString(svgText, "image/svg+xml");
+            const svg = doc.documentElement;
+            const [, , vw, vh] = (svg.getAttribute("viewBox") || "0 0 210 297").split(/[\s,]+/).map(Number);
+            const R = Math.min(vw, vh) / 2 - 10;
+            svg.setAttribute("viewBox", `${vw / 2 - R} ${vh / 2 - R} ${2 * R} ${2 * R}`);
+            svg.setAttribute("width", String(N));
+            svg.setAttribute("height", String(N));
+            const blob = new Blob([new XMLSerializer().serializeToString(svg)], { type: "image/svg+xml" });
+            const url = URL.createObjectURL(blob);
+            const img = new Image();
+            img.src = url;
+            await img.decode();
+            URL.revokeObjectURL(url);
+            if (token !== loadToken) return false;
+
+            const layer = document.createElement("canvas");
+            layer.width = N;
+            layer.height = N;
+            const lctx = layer.getContext("2d", { willReadFrequently: true })!;
+            lctx.fillStyle = "#fff";
+            lctx.fillRect(0, 0, N, N);
+            lctx.drawImage(img, 0, 0, N, N);
+            const px = lctx.getImageData(0, 0, N, N).data;
+            const total = N * N;
+            const barrier = new Uint8Array(total);
+            for (let i = 0; i < total; i++) {
+                const o = i * 4;
+                barrier[i] = px[o] * 0.299 + px[o + 1] * 0.587 + px[o + 2] * 0.114 < 170 ? 1 : 0;
+            }
+            await new Promise((r) => setTimeout(r, 0));
+
+            const lab = new Int32Array(total).fill(-1);
+            const stack = new Int32Array(total);
+            let count = 0;
+            for (let seed = 0; seed < total; seed++) {
+                if (barrier[seed] || lab[seed] !== -1) continue;
+                let top = 0;
+                stack[top++] = seed;
+                lab[seed] = count;
+                while (top) {
+                    const p = stack[--top];
+                    const x = p % N;
+                    if (x > 0 && !barrier[p - 1] && lab[p - 1] === -1) { lab[p - 1] = count; stack[top++] = p - 1; }
+                    if (x < N - 1 && !barrier[p + 1] && lab[p + 1] === -1) { lab[p + 1] = count; stack[top++] = p + 1; }
+                    if (p >= N && !barrier[p - N] && lab[p - N] === -1) { lab[p - N] = count; stack[top++] = p - N; }
+                    if (p < total - N && !barrier[p + N] && lab[p + N] === -1) { lab[p + N] = count; stack[top++] = p + N; }
+                }
+                count++;
+            }
+            await new Promise((r) => setTimeout(r, 0));
+            if (token !== loadToken) return false;
+
+            // Hand each ink pixel to its nearest region so fills run under the lines.
+            let head = 0;
+            let tail = 0;
+            for (let i = 0; i < total; i++) if (lab[i] !== -1) stack[tail++] = i;
+            while (head < tail) {
+                const p = stack[head++];
+                const l = lab[p];
+                const x = p % N;
+                if (x > 0 && lab[p - 1] === -1) { lab[p - 1] = l; stack[tail++] = p - 1; }
+                if (x < N - 1 && lab[p + 1] === -1) { lab[p + 1] = l; stack[tail++] = p + 1; }
+                if (p >= N && lab[p - N] === -1) { lab[p - N] = l; stack[tail++] = p - N; }
+                if (p < total - N && lab[p + N] === -1) { lab[p + N] = l; stack[tail++] = p + N; }
+            }
+
+            const off = new Int32Array(count + 1);
+            for (let i = 0; i < total; i++) if (lab[i] >= 0) off[lab[i] + 1]++;
+            for (let i = 0; i < count; i++) off[i + 1] += off[i];
+            const cursorPos = off.slice(0, count);
+            const mem = new Int32Array(total);
+            for (let i = 0; i < total; i++) if (lab[i] >= 0) mem[cursorPos[lab[i]]++] = i;
+
+            lineLayer = layer;
+            labels = lab;
+            offsets = off;
+            members = mem;
+            regionCount = count;
+            colours = new Int32Array(count).fill(-1);
+            fill = new ImageData(N, N);
+            fill.data.fill(255);
+            history = [];
+            undoBtn.disabled = true;
+            compose();
+            return true;
+        }
+
+        const applyFills = (targets: number[], packed: number) => {
+            const action: { label: number; prev: number }[] = [];
+            for (const label of targets) {
+                if (colours[label] === packed) continue;
+                action.push({ label, prev: colours[label] });
+                colours[label] = packed;
+                paint(label, packed);
+            }
+            if (action.length) {
+                history.push(action);
+                undoBtn.disabled = false;
+                compose();
+            }
+            return action.length;
+        };
+
+        const fillAt = (x: number, y: number) => {
+            if (!fill) return;
+            const ix = Math.max(0, Math.min(N - 1, Math.round(x)));
+            const iy = Math.max(0, Math.min(N - 1, Math.round(y)));
+            const targets = new Set<number>();
+            const order = symToggle.checked ? symmetry : 1;
+            for (let j = 0; j < order; j++) {
+                const a = (2 * Math.PI * j) / order;
+                const dx = ix - N / 2;
+                const dy = iy - N / 2;
+                const rx = Math.round(N / 2 + dx * Math.cos(a) - dy * Math.sin(a));
+                const ry = Math.round(N / 2 + dx * Math.sin(a) + dy * Math.cos(a));
+                if (rx < 0 || ry < 0 || rx >= N || ry >= N) continue;
+                const label = labels[ry * N + rx];
+                if (label >= 0) targets.add(label);
+            }
+            const [r, g, b] = current.rgb;
+            const packed = (r << 16) | (g << 8) | b;
+            const changed = applyFills([...targets], packed);
+            const pixels = [...targets].reduce((sum, l) => sum + offsets[l + 1] - offsets[l], 0);
+            status.textContent = changed
+                ? `Filled ${changed} region${changed > 1 ? "s" : ""} (${pixels.toLocaleString("en-GB")} px) with ${current.name}.`
+                : "That region already has this colour.";
+        };
+
+        canvas.addEventListener("click", (event) => {
+            const rect = canvas.getBoundingClientRect();
+            fillAt(((event.clientX - rect.left) / rect.width) * N, ((event.clientY - rect.top) / rect.height) * N);
+        });
+
+        const placeCursor = () => {
+            cursor.style.left = `${(kx / N) * 100}%`;
+            cursor.style.top = `${(ky / N) * 100}%`;
+        };
+        canvas.addEventListener("keydown", (event) => {
+            const stepPx = N / (event.shiftKey ? 120 : 40);
+            const moves: Record<string, [number, number]> = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, -1], ArrowDown: [0, 1] };
+            if (moves[event.key]) {
+                event.preventDefault();
+                kx = Math.max(0, Math.min(N - 1, kx + moves[event.key][0] * stepPx));
+                ky = Math.max(0, Math.min(N - 1, ky + moves[event.key][1] * stepPx));
+                placeCursor();
+            } else if (event.key === "Enter" || event.key === " ") {
+                event.preventDefault();
+                fillAt(kx, ky);
+            }
+        });
+        placeCursor();
+
+        undoBtn.addEventListener("click", () => {
+            const action = history.pop();
+            if (!action) return;
+            for (const { label, prev } of action) {
+                colours[label] = prev;
+                paint(label, prev);
+            }
+            compose();
+            undoBtn.disabled = history.length === 0;
+            status.textContent = `Undid ${action.length} fill${action.length > 1 ? "s" : ""}.`;
+        });
+
+        studio.querySelector(".reset-btn")?.addEventListener("click", () => {
+            const filled = [];
+            for (let l = 0; l < regionCount; l++) if (colours[l] !== -1) filled.push(l);
+            if (!filled.length) return;
+            const action = filled.map((label) => ({ label, prev: colours[label] }));
+            for (const label of filled) {
+                colours[label] = -1;
+                paint(label, -1);
+            }
+            history.push(action);
+            undoBtn.disabled = false;
+            compose();
+            status.textContent = "Page cleared. Undo brings the colours back.";
+        });
+
+        // Colour every region by its distance from the centre: symmetric by construction.
+        studio.querySelector(".auto-btn")?.addEventListener("click", () => {
+            if (!fill) return;
+            const outer = labels[0];
+            const ring = PALETTE.slice(0, 10).map(([, hex]) => hexToRgb(hex));
+            const offsetPick = Math.floor(Math.random() * ring.length);
+            const groups = new Map<number, number[]>();
+            for (let l = 0; l < regionCount; l++) {
+                const size = offsets[l + 1] - offsets[l];
+                if (l === outer || size < 12) continue;
+                let sx = 0;
+                let sy = 0;
+                for (let k = offsets[l]; k < offsets[l + 1]; k += 7) {
+                    sx += members[k] % N;
+                    sy += Math.floor(members[k] / N);
+                }
+                const n = Math.ceil(size / 7);
+                const dist = Math.hypot(sx / n - N / 2, sy / n - N / 2) / (N / 2);
+                const band = Math.round(dist * 26);
+                if (!groups.has(band)) groups.set(band, []);
+                groups.get(band)!.push(l);
+            }
+            const action: { label: number; prev: number }[] = [];
+            [...groups.keys()].sort((a, b) => a - b).forEach((band, i) => {
+                const [r, g, b] = ring[(i + offsetPick) % ring.length];
+                const packed = (r << 16) | (g << 8) | b;
+                for (const label of groups.get(band)!) {
+                    action.push({ label, prev: colours[label] });
+                    colours[label] = packed;
+                    paint(label, packed);
+                }
+            });
+            history.push(action);
+            undoBtn.disabled = false;
+            compose();
+            status.textContent = `Auto-coloured ${action.length.toLocaleString("en-GB")} regions in rings. Undo to revert.`;
+        });
+
+        studio.querySelector(".save-btn")?.addEventListener("click", () => {
+            canvas.toBlob((blob) => {
+                if (!blob) return;
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement("a");
+                link.href = url;
+                link.download = "my-coloured-mandala.png";
+                document.body.append(link);
+                link.click();
+                link.remove();
+                setTimeout(() => URL.revokeObjectURL(url), 4000);
+            }, "image/png");
+        });
+
+        async function load(design: Design) {
+            const token = ++loadToken;
+            sheet.classList.add("is-loading");
+            status.textContent = "Loading the page…";
+            symmetry = design.symmetry;
+            symOrder.textContent = `(×${design.symmetry})`;
+            kindEl.textContent = design.kind;
+            hashEl.textContent = "";
+            try {
+                let text = design.text ?? "";
+                if (design.file) {
+                    masterLink.hidden = false;
+                    masterLink.href = BASE + design.file;
+                    const buffer = await (await fetch(BASE + design.file)).arrayBuffer();
+                    text = new TextDecoder().decode(buffer);
+                    const hash = await sha256(buffer);
+                    if (token !== loadToken) return;
+                    if (hash && design.sha) {
+                        hashEl.innerHTML =
+                            hash === design.sha
+                                ? `<span class="ok">✓</span> SHA-256 <code>${hash.slice(0, 12)}…</code> matches the hash pinned in <code>tests/test_artifact_preservation.py</code>.`
+                                : `<span class="bad">✗</span> SHA-256 <code>${hash.slice(0, 12)}…</code> differs from the pinned baseline.`;
+                    }
+                } else {
+                    masterLink.hidden = true;
+                    hashEl.textContent = "Generated in this browser by the version-1 port.";
+                }
+                const meta = new DOMParser().parseFromString(text, "image/svg+xml");
+                recipeEl.textContent =
+                    meta.querySelector("metadata")?.textContent?.trim() ||
+                    `No recipe: fixed artwork.\n\n${meta.querySelector("desc")?.textContent?.trim() ?? ""}`;
+                const ok = await prepare(text, token);
+                if (!ok) return;
+                sheet.classList.remove("is-loading");
+                status.textContent = `Ready: ${regionCount.toLocaleString("en-GB")} enclosed regions detected. Pick a colour and click a region.`;
+            } catch (error) {
+                sheet.classList.remove("is-loading");
+                status.textContent = `Could not load this page: ${(error as Error).message}`;
+            }
+        }
+
+        let customDesign: Design | null = null;
+        const radios = studio.querySelectorAll<HTMLInputElement>("input[name=design]");
+        radios.forEach((radio) => {
+            radio.addEventListener("change", () => {
+                if (!radio.checked) return;
+                const design = radio.value === "custom" ? customDesign : DESIGNS.find((d) => d.id === radio.value);
+                if (design) load(design);
+            });
+        });
+
+        loadCustom = (text: string, order: number) => {
+            customDesign = { id: "custom", text, symmetry: order, kind: "Generated just now · v1.0.0 port" };
+            const custom = studio.querySelector<HTMLElement>(".custom-design")!;
+            custom.hidden = false;
+            const radio = custom.querySelector<HTMLInputElement>("input")!;
+            radio.checked = true;
+            load(customDesign);
+            document.querySelector("#colour")?.scrollIntoView({ behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
+        };
+
+        const io = new IntersectionObserver(
+            (entries) => {
+                if (entries.some((e) => e.isIntersecting)) {
+                    io.disconnect();
+                    load(DESIGNS[0]);
+                }
+            },
+            { rootMargin: "500px" },
+        );
+        io.observe(studio);
+    }
+
+    /* =========================================================
+       GENERATOR UI
+       ========================================================= */
+
+    const gen = document.querySelector<HTMLElement>(".gen-grid");
+    if (gen) {
+        const recipe: Recipe = { ...DEFAULT_RECIPE };
+        let lastValid = "";
+        const paper = gen.querySelector<HTMLElement>(".gen-paper")!;
+        const errorEl = gen.querySelector<HTMLElement>(".gen-error")!;
+        const jsonEl = gen.querySelector<HTMLElement>(".gen-json")!;
+        const verifyEl = gen.querySelector<HTMLElement>(".verify-result")!;
+        const seedInput = gen.querySelector<HTMLInputElement>(".seed-input")!;
+        const pageSelect = gen.querySelector<HTMLSelectElement>(".page-select")!;
+        const caption = gen.querySelector<HTMLElement>(".gen-caption")!;
+        const sliders = gen.querySelectorAll<HTMLInputElement>("input[type=range][data-key]");
+
+        const sync = () => {
+            sliders.forEach((s) => {
+                const key = s.dataset.key as keyof Recipe;
+                s.value = String(recipe[key]);
+                gen.querySelector(`output[data-for="${key}"]`)!.textContent = String(recipe[key]);
+            });
+            seedInput.value = String(recipe.seed);
+            pageSelect.value = recipe.page_size;
+        };
+
+        let frame = 0;
+        const update = () => {
+            cancelAnimationFrame(frame);
+            frame = requestAnimationFrame(() => {
+                const error = validateRecipe(recipe);
+                jsonEl.textContent = recipeJson(recipe);
+                if (error) {
+                    errorEl.textContent = `ValueError: ${error}`;
+                    errorEl.hidden = false;
+                    paper.classList.add("is-invalid");
+                    return;
+                }
+                errorEl.hidden = true;
+                paper.classList.remove("is-invalid");
+                lastValid = renderSvg(recipe);
+                paper.innerHTML = lastValid.replace(/^<\?xml[^>]*>\s*/, "");
+                const svg = paper.querySelector("svg");
+                if (svg) {
+                    svg.removeAttribute("width");
+                    svg.removeAttribute("height");
+                    svg.setAttribute("role", "img");
+                    svg.setAttribute("aria-label", `Generated ${recipe.symmetry}-fold mandala with ${recipe.layers} layers on ${recipe.page_size} paper`);
+                }
+                const geo = generate(recipe);
+                caption.textContent = `${recipe.page_size} page · ${geo.petals.length} closed petals · ${geo.circles.length} circles · ${(lastValid.length / 1024).toFixed(0)} KB SVG`;
+            });
+        };
+
+        sliders.forEach((slider) => {
+            slider.addEventListener("input", () => {
+                const key = slider.dataset.key as keyof Recipe;
+                (recipe as Record<string, unknown>)[key] = Number(slider.value);
+                gen.querySelector(`output[data-for="${key}"]`)!.textContent = slider.value;
+                verifyEl.textContent = "";
+                update();
+            });
+        });
+
+        seedInput.addEventListener("input", () => {
+            recipe.seed = seedInput.value.trim() === "" ? NaN : Number(seedInput.value);
+            verifyEl.textContent = "";
+            update();
+        });
+
+        pageSelect.addEventListener("change", () => {
+            recipe.page_size = pageSelect.value as Recipe["page_size"];
+            update();
+        });
+
+        gen.querySelector(".random-seed")?.addEventListener("click", () => {
+            const buffer = new Uint32Array(1);
+            crypto.getRandomValues(buffer);
+            recipe.seed = buffer[0];
+            seedInput.value = String(buffer[0]);
+            verifyEl.textContent = "";
+            update();
+        });
+
+        gen.querySelector(".gen-reset")?.addEventListener("click", () => {
+            Object.assign(recipe, DEFAULT_RECIPE);
+            sync();
+            verifyEl.textContent = "";
+            update();
+        });
+
+        gen.querySelector(".gen-download")?.addEventListener("click", () => {
+            if (validateRecipe(recipe)) return;
+            const blob = new Blob([renderSvg(recipe)], { type: "image/svg+xml" });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            link.href = url;
+            link.download = `mandala-s${recipe.symmetry}-l${recipe.layers}-seed${recipe.seed}.svg`;
+            document.body.append(link);
+            link.click();
+            link.remove();
+            setTimeout(() => URL.revokeObjectURL(url), 4000);
+        });
+
+        gen.querySelector(".gen-colour")?.addEventListener("click", () => {
+            if (validateRecipe(recipe) || !loadCustom) return;
+            loadCustom(renderSvg(recipe), recipe.symmetry);
+        });
+
+        gen.querySelector(".gen-verify")?.addEventListener("click", async () => {
+            Object.assign(recipe, DEFAULT_RECIPE);
+            sync();
+            update();
+            verifyEl.textContent = "Fetching the repository file…";
+            try {
+                const reference = (await (await fetch("/images/projects/mandala-generator/first-mandala.svg")).text()).replace(/\r\n/g, "\n");
+                const generated = renderSvg(recipe);
+                const [refHash, genHash] = await Promise.all([sha256(reference), sha256(generated)]);
+                const same = reference === generated;
+                verifyEl.innerHTML = same
+                    ? `<span class="ok">✓ Identical.</span> ${generated.length.toLocaleString("en-GB")} bytes${genHash ? `, SHA-256 <code>${genHash.slice(0, 16)}…</code>` : ""}, the same as <code>outputs/first-mandala.svg</code>${refHash === genHash ? "" : " (hash differs!)"}.`
+                    : `<span class="bad">✗ Different</span> from the repository file (${generated.length} vs ${reference.length} bytes).`;
+            } catch (error) {
+                verifyEl.textContent = `Verification failed: ${(error as Error).message}`;
+            }
+        });
+
+        sync();
+        update();
+    }
+</script>
+
+<style>
+    :root {
+        --bg: #06111e;
+        --surface: #091b2b;
+        --border: #203f59;
+        --heading: #ffffff;
+        --text: #d8e4ee;
+        --muted: #9eb1c0;
+        --subtle: #7890a3;
+        --blue: #168dff;
+        --blue-light: #65baff;
+        --orange: #ff8a00;
+        --page-width: 1240px;
+
+        /* Paper and ink personality */
+        --p-paper: #fbf7ee;
+        --p-paper-2: #f3ecdc;
+        --p-ink: #1d1a17;
+        --p-ink-soft: #5a524a;
+        --p-terracotta: #e2725b;
+        --p-saffron: #f2b134;
+        --p-sage: #8fb996;
+        --p-teal: #2a9d8f;
+        --p-rose: #e07a9b;
+        --p-sky: #7cc4e8;
+        --p-serif: Georgia, "Times New Roman", serif;
+        --p-script: "Segoe Script", "Brush Script MT", "Snell Roundhand", cursive;
+        --p-mono: "Cascadia Code", "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; background: var(--bg); }
+
+    body {
+        min-height: 100vh;
+        margin: 0;
+        color: var(--text);
+        background:
+            radial-gradient(circle at 88% 6%, rgba(242, 177, 52, 0.08), transparent 28rem),
+            radial-gradient(circle at 10% 50%, rgba(42, 157, 143, 0.06), transparent 30rem),
+            var(--bg);
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    main,
+    footer {
+        width: min(100%, var(--page-width));
+        margin-inline: auto;
+        padding-inline: clamp(1rem, 5vw, 4.5rem);
+    }
+
+    a { color: inherit; text-underline-offset: 0.25em; }
+    a:focus-visible,
+    button:focus-visible,
+    input:focus-visible,
+    select:focus-visible,
+    summary:focus-visible,
+    canvas:focus-visible { outline: 2px solid var(--orange); outline-offset: 3px; }
+
+    h1, h2, h3, p { margin-top: 0; }
+
+    h2 {
+        margin-bottom: 1rem;
+        color: var(--heading);
+        font-family: Georgia, "Times New Roman", serif;
+        font-size: clamp(2.2rem, 5vw, 4rem);
+        font-weight: 400;
+        line-height: 1.04;
+        letter-spacing: -0.05em;
+    }
+
+    h3 { color: var(--heading); font-size: 1.2rem; }
+
+    code { font-family: var(--p-mono); font-size: 0.86em; color: #ffd9a0; overflow-wrap: anywhere; }
+
+    [hidden] { display: none !important; }
+
+    .eyebrow {
+        margin-bottom: 1rem;
+        color: var(--orange);
+        font-size: 0.75rem;
+        font-weight: 800;
+        letter-spacing: 0.09em;
+        text-transform: uppercase;
+    }
+
+    .small { font-size: 0.85rem; }
+
+    /* =========================================================
+       HERO — PAPER BOARD
+       ========================================================= */
+
+    .hero { padding: clamp(3rem, 6vw, 4.5rem) 0; }
+
+    .breadcrumbs {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.6rem;
+        margin-bottom: 2rem;
+        color: var(--subtle);
+        font-size: 0.8rem;
+    }
+
+    .breadcrumbs a { text-decoration: none; }
+    .breadcrumbs a:hover { color: white; }
+    .breadcrumbs strong { color: var(--p-saffron); }
+
+    .paper-board {
+        position: relative;
+        display: grid;
+        grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+        align-items: center;
+        gap: clamp(1rem, 3vw, 2.5rem);
+        overflow: hidden;
+        margin-bottom: 2rem;
+        padding: clamp(1.6rem, 5vw, 3.8rem);
+        border-radius: 26px;
+        background:
+            radial-gradient(circle at 80% 50%, rgba(242, 177, 52, 0.18), transparent 55%),
+            var(--p-paper);
+        color: var(--p-ink);
+        box-shadow: 0 30px 80px -40px rgba(242, 177, 52, 0.5);
+    }
+
+    .paper-board::before {
+        content: "";
+        position: absolute;
+        inset: 12px;
+        border: 1.5px solid rgba(29, 26, 23, 0.18);
+        border-radius: 18px;
+        pointer-events: none;
+    }
+
+    .hero-copy { position: relative; z-index: 1; }
+
+    .board-eyebrow {
+        display: inline-block;
+        margin-bottom: 1.3rem;
+        padding: 0.35rem 0.8rem;
+        border: 1.5px solid var(--p-ink);
+        border-radius: 999px;
+        color: var(--p-ink);
+        font-size: 0.7rem;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+    }
+
+    .paper-board h1 {
+        display: flex;
+        flex-direction: column;
+        margin: 0 0 1.2rem;
+        font-family: var(--p-serif);
+        font-weight: 400;
+        line-height: 0.98;
+    }
+
+    .h1-small { color: var(--p-ink-soft); font-size: clamp(1.1rem, 2.4vw, 1.5rem); letter-spacing: 0.18em; text-transform: uppercase; }
+    .h1-big { font-size: clamp(2.5rem, 6.4vw, 4.8rem); letter-spacing: -0.04em; }
+    .h1-script { color: var(--p-terracotta); font-family: var(--p-script); font-size: clamp(1.7rem, 4vw, 2.8rem); rotate: -2deg; transform-origin: left; }
+
+    .hero-subtitle {
+        max-width: 500px;
+        margin-bottom: 1.5rem;
+        color: #3d3731;
+        font-size: clamp(1rem, 2vw, 1.15rem);
+        line-height: 1.65;
+    }
+
+    .hero-actions,
+    .tool-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.6rem;
+    }
+
+    .ink-btn,
+    .paper-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        padding: 0.7rem 1.1rem;
+        border: 1.5px solid var(--p-ink);
+        border-radius: 999px;
+        font: inherit;
+        font-size: 0.9rem;
+        font-weight: 800;
+        text-decoration: none;
+        cursor: pointer;
+        transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+    }
+
+    .ink-btn { background: var(--p-ink); color: var(--p-paper); box-shadow: 3px 3px 0 var(--p-saffron); }
+    .paper-btn { background: var(--p-paper); color: var(--p-ink); box-shadow: 3px 3px 0 rgba(29, 26, 23, 0.25); }
+    .ink-btn:hover,
+    .paper-btn:hover { transform: translate(-1px, -2px); box-shadow: 5px 5px 0 var(--p-saffron); }
+    .ink-btn.small,
+    .paper-btn.small { padding: 0.5rem 0.85rem; font-size: 0.8rem; }
+    .paper-btn:disabled { opacity: 0.45; cursor: not-allowed; transform: none; box-shadow: none; }
+
+    .hero-art { position: relative; margin: 0; }
+
+    .hero-art svg { display: block; width: 100%; height: auto; overflow: visible; }
+
+    .hero-spin { transform-origin: 0 0; animation: spin-slow 160s linear infinite; }
+
+    .hero-art circle,
+    .hero-art path {
+        fill: none;
+        stroke: var(--p-ink);
+        stroke-width: 0.55;
+        stroke-linejoin: round;
+        stroke-dasharray: 1;
+        stroke-dashoffset: 1;
+        animation: draw 1.6s cubic-bezier(0.5, 0, 0.2, 1) forwards;
+        animation-delay: calc(var(--i, 0) * 0.12s);
+    }
+
+    .hero-art path.layer-0 { fill: rgba(226, 114, 91, 0); animation-name: draw, tint-0; animation-duration: 1.6s, 1s; animation-delay: calc(var(--i) * 0.12s), 2.6s; animation-fill-mode: forwards; }
+    .hero-art path.layer-2 { animation-name: draw, tint-2; animation-duration: 1.6s, 1s; animation-delay: calc(var(--i) * 0.12s), 3s; animation-fill-mode: forwards; }
+
+    .hero-art figcaption {
+        margin-top: 0.4rem;
+        color: var(--p-ink-soft);
+        font-family: var(--p-mono);
+        font-size: 0.72rem;
+        text-align: center;
+    }
+
+    @keyframes draw { to { stroke-dashoffset: 0; } }
+    @keyframes tint-0 { to { fill: rgba(226, 114, 91, 0.75); } }
+    @keyframes tint-2 { to { fill: rgba(42, 157, 143, 0.55); } }
+    @keyframes spin-slow { to { transform: rotate(360deg); } }
+
+    .hero :global(.skill-links) { justify-content: flex-start; }
+
+    /* =========================================================
+       FACTS
+       ========================================================= */
+
+    .facts {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 1rem;
+        padding-bottom: clamp(3.5rem, 7vw, 5rem);
+    }
+
+    .fact {
+        padding: 1.1rem 1.2rem;
+        border-radius: 14px;
+        color: var(--p-ink);
+        transition: transform 0.25s ease, rotate 0.25s ease;
+    }
+
+    .fact:nth-child(odd) { rotate: -1deg; }
+    .fact:nth-child(even) { rotate: 0.8deg; }
+    .fact:hover { rotate: 0deg; transform: translateY(-3px); }
+
+    .fact span {
+        display: block;
+        margin-bottom: 0.45rem;
+        color: rgba(29, 26, 23, 0.7);
+        font-size: 0.7rem;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+    }
+
+    .fact strong { font-size: 0.93rem; line-height: 1.45; }
+    .tone-saffron { background: #f6d58c; }
+    .tone-sage { background: #c9dfc8; }
+    .tone-rose { background: #f4c4d1; }
+    .tone-sky { background: #c4e3f3; }
+
+    /* =========================================================
+       SECTIONS & CARDS
+       ========================================================= */
+
+    .case-section {
+        padding: clamp(4rem, 8vw, 6.5rem) 0;
+        border-top: 1px solid rgba(32, 63, 89, 0.8);
+    }
+
+    .section-heading { max-width: 830px; }
+    .centered-heading { margin-inline: auto; text-align: center; }
+    .section-heading > p:last-child { color: var(--muted); line-height: 1.7; }
+
+    .card {
+        padding: clamp(1.3rem, 3vw, 1.9rem);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        background: rgba(9, 27, 43, 0.82);
+        transition: border-color 0.25s ease, transform 0.25s ease;
+    }
+
+    .card:hover { border-color: var(--p-saffron); transform: translateY(-3px); }
+    .card p { color: var(--muted); line-height: 1.7; }
+    .card p:last-child { margin-bottom: 0; }
+
+    /* =========================================================
+       COLOURING STUDIO
+       ========================================================= */
+
+    .colour-studio {
+        margin-top: 2.2rem;
+        padding: clamp(0.9rem, 3vw, 1.8rem);
+        border-radius: 24px;
+        background: var(--p-paper-2);
+        color: var(--p-ink);
+    }
+
+    .design-picker {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.45rem;
+        margin-bottom: 1.2rem;
+    }
+
+    .design-picker label { position: relative; cursor: pointer; }
+    .design-picker input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+
+    .design-picker span {
+        display: block;
+        padding: 0.45rem 0.85rem;
+        border: 1.5px solid var(--p-ink);
+        border-radius: 999px;
+        background: var(--p-paper);
+        font-size: 0.82rem;
+        font-weight: 750;
+        transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+    }
+
+    .design-picker label:hover span { transform: translateY(-2px); }
+    .design-picker input:checked + span { background: var(--p-ink); color: var(--p-paper); }
+    .design-picker input:focus-visible + span { outline: 2px solid var(--orange); outline-offset: 2px; }
+
+    .studio-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1.4fr) minmax(250px, 0.8fr);
+        gap: clamp(1rem, 3vw, 2rem);
+        align-items: start;
+    }
+
+    .sheet-wrap { min-width: 0; }
+
+    .sheet {
+        position: relative;
+        width: min(100%, 640px);
+        margin-inline: auto;
+        overflow: hidden;
+        border-radius: 6px;
+        background: white;
+        box-shadow: 0 1px 0 rgba(0, 0, 0, 0.05), 0 16px 34px -14px rgba(29, 26, 23, 0.45);
+        rotate: -0.6deg;
+        transition: rotate 0.3s ease;
+    }
+
+    .sheet:hover { rotate: 0deg; }
+
+    .colour-canvas {
+        display: block;
+        width: 100%;
+        height: auto;
+        aspect-ratio: 1;
+        cursor: crosshair;
+        touch-action: manipulation;
+    }
+
+    .kb-cursor {
+        position: absolute;
+        width: 22px;
+        height: 22px;
+        margin: -11px 0 0 -11px;
+        border: 2px solid var(--orange);
+        border-radius: 50%;
+        box-shadow: 0 0 0 2px white;
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    .sheet:has(canvas:focus-visible) .kb-cursor { opacity: 1; }
+
+    .sheet-loading {
+        position: absolute;
+        inset: 0;
+        display: grid;
+        place-items: center;
+        background: rgba(251, 247, 238, 0.82);
+        color: var(--p-ink-soft);
+        font-family: var(--p-mono);
+        font-size: 0.85rem;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.2s ease;
+    }
+
+    .sheet.is-loading .sheet-loading { opacity: 1; }
+
+    .colour-status {
+        margin: 0.9rem auto 0;
+        max-width: 640px;
+        color: var(--p-ink-soft);
+        font-family: var(--p-mono);
+        font-size: 0.78rem;
+        text-align: center;
+    }
+
+    .tools { display: grid; gap: 1rem; min-width: 0; }
+
+    .swatches { margin: 0; padding: 0; border: 0; }
+
+    .swatches legend,
+    .slider > span,
+    .select > span,
+    .seed-row label {
+        margin-bottom: 0.5rem;
+        font-size: 0.72rem;
+        font-weight: 800;
+        letter-spacing: 0.07em;
+        text-transform: uppercase;
+    }
+
+    .swatch-grid { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 0.45rem; }
+
+    .swatch-grid :global(.swatch) { position: relative; display: block; aspect-ratio: 1; cursor: pointer; }
+    .swatch-grid :global(.swatch input) { position: absolute; inset: 0; margin: 0; opacity: 0; cursor: pointer; }
+
+    .swatch-grid :global(.swatch span) {
+        display: block;
+        width: 100%;
+        height: 100%;
+        border: 1.5px solid var(--p-ink);
+        border-radius: 50%;
+        background: var(--c);
+        transition: transform 0.2s cubic-bezier(0.3, 1.6, 0.5, 1);
+    }
+
+    .swatch-grid :global(.swatch:last-child span) {
+        background: repeating-linear-gradient(45deg, #fff 0 4px, #e9e2d4 4px 8px);
+    }
+
+    .swatch-grid :global(.swatch:hover span) { transform: scale(1.1); }
+    .swatch-grid :global(.swatch input:checked + span) { transform: scale(1.12); box-shadow: 0 0 0 3px var(--p-paper-2), 0 0 0 5px var(--p-ink); }
+    .swatch-grid :global(.swatch input:focus-visible + span) { outline: 2px solid var(--orange); outline-offset: 4px; }
+
+    .custom-colour { display: flex; align-items: center; gap: 0.6rem; margin-top: 0.7rem; font-size: 0.82rem; font-weight: 700; }
+    .custom-colour input { width: 44px; height: 30px; padding: 0; border: 1.5px solid var(--p-ink); border-radius: 8px; background: none; cursor: pointer; }
+
+    .check { display: flex; align-items: center; gap: 0.55rem; font-size: 0.88rem; font-weight: 700; cursor: pointer; }
+    .check input { width: 18px; height: 18px; accent-color: var(--p-ink); }
+    .check small { color: var(--p-ink-soft); font-weight: 600; }
+
+    .provenance {
+        padding: 0.9rem 1rem;
+        border: 1.5px dashed rgba(29, 26, 23, 0.35);
+        border-radius: 12px;
+        background: var(--p-paper);
+        font-size: 0.82rem;
+    }
+
+    .design-kind { margin-bottom: 0.4rem; font-weight: 800; }
+    .hash-check { margin-bottom: 0.6rem; color: var(--p-ink-soft); line-height: 1.5; }
+    .provenance code,
+    .verify-result code { color: #7a3d12; }
+    .provenance summary { font-weight: 700; cursor: pointer; }
+
+    .provenance pre,
+    .gen-recipe pre {
+        max-height: 240px;
+        margin: 0.6rem 0 0;
+        overflow: auto;
+        white-space: pre-wrap;
+        font-size: 0.72rem;
+        line-height: 1.5;
+    }
+
+    .provenance pre code { color: var(--p-ink); }
+    :global(.ok) { color: #1f7a4d; font-weight: 900; }
+    :global(.bad) { color: #b3261e; font-weight: 900; }
+
+    .credit {
+        max-width: 830px;
+        margin: 1rem 0 0;
+        color: var(--subtle);
+        font-size: 0.8rem;
+        line-height: 1.6;
+    }
+
+    /* =========================================================
+       GENERATOR
+       ========================================================= */
+
+    .gen-grid {
+        display: grid;
+        grid-template-columns: minmax(260px, 0.8fr) minmax(0, 1.2fr);
+        gap: clamp(1rem, 3vw, 2rem);
+        margin-top: 2.2rem;
+        padding: clamp(0.9rem, 3vw, 1.8rem);
+        border-radius: 24px;
+        background: var(--p-paper-2);
+        color: var(--p-ink);
+    }
+
+    .gen-controls { display: flex; flex-direction: column; gap: 0.85rem; min-width: 0; }
+
+    .slider { display: grid; }
+    .slider > span { display: flex; justify-content: space-between; margin-bottom: 0.2rem; }
+    .slider output { font-family: var(--p-mono); letter-spacing: 0; }
+    .slider input { width: 100%; accent-color: var(--p-terracotta); }
+
+    .seed-row { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; }
+    .seed-row label { flex-basis: 100%; margin-bottom: 0; }
+
+    .seed-input,
+    .select select {
+        width: 100%;
+        min-width: 0;
+        padding: 0.5rem 0.65rem;
+        border: 1.5px solid var(--p-ink);
+        border-radius: 10px;
+        background: var(--p-paper);
+        color: var(--p-ink);
+        font: inherit;
+        font-size: 0.88rem;
+    }
+
+    .seed-input { flex: 1 1 120px; width: auto; font-family: var(--p-mono); }
+    .select { display: grid; }
+
+    .gen-error {
+        margin: 0;
+        padding: 0.6rem 0.75rem;
+        border-left: 3px solid #b3261e;
+        background: #fbe3df;
+        color: #7d1b14;
+        font-family: var(--p-mono);
+        font-size: 0.76rem;
+        line-height: 1.5;
+    }
+
+    .verify-result { margin: 0; min-height: 1.2em; font-size: 0.82rem; line-height: 1.55; }
+
+    .gen-preview { margin: 0; min-width: 0; }
+
+    .gen-paper {
+        width: min(100%, 470px);
+        margin-inline: auto;
+        background: white;
+        box-shadow: 0 16px 34px -14px rgba(29, 26, 23, 0.45);
+        rotate: 0.8deg;
+        transition: opacity 0.2s ease, rotate 0.3s ease;
+    }
+
+    .gen-paper:hover { rotate: 0deg; }
+    .gen-paper.is-invalid { opacity: 0.35; }
+    .gen-paper :global(svg) { display: block; width: 100%; height: auto; }
+
+    .gen-caption { margin-top: 0.9rem; color: var(--p-ink-soft); font-family: var(--p-mono); font-size: 0.74rem; text-align: center; }
+
+    .gen-recipe {
+        grid-column: 1 / -1;
+        padding: 0.8rem 1rem;
+        border: 1.5px dashed rgba(29, 26, 23, 0.35);
+        border-radius: 12px;
+        background: var(--p-paper);
+        font-size: 0.85rem;
+    }
+
+    .gen-recipe summary { font-weight: 700; cursor: pointer; }
+    .gen-recipe code { color: var(--p-ink); }
+
+    /* =========================================================
+       MATHS, EXPORT, TESTS, STATUS
+       ========================================================= */
+
+    .version-row,
+    .export-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 1rem;
+        margin-top: 2.2rem;
+    }
+
+    .version-badge {
+        display: inline-block;
+        margin-bottom: 0.9rem;
+        padding: 0.2rem 0.6rem;
+        border-radius: 999px;
+        background: var(--p-saffron);
+        color: var(--p-ink);
+        font-family: var(--p-mono);
+        font-size: 0.75rem;
+        font-weight: 800;
+    }
+
+    .version-row .card:nth-child(2) .version-badge { background: var(--p-rose); }
+    .version-row .card:nth-child(3) .version-badge { background: var(--p-sage); }
+
+    .maths-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+        gap: 1rem;
+        margin-top: 1rem;
+    }
+
+    .code-card { min-width: 0; }
+
+    .code {
+        max-width: 100%;
+        margin: 0;
+        padding: 1rem;
+        overflow-x: auto;
+        border-radius: 12px;
+        background: #04101c;
+        border: 1px solid var(--border);
+        font-size: 0.72rem;
+        line-height: 1.6;
+    }
+
+    .code code { color: #e6eef5; overflow-wrap: normal; white-space: pre; }
+
+    .dot-list { margin: 0 0 1rem; padding: 0; list-style: none; }
+    .dot-list li { position: relative; padding: 0.4rem 0 0.4rem 1.4rem; color: var(--muted); line-height: 1.6; }
+    .dot-list li::before { content: "✿"; position: absolute; left: 0; top: 0.4rem; color: var(--p-saffron); }
+    .dot-list strong { color: white; }
+
+    .icon-dot {
+        display: inline-grid;
+        place-items: center;
+        width: 40px;
+        height: 40px;
+        margin-bottom: 1rem;
+        border-radius: 50%;
+        background: var(--p-paper);
+        color: var(--p-ink);
+        font-family: var(--p-serif);
+        font-size: 1.2rem;
+        transition: rotate 0.4s cubic-bezier(0.3, 1.6, 0.5, 1);
+    }
+
+    .card:hover .icon-dot { rotate: 20deg; }
+
+    .test-board {
+        display: grid;
+        grid-template-columns: minmax(0, 1.3fr) minmax(0, 0.7fr);
+        gap: 1rem;
+        margin-top: 2.2rem;
+        align-items: start;
+    }
+
+    .test-bars {
+        display: grid;
+        gap: 0.65rem;
+        margin: 0;
+        padding: clamp(1.2rem, 3vw, 1.8rem);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        background: rgba(9, 27, 43, 0.82);
+        list-style: none;
+    }
+
+    .test-bars li {
+        display: grid;
+        grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) 2rem;
+        gap: 0.8rem;
+        align-items: center;
+        font-size: 0.82rem;
+    }
+
+    .test-bars .bar { height: 10px; overflow: hidden; border-radius: 999px; background: rgba(255, 255, 255, 0.06); }
+
+    .test-bars i {
+        display: block;
+        width: var(--w);
+        height: 100%;
+        border-radius: inherit;
+        background: linear-gradient(90deg, var(--p-saffron), var(--p-terracotta));
+        transform-origin: left center;
+        animation: grow 1.2s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+    }
+
+    .test-bars strong { color: white; text-align: right; font-family: var(--p-mono); }
+
+    @keyframes grow { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+
+    .note-card {
+        padding: 1.3rem 1.4rem;
+        border-radius: 16px;
+        background: var(--p-paper);
+        color: var(--p-ink);
+        rotate: 0.8deg;
+    }
+
+    .note-title { margin-bottom: 0.6rem; font-family: var(--p-script); font-size: 1.2rem; }
+    .note-card p:last-child { margin: 0; color: #3d3731; font-size: 0.9rem; line-height: 1.65; }
+
+    .scope-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 1rem;
+        margin-top: 2.2rem;
+    }
+
+    .scope-grid ul { margin: 1rem 0 0; padding-left: 1.2rem; color: var(--muted); line-height: 1.7; }
+    .scope-grid li + li { margin-top: 0.45rem; }
+    .scope-grid .delivered { border-color: rgba(143, 185, 150, 0.6); }
+
+    .skills-section { text-align: center; }
+    .skills-section :global(.skill-links) { justify-content: center; max-width: 980px; margin-inline: auto; }
+
+    .project-end {
+        padding: clamp(4rem, 8vw, 6.5rem) 0;
+        border-top: 1px solid rgba(32, 63, 89, 0.8);
+        text-align: center;
+    }
+
+    .project-end h2 { margin-inline: auto; }
+    .project-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.8rem 1.5rem; margin-top: 1.6rem; }
+    .project-links a { color: var(--blue-light); font-weight: 750; text-decoration: none; }
+    .project-links a:hover { color: white; text-decoration: underline; }
+
+    /* =========================================================
+       RESPONSIVE
+       ========================================================= */
+
+    @media (max-width: 980px) {
+        .studio-grid,
+        .gen-grid { grid-template-columns: 1fr; }
+        .gen-preview { order: -1; }
+    }
+
+    @media (max-width: 880px) {
+        .facts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        .paper-board { grid-template-columns: 1fr; }
+        .hero-art { width: min(100%, 380px); margin-inline: auto; }
+        .version-row,
+        .export-grid,
+        .maths-grid,
+        .test-board,
+        .scope-grid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 620px) {
+        .facts { grid-template-columns: 1fr 1fr; gap: 0.6rem; }
+        .fact { padding: 0.9rem; }
+        .swatch-grid { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+        .test-bars li { grid-template-columns: minmax(0, 1fr) 2rem; }
+        .test-bars .bar { grid-column: 1 / -1; grid-row: 2; }
+        .sheet { rotate: 0deg; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        html { scroll-behavior: auto; }
+        .hero-spin,
+        .test-bars i { animation: none; }
+        .hero-art circle,
+        .hero-art path { animation: none; stroke-dashoffset: 0; }
+        .hero-art path.layer-0 { fill: rgba(226, 114, 91, 0.75); }
+        .hero-art path.layer-2 { fill: rgba(42, 157, 143, 0.55); }
+        .fact,
+        .card,
+        .sheet,
+        .gen-paper,
+        .ink-btn,
+        .paper-btn,
+        .icon-dot,
+        .design-picker span,
+        .swatch-grid :global(.swatch span) { transition: none; }
+    }
+</style>

@@ -12,6 +12,32 @@ import SkillTagList from "../components/SkillTagList.astro";
 const title =
     "Konstantinos Zafeiropoulos | Marketplace Operations, Automation, Data & Web";
 
+const toolbelt = [
+    "Excel & VBA",
+    "Python",
+    "SQL",
+    "PostgreSQL",
+    "n8n",
+    "Google Apps Script",
+    "Power BI",
+    "DuckDB",
+    "WooCommerce",
+    "WordPress",
+    "Gemini API",
+    "Astro",
+    "Git & GitHub",
+];
+
+// Decorative card art for the maths lab (computed at build time).
+const mathOrbitPath = Array.from({ length: 361 }, (_, i) => {
+    const t = (i / 360) * Math.PI * 2;
+    const x = 100 + 82 * Math.sin(3 * t + Math.PI / 2);
+    const y = 60 + 46 * Math.sin(4 * t);
+    return `${i === 0 ? "M" : "L"}${x.toFixed(1)} ${y.toFixed(1)}`;
+}).join(" ");
+
+const mandalaPetals = Array.from({ length: 12 }, (_, i) => i * 30);
+
 const description =
     "Portfolio of Konstantinos Zafeiropoulos: marketplace and e-commerce operations, pricing systems, Excel/VBA, data analysis, and process automation.";
 ---
@@ -72,6 +98,15 @@ const description =
                     </div>
                 </div>
             </section>
+
+            <div class="toolbelt" aria-label="Tools I work with">
+                <ul class="toolbelt-track">
+                    {toolbelt.map((tool) => <li>{tool}</li>)}
+                </ul>
+                <ul class="toolbelt-track" aria-hidden="true">
+                    {toolbelt.map((tool) => <li>{tool}</li>)}
+                </ul>
+            </div>
 
             <!-- =================================================
                  PROJECTS
@@ -398,15 +433,122 @@ const description =
                             Practical systems beyond Rocketeers.
                         </h3>
 
-                        <p>Web development, data, AI, and automation.</p>
+                        <p>Automation, e-commerce, data, and a little maths.</p>
                     </div>
 
+                    <div class="track-filter" role="group" aria-label="Filter projects by area">
+                        <button type="button" aria-pressed="true" data-track-filter="all">All</button>
+                        <button type="button" aria-pressed="false" data-track-filter="automation">Automation</button>
+                        <button type="button" aria-pressed="false" data-track-filter="ecommerce">E-commerce & web</button>
+                        <button type="button" aria-pressed="false" data-track-filter="data">Data & analytics</button>
+                        <button type="button" aria-pressed="false" data-track-filter="lab">Maths lab</button>
+                    </div>
+                    <p class="visually-hidden" aria-live="polite" data-track-status></p>
+
                     <div class="other-project-grid">
+                        <!-- =====================================
+                             AI JOB DISCOVERY & OUTREACH AUTOMATION
+                             ===================================== -->
+
+                        <article class="other-project-card project-link" data-track="automation">
+                            <a
+                                class="card-cover-link"
+                                href="/projects/ai-job-outreach/"
+                                aria-label="View the AI Job Discovery and Outreach Automation case study"
+                            ></a>
+                            <div class="project-visual ai-visual">
+                                <div class="ai-circle" aria-hidden="true">
+                                    AI
+                                </div>
+                            </div>
+
+                            <div class="other-project-body">
+                                <h4>
+                                    <a
+                                        class="card-title-link"
+                                        href="/projects/ai-job-outreach/"
+                                    >
+                                        AI Job Discovery & Outreach Automation
+                                        <span
+                                            class="inline-arrow blue"
+                                            aria-hidden="true">→</span
+                                        >
+                                    </a>
+                                </h4>
+
+                                <p>
+                                    From a Python and Gemini job-API prototype
+                                    to a nine-ATS Google Apps Script job funnel
+                                    with deduplication, conservative screening,
+                                    and human review batches.
+                                </p>
+
+                                <SkillTagList
+                                    skills={[
+                                        "google-apps-script",
+                                        "python",
+                                        "deduplication",
+                                        "ai-workflow-implementation",
+                                    ]}
+                                />
+
+                                <a
+                                    class="view-link"
+                                    href="/projects/ai-job-outreach/"
+                                    >View case study ↗</a
+                                >
+                            </div>
+                        </article>
+
+                        <!-- =====================================
+                             MARKETPLACE OPPORTUNITY INTELLIGENCE
+                             ===================================== -->
+
+                        <article class="other-project-card project-link" data-track="automation">
+                            <a
+                                class="card-cover-link"
+                                href="/projects/rocketeers-intelligence/"
+                                aria-label="View the Marketplace Opportunity Intelligence case study"
+                            ></a>
+                            <div class="project-visual intel-visual">
+                                <svg class="intel-graph" viewBox="0 0 160 100" aria-hidden="true">
+                                    <path d="M22 50 L70 22 L70 78 Z M70 22 L132 50 L70 78" />
+                                    <circle cx="22" cy="50" r="9" />
+                                    <circle cx="70" cy="22" r="9" />
+                                    <circle cx="70" cy="78" r="9" />
+                                    <rect x="118" y="36" width="28" height="28" rx="6" />
+                                </svg>
+                            </div>
+
+                            <div class="other-project-body">
+                                <h4>
+                                    <a class="card-title-link" href="/projects/rocketeers-intelligence/">
+                                        Marketplace Opportunity Intelligence
+                                        <span class="inline-arrow blue" aria-hidden="true">→</span>
+                                    </a>
+                                </h4>
+
+                                <p>
+                                    An n8n and PostgreSQL pipeline that turns
+                                    public-domain museum archives into
+                                    reviewable product-niche evidence, with
+                                    idempotent ingestion and append-only human
+                                    reviews.
+                                </p>
+
+                                <SkillTagList
+                                    skills={["workflow-automation", "sql", "rest-api-integration", "human-oversight"]}
+                                />
+
+                                <a class="view-link" href="/projects/rocketeers-intelligence/">View case study ↗</a>
+                            </div>
+                        </article>
+
                         <!-- =====================================
                              RAME
                              ===================================== -->
 
-                        <article class="other-project-card project-link">
+                        <article class="other-project-card project-link" data-track="ecommerce">
                             <a
                                 class="card-cover-link"
                                 href="/projects/rame/"
@@ -461,65 +603,10 @@ const description =
                         </article>
 
                         <!-- =====================================
-                             AI JOB DISCOVERY & OUTREACH AUTOMATION
-                             ===================================== -->
-
-                        <article class="other-project-card project-link">
-                            <a
-                                class="card-cover-link"
-                                href="/projects/ai-job-outreach/"
-                                aria-label="View the AI Job Discovery and Outreach Automation case study"
-                            ></a>
-                            <div class="project-visual ai-visual">
-                                <div class="ai-circle" aria-hidden="true">
-                                    AI
-                                </div>
-                            </div>
-
-                            <div class="other-project-body">
-                                <h4>
-                                    <a
-                                        class="card-title-link"
-                                        href="/projects/ai-job-outreach/"
-                                    >
-                                        AI Job Discovery & Outreach Automation
-                                        <span
-                                            class="inline-arrow blue"
-                                            aria-hidden="true">→</span
-                                        >
-                                    </a>
-                                </h4>
-
-                                <p>
-                                    An end-to-end Python workflow combining
-                                    three job APIs with Gemini-based relevance
-                                    assessment, structured prompts, reusable
-                                    validation, and human-reviewed outreach
-                                    drafts in Google Sheets.
-                                </p>
-
-                                <SkillTagList
-                                    skills={[
-                                        "python",
-                                        "google-gemini",
-                                        "prompt-design",
-                                        "ai-workflow-implementation",
-                                    ]}
-                                />
-
-                                <a
-                                    class="view-link"
-                                    href="/projects/ai-job-outreach/"
-                                    >View case study ↗</a
-                                >
-                            </div>
-                        </article>
-
-                        <!-- =====================================
                              CHESS ANALYTICS
                              ===================================== -->
 
-                        <article class="other-project-card project-link">
+                        <article class="other-project-card project-link" data-track="data">
                             <a
                                 class="card-cover-link"
                                 href="/projects/chess-analytics/"
@@ -557,7 +644,7 @@ const description =
                              GYM PROGRESS SYSTEM
                              ===================================== -->
 
-                        <article class="other-project-card project-link">
+                        <article class="other-project-card project-link" data-track="data">
                             <a
                                 class="card-cover-link"
                                 href="/projects/gym-progress/"
@@ -602,6 +689,35 @@ const description =
                                 >
                             </div>
                         </article>
+                    </div>
+
+                    <div class="lab-strip" data-track="lab">
+                        <p class="lab-label">Maths lab · generative side projects</p>
+
+                        <div class="lab-grid">
+                            <a class="lab-card math-card" href="/projects/math-wallpapers/">
+                                <svg class="math-orbit" viewBox="0 0 200 120" aria-hidden="true">
+                                    <path d={mathOrbitPath} />
+                                </svg>
+                                <span class="lab-copy">
+                                    <strong>Mathematical OLED Wallpapers <span aria-hidden="true">→</span></strong>
+                                    <span>A deterministic Python engine for true-black attractor and flow-field wallpapers. Run its real presets live in your browser.</span>
+                                </span>
+                            </a>
+
+                            <a class="lab-card mandala-card" href="/projects/mandala-generator/">
+                                <svg class="mandala-mini" viewBox="-60 -60 120 120" aria-hidden="true">
+                                    {mandalaPetals.map((angle) => (
+                                        <ellipse cx="0" cy="-28" rx="9" ry="24" transform={`rotate(${angle})`} />
+                                    ))}
+                                    <circle r="12" />
+                                </svg>
+                                <span class="lab-copy">
+                                    <strong>Mandala & Coloring Puzzle Generator <span aria-hidden="true">→</span></strong>
+                                    <span>Printable, reproducible mandala colouring pages from polar geometry. Colour the real SVGs or generate a new one.</span>
+                                </span>
+                            </a>
+                        </div>
                     </div>
                 </section>
             </section>
@@ -827,6 +943,39 @@ const description =
 </html>
 
 <script>
+    // Project track filter: shows one area of work at a time.
+    const filterButtons = document.querySelectorAll<HTMLButtonElement>("[data-track-filter]");
+    const projectGrid = document.querySelector<HTMLElement>(".other-project-grid");
+    const trackItems = document.querySelectorAll<HTMLElement>(".other-project-grid > [data-track], .lab-strip[data-track]");
+    const trackStatus = document.querySelector<HTMLElement>("[data-track-status]");
+
+    for (const button of filterButtons) {
+        button.addEventListener("click", () => {
+            const track = button.dataset.trackFilter ?? "all";
+            let shown = 0;
+
+            for (const other of filterButtons) {
+                other.setAttribute("aria-pressed", String(other === button));
+            }
+
+            for (const item of trackItems) {
+                const visible = track === "all" || item.dataset.track === track;
+                const lab = item.classList.contains("lab-strip");
+                item.hidden = !visible;
+                item.classList.remove("is-entering");
+                if (visible) {
+                    void item.offsetWidth;
+                    item.classList.add("is-entering");
+                    shown += lab ? item.querySelectorAll(".lab-card").length : 1;
+                }
+            }
+
+            projectGrid?.classList.toggle("is-filtered", track !== "all");
+            if (projectGrid) projectGrid.hidden = track === "lab";
+            if (trackStatus) trackStatus.textContent = `${shown} projects shown`;
+        });
+    }
+
     // Count the hero figures up from zero; the final text is already in the HTML.
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
@@ -1749,8 +1898,266 @@ const description =
     }
     .other-project-grid {
         display: grid;
-        grid-template-columns: repeat(4, minmax(0, 1fr));
+        grid-template-columns: repeat(6, minmax(0, 1fr));
         gap: 1rem;
+    }
+
+    /* Automation work leads as two wide cards; the rest sit three across. */
+    .other-project-grid > .other-project-card { grid-column: span 2; }
+    .other-project-grid > [data-track="automation"] { grid-column: span 3; }
+    .other-project-grid.is-filtered > .other-project-card { grid-column: span 2; }
+
+    .other-project-card[hidden],
+    .lab-strip[hidden] {
+        display: none;
+    }
+
+    .other-project-card.is-entering,
+    .lab-strip.is-entering {
+        animation: card-enter 0.45s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+    }
+
+    @keyframes card-enter {
+        from { opacity: 0; transform: translateY(14px) scale(0.98); }
+        to { opacity: 1; transform: none; }
+    }
+
+    /* =========================================================
+       TOOLBELT MARQUEE
+       ========================================================= */
+
+    .toolbelt {
+        display: flex;
+        overflow: hidden;
+        margin-bottom: clamp(1rem, 3vw, 2rem);
+        padding: 0.9rem 0;
+        border-top: 1px solid var(--border);
+        mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent);
+    }
+
+    .toolbelt-track {
+        display: flex;
+        flex: 0 0 auto;
+        gap: 2.2rem;
+        margin: 0;
+        padding: 0 1.1rem;
+        list-style: none;
+        animation: toolbelt-scroll 38s linear infinite;
+    }
+
+    .toolbelt:hover .toolbelt-track {
+        animation-play-state: paused;
+    }
+
+    .toolbelt li {
+        color: var(--muted);
+        font-size: 0.86rem;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    .toolbelt li::before {
+        content: "◆";
+        margin-right: 0.7rem;
+        color: var(--blue);
+        font-size: 0.6rem;
+        vertical-align: 0.15em;
+    }
+
+    @keyframes toolbelt-scroll {
+        to { transform: translateX(-100%); }
+    }
+
+    /* =========================================================
+       PROJECT TRACK FILTER
+       ========================================================= */
+
+    .track-filter {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 0.5rem;
+        margin: 0 auto 2rem;
+    }
+
+    .track-filter button {
+        min-height: 40px;
+        padding: 0 1rem;
+        border: 1px solid var(--border);
+        border-radius: 999px;
+        background: rgba(9, 27, 43, 0.7);
+        color: var(--muted);
+        font: inherit;
+        font-size: 0.82rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease, transform 0.2s ease;
+    }
+
+    .track-filter button:hover {
+        color: #ffffff;
+        border-color: #2a5d84;
+        transform: translateY(-1px);
+    }
+
+    .track-filter button[aria-pressed="true"] {
+        border-color: var(--blue);
+        background: var(--blue);
+        color: #ffffff;
+    }
+
+    .track-filter button:focus-visible {
+        outline: 2px solid var(--orange);
+        outline-offset: 3px;
+    }
+
+    /* =========================================================
+       INTELLIGENCE CARD VISUAL
+       ========================================================= */
+
+    .intel-graph {
+        width: 150px;
+        overflow: visible;
+    }
+
+    .intel-graph path {
+        fill: none;
+        stroke: #2c6a9c;
+        stroke-width: 2;
+        stroke-dasharray: 6 6;
+        animation: intel-flow 2.4s linear infinite;
+    }
+
+    .intel-graph circle {
+        fill: #0b2338;
+        stroke: var(--blue-light);
+        stroke-width: 2.5;
+    }
+
+    .intel-graph rect {
+        fill: rgba(255, 138, 0, 0.14);
+        stroke: var(--orange);
+        stroke-width: 2.5;
+    }
+
+    @keyframes intel-flow {
+        to { stroke-dashoffset: -24; }
+    }
+
+    /* =========================================================
+       MATHS LAB STRIP
+       ========================================================= */
+
+    .lab-strip {
+        margin-top: 1.4rem;
+    }
+
+    .lab-label {
+        margin: 0 0 0.8rem;
+        color: var(--subtle);
+        font-size: 0.72rem;
+        font-weight: 800;
+        letter-spacing: 0.1em;
+        text-align: left;
+        text-transform: uppercase;
+    }
+
+    .lab-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 1rem;
+    }
+
+    .lab-card {
+        display: flex;
+        align-items: center;
+        gap: 1.2rem;
+        min-width: 0;
+        padding: 1rem 1.2rem;
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        background: var(--bg-card);
+        color: inherit;
+        text-align: left;
+        text-decoration: none;
+        transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    .lab-card:hover {
+        transform: translateY(-3px);
+        border-color: #2a5d84;
+        box-shadow: 0 14px 32px rgba(0, 0, 0, 0.3);
+    }
+
+    .lab-card:focus-visible {
+        outline: 3px solid var(--orange);
+        outline-offset: 3px;
+    }
+
+    .lab-card svg {
+        flex: 0 0 auto;
+        width: 96px;
+        height: 72px;
+        overflow: visible;
+    }
+
+    .math-orbit {
+        border-radius: 10px;
+        background: #000000;
+    }
+
+    .math-orbit path {
+        fill: none;
+        stroke: #b48cff;
+        stroke-width: 1.4;
+        stroke-dasharray: 1400;
+        stroke-dashoffset: 1400;
+        filter: drop-shadow(0 0 3px rgba(180, 140, 255, 0.8));
+        animation: orbit-draw 6s ease-in-out infinite alternate;
+    }
+
+    @keyframes orbit-draw {
+        to { stroke-dashoffset: 0; }
+    }
+
+    .mandala-mini ellipse,
+    .mandala-mini circle {
+        fill: rgba(255, 252, 239, 0.04);
+        stroke: #e9e2cf;
+        stroke-width: 1.6;
+        transition: fill 0.3s ease;
+    }
+
+    .mandala-mini {
+        animation: mandala-turn 30s linear infinite;
+    }
+
+    .mandala-card:hover .mandala-mini ellipse:nth-child(odd) { fill: #f4a7cf; }
+    .mandala-card:hover .mandala-mini ellipse:nth-child(even) { fill: #65baff; }
+    .mandala-card:hover .mandala-mini circle { fill: #ff8a00; }
+
+    @keyframes mandala-turn {
+        to { transform: rotate(360deg); }
+    }
+
+    .lab-copy {
+        display: flex;
+        flex-direction: column;
+        gap: 0.35rem;
+        min-width: 0;
+    }
+
+    .lab-copy strong {
+        color: #ffffff;
+        font-size: 0.98rem;
+    }
+
+    .lab-copy strong span { color: var(--blue); }
+
+    .lab-copy > span {
+        color: var(--muted);
+        font-size: 0.84rem;
+        line-height: 1.55;
     }
 
     .other-project-card {
@@ -2221,6 +2628,12 @@ const description =
         .other-project-grid {
             grid-template-columns: repeat(2, minmax(0, 1fr));
         }
+
+        .other-project-grid > .other-project-card,
+        .other-project-grid > [data-track="automation"],
+        .other-project-grid.is-filtered > .other-project-card {
+            grid-column: auto;
+        }
     }
 
     /* =========================================================
@@ -2274,7 +2687,8 @@ const description =
             grid-template-columns: 1fr;
         }
 
-        .other-project-grid {
+        .other-project-grid,
+        .lab-grid {
             grid-template-columns: 1fr;
         }
 
@@ -2319,9 +2733,19 @@ const description =
             transform: none;
         }
 
+        .toolbelt-track,
         .hero::before,
-        .hero-accent {
+        .hero-accent,
+        .intel-graph path,
+        .math-orbit path,
+        .mandala-mini,
+        .other-project-card.is-entering,
+        .lab-strip.is-entering {
             animation: none;
+        }
+
+        .math-orbit path {
+            stroke-dashoffset: 0;
         }
 
         .rame-mini,

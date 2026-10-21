@@ -1,0 +1,2082 @@
+---
+import SiteHeader from "../../components/SiteHeader.astro";
+import SiteFooter from "../../components/SiteFooter.astro";
+import SeoHead from "../../components/SeoHead.astro";
+import SkillLinks from "../../components/SkillLinks.astro";
+
+const title =
+    "Mathematical OLED Wallpapers | Python Generative Art | Konstantinos Zafeiropoulos";
+
+const description =
+    "A deterministic Python generator for mathematical OLED wallpapers: Clifford attractors and particle flow fields, validated JSON presets, workload budgets and 57 unit tests, with a live in-browser port.";
+
+const projectFacts = [
+    { label: "Type", value: "Personal generative-art project" },
+    { label: "Stack", value: "Python 3.11 · NumPy · Pillow" },
+    { label: "Engines", value: "Clifford attractor · Trigonometric flow field" },
+    { label: "Status", value: "Milestone 1 accepted · exploratory" },
+];
+
+const previews = [
+    {
+        src: "/images/projects/math-wallpapers/clifford-foundation-01-desktop.webp",
+        name: "Clifford Foundation 01",
+        preset: "presets/candidates/clifford_foundation_01.json",
+        alt: "Clifford attractor preview on a pure black background: blue and magenta point clouds form two sweeping folded lobes with dark internal cavities.",
+        meta: "seed 1729 · a −1.4 · b 1.6 · c 1.0 · d 0.7 · 100,000 points",
+        score: "68.5",
+    },
+    {
+        src: "/images/projects/math-wallpapers/flow-foundation-01-desktop.webp",
+        name: "Flow Foundation 01",
+        preset: "presets/candidates/flow_foundation_01.json",
+        alt: "Particle flow-field preview on a pure black background: turquoise and amber trajectories circulate inside a diagonal grid of rounded diamond cells.",
+        meta: "seed 2718 · frequency 2.4 · phase 0.35 · step 0.025 · 400 × 250 points",
+        score: "64.5",
+    },
+];
+
+const validationRules = [
+    { field: "schema_version", rule: "Currently 1" },
+    { field: "family", rule: "strange_attractor or particle_flow_field" },
+    { field: "seed", rule: "Integer 0 – 4,294,967,295" },
+    { field: "composition", rule: "desktop + mobile, each side ≤ 8,192 px" },
+    { field: "budgets", rule: "preview ≤ final ≤ 10,000,000" },
+    { field: "parameters", rule: "Finite numbers only; nesting ≤ 64 levels" },
+];
+
+const engineLimits = [
+    { value: "5,000,000", label: "Max attractor iterations" },
+    { value: "±3.0", label: "Clifford coefficient bounds" },
+    { value: "250,000", label: "Max flow particles" },
+    { value: "5,000,000", label: "Max flow trajectory points" },
+];
+
+const testFiles = [
+    { file: "test_presets.py", count: 17, focus: "Schema fields, UTF-8, malformed JSON, NaN, nesting and integer-size limits" },
+    { file: "test_attractors.py", count: 11, focus: "Same seed → identical points, recurrence check, coefficient and iteration bounds" },
+    { file: "test_flow_fields.py", count: 11, focus: "Normalised vector-field steps, finite output at parameter limits, workload caps" },
+    { file: "test_compositor.py", count: 11, focus: "True-black background, identical pixels for identical input, unsafe coordinates" },
+    { file: "test_cli.py", count: 7, focus: "validate/preview commands, no tracebacks, refuses to overwrite files" },
+];
+
+const codeExcerpt = `x, y = np.random.default_rng(seed).uniform(-0.5, 0.5, size=2)
+points = np.empty((iterations, 2), dtype=np.float64)
+
+for index in range(iterations):
+    next_x = math.sin(a * y) + c * math.cos(a * x)
+    next_y = math.sin(b * x) + d * math.cos(b * y)
+    if not math.isfinite(next_x) or not math.isfinite(next_y):
+        raise AttractorError(
+            f"attractor produced non-finite output at iteration {index}"
+        )
+    points[index] = (next_x, next_y)
+    x, y = next_x, next_y`;
+---
+
+<html lang="en">
+    <head>
+        <SeoHead {title} {description} type="article" />
+    </head>
+
+    <body>
+        <main>
+            <SiteHeader />
+
+            <header class="hero">
+                <div class="breadcrumbs">
+                    <a href="/#projects">Projects</a>
+                    <span aria-hidden="true">→</span>
+                    <strong>Mathematical OLED Wallpapers</strong>
+                </div>
+
+                <div class="oled-board">
+                    <canvas class="hero-canvas" width="900" height="560" aria-hidden="true"></canvas>
+                    <div class="hero-copy">
+                        <p class="board-eyebrow">Personal project · Python · Generative art</p>
+                        <h1>
+                            <span class="h1-line">Mathematical</span>
+                            <span class="h1-neon">OLED Wallpapers</span>
+                        </h1>
+                        <p class="hero-subtitle">
+                            A small offline Python engine that turns a seed and
+                            a handful of coefficients into true-black
+                            wallpapers. The attractor behind this text is the
+                            repository's own preset, re-computed live in your
+                            browser.
+                        </p>
+                        <p class="equation" aria-label="Clifford attractor recurrence">
+                            <span>x′ = sin(a·y) + c·cos(a·x)</span>
+                            <span>y′ = sin(b·x) + d·cos(b·y)</span>
+                        </p>
+                        <a class="hero-cta" href="#playground">Open the playground <span aria-hidden="true">↓</span></a>
+                    </div>
+                </div>
+
+                <SkillLinks
+                    variant="hero"
+                    skills={[
+                        "python",
+                        "generative-art",
+                        "canvas-graphics",
+                        "unit-testing",
+                        "data-visualisation",
+                        "output-validation",
+                        "iterative-development",
+                        "documentation",
+                    ]}
+                />
+            </header>
+
+            <section class="facts" aria-label="Project information">
+                {projectFacts.map((fact) => (
+                    <article class="fact">
+                        <span>{fact.label}</span>
+                        <strong>{fact.value}</strong>
+                    </article>
+                ))}
+            </section>
+
+            <section class="case-section" id="playground" aria-labelledby="mw-playground">
+                <div class="section-heading">
+                    <p class="eyebrow">01 — Live playground</p>
+                    <h2 id="mw-playground">Run the engine yourself.</h2>
+                    <p>
+                        Both mathematical engines, ported line by line from <code>attractors.py</code>, <code>flow_fields.py</code> and <code>compositor.py</code> to browser JavaScript.
+                        Start from the repository's two real presets, change
+                        anything, and download the result as a PNG.
+                    </p>
+                </div>
+
+                <div class="playground">
+                    <div class="stage-wrap">
+                        <div class="stage" data-target="desktop">
+                            <div class="device">
+                                <canvas class="wall-canvas" width="1280" height="720" role="img" aria-label="Generated wallpaper preview"></canvas>
+                                <img
+                                    class="compare-img"
+                                    src={previews[0].src}
+                                    alt=""
+                                    width="1280"
+                                    height="720"
+                                    hidden
+                                />
+                                <span class="compare-line" hidden></span>
+                                <span class="compare-tag compare-tag-js" hidden>Browser port</span>
+                                <span class="compare-tag compare-tag-py" hidden>Python PNG</span>
+                            </div>
+                        </div>
+                        <progress class="render-progress" max="100" value="0" aria-label="Render progress"></progress>
+                        <p class="render-status" role="status" aria-live="polite">Preparing the renderer…</p>
+
+                        <div class="compare-box">
+                            <label class="check">
+                                <input type="checkbox" class="compare-toggle" />
+                                <span>Compare with the Python PNG from the repository</span>
+                            </label>
+                            <label class="compare-slider-label" hidden>
+                                <span>Divider position</span>
+                                <input type="range" class="compare-slider" min="0" max="100" value="50" />
+                            </label>
+                            <p class="compare-note">Available for the unmodified presets at desktop, 1280 px, with the repository palette.</p>
+                        </div>
+                    </div>
+
+                    <form class="controls" aria-label="Wallpaper controls" onsubmit="return false">
+                        <fieldset class="segmented">
+                            <legend>Family</legend>
+                            <label><input type="radio" name="family" value="strange_attractor" checked /><span>Clifford attractor</span></label>
+                            <label><input type="radio" name="family" value="particle_flow_field" /><span>Flow field</span></label>
+                        </fieldset>
+
+                        <div class="preset-row">
+                            <span class="preset-name" aria-live="polite">Clifford Foundation 01</span>
+                            <button type="button" class="ghost-btn reset-preset">Reset to preset</button>
+                        </div>
+
+                        <div class="seed-row">
+                            <label for="mw-seed">Seed</label>
+                            <input id="mw-seed" class="seed-input" type="number" min="0" max="4294967295" step="1" value="1729" inputmode="numeric" />
+                            <button type="button" class="ghost-btn random-seed">Random seed</button>
+                        </div>
+                        <p class="seed-error" role="alert" hidden></p>
+
+                        <div class="param-group" data-family="strange_attractor">
+                            <label class="slider"><span>a <output data-for="a">-1.40</output></span><input type="range" data-key="a" min="-3" max="3" step="0.01" value="-1.4" /></label>
+                            <label class="slider"><span>b <output data-for="b">1.60</output></span><input type="range" data-key="b" min="-3" max="3" step="0.01" value="1.6" /></label>
+                            <label class="slider"><span>c <output data-for="c">1.00</output></span><input type="range" data-key="c" min="-3" max="3" step="0.01" value="1" /></label>
+                            <label class="slider"><span>d <output data-for="d">0.70</output></span><input type="range" data-key="d" min="-3" max="3" step="0.01" value="0.7" /></label>
+                            <label class="slider"><span>Iterations <output data-for="iterations">100,000</output></span><input type="range" data-key="iterations" min="10000" max="2000000" step="10000" value="100000" /></label>
+                        </div>
+
+                        <div class="param-group" data-family="particle_flow_field" hidden>
+                            <label class="slider"><span>Frequency <output data-for="frequency">2.40</output></span><input type="range" data-key="frequency" min="0.2" max="20" step="0.05" value="2.4" /></label>
+                            <label class="slider"><span>Phase <output data-for="phase">0.35</output></span><input type="range" data-key="phase" min="-6.28" max="6.28" step="0.01" value="0.35" /></label>
+                            <label class="slider"><span>Step size <output data-for="step_size">0.025</output></span><input type="range" data-key="step_size" min="0.005" max="0.25" step="0.005" value="0.025" /></label>
+                            <label class="slider"><span>Initial extent <output data-for="initial_extent">1.6</output></span><input type="range" data-key="initial_extent" min="0.1" max="10" step="0.1" value="1.6" /></label>
+                            <label class="slider"><span>Particles <output data-for="particles">400</output></span><input type="range" data-key="particles" min="10" max="2000" step="10" value="400" /></label>
+                            <label class="slider"><span>Steps per particle <output data-for="steps">250</output></span><input type="range" data-key="steps" min="10" max="1000" step="10" value="250" /></label>
+                        </div>
+
+                        <div class="two-col">
+                            <label class="select">
+                                <span>Palette</span>
+                                <select class="palette-select">
+                                    <option value="clifford">Repo: blue → magenta</option>
+                                    <option value="flow">Repo: turquoise → amber</option>
+                                    <option value="ice">Extra: ice</option>
+                                    <option value="ember">Extra: ember</option>
+                                </select>
+                            </label>
+                            <label class="slider compact"><span>Glow <output data-for="glow">2</output></span><input type="range" data-key="glow" min="0" max="6" step="1" value="2" /></label>
+                        </div>
+
+                        <fieldset class="segmented">
+                            <legend>Composition target</legend>
+                            <label><input type="radio" name="target" value="desktop" checked /><span>Desktop 16:9</span></label>
+                            <label><input type="radio" name="target" value="mobile" /><span>Phone 13:6</span></label>
+                        </fieldset>
+
+                        <label class="select">
+                            <span>Output size (longest side)</span>
+                            <select class="res-select">
+                                <option value="1280">1280 px (CLI default)</option>
+                                <option value="2048" class="large-res">2048 px (CLI maximum)</option>
+                            </select>
+                        </label>
+
+                        <div class="action-row">
+                            <button type="button" class="neon-btn download-btn">Download PNG</button>
+                            <button type="button" class="ghost-btn copy-btn">Copy preset JSON</button>
+                        </div>
+
+                        <details class="json-panel">
+                            <summary>Preset JSON for this design</summary>
+                            <pre><code class="preset-json"></code></pre>
+                        </details>
+                    </form>
+                </div>
+
+                <div class="port-notes">
+                    <article>
+                        <h3>Exact: seeding</h3>
+                        <p>
+                            The page re-implements NumPy's <code>SeedSequence</code> and PCG64 generator, so a seed yields the same start
+                            points as <code>np.random.default_rng(seed)</code>.
+                        </p>
+                        <p class="rng-check" aria-live="polite">Checking the RNG port…</p>
+                    </article>
+                    <article>
+                        <h3>Faithful: the maths</h3>
+                        <p>
+                            Same recurrence, same normalised vector field, same
+                            bounding-box framing (12% / 9% margins), colour ramps,
+                            dimmed glow and stroke widths as the Python compositor.
+                        </p>
+                    </article>
+                    <article>
+                        <h3>Approximate: the pixels</h3>
+                        <p>
+                            JavaScript's <code>sin</code>/<code>cos</code> can
+                            differ from C's in the last bit, and the attractor is
+                            chaotic, so individual points drift while the shape
+                            stays the same. Canvas lines are anti-aliased; Pillow's
+                            are not. This is a port, not the Python engine.
+                        </p>
+                    </article>
+                </div>
+            </section>
+
+            <section class="case-section" aria-labelledby="mw-previews">
+                <div class="section-heading">
+                    <p class="eyebrow">02 — Output from the Python engine</p>
+                    <h2 id="mw-previews">The two Milestone 1 previews.</h2>
+                    <p>
+                        These are the repository's own exploratory renders
+                        (1280 × 720, produced by <code>mathwall preview</code>),
+                        converted to WebP for the web. They are explicitly not
+                        approved final artwork.
+                    </p>
+                </div>
+
+                <div class="preview-grid">
+                    {previews.map((preview) => (
+                        <figure class="preview-card">
+                            <div class="preview-frame">
+                                <a href={preview.src} target="_blank" rel="noopener">
+                                    <img
+                                        src={preview.src}
+                                        alt={preview.alt}
+                                        width="1280"
+                                        height="720"
+                                        loading="lazy"
+                                        decoding="async"
+                                    />
+                                </a>
+                            </div>
+                            <figcaption>
+                                <strong>{preview.name}</strong>
+                                <span class="mono">{preview.meta}</span>
+                                <span class="score">Manual AQS review: {preview.score}/100 · “Refine”</span>
+                            </figcaption>
+                        </figure>
+                    ))}
+                </div>
+            </section>
+
+            <section class="case-section" aria-labelledby="mw-how">
+                <div class="section-heading">
+                    <p class="eyebrow">03 — How it works</p>
+                    <h2 id="mw-how">Presets in, deterministic pixels out.</h2>
+                    <p>
+                        A design is a small JSON preset. The CLI validates it,
+                        generates points with a seeded engine, and the
+                        compositor frames and draws them on a true-black canvas.
+                    </p>
+                </div>
+
+                <ol class="pipeline" aria-label="Generation pipeline">
+                    <li><span>1</span><strong>Preset JSON</strong><small>presets.py validates the schema</small></li>
+                    <li><span>2</span><strong>Seeded engine</strong><small>attractors.py · flow_fields.py</small></li>
+                    <li><span>3</span><strong>Compositor</strong><small>framing, colour ramp, glow</small></li>
+                    <li><span>4</span><strong>PNG</strong><small>exclusive write, never overwrites</small></li>
+                </ol>
+
+                <div class="how-grid">
+                    <article class="panel">
+                        <h3>Validated presets</h3>
+                        <p>Every preset must carry these fields before anything is generated:</p>
+                        <dl class="rule-list">
+                            {validationRules.map((rule) => (
+                                <div>
+                                    <dt><code>{rule.field}</code></dt>
+                                    <dd>{rule.rule}</dd>
+                                </div>
+                            ))}
+                        </dl>
+                    </article>
+
+                    <article class="panel">
+                        <h3>Workload budgets</h3>
+                        <p>
+                            Each preset declares a <code>preview</code> and a <code>final</code> budget,
+                            and each engine applies
+                            its own tighter limits <em>before</em> allocating
+                            arrays, so a typo cannot ask for a billion points.
+                        </p>
+                        <div class="limit-grid">
+                            {engineLimits.map((limit) => (
+                                <div>
+                                    <strong>{limit.value}</strong>
+                                    <span>{limit.label}</span>
+                                </div>
+                            ))}
+                        </div>
+                        <p class="small">
+                            The compositor separately caps previews at
+                            3840 × 2160 pixels and 1,000,000 drawn points.
+                        </p>
+                    </article>
+
+                    <article class="panel code-panel">
+                        <h3>The attractor, verbatim</h3>
+                        <p>
+                            From <code>src/mathwall/attractors.py</code>. A
+                            local NumPy generator seeds the start point; every
+                            step is checked for non-finite output.
+                        </p>
+                        <pre class="code"><code>{codeExcerpt}</code></pre>
+                    </article>
+
+                    <article class="panel">
+                        <h3>Determinism, by design</h3>
+                        <ul class="tick-list">
+                            <li>No global randomness: <code>np.random.default_rng(seed)</code> per call.</li>
+                            <li>Same preset and seed → identical points and identical pixels, asserted in tests.</li>
+                            <li>Untouched background pixels must be exactly <code>(0, 0, 0)</code> for OLED panels.</li>
+                            <li>Exact dependency versions locked in <code>uv.lock</code>.</li>
+                            <li>The CLI refuses to overwrite an existing file, including its own preset.</li>
+                        </ul>
+                    </article>
+                </div>
+            </section>
+
+            <section class="case-section" aria-labelledby="mw-quality">
+                <div class="section-heading">
+                    <p class="eyebrow">04 — Tests & artistic review</p>
+                    <h2 id="mw-quality">57 tests for the code, a rubric for the art.</h2>
+                    <p>
+                        Correctness is automated with <code>unittest</code>.
+                        Artistic quality is not: it is judged by people
+                        against a written rubric.
+                    </p>
+                </div>
+
+                <div class="quality-grid">
+                    <article class="panel">
+                        <h3>Unit tests by file</h3>
+                        <ul class="test-list">
+                            {testFiles.map((test) => (
+                                <li>
+                                    <div class="test-head">
+                                        <code>{test.file}</code>
+                                        <span>{test.count} tests</span>
+                                    </div>
+                                    <span class="test-bar" style={`--share: ${(test.count / 17) * 100}%`} aria-hidden="true"></span>
+                                    <p>{test.focus}</p>
+                                </li>
+                            ))}
+                        </ul>
+                    </article>
+
+                    <article class="panel">
+                        <h3>Artistic Quality Score (AQS)</h3>
+                        <p>
+                            The rubric in <code>docs/review-rubrics/artistic-quality-score.md</code> defines eight weighted criteria, from composition (20%)
+                            to OLED suitability (10%), with a final-art target of
+                            85/100 that stays advisory: the owner's explicit
+                            approval is always required.
+                        </p>
+                        <div class="score-bars">
+                            <div>
+                                <span>Clifford Foundation 01</span>
+                                <span class="bar"><i style="--score: 68.5%"></i></span>
+                                <strong>68.5</strong>
+                            </div>
+                            <div>
+                                <span>Flow Foundation 01</span>
+                                <span class="bar"><i style="--score: 64.5%"></i></span>
+                                <strong>64.5</strong>
+                            </div>
+                            <div class="target">
+                                <span>Final-art target</span>
+                                <span class="bar"><i style="--score: 85%"></i></span>
+                                <strong>85</strong>
+                            </div>
+                        </div>
+                        <p class="small">
+                            From <code>docs/reviews/m1-artistic-viability.md</code> (12 October 2026). Both previews: “Refine”, medium
+                            confidence.
+                        </p>
+                    </article>
+                </div>
+            </section>
+
+            <section class="case-section status-section" aria-labelledby="mw-status">
+                <div class="section-heading">
+                    <p class="eyebrow">05 — Current status</p>
+                    <h2 id="mw-status">A proven engine, art still in progress.</h2>
+                    <p>
+                        Milestone 1 was accepted as a technical and
+                        artistic-feasibility milestone only. The review found
+                        the Clifford direction promising and the current
+                        flow-field composition not commercially promising.
+                    </p>
+                </div>
+
+                <div class="scope-grid">
+                    <article class="panel delivered">
+                        <h3>Built and tested</h3>
+                        <ul>
+                            <li>Preset loader and validator with schema version 1</li>
+                            <li>Seeded Clifford attractor and trigonometric flow-field engines</li>
+                            <li>Deterministic compositor with points and lines styles</li>
+                            <li><code>mathwall validate</code> and <code>mathwall preview</code> CLI</li>
+                            <li>Two candidate presets, two previews, a review rubric and an M1 review</li>
+                        </ul>
+                    </article>
+                    <article class="panel">
+                        <h3>Not claimed</h3>
+                        <ul>
+                            <li>Final-resolution exports or approved artwork</li>
+                            <li>A wallpaper collection or anything on sale</li>
+                            <li>Physical OLED testing</li>
+                            <li>Milestone 2 work, which has not been authorised yet</li>
+                        </ul>
+                    </article>
+                </div>
+            </section>
+
+            <section class="case-section skills-section" aria-labelledby="mw-skills">
+                <div class="section-heading centered-heading">
+                    <p class="eyebrow">06 — Skills demonstrated</p>
+                    <h2 id="mw-skills">Reproducible maths, careful limits.</h2>
+                    <p>Select any skill to see its evidence across the portfolio.</p>
+                </div>
+
+                <SkillLinks
+                    skills={[
+                        "python",
+                        "generative-art",
+                        "canvas-graphics",
+                        "unit-testing",
+                        "data-visualisation",
+                        "output-validation",
+                        "data-quality",
+                        "debugging",
+                        "system-architecture",
+                        "iterative-development",
+                        "documentation",
+                        "git-github",
+                        "html-css",
+                    ]}
+                />
+            </section>
+
+            <section class="project-end">
+                <p class="eyebrow">Portfolio</p>
+                <h2>Explore another project.</h2>
+                <div class="project-links">
+                    <a href="/projects/mandala-generator/">Mandala & Coloring Puzzle Generator <span aria-hidden="true">→</span></a>
+                    <a href="/projects/chess-analytics/">Chess analytics <span aria-hidden="true">→</span></a>
+                    <a href="/#projects">All projects <span aria-hidden="true">→</span></a>
+                </div>
+            </section>
+        </main>
+
+        <SiteFooter />
+    </body>
+</html>
+
+<script>
+    /* =========================================================
+       NUMPY-COMPATIBLE SEEDING (SeedSequence + PCG64)
+       Mirrors np.random.default_rng(seed).uniform(low, high).
+       ========================================================= */
+
+    const mul32 = (a: number, b: number) => Math.imul(a, b) >>> 0;
+
+    function seedSequenceState(seed: number, words64: number): bigint[] {
+        const entropy: number[] = [];
+        let s = BigInt(seed);
+        if (s === 0n) entropy.push(0);
+        while (s > 0n) {
+            entropy.push(Number(s & 0xffffffffn));
+            s >>= 32n;
+        }
+        const POOL = 4;
+        let hashA = 0x43b0d7e5;
+        const hashmix = (value: number) => {
+            value = (value ^ hashA) >>> 0;
+            hashA = mul32(hashA, 0x931e8875);
+            value = mul32(value, hashA);
+            return (value ^ (value >>> 16)) >>> 0;
+        };
+        const mix = (x: number, y: number) => {
+            const r = (mul32(0xca01f9dd, x) - mul32(0x4973f715, y)) >>> 0;
+            return (r ^ (r >>> 16)) >>> 0;
+        };
+        const pool: number[] = [];
+        for (let i = 0; i < POOL; i++) pool[i] = hashmix(i < entropy.length ? entropy[i] : 0);
+        for (let src = 0; src < POOL; src++) {
+            for (let dst = 0; dst < POOL; dst++) {
+                if (src !== dst) pool[dst] = mix(pool[dst], hashmix(pool[src]));
+            }
+        }
+        for (let src = POOL; src < entropy.length; src++) {
+            for (let dst = 0; dst < POOL; dst++) pool[dst] = mix(pool[dst], hashmix(entropy[src]));
+        }
+        let hashB = 0x8b51f9dd;
+        const words: number[] = [];
+        for (let i = 0; i < words64 * 2; i++) {
+            let value = pool[i % POOL];
+            value = (value ^ hashB) >>> 0;
+            hashB = mul32(hashB, 0x58f38ded);
+            value = mul32(value, hashB);
+            words.push((value ^ (value >>> 16)) >>> 0);
+        }
+        const out: bigint[] = [];
+        for (let i = 0; i < words64; i++) out.push((BigInt(words[2 * i + 1]) << 32n) | BigInt(words[2 * i]));
+        return out;
+    }
+
+    const MASK64 = (1n << 64n) - 1n;
+    const MASK128 = (1n << 128n) - 1n;
+    const PCG_MULT = (2549297995355413924n << 64n) + 4865540595714422341n;
+
+    class PCG64 {
+        state = 0n;
+        inc = 0n;
+        constructor(seed: number) {
+            const v = seedSequenceState(seed, 4);
+            this.inc = ((((v[2] << 64n) | v[3]) << 1n) | 1n) & MASK128;
+            this.step();
+            this.state = (this.state + ((v[0] << 64n) | v[1])) & MASK128;
+            this.step();
+        }
+        step() {
+            this.state = (this.state * PCG_MULT + this.inc) & MASK128;
+        }
+        next64() {
+            this.step();
+            const s = this.state;
+            const x = ((s >> 64n) ^ s) & MASK64;
+            const rot = BigInt(Number(s >> 122n));
+            return ((x >> rot) | (x << ((64n - rot) & 63n))) & MASK64;
+        }
+        random() {
+            return Number(this.next64() >> 11n) / 9007199254740992;
+        }
+        uniform(low: number, high: number) {
+            return low + (high - low) * this.random();
+        }
+    }
+
+    /* =========================================================
+       PRESETS, PALETTES AND STATE
+       ========================================================= */
+
+    type Family = "strange_attractor" | "particle_flow_field";
+    type RGB = [number, number, number];
+
+    const PRESETS = {
+        strange_attractor: {
+            name: "Clifford Foundation 01",
+            seed: 1729,
+            params: { a: -1.4, b: 1.6, c: 1.0, d: 0.7, iterations: 100000 },
+            palette: "clifford",
+            glow: 2,
+            image: "/images/projects/math-wallpapers/clifford-foundation-01-desktop.webp",
+        },
+        particle_flow_field: {
+            name: "Flow Foundation 01",
+            seed: 2718,
+            params: { frequency: 2.4, phase: 0.35, step_size: 0.025, initial_extent: 1.6, particles: 400, steps: 250 },
+            palette: "flow",
+            glow: 1,
+            image: "/images/projects/math-wallpapers/flow-foundation-01-desktop.webp",
+        },
+    } as const;
+
+    const PALETTES: Record<string, { color: RGB; accent: RGB }> = {
+        clifford: { color: [24, 126, 255], accent: [232, 60, 184] },
+        flow: { color: [20, 220, 188], accent: [255, 154, 46] },
+        ice: { color: [150, 205, 255], accent: [235, 250, 255] },
+        ember: { color: [255, 64, 32], accent: [255, 214, 92] },
+    };
+
+    const COMPOSITION = { desktop: [3840, 2160], mobile: [1440, 3120] } as const;
+    const MAX_SEED = 4294967295;
+
+    const isSmallDevice = window.matchMedia("(max-width: 700px), (pointer: coarse)").matches;
+    const POINT_CAP = isSmallDevice ? 400000 : 2000000;
+
+    const state = {
+        family: "strange_attractor" as Family,
+        seeds: { strange_attractor: 1729, particle_flow_field: 2718 } as Record<Family, number>,
+        params: {
+            strange_attractor: { ...PRESETS.strange_attractor.params },
+            particle_flow_field: { ...PRESETS.particle_flow_field.params },
+        } as Record<Family, Record<string, number>>,
+        palette: "clifford",
+        glow: 2,
+        target: "desktop" as "desktop" | "mobile",
+        res: 1280,
+    };
+
+    /* =========================================================
+       ENGINES (ports of attractors.py and flow_fields.py)
+       ========================================================= */
+
+    const nextFrame = () => new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
+    let renderToken = 0;
+
+    interface PointSet {
+        pts: Float32Array;
+        trajectories: number; // 0 for a single attractor trajectory
+        steps: number;
+        min: [number, number];
+        max: [number, number];
+    }
+
+    async function computeAttractor(p: Record<string, number>, seed: number, iterations: number, token: number, onProgress: (f: number) => void): Promise<PointSet | null> {
+        const rng = new PCG64(seed);
+        let x = rng.uniform(-0.5, 0.5);
+        let y = rng.uniform(-0.5, 0.5);
+        const { a, b, c, d } = p;
+        const pts = new Float32Array(iterations * 2);
+        let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+        let index = 0;
+        while (index < iterations) {
+            const end = Math.min(iterations, index + 250000);
+            for (; index < end; index++) {
+                const nx = Math.sin(a * y) + c * Math.cos(a * x);
+                const ny = Math.sin(b * x) + d * Math.cos(b * y);
+                if (!Number.isFinite(nx) || !Number.isFinite(ny)) throw new Error(`attractor produced non-finite output at iteration ${index}`);
+                pts[index * 2] = nx;
+                pts[index * 2 + 1] = ny;
+                if (nx < minX) minX = nx;
+                if (nx > maxX) maxX = nx;
+                if (ny < minY) minY = ny;
+                if (ny > maxY) maxY = ny;
+                x = nx;
+                y = ny;
+            }
+            onProgress(index / iterations);
+            await nextFrame();
+            if (token !== renderToken) return null;
+        }
+        return { pts, trajectories: 0, steps: iterations, min: [minX, minY], max: [maxX, maxY] };
+    }
+
+    async function computeFlow(p: Record<string, number>, seed: number, particles: number, steps: number, token: number, onProgress: (f: number) => void): Promise<PointSet | null> {
+        const rng = new PCG64(seed);
+        const positions = new Float64Array(particles * 2);
+        // Row-major fill, exactly like uniform(size=(particle_count, 2)).
+        for (let i = 0; i < particles * 2; i++) positions[i] = rng.uniform(-p.initial_extent, p.initial_extent);
+        const { frequency, phase, step_size } = p;
+        const pts = new Float32Array(particles * steps * 2);
+        let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+        const chunk = Math.max(1, Math.floor(200000 / particles));
+        for (let step = 0; step < steps; ) {
+            const end = Math.min(steps, step + chunk);
+            for (; step < end; step++) {
+                for (let i = 0; i < particles; i++) {
+                    const px = positions[i * 2];
+                    const py = positions[i * 2 + 1];
+                    let vx = Math.sin(frequency * py + phase);
+                    let vy = Math.cos(frequency * px - phase);
+                    const speed = Math.hypot(vx, vy);
+                    if (speed > 0) {
+                        vx /= speed;
+                        vy /= speed;
+                    }
+                    const nx = px + step_size * vx;
+                    const ny = py + step_size * vy;
+                    if (!Number.isFinite(nx) || !Number.isFinite(ny)) throw new Error(`flow field produced non-finite output at step ${step}`);
+                    positions[i * 2] = nx;
+                    positions[i * 2 + 1] = ny;
+                    const o = (i * steps + step) * 2;
+                    pts[o] = nx;
+                    pts[o + 1] = ny;
+                    if (nx < minX) minX = nx;
+                    if (nx > maxX) maxX = nx;
+                    if (ny < minY) minY = ny;
+                    if (ny > maxY) maxY = ny;
+                }
+            }
+            onProgress(step / steps);
+            await nextFrame();
+            if (token !== renderToken) return null;
+        }
+        return { pts, trajectories: particles, steps, min: [minX, minY], max: [maxX, maxY] };
+    }
+
+    /* =========================================================
+       COMPOSITOR (port of compositor.py)
+       ========================================================= */
+
+    function transformInPlace(set: PointSet, width: number, height: number, margin: number) {
+        const eps = 2.220446049250313e-16;
+        const spanX = Math.max(set.max[0] - set.min[0], eps);
+        const spanY = Math.max(set.max[1] - set.min[1], eps);
+        const scale = Math.min((width * (1 - 2 * margin)) / spanX, (height * (1 - 2 * margin)) / spanY);
+        const cx = (set.min[0] + set.max[0]) / 2;
+        const cy = (set.min[1] + set.max[1]) / 2;
+        const pts = set.pts;
+        for (let i = 0; i < pts.length; i += 2) {
+            pts[i] = Math.round((pts[i] - cx) * scale + width * 0.5);
+            pts[i + 1] = Math.round(height * 0.5 - (pts[i + 1] - cy) * scale);
+        }
+    }
+
+    const lerpColor = (from: RGB, to: RGB, f: number): RGB => [0, 1, 2].map((k) => Math.round(from[k] + (to[k] - from[k]) * f)) as RGB;
+    const dim = (c: RGB): RGB => c.map((v) => Math.round(v * 0.28)) as RGB;
+
+    function boxBlur(src: Float32Array, w: number, h: number, r: number) {
+        const tmp = new Float32Array(src.length);
+        const size = 2 * r + 1;
+        for (let y = 0; y < h; y++) {
+            const row = y * w;
+            let acc = 0;
+            for (let x = -r; x <= r; x++) acc += src[row + Math.min(w - 1, Math.max(0, x))];
+            for (let x = 0; x < w; x++) {
+                tmp[row + x] = acc / size;
+                acc += src[row + Math.min(w - 1, x + r + 1)] - src[row + Math.max(0, x - r)];
+            }
+        }
+        for (let x = 0; x < w; x++) {
+            let acc = 0;
+            for (let y = -r; y <= r; y++) acc += tmp[Math.min(h - 1, Math.max(0, y)) * w + x];
+            for (let y = 0; y < h; y++) {
+                src[y * w + x] = acc / size;
+                acc += tmp[Math.min(h - 1, y + r + 1) * w + x] - tmp[Math.max(0, y - r) * w + x];
+            }
+        }
+    }
+
+    // Three box passes approximate Pillow's GaussianBlur(radius=sigma).
+    function gaussianApprox(mask: Float32Array, w: number, h: number, sigma: number) {
+        const n = 3;
+        const ideal = Math.sqrt((12 * sigma * sigma) / n + 1);
+        let wl = Math.floor(ideal);
+        if (wl % 2 === 0) wl--;
+        const wu = wl + 2;
+        const m = Math.round((12 * sigma * sigma - n * wl * wl - 4 * n * wl - 3 * n) / (-4 * wl - 4));
+        for (let i = 0; i < n; i++) boxBlur(mask, w, h, ((i < m ? wl : wu) - 1) / 2);
+    }
+
+    async function drawPoints(ctx: CanvasRenderingContext2D, set: PointSet, w: number, h: number, color: RGB, accent: RGB, glow: number, token: number, onProgress: (f: number) => void) {
+        const image = ctx.createImageData(w, h);
+        const data = image.data;
+        for (let i = 3; i < data.length; i += 4) data[i] = 255;
+        const pts = set.pts;
+        const n = pts.length / 2;
+
+        if (glow > 0) {
+            const mask = new Float32Array(w * h);
+            for (let i = 0; i < n; i++) {
+                const x = pts[i * 2], y = pts[i * 2 + 1];
+                if (x >= 0 && x < w && y >= 0 && y < h) mask[y * w + x] = 255;
+            }
+            gaussianApprox(mask, w, h, glow);
+            const g = dim(color);
+            for (let i = 0; i < mask.length; i++) {
+                const m = mask[i] / 255;
+                if (m > 0.001) {
+                    data[i * 4] = g[0] * m;
+                    data[i * 4 + 1] = g[1] * m;
+                    data[i * 4 + 2] = g[2] * m;
+                }
+            }
+            if (token !== renderToken) return;
+        }
+
+        // np.array_split into min(32, n) groups, each with its own ramp colour.
+        const groups = Math.min(32, n);
+        const base = Math.floor(n / groups);
+        const extra = n % groups;
+        let start = 0;
+        let lastPaint = performance.now();
+        for (let gIndex = 0; gIndex < groups; gIndex++) {
+            const size = base + (gIndex < extra ? 1 : 0);
+            const [r, g, b] = lerpColor(color, accent, gIndex / Math.max(1, groups - 1));
+            for (let i = start; i < start + size; i++) {
+                const x = pts[i * 2], y = pts[i * 2 + 1];
+                if (x >= 0 && x < w && y >= 0 && y < h) {
+                    const o = (y * w + x) * 4;
+                    data[o] = r;
+                    data[o + 1] = g;
+                    data[o + 2] = b;
+                }
+            }
+            start += size;
+            if (performance.now() - lastPaint > 30 || gIndex === groups - 1) {
+                ctx.putImageData(image, 0, 0);
+                onProgress((gIndex + 1) / groups);
+                await nextFrame();
+                if (token !== renderToken) return;
+                lastPaint = performance.now();
+            }
+        }
+    }
+
+    async function drawLines(ctx: CanvasRenderingContext2D, set: PointSet, color: RGB, accent: RGB, glow: number, token: number, onProgress: (f: number) => void) {
+        const { pts, trajectories, steps } = set;
+        ctx.lineJoin = "round";
+        ctx.lineCap = "butt";
+        const pass = async (isGlow: boolean) => {
+            let lastPaint = performance.now();
+            if (isGlow) {
+                const g = dim(color);
+                ctx.strokeStyle = `rgb(${g[0]},${g[1]},${g[2]})`;
+                ctx.lineWidth = 1 + 2 * glow;
+            } else {
+                ctx.lineWidth = 1;
+            }
+            for (let t = 0; t < trajectories; t++) {
+                if (!isGlow) {
+                    const [r, g, b] = lerpColor(color, accent, t / Math.max(1, trajectories - 1));
+                    ctx.strokeStyle = `rgb(${r},${g},${b})`;
+                }
+                ctx.beginPath();
+                const o = t * steps * 2;
+                ctx.moveTo(pts[o] + 0.5, pts[o + 1] + 0.5);
+                for (let s = 1; s < steps; s++) ctx.lineTo(pts[o + s * 2] + 0.5, pts[o + s * 2 + 1] + 0.5);
+                ctx.stroke();
+                if (performance.now() - lastPaint > 24) {
+                    onProgress(((isGlow ? 0 : glow > 0 ? 0.5 : 0) + (t / trajectories) * (glow > 0 ? 0.5 : 1)));
+                    await nextFrame();
+                    if (token !== renderToken) return false;
+                    lastPaint = performance.now();
+                }
+            }
+            return true;
+        };
+        if (glow > 0 && !(await pass(true))) return;
+        await pass(false);
+        onProgress(1);
+    }
+
+    /* =========================================================
+       UI WIRING
+       ========================================================= */
+
+    const root = document.querySelector<HTMLElement>(".playground");
+    if (root) {
+        const canvas = root.querySelector<HTMLCanvasElement>(".wall-canvas")!;
+        const ctx = canvas.getContext("2d")!;
+        const stage = root.querySelector<HTMLElement>(".stage")!;
+        const progress = root.querySelector<HTMLProgressElement>(".render-progress")!;
+        const status = root.querySelector<HTMLElement>(".render-status")!;
+        const seedInput = root.querySelector<HTMLInputElement>(".seed-input")!;
+        const seedError = root.querySelector<HTMLElement>(".seed-error")!;
+        const presetName = root.querySelector<HTMLElement>(".preset-name")!;
+        const paletteSelect = root.querySelector<HTMLSelectElement>(".palette-select")!;
+        const resSelect = root.querySelector<HTMLSelectElement>(".res-select")!;
+        const jsonCode = root.querySelector<HTMLElement>(".preset-json")!;
+        const compareToggle = root.querySelector<HTMLInputElement>(".compare-toggle")!;
+        const compareSlider = root.querySelector<HTMLInputElement>(".compare-slider")!;
+        const compareSliderLabel = root.querySelector<HTMLElement>(".compare-slider-label")!;
+        const compareImg = root.querySelector<HTMLImageElement>(".compare-img")!;
+        const compareLine = root.querySelector<HTMLElement>(".compare-line")!;
+        const compareTags = root.querySelectorAll<HTMLElement>(".compare-tag");
+        const compareNote = root.querySelector<HTMLElement>(".compare-note")!;
+        const sliders = root.querySelectorAll<HTMLInputElement>("input[type=range][data-key]");
+        let lastRender = { points: 0, ms: 0 };
+
+        if (isSmallDevice) {
+            root.querySelector<HTMLOptionElement>(".large-res")?.remove();
+            root.querySelectorAll<HTMLInputElement>('[data-key="iterations"]').forEach((el) => (el.max = String(POINT_CAP)));
+        }
+
+        const formatValue = (key: string, value: number) => {
+            if (key === "iterations" || key === "particles" || key === "steps") return value.toLocaleString("en-GB");
+            if (key === "glow") return String(value);
+            if (key === "step_size") return value.toFixed(3);
+            if (key === "initial_extent") return value.toFixed(1);
+            return value.toFixed(2);
+        };
+
+        const setOutput = (key: string, value: number) => {
+            const out = root.querySelector<HTMLOutputElement>(`output[data-for="${key}"]`);
+            if (out) out.textContent = formatValue(key, value);
+        };
+
+        const dims = (): [number, number] => {
+            const [sw, sh] = COMPOSITION[state.target];
+            const scale = state.res / Math.max(sw, sh);
+            return [Math.max(1, Math.round(sw * scale)), Math.max(1, Math.round(sh * scale))];
+        };
+
+        const isUnmodifiedPreset = () => {
+            const preset = PRESETS[state.family];
+            const params = state.params[state.family];
+            return (
+                state.seeds[state.family] === preset.seed &&
+                Object.entries(preset.params).every(([k, v]) => params[k] === v) &&
+                state.palette === preset.palette &&
+                state.glow === preset.glow
+            );
+        };
+
+        const presetJson = () => {
+            const p = state.params[state.family];
+            const parameters =
+                state.family === "strange_attractor"
+                    ? { system: "clifford", a: p.a, b: p.b, c: p.c, d: p.d }
+                    : { system: "trigonometric", frequency: p.frequency, phase: p.phase, step_size: p.step_size, initial_extent: p.initial_extent };
+            const budget = state.family === "strange_attractor" ? p.iterations : p.particles * p.steps;
+            return {
+                schema_version: 1,
+                name: isUnmodifiedPreset() ? PRESETS[state.family].name : `Playground ${state.family === "strange_attractor" ? "Clifford" : "Flow"} ${state.seeds[state.family]}`,
+                family: state.family,
+                seed: state.seeds[state.family],
+                parameters,
+                composition: {
+                    desktop: { width: 3840, height: 2160 },
+                    mobile: { width: 1440, height: 3120 },
+                },
+                budgets: { preview: budget, final: Math.max(5000000, budget) },
+            };
+        };
+
+        const updateCompare = () => {
+            const eligible = isUnmodifiedPreset() && state.target === "desktop" && state.res === 1280;
+            compareToggle.disabled = !eligible;
+            compareNote.textContent = eligible
+                ? "Drag the divider: left of it is this page's port, right of it is the repository's PNG."
+                : "Available for the unmodified presets at desktop, 1280 px, with the repository palette.";
+            const show = eligible && compareToggle.checked;
+            compareImg.src = PRESETS[state.family].image;
+            compareImg.hidden = !show;
+            compareLine.hidden = !show;
+            compareTags.forEach((tag) => (tag.hidden = !show));
+            compareSliderLabel.hidden = !show;
+            const pos = Number(compareSlider.value);
+            stage.style.setProperty("--split", `${pos}%`);
+        };
+
+        const syncControls = () => {
+            const params = state.params[state.family];
+            root.querySelector<HTMLInputElement>(`input[name=family][value=${state.family}]`)!.checked = true;
+            root.querySelectorAll<HTMLElement>(".param-group").forEach((group) => {
+                group.hidden = group.dataset.family !== state.family;
+            });
+            sliders.forEach((slider) => {
+                const key = slider.dataset.key!;
+                const value = key === "glow" ? state.glow : params[key];
+                if (value === undefined) return;
+                slider.value = String(value);
+                setOutput(key, value);
+            });
+            seedInput.value = String(state.seeds[state.family]);
+            seedError.hidden = true;
+            paletteSelect.value = state.palette;
+            presetName.textContent = isUnmodifiedPreset() ? PRESETS[state.family].name : `Modified from ${PRESETS[state.family].name}`;
+            jsonCode.textContent = JSON.stringify(presetJson(), null, 2);
+            updateCompare();
+        };
+
+        let debounce = 0;
+        const scheduleRender = (delay = 140) => {
+            window.clearTimeout(debounce);
+            presetName.textContent = isUnmodifiedPreset() ? PRESETS[state.family].name : `Modified from ${PRESETS[state.family].name}`;
+            jsonCode.textContent = JSON.stringify(presetJson(), null, 2);
+            updateCompare();
+            debounce = window.setTimeout(render, delay);
+        };
+
+        async function render() {
+            const token = ++renderToken;
+            const [w, h] = dims();
+            canvas.width = w;
+            canvas.height = h;
+            stage.dataset.target = state.target;
+            ctx.fillStyle = "#000";
+            ctx.fillRect(0, 0, w, h);
+            progress.value = 0;
+            stage.classList.add("is-rendering");
+            status.textContent = "Rendering…";
+            const t0 = performance.now();
+            const p = state.params[state.family];
+            const seed = state.seeds[state.family];
+            const palette = PALETTES[state.palette];
+            try {
+                let set: PointSet | null;
+                if (state.family === "strange_attractor") {
+                    const iterations = Math.min(p.iterations, POINT_CAP);
+                    set = await computeAttractor(p, seed, iterations, token, (f) => (progress.value = f * 35));
+                    if (!set) return;
+                    transformInPlace(set, w, h, 0.12);
+                    await drawPoints(ctx, set, w, h, palette.color, palette.accent, state.glow, token, (f) => (progress.value = 35 + f * 65));
+                } else {
+                    let particles = p.particles;
+                    let steps = p.steps;
+                    if (particles * steps > POINT_CAP) steps = Math.max(1, Math.floor(POINT_CAP / particles));
+                    set = await computeFlow(p, seed, particles, steps, token, (f) => (progress.value = f * 35));
+                    if (!set) return;
+                    transformInPlace(set, w, h, 0.09);
+                    await drawLines(ctx, set, palette.color, palette.accent, state.glow, token, (f) => (progress.value = 35 + f * 65));
+                }
+                if (token !== renderToken) return;
+                const ms = Math.round(performance.now() - t0);
+                const points = set.pts.length / 2;
+                lastRender = { points, ms };
+                progress.value = 100;
+                stage.classList.remove("is-rendering");
+                const capped = state.family === "strange_attractor" ? p.iterations > POINT_CAP : p.particles * p.steps > POINT_CAP;
+                status.textContent = `Rendered ${points.toLocaleString("en-GB")} points at ${w} × ${h} in ${ms.toLocaleString("en-GB")} ms${capped ? " (capped on this device)" : ""}.`;
+            } catch (error) {
+                stage.classList.remove("is-rendering");
+                status.textContent = `Engine error: ${(error as Error).message}`;
+            }
+        }
+
+        // Family switch
+        root.querySelectorAll<HTMLInputElement>("input[name=family]").forEach((radio) => {
+            radio.addEventListener("change", () => {
+                if (!radio.checked) return;
+                state.family = radio.value as Family;
+                state.palette = PRESETS[state.family].palette;
+                state.glow = PRESETS[state.family].glow;
+                syncControls();
+                scheduleRender(0);
+            });
+        });
+
+        root.querySelector(".reset-preset")?.addEventListener("click", () => {
+            const preset = PRESETS[state.family];
+            state.params[state.family] = { ...preset.params };
+            state.seeds[state.family] = preset.seed;
+            state.palette = preset.palette;
+            state.glow = preset.glow;
+            syncControls();
+            scheduleRender(0);
+        });
+
+        sliders.forEach((slider) => {
+            slider.addEventListener("input", () => {
+                const key = slider.dataset.key!;
+                const value = Number(slider.value);
+                if (key === "glow") state.glow = value;
+                else state.params[state.family][key] = value;
+                setOutput(key, value);
+                scheduleRender();
+            });
+        });
+
+        seedInput.addEventListener("input", () => {
+            const raw = seedInput.value.trim();
+            const value = Number(raw);
+            if (raw === "" || !Number.isInteger(value) || value < 0 || value > MAX_SEED) {
+                seedError.textContent = `seed must be an integer between 0 and ${MAX_SEED}`;
+                seedError.hidden = false;
+                return;
+            }
+            seedError.hidden = true;
+            state.seeds[state.family] = value;
+            scheduleRender(250);
+        });
+
+        root.querySelector(".random-seed")?.addEventListener("click", () => {
+            const buffer = new Uint32Array(1);
+            crypto.getRandomValues(buffer);
+            state.seeds[state.family] = buffer[0];
+            seedInput.value = String(buffer[0]);
+            seedError.hidden = true;
+            scheduleRender(0);
+        });
+
+        paletteSelect.addEventListener("change", () => {
+            state.palette = paletteSelect.value;
+            scheduleRender(0);
+        });
+
+        root.querySelectorAll<HTMLInputElement>("input[name=target]").forEach((radio) => {
+            radio.addEventListener("change", () => {
+                if (!radio.checked) return;
+                state.target = radio.value as "desktop" | "mobile";
+                scheduleRender(0);
+            });
+        });
+
+        resSelect.addEventListener("change", () => {
+            state.res = Number(resSelect.value);
+            scheduleRender(0);
+        });
+
+        compareToggle.addEventListener("change", updateCompare);
+        compareSlider.addEventListener("input", updateCompare);
+
+        root.querySelector(".download-btn")?.addEventListener("click", () => {
+            canvas.toBlob((blob) => {
+                if (!blob) return;
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement("a");
+                const slug = (presetJson().name as string).toLowerCase().replace(/[^a-z0-9]+/g, "-");
+                link.href = url;
+                link.download = `${slug}-${state.target}-seed-${state.seeds[state.family]}.png`;
+                document.body.append(link);
+                link.click();
+                link.remove();
+                setTimeout(() => URL.revokeObjectURL(url), 4000);
+                status.textContent = `Saved ${canvas.width} × ${canvas.height} PNG (${lastRender.points.toLocaleString("en-GB")} points).`;
+            }, "image/png");
+        });
+
+        root.querySelector(".copy-btn")?.addEventListener("click", async () => {
+            const text = JSON.stringify(presetJson(), null, 2) + "\n";
+            try {
+                await navigator.clipboard.writeText(text);
+                status.textContent = "Preset JSON copied. It passes the repository's schema rules.";
+            } catch {
+                root.querySelector<HTMLDetailsElement>(".json-panel")!.open = true;
+                status.textContent = "Clipboard unavailable: the preset JSON is shown below.";
+            }
+        });
+
+        // RNG self-check against NumPy's documented output.
+        const rngCheck = document.querySelector<HTMLElement>(".rng-check");
+        if (rngCheck) {
+            const value = new PCG64(12345).random();
+            const ok = value === 0.22733602246716966;
+            const start = new PCG64(1729);
+            const sx = start.uniform(-0.5, 0.5);
+            const sy = start.uniform(-0.5, 0.5);
+            rngCheck.innerHTML = `<span class="${ok ? "ok" : "bad"}">${ok ? "✓" : "✗"}</span> <code>default_rng(12345).random()</code> = <code>${value}</code>${ok ? ", matching NumPy's documentation" : ", which does NOT match NumPy"}. Seed 1729 starts at (${sx.toFixed(6)}, ${sy.toFixed(6)}).`;
+        }
+
+        syncControls();
+
+        // Render once the playground scrolls near the viewport.
+        const io = new IntersectionObserver(
+            (entries) => {
+                if (entries.some((e) => e.isIntersecting)) {
+                    io.disconnect();
+                    render();
+                }
+            },
+            { rootMargin: "400px" },
+        );
+        io.observe(root);
+    }
+
+    /* =========================================================
+       HERO — the Clifford preset accumulating behind the title
+       ========================================================= */
+
+    const heroCanvas = document.querySelector<HTMLCanvasElement>(".hero-canvas");
+    if (heroCanvas) {
+        const hctx = heroCanvas.getContext("2d")!;
+        const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        const total = isSmallDevice ? 60000 : 140000;
+        const rng = new PCG64(1729);
+        let x = rng.uniform(-0.5, 0.5);
+        let y = rng.uniform(-0.5, 0.5);
+        const [a, b, c, d] = [-1.4, 1.6, 1.0, 0.7];
+        const W = heroCanvas.width, H = heroCanvas.height;
+        // The attractor's extent is bounded by 1 + |c| and 1 + |d|.
+        const sx = (W * 0.86) / 4, sy = (H * 0.86) / 3.4;
+        const from: RGB = [24, 126, 255], to: RGB = [232, 60, 184];
+        let drawn = 0;
+        hctx.fillStyle = "#000";
+        hctx.fillRect(0, 0, W, H);
+        hctx.globalCompositeOperation = "lighter";
+        const batch = reduce ? total : 1800;
+        const tick = () => {
+            const end = Math.min(total, drawn + batch);
+            const [r, g, bl] = lerpColor(from, to, drawn / total);
+            hctx.fillStyle = `rgba(${r},${g},${bl},0.32)`;
+            for (; drawn < end; drawn++) {
+                const nx = Math.sin(a * y) + c * Math.cos(a * x);
+                const ny = Math.sin(b * x) + d * Math.cos(b * y);
+                x = nx;
+                y = ny;
+                hctx.fillRect(W / 2 + x * sx, H / 2 - y * sy, 1, 1);
+            }
+            if (drawn < total) requestAnimationFrame(tick);
+        };
+        requestAnimationFrame(tick);
+    }
+</script>
+
+<style>
+    :root {
+        --bg: #06111e;
+        --surface: #091b2b;
+        --border: #203f59;
+        --heading: #ffffff;
+        --text: #d8e4ee;
+        --muted: #9eb1c0;
+        --subtle: #7890a3;
+        --blue: #168dff;
+        --blue-light: #65baff;
+        --orange: #ff8a00;
+        --page-width: 1240px;
+
+        /* OLED personality, taken from the repository's preview palettes */
+        --o-black: #000000;
+        --o-blue: rgb(24, 126, 255);
+        --o-magenta: rgb(232, 60, 184);
+        --o-teal: rgb(20, 220, 188);
+        --o-amber: rgb(255, 154, 46);
+        --o-line: rgba(255, 255, 255, 0.1);
+        --o-mono: "Cascadia Code", "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; background: var(--bg); }
+
+    body {
+        min-height: 100vh;
+        margin: 0;
+        color: var(--text);
+        background:
+            radial-gradient(circle at 85% 4%, rgba(232, 60, 184, 0.09), transparent 28rem),
+            radial-gradient(circle at 8% 45%, rgba(20, 220, 188, 0.05), transparent 30rem),
+            var(--bg);
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    main,
+    footer {
+        width: min(100%, var(--page-width));
+        margin-inline: auto;
+        padding-inline: clamp(1rem, 5vw, 4.5rem);
+    }
+
+    a { color: inherit; text-underline-offset: 0.25em; }
+    a:focus-visible,
+    button:focus-visible,
+    input:focus-visible,
+    select:focus-visible,
+    summary:focus-visible { outline: 2px solid var(--orange); outline-offset: 3px; }
+
+    h1, h2, h3, p { margin-top: 0; }
+
+    h2 {
+        margin-bottom: 1rem;
+        color: var(--heading);
+        font-family: Georgia, "Times New Roman", serif;
+        font-size: clamp(2.2rem, 5vw, 4rem);
+        font-weight: 400;
+        line-height: 1.04;
+        letter-spacing: -0.05em;
+    }
+
+    h3 { color: var(--heading); font-size: 1.2rem; }
+
+    code { font-family: var(--o-mono); font-size: 0.88em; color: #bfe9ff; overflow-wrap: anywhere; }
+
+    .eyebrow {
+        margin-bottom: 1rem;
+        color: var(--orange);
+        font-size: 0.75rem;
+        font-weight: 800;
+        letter-spacing: 0.09em;
+        text-transform: uppercase;
+    }
+
+    /* =========================================================
+       HERO — OLED BOARD
+       ========================================================= */
+
+    .hero { padding: clamp(3rem, 6vw, 4.5rem) 0 clamp(3rem, 6vw, 4.5rem); }
+
+    .breadcrumbs {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.6rem;
+        margin-bottom: 2rem;
+        color: var(--subtle);
+        font-size: 0.8rem;
+    }
+
+    .breadcrumbs a { text-decoration: none; }
+    .breadcrumbs a:hover { color: white; }
+    .breadcrumbs strong { color: var(--o-teal); }
+
+    .oled-board {
+        position: relative;
+        overflow: hidden;
+        min-height: clamp(420px, 52vw, 560px);
+        margin-bottom: 2rem;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 26px;
+        background: var(--o-black);
+        box-shadow:
+            0 0 0 1px rgba(24, 126, 255, 0.15),
+            0 30px 80px -30px rgba(232, 60, 184, 0.35);
+    }
+
+    .hero-canvas {
+        position: absolute;
+        top: 50%;
+        right: -6%;
+        width: min(78%, 900px);
+        height: auto;
+        transform: translateY(-50%);
+        animation: breathe 14s ease-in-out infinite alternate;
+    }
+
+    .hero-copy {
+        position: relative;
+        z-index: 1;
+        max-width: 620px;
+        padding: clamp(2rem, 6vw, 4.5rem) clamp(1.25rem, 5vw, 4rem);
+    }
+
+    .board-eyebrow {
+        display: inline-block;
+        margin-bottom: 1.4rem;
+        padding: 0.4rem 0.85rem;
+        border: 1px solid rgba(20, 220, 188, 0.5);
+        border-radius: 999px;
+        color: var(--o-teal);
+        font-size: 0.72rem;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        background: rgba(0, 0, 0, 0.6);
+    }
+
+    .oled-board h1 {
+        display: flex;
+        flex-direction: column;
+        margin: 0 0 1.3rem;
+        color: white;
+        font-size: clamp(2.6rem, 7vw, 5.2rem);
+        font-weight: 850;
+        line-height: 0.98;
+        letter-spacing: -0.045em;
+    }
+
+    .h1-neon {
+        background: linear-gradient(90deg, var(--o-blue), var(--o-magenta) 60%, var(--o-amber));
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        filter: drop-shadow(0 0 18px rgba(232, 60, 184, 0.35));
+    }
+
+    .hero-subtitle {
+        max-width: 520px;
+        margin-bottom: 1.4rem;
+        color: #c9d6e2;
+        font-size: clamp(1rem, 2vw, 1.15rem);
+        line-height: 1.65;
+        text-shadow: 0 1px 12px #000;
+    }
+
+    .equation {
+        display: inline-flex;
+        flex-direction: column;
+        gap: 0.2rem;
+        margin-bottom: 1.6rem;
+        padding: 0.7rem 0.95rem;
+        border-left: 2px solid var(--o-magenta);
+        background: rgba(0, 0, 0, 0.65);
+        color: #f1d7ff;
+        font-family: var(--o-mono);
+        font-size: clamp(0.78rem, 2vw, 0.92rem);
+    }
+
+    .hero-cta {
+        display: block;
+        width: fit-content;
+        padding: 0.75rem 1.2rem;
+        border-radius: 999px;
+        background: linear-gradient(90deg, var(--o-blue), var(--o-magenta));
+        color: white;
+        font-weight: 800;
+        text-decoration: none;
+        box-shadow: 0 0 24px rgba(232, 60, 184, 0.45);
+        transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    .hero-cta:hover { transform: translateY(-3px); box-shadow: 0 0 34px rgba(232, 60, 184, 0.7); }
+
+    @keyframes breathe {
+        from { transform: translateY(-50%) scale(1) rotate(0deg); }
+        to { transform: translateY(-50%) scale(1.06) rotate(-2.5deg); }
+    }
+
+    /* =========================================================
+       FACTS
+       ========================================================= */
+
+    .facts {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 1rem;
+        padding-bottom: clamp(3.5rem, 7vw, 5rem);
+    }
+
+    .fact {
+        padding: 1.1rem 1.2rem;
+        border: 1px solid var(--o-line);
+        border-radius: 14px;
+        background: linear-gradient(160deg, rgba(24, 126, 255, 0.09), rgba(0, 0, 0, 0.6));
+        transition: transform 0.25s ease, border-color 0.25s ease;
+    }
+
+    .fact:hover { transform: translateY(-3px); border-color: rgba(20, 220, 188, 0.6); }
+
+    .fact span {
+        display: block;
+        margin-bottom: 0.45rem;
+        color: var(--o-teal);
+        font-size: 0.7rem;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+    }
+
+    .fact strong { color: white; font-size: 0.95rem; line-height: 1.45; }
+
+    /* =========================================================
+       SECTIONS
+       ========================================================= */
+
+    .case-section {
+        padding: clamp(4rem, 8vw, 6.5rem) 0;
+        border-top: 1px solid rgba(32, 63, 89, 0.8);
+    }
+
+    .section-heading { max-width: 830px; }
+    .centered-heading { margin-inline: auto; text-align: center; }
+    .section-heading > p:last-child { color: var(--muted); line-height: 1.7; }
+
+    .panel {
+        padding: clamp(1.3rem, 3vw, 1.9rem);
+        border: 1px solid var(--o-line);
+        border-radius: 16px;
+        background: rgba(0, 0, 0, 0.55);
+        transition: border-color 0.25s ease, transform 0.25s ease;
+    }
+
+    .panel:hover { border-color: rgba(24, 126, 255, 0.55); }
+    .panel p { color: var(--muted); line-height: 1.7; }
+    .panel p:last-child { margin-bottom: 0; }
+    .small { font-size: 0.85rem; }
+
+    /* =========================================================
+       PLAYGROUND
+       ========================================================= */
+
+    .playground {
+        display: grid;
+        grid-template-columns: minmax(0, 1.55fr) minmax(280px, 0.85fr);
+        gap: clamp(1rem, 2.5vw, 1.8rem);
+        margin-top: 2.2rem;
+        padding: clamp(0.9rem, 2.5vw, 1.6rem);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 24px;
+        background: var(--o-black);
+        box-shadow: 0 30px 80px -40px rgba(24, 126, 255, 0.45);
+    }
+
+    .stage-wrap { min-width: 0; }
+
+    .stage {
+        --split: 50%;
+        display: grid;
+        place-items: center;
+        min-height: clamp(240px, 38vw, 520px);
+        padding: clamp(0.6rem, 2vw, 1.2rem);
+        border-radius: 18px;
+        background:
+            radial-gradient(circle at 50% 40%, rgba(24, 126, 255, 0.08), transparent 70%),
+            #050507;
+    }
+
+    .device {
+        position: relative;
+        overflow: hidden;
+        width: 100%;
+        border: 3px solid #1b1d24;
+        border-radius: 12px;
+        background: #000;
+        box-shadow: 0 0 0 1px #2a2d38, 0 18px 40px rgba(0, 0, 0, 0.6);
+        transition: width 0.35s ease, border-radius 0.35s ease;
+    }
+
+    .stage[data-target="mobile"] .device {
+        width: min(46%, 300px);
+        border-width: 6px;
+        border-radius: 30px;
+    }
+
+    .wall-canvas,
+    .compare-img {
+        display: block;
+        width: 100%;
+        height: auto;
+    }
+
+    .stage.is-rendering .device { box-shadow: 0 0 0 1px rgba(20, 220, 188, 0.5), 0 0 30px rgba(20, 220, 188, 0.15); }
+
+    .compare-img {
+        position: absolute;
+        inset: 0;
+        clip-path: inset(0 0 0 var(--split));
+    }
+
+    .compare-line {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: var(--split);
+        width: 2px;
+        background: white;
+        box-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
+        pointer-events: none;
+    }
+
+    .compare-tag {
+        position: absolute;
+        top: 0.5rem;
+        padding: 0.15rem 0.5rem;
+        border-radius: 999px;
+        background: rgba(0, 0, 0, 0.75);
+        color: white;
+        font-size: 0.68rem;
+        font-weight: 700;
+    }
+
+    .compare-tag-js { left: 0.5rem; }
+    .compare-tag-py { right: 0.5rem; }
+
+    [hidden] { display: none !important; }
+
+    .render-progress {
+        display: block;
+        width: 100%;
+        height: 4px;
+        margin-top: 0.8rem;
+        border: 0;
+        border-radius: 999px;
+        overflow: hidden;
+        appearance: none;
+        background: #15171d;
+    }
+
+    .render-progress::-webkit-progress-bar { background: #15171d; }
+    .render-progress::-webkit-progress-value { background: linear-gradient(90deg, var(--o-teal), var(--o-blue), var(--o-magenta)); }
+    .render-progress::-moz-progress-bar { background: linear-gradient(90deg, var(--o-teal), var(--o-blue), var(--o-magenta)); }
+
+    .render-status {
+        margin: 0.6rem 0 0;
+        color: var(--muted);
+        font-family: var(--o-mono);
+        font-size: 0.78rem;
+    }
+
+    .compare-box {
+        margin-top: 1rem;
+        padding: 0.85rem 1rem;
+        border: 1px dashed rgba(255, 255, 255, 0.16);
+        border-radius: 12px;
+    }
+
+    .compare-box .check { display: flex; align-items: center; gap: 0.6rem; color: white; font-size: 0.88rem; cursor: pointer; }
+    .compare-box .check input { width: 18px; height: 18px; accent-color: var(--o-teal); }
+    .compare-box .check:has(input:disabled) { opacity: 0.55; cursor: not-allowed; }
+    .compare-slider-label { display: grid; gap: 0.3rem; margin-top: 0.7rem; color: var(--muted); font-size: 0.78rem; }
+    .compare-note { margin: 0.5rem 0 0; color: var(--subtle); font-size: 0.78rem; line-height: 1.5; }
+
+    .controls {
+        display: flex;
+        flex-direction: column;
+        gap: 0.95rem;
+        min-width: 0;
+        color: var(--text);
+    }
+
+    .segmented {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0.35rem;
+        margin: 0;
+        padding: 0.3rem;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 12px;
+    }
+
+    .segmented legend,
+    .slider > span,
+    .select > span,
+    .seed-row label {
+        color: var(--subtle);
+        font-size: 0.72rem;
+        font-weight: 800;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+    }
+
+    .segmented legend { padding: 0 0.3rem; }
+    .segmented label { position: relative; cursor: pointer; }
+    .segmented input { position: absolute; opacity: 0; inset: 0; cursor: pointer; }
+
+    .segmented span {
+        display: block;
+        padding: 0.55rem 0.4rem;
+        border-radius: 9px;
+        color: var(--muted);
+        font-size: 0.82rem;
+        font-weight: 700;
+        text-align: center;
+        transition: background 0.2s ease, color 0.2s ease;
+    }
+
+    .segmented input:checked + span {
+        background: linear-gradient(90deg, rgba(24, 126, 255, 0.35), rgba(232, 60, 184, 0.35));
+        color: white;
+        box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.18);
+    }
+
+    .segmented input:focus-visible + span { outline: 2px solid var(--orange); outline-offset: 2px; }
+
+    .preset-row,
+    .seed-row,
+    .action-row {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .preset-row { justify-content: space-between; }
+    .preset-name { color: white; font-weight: 750; font-size: 0.92rem; }
+
+    .seed-row label { flex-basis: 100%; }
+
+    .seed-input {
+        flex: 1 1 120px;
+        min-width: 0;
+        padding: 0.55rem 0.7rem;
+        border: 1px solid rgba(255, 255, 255, 0.16);
+        border-radius: 10px;
+        background: #0b0c10;
+        color: white;
+        font-family: var(--o-mono);
+        font-size: 0.92rem;
+    }
+
+    .seed-error { margin: -0.4rem 0 0; color: #ff8fa3; font-family: var(--o-mono); font-size: 0.76rem; }
+
+    .ghost-btn,
+    .neon-btn {
+        padding: 0.55rem 0.85rem;
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        border-radius: 10px;
+        background: #0e1016;
+        color: white;
+        font: inherit;
+        font-size: 0.82rem;
+        font-weight: 750;
+        cursor: pointer;
+        transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .ghost-btn:hover { border-color: var(--o-teal); transform: translateY(-1px); }
+
+    .neon-btn {
+        border-color: transparent;
+        background: linear-gradient(90deg, var(--o-blue), var(--o-magenta));
+        box-shadow: 0 0 18px rgba(232, 60, 184, 0.35);
+    }
+
+    .neon-btn:hover { transform: translateY(-1px); box-shadow: 0 0 26px rgba(232, 60, 184, 0.6); }
+
+    .param-group { display: grid; gap: 0.65rem; }
+
+    .slider { display: grid; gap: 0.25rem; }
+    .slider > span { display: flex; justify-content: space-between; gap: 0.5rem; }
+    .slider output { color: white; font-family: var(--o-mono); font-size: 0.8rem; letter-spacing: 0; text-transform: none; }
+    .slider input { width: 100%; accent-color: var(--o-magenta); }
+
+    .two-col { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); gap: 0.8rem; align-items: end; }
+
+    .select { display: grid; gap: 0.3rem; }
+
+    .select select {
+        width: 100%;
+        padding: 0.55rem 0.6rem;
+        border: 1px solid rgba(255, 255, 255, 0.16);
+        border-radius: 10px;
+        background: #0b0c10;
+        color: white;
+        font: inherit;
+        font-size: 0.85rem;
+    }
+
+    .json-panel {
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
+        background: #07080b;
+    }
+
+    .json-panel summary { padding: 0.7rem 0.9rem; color: var(--muted); font-size: 0.82rem; font-weight: 700; cursor: pointer; }
+
+    .json-panel pre {
+        max-height: 260px;
+        margin: 0;
+        padding: 0 0.9rem 0.9rem;
+        overflow: auto;
+        font-size: 0.75rem;
+        line-height: 1.5;
+    }
+
+    .port-notes {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 1rem;
+        margin-top: 1.4rem;
+    }
+
+    .port-notes article {
+        padding: 1.2rem 1.3rem;
+        border: 1px solid var(--o-line);
+        border-radius: 14px;
+        background: rgba(0, 0, 0, 0.45);
+    }
+
+    .port-notes h3 { margin-bottom: 0.5rem; font-size: 1rem; }
+    .port-notes article:nth-child(1) h3 { color: var(--o-teal); }
+    .port-notes article:nth-child(2) h3 { color: #8fc3ff; }
+    .port-notes article:nth-child(3) h3 { color: var(--o-amber); }
+    .port-notes p { margin-bottom: 0.6rem; color: var(--muted); font-size: 0.9rem; line-height: 1.65; }
+    .port-notes p:last-child { margin-bottom: 0; }
+    .rng-check { font-size: 0.8rem !important; }
+    .rng-check :global(.ok) { color: var(--o-teal); font-weight: 900; }
+    .rng-check :global(.bad) { color: #ff6b81; font-weight: 900; }
+
+    /* =========================================================
+       PREVIEWS
+       ========================================================= */
+
+    .preview-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 1.4rem;
+        margin-top: 2.2rem;
+    }
+
+    .preview-card { margin: 0; }
+
+    .preview-frame {
+        overflow: hidden;
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 16px;
+        background: #000;
+        transition: transform 0.35s ease, box-shadow 0.35s ease;
+    }
+
+    .preview-card:nth-child(1) .preview-frame { box-shadow: 0 20px 50px -25px rgba(232, 60, 184, 0.6); }
+    .preview-card:nth-child(2) .preview-frame { box-shadow: 0 20px 50px -25px rgba(20, 220, 188, 0.6); }
+    .preview-card:hover .preview-frame { transform: translateY(-4px) rotate(-0.4deg); }
+
+    .preview-frame a { display: block; }
+    .preview-frame img { display: block; width: 100%; height: auto; transition: transform 0.6s ease; }
+    .preview-card:hover img { transform: scale(1.04); }
+
+    .preview-card figcaption { display: grid; gap: 0.3rem; margin-top: 0.9rem; }
+    .preview-card strong { color: white; }
+    .mono { color: var(--muted); font-family: var(--o-mono); font-size: 0.76rem; line-height: 1.5; }
+    .score { color: var(--o-amber); font-size: 0.82rem; font-weight: 700; }
+
+    /* =========================================================
+       HOW IT WORKS
+       ========================================================= */
+
+    .pipeline {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 0.8rem;
+        margin: 2.2rem 0 1.2rem;
+        padding: 0;
+        list-style: none;
+        counter-reset: none;
+    }
+
+    .pipeline li {
+        position: relative;
+        display: grid;
+        gap: 0.25rem;
+        padding: 1rem 1.1rem;
+        border: 1px solid var(--o-line);
+        border-radius: 14px;
+        background: rgba(0, 0, 0, 0.5);
+    }
+
+    .pipeline li:not(:last-child)::after {
+        content: "";
+        position: absolute;
+        top: 50%;
+        right: -0.65rem;
+        width: 0.5rem;
+        height: 2px;
+        background: linear-gradient(90deg, var(--o-blue), var(--o-magenta));
+    }
+
+    .pipeline span {
+        display: inline-grid;
+        place-items: center;
+        width: 28px;
+        height: 28px;
+        margin-bottom: 0.3rem;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--o-blue), var(--o-magenta));
+        color: white;
+        font-size: 0.8rem;
+        font-weight: 900;
+    }
+
+    .pipeline strong { color: white; }
+    .pipeline small { color: var(--muted); font-size: 0.8rem; line-height: 1.45; }
+
+    .how-grid,
+    .quality-grid,
+    .scope-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 1rem;
+        margin-top: 1.2rem;
+    }
+
+    .quality-grid,
+    .scope-grid { margin-top: 2.2rem; }
+
+    .rule-list { display: grid; gap: 0.45rem; margin: 0; }
+
+    .rule-list div {
+        display: grid;
+        grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+        gap: 0.8rem;
+        padding: 0.5rem 0;
+        border-bottom: 1px solid var(--o-line);
+        font-size: 0.86rem;
+    }
+
+    .rule-list dd { margin: 0; color: var(--muted); }
+
+    .limit-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0.6rem;
+        margin-bottom: 1rem;
+    }
+
+    .limit-grid div {
+        padding: 0.8rem;
+        border: 1px solid rgba(20, 220, 188, 0.25);
+        border-radius: 12px;
+        background: rgba(20, 220, 188, 0.05);
+    }
+
+    .limit-grid strong { display: block; color: var(--o-teal); font-family: var(--o-mono); font-size: 1.05rem; }
+    .limit-grid span { color: var(--muted); font-size: 0.78rem; }
+
+    .code-panel { min-width: 0; }
+
+    .code {
+        max-width: 100%;
+        margin: 0;
+        padding: 1rem;
+        overflow-x: auto;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 12px;
+        background: #050608;
+        font-size: 0.74rem;
+        line-height: 1.6;
+    }
+
+    .code code { color: #d6e9ff; overflow-wrap: normal; white-space: pre; }
+
+    .tick-list { margin: 0; padding: 0; list-style: none; }
+
+    .tick-list li {
+        position: relative;
+        padding: 0.45rem 0 0.45rem 1.6rem;
+        color: var(--muted);
+        line-height: 1.6;
+    }
+
+    .tick-list li::before {
+        content: "";
+        position: absolute;
+        top: 0.95rem;
+        left: 0.2rem;
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--o-teal);
+        box-shadow: 0 0 10px var(--o-teal);
+    }
+
+    /* =========================================================
+       QUALITY
+       ========================================================= */
+
+    .test-list { display: grid; gap: 0.9rem; margin: 0; padding: 0; list-style: none; }
+    .test-head { display: flex; justify-content: space-between; gap: 0.6rem; flex-wrap: wrap; }
+    .test-head span { color: var(--o-teal); font-size: 0.82rem; font-weight: 800; }
+    .test-list p { margin: 0.35rem 0 0; font-size: 0.84rem; }
+
+    .test-bar {
+        display: block;
+        height: 4px;
+        margin-top: 0.35rem;
+        border-radius: 999px;
+        background: linear-gradient(90deg, var(--o-teal), var(--o-blue)) 0 0 / var(--share) 100% no-repeat, #15171d;
+    }
+
+    .score-bars { display: grid; gap: 0.8rem; margin: 1.2rem 0; }
+
+    .score-bars div {
+        display: grid;
+        grid-template-columns: minmax(0, 1.2fr) minmax(0, 1.4fr) auto;
+        gap: 0.7rem;
+        align-items: center;
+        font-size: 0.85rem;
+    }
+
+    .score-bars .bar { height: 10px; overflow: hidden; border-radius: 999px; background: #15171d; }
+
+    .score-bars i {
+        display: block;
+        width: var(--score);
+        height: 100%;
+        border-radius: inherit;
+        background: linear-gradient(90deg, var(--o-blue), var(--o-magenta));
+        transform-origin: left center;
+        animation: grow 1.4s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+    }
+
+    .score-bars .target i { background: repeating-linear-gradient(90deg, var(--o-amber) 0 6px, transparent 6px 10px); }
+    .score-bars strong { color: white; font-family: var(--o-mono); }
+
+    @keyframes grow { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+
+    /* =========================================================
+       STATUS, SKILLS, END
+       ========================================================= */
+
+    .scope-grid ul { margin: 1rem 0 0; padding-left: 1.2rem; color: var(--muted); line-height: 1.7; }
+    .scope-grid li + li { margin-top: 0.45rem; }
+    .scope-grid .delivered { border-color: rgba(20, 220, 188, 0.45); }
+
+    .skills-section { text-align: center; }
+    .skills-section :global(.skill-links) { justify-content: center; max-width: 980px; margin-inline: auto; }
+    .hero :global(.skill-links) { justify-content: flex-start; }
+
+    .project-end {
+        padding: clamp(4rem, 8vw, 6.5rem) 0;
+        border-top: 1px solid rgba(32, 63, 89, 0.8);
+        text-align: center;
+    }
+
+    .project-end h2 { margin-inline: auto; }
+    .project-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.8rem 1.5rem; margin-top: 1.6rem; }
+    .project-links a { color: var(--blue-light); font-weight: 750; text-decoration: none; }
+    .project-links a:hover { color: white; text-decoration: underline; }
+
+    /* =========================================================
+       RESPONSIVE
+       ========================================================= */
+
+    @media (max-width: 980px) {
+        .playground { grid-template-columns: 1fr; }
+        .port-notes { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 880px) {
+        .facts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        .how-grid,
+        .quality-grid,
+        .scope-grid,
+        .preview-grid { grid-template-columns: 1fr; }
+        .pipeline { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        .pipeline li:nth-child(2)::after { display: none; }
+    }
+
+    @media (max-width: 620px) {
+        .facts { grid-template-columns: 1fr 1fr; gap: 0.6rem; }
+        .fact { padding: 0.9rem; }
+        .oled-board { min-height: 0; }
+        .hero-canvas { top: auto; bottom: -4%; right: -30%; width: 140%; transform: none; opacity: 0.55; animation: none; }
+        .hero-copy { padding-bottom: 2.4rem; }
+        .two-col { grid-template-columns: 1fr; }
+        .rule-list div { grid-template-columns: 1fr; gap: 0.15rem; }
+        .score-bars div { grid-template-columns: 1fr auto; }
+        .score-bars .bar { grid-column: 1 / -1; grid-row: 2; }
+        .stage[data-target="mobile"] .device { width: min(62%, 260px); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        html { scroll-behavior: auto; }
+        .hero-canvas,
+        .score-bars i { animation: none; }
+        .fact,
+        .panel,
+        .preview-frame,
+        .preview-frame img,
+        .hero-cta,
+        .ghost-btn,
+        .neon-btn,
+        .device { transition: none; }
+    }
+</style>

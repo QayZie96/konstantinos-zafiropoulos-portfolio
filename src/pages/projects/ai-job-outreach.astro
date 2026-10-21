@@ -1,7 +1,13 @@
 ---
 /* =========================================================
    AI JOB DISCOVERY & OUTREACH AUTOMATION
-   Portfolio case study
+   Portfolio case study: v1 Python + Gemini prototype, and
+   its evolution into the v2 multi-ATS Apps Script job funnel.
+
+   Every number on this page comes from the project READMEs,
+   code, milestone specs, readiness reports or handoff notes.
+   Sample postings in the interactive labs are fictional and
+   are labelled as such.
    ========================================================= */
 
 import SiteHeader from "../../components/SiteHeader.astro";
@@ -10,53 +16,418 @@ import SeoHead from "../../components/SeoHead.astro";
 import SkillLinks from "../../components/SkillLinks.astro";
 
 const title =
-    "AI Job Discovery & Outreach Automation | Konstantinos Zafeiropoulos";
+    "AI Job Discovery & Outreach Automation | Python, Gemini & Apps Script | Konstantinos Zafeiropoulos";
 
 const description =
-    "A Python automation integrating three job APIs, Google Gemini, SQLite, and Google Sheets to discover vacancies and generate personalized outreach drafts.";
-
-const metrics = [
-    {
-        value: "3",
-        label: "Job-source APIs",
-    },
-    {
-        value: "69/69",
-        label: "Cache hits in the final diagnostic",
-    },
-    {
-        value: "20",
-        label: "Jobs per AI validation batch",
-    },
-    {
-        value: "Daily",
-        label: "Configured execution schedule",
-    },
-];
+    "How a three-API Python and Gemini prototype evolved into a nine-adapter Google Apps Script job funnel with source verification, deduplication, conservative screening, review batches and scheduled collection.";
 
 const githubUrl = "https://github.com/QayZie96/ai-job-outreach-automation";
 const dashboardUrl =
     "https://docs.google.com/spreadsheets/d/1HuyvIww3t2x2ta-_hHnoeIT8t0M2MFtA6XQFL-ikbA0/edit?usp=sharing";
 
-const hasGithub = githubUrl.startsWith("https://");
-const hasDashboard = dashboardUrl.startsWith("https://");
+const metrics = [
+    { value: "3 → 9", label: "Job sources: three aggregator APIs in v1, nine ATS adapters in v2" },
+    { value: "500/500", label: "Native tests passing after the v2 reconciliation" },
+    { value: "15", label: "Sources in the first scheduled set, split into five batches" },
+    { value: "69/69", label: "v1 cache hits in the final diagnostic" },
+];
+
+/* ---------- Evolution timeline ---------- */
+const milestones = [
+    {
+        id: "v1",
+        tag: "v1",
+        date: "Assessment",
+        name: "Python prototype",
+        summary:
+            "Three public job APIs, Gemini validation in batches of 20, generated outreach drafts, a SQLite validation cache and a Google Sheets dashboard, run daily by Windows Task Scheduler.",
+        points: ["Arbeitnow, Remotive and Adzuna", "Gemini checks remote, language and role fit", "SQLite cache keyed on a content fingerprint"],
+    },
+    {
+        id: "spec",
+        tag: "Spec",
+        date: "12 Oct 2026",
+        name: "Multi-ATS design",
+        summary:
+            "Rewrote the goal: find genuinely suitable, active postings on employers' own ATS job boards with less repeated manual browsing. Nine public-feed provider families, isolated staging, a protected master spreadsheet and conservative rules.",
+        points: ["One adapter per ATS behind one interface", "Only verified public feeds may run", "Zero new jobs is an acceptable, truthful output"],
+    },
+    {
+        id: "m1",
+        tag: "M1",
+        date: "12 Oct 2026",
+        name: "Functional core",
+        summary:
+            "Greenhouse, Ashby and Lever adapters, a four-tab staging workbook (Sources, Postings, Dedup Snapshot, Run Log) and a manual runner. A hotfix added Greenhouse EU boards and Lever's literal \"onsite\" after testing against real public responses.",
+        points: ["Full suite 211/211 → 217/217 after the hotfix", "Real response bodies: 5/5, 37/37 and 2/2 postings accepted", "All candidate sources start disabled"],
+    },
+    {
+        id: "m21",
+        tag: "M2.1",
+        date: "13 Oct 2026",
+        name: "Conservative screening",
+        summary:
+            "Deterministic pre-screening routes each posting to AI Review, Already handled, Hard ineligible, Low priority or Source uncertain. A hard exclusion needs an explicit textual signal in a complete description.",
+        points: ["Reason codes tied to Search Criteria IDs", "Unknowns go to review, never to the bin", "Never marks anything application-ready"],
+    },
+    {
+        id: "m22",
+        tag: "M2.2",
+        date: "13 Oct 2026",
+        name: "Review batches",
+        summary:
+            "Builds bounded, copy-paste review packets for a manual AI review session: 20 jobs by default (1–30 allowed) within a 45,000-character budget. Results are cached against the posting fingerprint and the criteria version.",
+        points: ["Job text is wrapped as untrusted JSON", "Unchanged, reviewed postings are not re-queued", "Criteria change → re-screen, even old exclusions"],
+    },
+    {
+        id: "m22b",
+        tag: "M2.2b",
+        date: "13 Oct 2026",
+        name: "Source onboarding",
+        summary:
+            "A dependency-free Node CLI with discover, prepare and verify commands. It follows official careers pages to ATS boards, verifies public endpoints with bounded requests, and emits disabled Sources rows plus an explicit approval plan.",
+        points: ["Tenant IDs parsed from real URLs, never guessed", "HTTP 200 alone is not proof of identity", "Re-running is deterministic and idempotent"],
+    },
+    {
+        id: "m23",
+        tag: "M2.3",
+        date: "13–14 Oct 2026",
+        name: "Six more adapters",
+        summary:
+            "SmartRecruiters, Workable, Personio, Recruitee, Teamtailor and Pinpoint, including XML and RSS feeds through a hardened shared parser, integrated into the same collector, normaliser, lifecycle and screening code.",
+        points: ["459/459 native tests at the integration commit", "Shared XML parser rejects DTD/entity attacks", "Every adapter has its own readiness report"],
+    },
+    {
+        id: "m24",
+        tag: "R1",
+        date: "14 Oct 2026",
+        name: "Reconciliation",
+        summary:
+            "Merged the nine-provider collector (461/461) with the onboarding branch (285/285), preserving both histories, plus seven new onboarding-to-collector contract tests.",
+        points: ["Combined native suite: 500/500", "Offline checkpoint, not a deployment", "Deployment and activation stay separately gated"],
+    },
+    {
+        id: "m2d",
+        tag: "M2D",
+        date: "15 Oct 2026",
+        name: "Unattended collection",
+        summary:
+            "A scheduled mode: one time-driven trigger every six hours processes one batch of a fingerprint-approved 15-source configuration under a script lock, after a read-only refresh of the dedup snapshot from the master spreadsheet.",
+        points: ["Five batches, a full cycle in about 30 hours", "Snapshot older than 48 hours blocks every request", "Cursor commits only after a terminal summary"],
+    },
+];
+
+/* ---------- Pipeline walkthrough ---------- */
+const stages = [
+    {
+        file: "SourceValidation.gs",
+        name: "Source gate",
+        text: "Only a Sources row marked PUBLIC_FEED_VERIFIED, enabled for manual fetch or listed in the approved schedule, can make a request. The feed host must be on the provider allowlist and the source key must equal co_id:provider:tenant.",
+        sample: `{
+  "source_key": "CO-9001:lever:example-market",
+  "provider": "Lever",
+  "feed_format": "JSON",
+  "api_validation_status": "PUBLIC_FEED_VERIFIED",
+  "candidate_public_feed_url":
+    "https://api.lever.co/v0/postings/example-market"
+}`,
+    },
+    {
+        file: "Fetch.gs · Lever.gs",
+        name: "Bounded fetch",
+        text: "HTTPS only, no redirects, no credential-like query keys. Each source has a budget of 6 requests, 4 pages, 1.5 MB and 1 retry inside a 150-second collection deadline. A failed later page makes the inventory PARTIAL, never empty.",
+        sample: `{
+  "coverage_status": "ACTIVE_COMPLETE_SCOPE",
+  "pagination_manifest": {
+    "method": "lever_public_postings_skip_limit_json",
+    "requested_offsets": [0],
+    "pages_fetched": 1,
+    "observed_count": 12,
+    "duplicate_count": 0,
+    "ending_evidence": "SHORT_PAGE"
+  }
+}`,
+    },
+    {
+        file: "Normalize.gs",
+        name: "Normalise & fingerprint",
+        text: "Provider fields are mapped into one Postings schema. Identity is source key + provider posting ID, never title or requisition. A 128-bit FNV fingerprint covers meaningful content only, so fetch times cannot create false changes.",
+        sample: "fingerprint",
+    },
+    {
+        file: "Lifecycle.gs",
+        name: "Change detection",
+        text: "The first complete fetch is a baseline. Later complete, same-scope fetches classify each posting as new, unchanged or changed. A missing posting becomes possibly_removed only when the feed was complete; partial feeds retain prior jobs.",
+        sample: `{
+  "reason": "COMPLETE_MATCHING_SCOPE",
+  "new": [],
+  "unchanged": [],
+  "changed": [],
+  "baseline_discovered": ["CO-9001:lever:example-market:3f2c9a1e-…"],
+  "possibly_removed": [],
+  "removal_authorized": false
+}`,
+    },
+    {
+        file: "Dedup.gs",
+        name: "History match",
+        text: "The posting is compared with a minimal Dedup Snapshot of past applications and researched vacancies: posting ID, then requisition, then canonical URL. Title similarity alone only raises an alias warning.",
+        sample: `{
+  "status": "none",
+  "match_type": "",
+  "snapshot_available": true,
+  "requires_live_master_recheck": true
+}`,
+    },
+    {
+        file: "Screen.gs",
+        name: "Conservative screening",
+        text: "Deterministic rules route the posting. Without an explicit hard exclusion it goes to AI Review, with open questions such as whether the employer can actually hire someone based in Greece.",
+        sample: `{
+  "route": "AI Review",
+  "reason_codes": [
+    "GEOGRAPHY_NEEDS_VERIFICATION",
+    "POTENTIALLY_RELEVANT_OR_UNCERTAIN"
+  ],
+  "application_ready": false,
+  "requires_manual_high_review": true
+}`,
+    },
+    {
+        file: "Review.gs",
+        name: "Review batch",
+        text: "Postings that need review are prioritised (never reviewed → changed → criteria changed) and packed into a manual review prompt. The packet tells the reviewer to treat job text as untrusted and never to treat a result as permission to apply.",
+        sample: `MANUAL HIGH REVIEW PACKET — NOT AN APPLICATION DECISION
+Criteria version reference: v2.3
+UNTRUSTED employer/job data follows. …
+
+JOB 1 (UNTRUSTED JSON DATA):
+{"posting_key":"CO-9001:lever:example-market:3f2c…",
+ "cache_state":"NEEDS_MANUAL_REVIEW", …}`,
+    },
+    {
+        file: "Review.gs · Run.gs",
+        name: "Decision cached",
+        text: "The reviewer's JSON result updates only the review-cache triple. On the next run the unchanged posting reports CACHED_UNCHANGED and is not queued again; if the employer edits the advert, the fingerprint changes and it returns to review.",
+        sample: `{
+  "ai_review_state": "Credible Stretch",
+  "ai_reviewed_fingerprint": "fnv128:…",
+  "ai_reviewed_criteria_version": "v2.3"
+}`,
+    },
+];
+
+/* ---------- ATS adapter explorer (from src/*.gs) ---------- */
+const adapters = [
+    {
+        id: "greenhouse",
+        name: "Greenhouse",
+        format: "JSON",
+        endpoint: "GET https://boards-api.greenhouse.io/v1/boards/{board}/jobs?content=true",
+        paging: "Single document. jobs.length must equal meta.total.",
+        mapping: [
+            ["id", "provider_posting_id"],
+            ["title", "title"],
+            ["absolute_url", "official_job_url"],
+            ["content (HTML)", "description_text"],
+            ["location.name · offices[].location / name", "locations_normalized"],
+            ["internal_job_id ?? requisition_id", "internal_requisition_id"],
+            ["departments · metadata", "source_evidence_note"],
+        ],
+        rule: "Complete only when the count reconciles, IDs are unique and every job URL sits on the configured board.",
+        guard: "The EU board host job-boards.eu.greenhouse.io is accepted only when it is the configured official board for that tenant.",
+        tests: "Original M1 adapter",
+    },
+    {
+        id: "ashby",
+        name: "Ashby",
+        format: "JSON",
+        endpoint: "GET https://api.ashbyhq.com/posting-api/job-board/{org}?includeCompensation=true",
+        paging: "Single document. No total count is exposed, so none is claimed.",
+        mapping: [
+            ["id", "provider_posting_id"],
+            ["title", "title"],
+            ["jobUrl", "official_job_url"],
+            ["applyUrl", "official_application_url"],
+            ["descriptionPlain || descriptionHtml", "description_text"],
+            ["location · address · secondaryLocations", "locations_normalized"],
+            ["workplaceType · isRemote", "work_arrangement_evidence"],
+            ["publishedAt", "published_at_if_supplied"],
+        ],
+        rule: "Compensation, department, team and employment type are kept as evidence, not as fit signals.",
+        guard: "Feed path must be exactly /posting-api/job-board/{org} with no extra query beyond includeCompensation.",
+        tests: "Original M1 adapter",
+    },
+    {
+        id: "lever",
+        name: "Lever",
+        format: "JSON",
+        endpoint: "GET https://api.lever.co/v0/postings/{slug}?mode=json&skip={n}&limit=50",
+        paging: "Pages of 50 until a short or empty page; EU boards use api.eu.lever.co. Repeated pages stop the run.",
+        mapping: [
+            ["id", "provider_posting_id"],
+            ["text", "title"],
+            ["hostedUrl", "official_job_url"],
+            ["descriptionPlain || description + lists[]", "description_text"],
+            ["categories.location · allLocations · country", "locations_normalized"],
+            ["workplaceType", "work_arrangement_evidence"],
+            ["commitment · salaryRange · team", "source_evidence_note"],
+        ],
+        rule: "Requirement lists are kept, but lists alone never mark a description complete.",
+        guard: "Accepts the provider-observed literal \"onsite\" (M1 hotfix); any other unknown workplace value holds the source PARTIAL.",
+        tests: "Original M1 adapter",
+    },
+    {
+        id: "smartrecruiters",
+        name: "SmartRecruiters",
+        format: "JSON",
+        endpoint: "GET https://api.smartrecruiters.com/v1/companies/{company}/postings?destination=PUBLIC&limit=100&offset={n}",
+        paging: "Offset pages of 100 reconciled against totalFound, then one detail GET per posting.",
+        mapping: [
+            ["id (public posting)", "provider_posting_id"],
+            ["name", "title"],
+            ["postingUrl", "official_job_url"],
+            ["applyUrl", "official_application_url"],
+            ["jobAd.sections", "description_text"],
+            ["location.remote", "work_arrangement_evidence"],
+            ["releasedDate", "published_at_if_supplied"],
+        ],
+        rule: "Complete only when jobAd.sections.jobDescription has visible text and every detail matches the verified company identifier.",
+        guard: "With the 4-page budget, pilot boards need at most three public postings; budgets are not raised to make a feed pass.",
+        tests: "26/26 targeted tests",
+    },
+    {
+        id: "workable",
+        name: "Workable",
+        format: "JSON",
+        endpoint: "GET https://apply.workable.com/api/v1/widget/accounts/{subdomain}?details=true",
+        paging: "One published-jobs array; no cursor or total is documented.",
+        mapping: [
+            ["shortcode (not id)", "provider_posting_id"],
+            ["title", "title"],
+            ["url || shortlink || application_url", "official_job_url"],
+            ["application_url", "official_application_url"],
+            ["description || full_description", "description_text"],
+            ["workplace_type · telecommuting", "work_arrangement_evidence"],
+            ["state → geographic_state", "source_evidence_note"],
+        ],
+        rule: "Workable's public state field is a region such as Attica, never a draft/published status.",
+        guard: "Confidential, unpublished or draft flags, a foreign subdomain, or a URL on another account blocks the source.",
+        tests: "23/23 targeted tests",
+    },
+    {
+        id: "personio",
+        name: "Personio",
+        format: "XML",
+        endpoint: "GET https://{tenant}.jobs.personio.de/xml (or .com)",
+        paging: "Single <workzag-jobs> document of <position> records, one language per source.",
+        mapping: [
+            ["position/id", "provider_posting_id"],
+            ["position/name", "title"],
+            ["https://{host}/job/{id} (derived)", "official_job_url"],
+            ["jobDescriptions/jobDescription", "description_text"],
+            ["office · additionalOffices", "locations_normalized"],
+            ["employmentType · seniority · schedule", "source_evidence_note"],
+        ],
+        rule: "createdAt stays a creation time and is not relabelled as a publication date; no application URL is invented.",
+        guard: "Wrong root, unknown children or error pages are never treated as zero jobs.",
+        tests: "22/22 targeted tests",
+    },
+    {
+        id: "recruitee",
+        name: "Recruitee",
+        format: "XML",
+        endpoint: "GET https://{tenant}.recruitee.com/api/feeds/offers.xml",
+        paging: "Single published-board XML collection; board scope only, never employer-wide.",
+        mapping: [
+            ["reference (reversibly escaped)", "provider_posting_id"],
+            ["title", "title"],
+            ["url / careers_url", "official_job_url"],
+            ["apply_url", "official_application_url"],
+            ["description_requirements", "description_text"],
+            ["locations/location", "locations_normalized"],
+            ["remote · hybrid · on_site", "work_arrangement_evidence"],
+        ],
+        rule: "Job and apply URLs must share the same /o/{slug} route on the same host.",
+        guard: "The documented <credentials> subtree and the mailbox email are never extracted or stored.",
+        tests: "23/23 targeted tests",
+    },
+    {
+        id: "teamtailor",
+        name: "Teamtailor",
+        format: "RSS",
+        endpoint: "GET https://{careers-host}/jobs.rss?offset={n}&per_page=100",
+        paging: "Offset advances by the items actually observed; complete only after an explicitly empty terminal page.",
+        mapping: [
+            ["guid", "provider_posting_id"],
+            ["title", "title"],
+            ["link", "official_job_url"],
+            ["description", "description_text"],
+            ["tt:locations", "locations_normalized"],
+            ["remoteStatus", "work_arrangement_evidence"],
+            ["pubDate", "published_at_if_supplied"],
+        ],
+        rule: "remoteStatus \"none\" does not prove an on-site role; Greece eligibility stays UNKNOWN.",
+        guard: "Changed channel metadata between pages, or a job URL on another host, holds the source PARTIAL or BLOCKED.",
+        tests: "26/26 targeted tests",
+    },
+    {
+        id: "pinpoint",
+        name: "Pinpoint",
+        format: "JSON",
+        endpoint: "GET https://{board}.pinpointhq.com/postings.json",
+        paging: "One public postings collection; an unexpected next/has_more cursor invalidates completeness.",
+        mapping: [
+            ["data[].id", "provider_posting_id"],
+            ["job.requisition_id", "internal_requisition_id"],
+            ["title", "title"],
+            ["url", "official_job_url"],
+            ["application_form_url", "official_application_url"],
+            ["description + responsibilities + skills + benefits", "description_text"],
+            ["workplace_type", "work_arrangement_evidence"],
+        ],
+        rule: "Supplemental sections cannot make a missing principal description complete.",
+        guard: "Never the deprecated jobs.json or the key-protected /api/v1 endpoints.",
+        tests: "22/22 targeted tests",
+    },
+];
+
+/* ---------- Verification evidence ---------- */
+const evidence = [
+    { label: "v1 · final cache diagnostic", pass: 69, total: 69, note: "Previously evaluated candidates matched" },
+    { label: "M1 · full suite after hotfix", pass: 217, total: 217, note: "Up from 211/211 before the hotfix tests" },
+    { label: "M1 · real public responses parsed", pass: 44, total: 44, note: "Postings from three real feeds (5 + 37 + 2): parser compatibility, not live connectivity" },
+    { label: "M2.3 · integrated native suite", pass: 459, total: 459, note: "0 failures, 0 skips at the integration commit" },
+    { label: "R1 · combined native suite", pass: 500, total: 500, note: "Nine-provider collector + onboarding, reconciled" },
+];
+
+const adapterTests = [
+    { name: "SmartRecruiters", n: 26 },
+    { name: "Teamtailor", n: 26 },
+    { name: "Workable", n: 23 },
+    { name: "Recruitee", n: 23 },
+    { name: "Pinpoint", n: 22 },
+    { name: "Personio", n: 22 },
+    { name: "Shared XML parser", n: 9 },
+];
+
+/* M2D schedule, anonymised: provider of each source per batch. */
+const schedule = [
+    ["Ashby", "Teamtailor", "Personio", "Pinpoint"],
+    ["Greenhouse", "Lever", "Lever", "Ashby"],
+    ["Greenhouse", "Lever", "Ashby"],
+    ["Greenhouse"],
+    ["Ashby", "Greenhouse", "Ashby"],
+];
 ---
 
 <html lang="en">
-    <!-- =====================================================
-         HEAD / SEO
-         ===================================================== -->
-
     <head>
         <SeoHead {title} {description} type="article" />
     </head>
 
     <body>
         <main>
-            <!-- =================================================
-                 NAVIGATION
-                 ================================================= -->
-
             <SiteHeader />
 
             <!-- =================================================
@@ -70,808 +441,784 @@ const hasDashboard = dashboardUrl.startsWith("https://");
                     <strong>AI Job Discovery & Outreach</strong>
                 </div>
 
-                <p class="eyebrow">
-                    Python · AI Implementation · Workflow Automation
-                </p>
+                <p class="eyebrow">Python · Google Apps Script · Workflow automation</p>
 
                 <h1>
-                    AI Job Discovery &{" "}
-                    <span class="accent">Outreach Automation.</span>
+                    From job-board prototype to a{" "}
+                    <span class="accent">multi-ATS job funnel.</span>
                 </h1>
 
                 <p class="hero-lead">
-                    A working Python automation that discovers job vacancies,
-                    evaluates their suitability using Google Gemini, generates
-                    personalized outreach drafts, and organizes qualifying
-                    results in Google Sheets.
+                    Version 1 was a Python and Gemini automation that pulled
+                    vacancies from three job APIs and drafted outreach. Version
+                    2 is a Google Apps Script collector that reads employers'
+                    own job boards across nine ATS platforms, deduplicates
+                    against my application history, screens conservatively and
+                    prepares review batches, with a human making every decision.
                 </p>
 
-                <p class="hero-context">
-                    Built for a practical AI automation hiring assessment. The
-                    solution automates repetitive job research and message
-                    drafting while keeping the final outreach decision under
-                    human control.
-                </p>
+                <div class="funnel-graphic" aria-hidden="true">
+                    <div class="funnel-sources">
+                        {adapters.map((a, i) => (
+                            <span class={`src fmt-${a.format.toLowerCase()}`} style={`--i:${i}`}>
+                                {a.name}
+                            </span>
+                        ))}
+                    </div>
+                    <div class="funnel-lanes">
+                        {adapters.map((_, i) => (
+                            <span class="lane" style={`--i:${i}`}><i></i></span>
+                        ))}
+                    </div>
+                    <div class="funnel-core">
+                        <span>Normalise</span>
+                        <span>Dedup</span>
+                        <span>Screen</span>
+                    </div>
+                    <div class="funnel-out">
+                        <span>Review batch</span>
+                        <small>human decides</small>
+                    </div>
+                </div>
 
                 <SkillLinks
                     variant="hero"
                     skills={[
+                        "google-apps-script",
                         "python",
                         "google-gemini",
                         "rest-api-integration",
-                        "sqlite",
+                        "deduplication",
+                        "workflow-automation",
                         "google-sheets-api",
-                        "powershell",
                     ]}
                 />
 
                 <div class="hero-actions">
-                    {
-                        hasGithub && (
-                            <a
-                                class="button button-primary"
-                                href={githubUrl}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                            >
-                                View source code ↗
-                            </a>
-                        )
-                    }
-
-                    {
-                        hasDashboard && (
-                            <a
-                                class="button button-secondary"
-                                href={dashboardUrl}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                            >
-                                View Google Sheets output ↗
-                            </a>
-                        )
-                    }
-
-                    <a class="button button-secondary" href="#workflow">
-                        Explore the workflow ↓
-                    </a>
+                    <a class="button button-primary" href="#adapters">Explore the ATS adapters ↓</a>
+                    <a class="button button-secondary" href={githubUrl} target="_blank" rel="noopener noreferrer">v1 source code ↗</a>
+                    <a class="button button-secondary" href={dashboardUrl} target="_blank" rel="noopener noreferrer">v1 Google Sheets output ↗</a>
                 </div>
             </header>
 
-            <!-- =================================================
-                 KEY PROJECT METRICS
-                 ================================================= -->
-
             <section class="metrics" aria-label="Project metrics">
-                {
-                    metrics.map((metric) => (
-                        <article class="metric-card">
-                            <strong>{metric.value}</strong>
-                            <span>{metric.label}</span>
-                        </article>
-                    ))
-                }
+                {metrics.map((metric) => (
+                    <article class="metric-card">
+                        <strong>{metric.value}</strong>
+                        <span>{metric.label}</span>
+                    </article>
+                ))}
             </section>
 
             <!-- =================================================
-                 SECTION 01 — THE PROBLEM
+                 01 — WHERE IT STARTED (v1)
                  ================================================= -->
 
-            <section class="case-section">
-                <div class="section-label">
-                    <p class="eyebrow">01 — The problem</p>
-                </div>
-
-                <div class="section-content">
-                    <h2>
-                        Job research is repetitive. Personalization takes time.
-                    </h2>
-
-                    <p class="lead">
-                        The assessment called for a workflow that could discover
-                        executive and administrative support vacancies, evaluate
-                        their suitability, and prepare personalized outreach
-                        without relying on LinkedIn.
-                    </p>
-
+            <section class="case-section" aria-labelledby="s-v1">
+                <div class="section-heading">
+                    <p class="eyebrow">01 — Where it started</p>
+                    <h2 id="s-v1">v1: three job APIs, Gemini and a spreadsheet.</h2>
                     <p>
-                        Finding a vacancy is only the beginning. Each posting
-                        needs to be checked for remote-work arrangements,
-                        language requirements, and role relevance before
-                        preparing a message that accurately reflects both the
-                        vacancy and the sender's background.
-                    </p>
-
-                    <p>
-                        I built a modular Python workflow to automate those
-                        repetitive steps and deliver the results in a
-                        spreadsheet that the intended user could review without
-                        opening the Python application.
+                        Built for a practical AI automation hiring assessment:
+                        discover executive and administrative support vacancies
+                        without LinkedIn, check their suitability and draft a
+                        first message, keeping the final outreach decision
+                        with a person.
                     </p>
                 </div>
-            </section>
 
-            <!-- =================================================
-                 SECTION 02 — WORKFLOW ARCHITECTURE
-                 ================================================= -->
-
-            <section id="workflow" class="case-section architecture-section">
-                <div class="section-label">
-                    <p class="eyebrow">02 — Architecture</p>
-                </div>
-
-                <div class="section-content">
-                    <h2>From three job APIs to one reviewable dashboard.</h2>
-
-                    <p class="lead">
-                        The workflow separates discovery, filtering, AI
-                        evaluation, message generation, and storage into
-                        distinct stages.
-                    </p>
-
-                    <div class="workflow">
-                        <div class="workflow-step">
-                            <span>01 / DISCOVERY</span>
-                            <strong>Retrieve vacancies</strong>
-                            <p>
-                                Collect job postings from Arbeitnow, Remotive,
-                                and Adzuna.
-                            </p>
-                        </div>
-
-                        <div class="workflow-arrow" aria-hidden="true">↓</div>
-
-                        <div class="workflow-step">
-                            <span>02 / PROCESSING</span>
-                            <strong>Normalize & deduplicate</strong>
-                            <p>
-                                Standardize job fields, filter titles, and
-                                exclude vacancies already saved.
-                            </p>
-                        </div>
-
-                        <div class="workflow-arrow" aria-hidden="true">↓</div>
-
-                        <div class="workflow-step">
-                            <span>03 / VALIDATION</span>
-                            <strong>Check cache & evaluate</strong>
-                            <p>
-                                Reuse previous validation results where
-                                appropriate or ask Gemini to evaluate new and
-                                changed vacancies.
-                            </p>
-                        </div>
-
-                        <div class="workflow-arrow" aria-hidden="true">↓</div>
-
-                        <div class="workflow-step">
-                            <span>04 / GENERATION</span>
-                            <strong>Draft personalized outreach</strong>
-                            <p>
-                                Generate a message using the job posting, an
-                                editable prompt, and a sender profile.
-                            </p>
-                        </div>
-
-                        <div class="workflow-arrow" aria-hidden="true">↓</div>
-
-                        <div class="workflow-step final-step">
-                            <span>05 / OUTPUT</span>
-                            <strong>Update Google Sheets</strong>
-                            <p>
-                                Append qualifying vacancies and outreach drafts
-                                for human review.
-                            </p>
-                        </div>
-                    </div>
-
-                    <div class="callout">
-                        <strong>Human-in-the-loop design</strong>
+                <div class="v1-grid">
+                    <article class="card">
+                        <span class="kicker">Discover</span>
+                        <h3>Arbeitnow, Remotive, Adzuna</h3>
                         <p>
-                            The workflow does not automatically contact
-                            employers or submit job applications. The intended
-                            user reviews the posting and generated message
-                            before deciding whether to proceed.
+                            Each API returns a different shape, so normalisation
+                            functions map them to one structure. Titles outside
+                            the target roles and already-saved jobs are dropped
+                            before any AI call.
+                        </p>
+                    </article>
+                    <article class="card">
+                        <span class="kicker">Validate</span>
+                        <h3>Gemini, 20 jobs per batch</h3>
+                        <p>
+                            Three conditions (clearly remote, workable in
+                            English, genuinely an assistant role) returned as
+                            structured Booleans, confidence and a short reason.
+                            Rules live in an editable prompt file.
+                        </p>
+                    </article>
+                    <article class="card">
+                        <span class="kicker">Draft</span>
+                        <h3>Grounded outreach</h3>
+                        <p>
+                            Gemini writes a first-contact draft from the real
+                            posting and a sender profile. The prompt forbids
+                            inventing qualifications; nothing is sent
+                            automatically.
+                        </p>
+                    </article>
+                    <article class="card">
+                        <span class="kicker">Run</span>
+                        <h3>SQLite cache + Task Scheduler</h3>
+                        <p>
+                            A PowerShell launcher runs the workflow daily. The
+                            Google Sheets dashboard (formatted with Apps Script)
+                            holds the job details and drafts.
+                        </p>
+                    </article>
+                </div>
+
+                <div class="cache-story">
+                    <div class="cache-copy">
+                        <h3>The bug that taught the v2 lesson.</h3>
+                        <p>
+                            The validation cache keyed results on the job URL
+                            plus a SHA-256 fingerprint of the job, prompt and
+                            model. A repeated run only matched 33 of 69 known
+                            jobs: the same Adzuna vacancy appeared under
+                            different tracking parameters and URL paths. I
+                            switched Adzuna to its numeric listing ID and
+                            migrated the records; the final diagnostic matched
+                            69 of 69, and a manual Task Scheduler run reused 70
+                            cached candidates.
+                        </p>
+                        <p class="muted-note">
+                            A diagnostic against already-evaluated jobs, not a
+                            promise of a 100% hit rate on future runs.
                         </p>
                     </div>
-                </div>
-            </section>
-
-            <!-- =================================================
-                 SECTION 03 — JOB DISCOVERY
-                 ================================================= -->
-
-            <section class="case-section">
-                <div class="section-label">
-                    <p class="eyebrow">03 — Job discovery</p>
-                </div>
-
-                <div class="section-content">
-                    <h2>
-                        Three independent sources, one consistent data
-                        structure.
-                    </h2>
-
-                    <p class="lead">
-                        Each source returns jobs in a different format. I
-                        implemented normalization functions so the rest of the
-                        pipeline could process all vacancies consistently.
-                    </p>
-
-                    <div class="source-grid">
-                        <article>
-                            <span>API 01</span>
-                            <strong>Arbeitnow</strong>
-                            <p>
-                                Paginated job discovery with safeguards against
-                                repeated pagination URLs.
-                            </p>
-                        </article>
-
-                        <article>
-                            <span>API 02</span>
-                            <strong>Remotive</strong>
-                            <p>
-                                Remote-job listings with location restrictions,
-                                descriptions, and employer information.
-                            </p>
-                        </article>
-
-                        <article>
-                            <span>API 03</span>
-                            <strong>Adzuna</strong>
-                            <p>
-                                Targeted searches for executive and
-                                administrative assistant vacancies.
-                            </p>
-                        </article>
-                    </div>
-
-                    <p>
-                        The preliminary filtering stage removes duplicate
-                        listings and excludes job titles outside the target
-                        categories before making AI requests. This reduces
-                        unnecessary model calls.
-                    </p>
-
-                    <p>
-                        Because job-board listings may contain incomplete
-                        descriptions or geographical restrictions, the workflow
-                        does not assume that a remote listing is automatically
-                        suitable for every applicant.
-                    </p>
-                </div>
-            </section>
-
-            <!-- =================================================
-                 SECTION 04 — GEMINI VALIDATION
-                 ================================================= -->
-
-            <section class="case-section">
-                <div class="section-label">
-                    <p class="eyebrow">04 — AI validation</p>
-                </div>
-
-                <div class="section-content">
-                    <h2>
-                        Gemini evaluates actual job requirements, not just job
-                        titles.
-                    </h2>
-
-                    <p class="lead">
-                        Candidate vacancies are evaluated in batches of 20
-                        against three conditions.
-                    </p>
-
-                    <div class="criteria-grid">
-                        <article>
-                            <span>01</span>
-                            <strong>Remote suitability</strong>
-                            <p>
-                                The available posting must clearly indicate that
-                                remote work is permitted. On-site, hybrid, and
-                                unclear arrangements are excluded.
-                            </p>
-                        </article>
-
-                        <article>
-                            <span>02</span>
-                            <strong>English-language suitability</strong>
-                            <p>
-                                The role must be workable professionally in
-                                English without another mandatory professional
-                                language.
-                            </p>
-                        </article>
-
-                        <article>
-                            <span>03</span>
-                            <strong>Role relevance</strong>
-                            <p>
-                                Responsibilities must genuinely involve
-                                executive or administrative support rather than
-                                an unrelated specialist position.
-                            </p>
-                        </article>
-                    </div>
-
-                    <p>
-                        Gemini returns structured results containing Boolean
-                        decisions, confidence values, and short explanations.
-                        The program matches the returned evaluations to the
-                        original vacancies using their job indexes.
-                    </p>
-
-                    <p>
-                        Validation rules are stored in an editable prompt file.
-                        They can be updated without rewriting the underlying
-                        Python evaluation logic.
-                    </p>
-
-                    <div class="callout">
-                        <strong>AI classification is not definitive</strong>
-                        <p>
-                            During testing, the model incorrectly classified a
-                            position with an Italian-language requirement as
-                            English-suitable. I refined the validation prompt to
-                            address this issue. Model decisions remain
-                            AI-assisted assessments rather than guaranteed
-                            verification of job suitability.
-                        </p>
-                    </div>
-                </div>
-            </section>
-
-            <!-- =================================================
-                 SECTION 05 — PERSONALIZED OUTREACH
-                 ================================================= -->
-
-            <section class="case-section">
-                <div class="section-label">
-                    <p class="eyebrow">05 — Outreach generation</p>
-                </div>
-
-                <div class="section-content">
-                    <h2>Personalization grounded in real job information.</h2>
-
-                    <p class="lead">
-                        Once a vacancy passes validation, Gemini generates a
-                        first-contact message using the actual job posting, a
-                        configurable sender profile, and an editable outreach
-                        prompt.
-                    </p>
-
-                    <div class="feature-list">
-                        <div>
-                            <span>01</span>
-                            <div>
-                                <strong>Job-specific context</strong>
-                                <p>
-                                    The draft references concrete details
-                                    supported by the available posting.
-                                </p>
-                            </div>
+                    <div class="cache-meter" data-count-group>
+                        <div class="meter-row">
+                            <span>Initial repeat run</span>
+                            <div class="meter"><i style="--w:47.8%"></i></div>
+                            <strong data-count="33">33</strong><em>/ 69</em>
                         </div>
-
-                        <div>
-                            <span>02</span>
-                            <div>
-                                <strong>Editable prompts and profiles</strong>
-                                <p>
-                                    Message instructions and sender information
-                                    are stored separately from the Python
-                                    application logic.
-                                </p>
-                            </div>
-                        </div>
-
-                        <div>
-                            <span>03</span>
-                            <div>
-                                <strong>Grounded professional claims</strong>
-                                <p>
-                                    The prompt prohibits inventing
-                                    qualifications, prior experience, software
-                                    skills, or achievements.
-                                </p>
-                            </div>
-                        </div>
-
-                        <div>
-                            <span>04</span>
-                            <div>
-                                <strong>Human approval</strong>
-                                <p>
-                                    The generated text is a draft for review,
-                                    not an automatically sent message.
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <p>
-                        The individual-applicant mode was implemented and
-                        demonstrated end to end. An additional business-outreach
-                        configuration was prepared, but it requires genuine
-                        business and service information before it can generate
-                        messages.
-                    </p>
-                </div>
-            </section>
-
-            <!-- =================================================
-                 SECTION 06 — PERSISTENT CACHE
-                 ================================================= -->
-
-            <section class="case-section">
-                <div class="section-label">
-                    <p class="eyebrow">06 — Engineering improvement</p>
-                </div>
-
-                <div class="section-content">
-                    <h2>Solving repeated AI validation with SQLite caching.</h2>
-
-                    <p class="lead">
-                        Re-evaluating unchanged jobs during every scheduled
-                        execution would waste model requests. I introduced a
-                        persistent SQLite cache to reuse previous validation
-                        results.
-                    </p>
-
-                    <p>
-                        Each cache entry contains a job identifier, a
-                        fingerprint of the validation inputs, the previous
-                        result, and an update timestamp. The fingerprint
-                        accounts for job details, the validation prompt, and the
-                        model identifier.
-                    </p>
-
-                    <p>
-                        When relevant job information or validation instructions
-                        change, the previous result is invalidated and a new
-                        evaluation is required.
-                    </p>
-
-                    <div class="comparison">
-                        <article>
-                            <span>Initial repeated run</span>
-                            <strong>33 / 69</strong>
-                            <p>
-                                Previously evaluated jobs retrieved from cache
-                            </p>
-                        </article>
-
-                        <div class="comparison-arrow" aria-hidden="true">→</div>
-
-                        <article class="comparison-highlight">
+                        <div class="meter-row is-good">
                             <span>Final diagnostic</span>
-                            <strong>69 / 69</strong>
-                            <p>Previously evaluated candidates matched</p>
-                        </article>
+                            <div class="meter"><i style="--w:100%"></i></div>
+                            <strong data-count="69">69</strong><em>/ 69</em>
+                        </div>
                     </div>
+                </div>
 
-                    <h3>The underlying problem: inconsistent Adzuna URLs.</h3>
-
+                <div class="verified-example">
+                    <span class="kicker green">Verified v1 example</span>
                     <p>
-                        Investigation showed that the same Adzuna vacancy could
-                        appear with different tracking parameters or URL paths,
-                        preventing the original cache from recognizing
-                        previously evaluated jobs.
+                        A real Remote Office Assistant vacancy from Coalition
+                        Technologies, found through Remotive, went through
+                        every stage: discovered, evaluated, draft generated and
+                        saved to Sheets. No fictional vacancies were added to
+                        the demonstration dashboard.
                     </p>
+                </div>
+            </section>
 
+            <!-- =================================================
+                 02 — WHY REBUILD
+                 ================================================= -->
+
+            <section class="case-section" aria-labelledby="s-why">
+                <div class="section-heading">
+                    <p class="eyebrow">02 — Why rebuild it</p>
+                    <h2 id="s-why">Aggregators were the wrong source of truth.</h2>
                     <p>
-                        I updated the cache to identify Adzuna listings using
-                        their underlying numeric job IDs and migrated the
-                        existing records. The final diagnostic returned 69 cache
-                        hits and zero misses for the tested candidate set.
+                        For my own search (operations, marketplace and
+                        e-commerce roles) the employers I care about publish
+                        on their own ATS job boards. Aggregator feeds gave
+                        shortened descriptions and partial coverage, and
+                        title-based dedup could silently drop a different job
+                        with the same name.
                     </p>
+                </div>
 
-                    <div class="callout">
-                        <strong>What the result means</strong>
+                <div class="why-grid">
+                    <article class="card why-card">
+                        <span class="why-from">v1 assumption</span>
+                        <p>Three aggregators are enough coverage.</p>
+                        <span class="why-to">v2 rule</span>
+                        <p>Read each employer's own public board, one verified source at a time.</p>
+                    </article>
+                    <article class="card why-card">
+                        <span class="why-from">v1 assumption</span>
+                        <p>Same company + same title = duplicate.</p>
+                        <span class="why-to">v2 rule</span>
+                        <p>Identity is the provider's posting ID. Title similarity is a warning for a human.</p>
+                    </article>
+                    <article class="card why-card">
+                        <span class="why-from">v1 assumption</span>
+                        <p>An AI call decides fit on every run.</p>
+                        <span class="why-to">v2 rule</span>
+                        <p>Deterministic rules first, a manual review batch for the rest, cached until the job changes.</p>
+                    </article>
+                    <article class="card why-card">
+                        <span class="why-from">v1 assumption</span>
+                        <p>An empty response means no jobs.</p>
+                        <span class="why-to">v2 rule</span>
+                        <p>403, 429, a malformed page or a missing page is PARTIAL or BLOCKED, never zero.</p>
+                    </article>
+                </div>
+
+                <div class="registry">
+                    <div class="registry-copy">
+                        <h3>Starting point: a 389-employer research registry.</h3>
                         <p>
-                            This was a successful diagnostic against previously
-                            evaluated jobs, not a claim that every future run
-                            will achieve a 100% cache-hit rate. New or modified
-                            vacancies still require fresh evaluation.
+                            The reference registry tracked 389 employers. Only
+                            40 had an identified ATS; 349 were still unknown and
+                            none had a tested public endpoint. That is why v2
+                            needed source onboarding and verification, not just
+                            more adapters.
                         </p>
+                    </div>
+                    <div class="registry-dots" role="img" aria-label="389 employers: 40 with an identified ATS, 349 unknown">
+                        {Array.from({ length: 389 }, (_, i) => (
+                            <i class={i < 40 ? "known" : ""} style={`--d:${(i % 40) * 18}ms`}></i>
+                        ))}
+                    </div>
+                    <div class="registry-legend" aria-hidden="true">
+                        <span><i class="known"></i>ATS identified (40)</span>
+                        <span><i></i>Unknown (349)</span>
                     </div>
                 </div>
             </section>
 
             <!-- =================================================
-                 SECTION 07 — AUTOMATION & DASHBOARD
+                 03 — EVOLUTION TIMELINE
                  ================================================= -->
 
-            <section class="case-section">
-                <div class="section-label">
-                    <p class="eyebrow">07 — Execution & output</p>
+            <section class="case-section" aria-labelledby="s-evo">
+                <div class="section-heading">
+                    <p class="eyebrow">03 — How it evolved</p>
+                    <h2 id="s-evo">Nine milestones, each behind its own gate.</h2>
+                    <p>Select a milestone to see what it added.</p>
                 </div>
 
-                <div class="section-content">
-                    <h2>
-                        Scheduled execution with a spreadsheet as the user
-                        interface.
-                    </h2>
-
-                    <p class="lead">
-                        The system is configured to run daily using Windows Task
-                        Scheduler and deliver qualifying results to a Google
-                        Sheets dashboard.
-                    </p>
-
-                    <div class="output-grid">
-                        <article>
-                            <span>Automation</span>
-                            <strong>Windows Task Scheduler</strong>
-                            <p>
-                                A PowerShell launcher activates the project's
-                                Python environment, executes the workflow,
-                                captures logs, and reports the execution
-                                outcome.
-                            </p>
-                        </article>
-
-                        <article>
-                            <span>Storage</span>
-                            <strong>SQLite</strong>
-                            <p>
-                                Persistent validation results allow subsequent
-                                runs to avoid unnecessary evaluations of
-                                unchanged vacancies.
-                            </p>
-                        </article>
-
-                        <article>
-                            <span>Output</span>
-                            <strong>Google Sheets</strong>
-                            <p>
-                                The dashboard contains job details, source URLs,
-                                descriptions, and personalized outreach drafts.
-                            </p>
-                        </article>
-
-                        <article>
-                            <span>Presentation</span>
-                            <strong>Google Apps Script</strong>
-                            <p>
-                                Dashboard formatting improves readability
-                                through consistent column widths, text wrapping,
-                                alternating rows, filters, and a frozen header.
-                            </p>
-                        </article>
+                <div class="timeline" data-tabs>
+                    <div class="timeline-track" role="tablist" aria-label="Project milestones">
+                        {milestones.map((m, i) => (
+                            <button
+                                class="tl-node"
+                                type="button"
+                                role="tab"
+                                id={`tl-tab-${m.id}`}
+                                aria-controls={`tl-panel-${m.id}`}
+                                aria-selected={i === milestones.length - 1 ? "true" : "false"}
+                                tabindex={i === milestones.length - 1 ? 0 : -1}
+                            >
+                                <span class="tl-dot"></span>
+                                <strong>{m.tag}</strong>
+                                <small>{m.name}</small>
+                            </button>
+                        ))}
                     </div>
-
-                    <p>
-                        The Task Scheduler manual execution test completed
-                        successfully, with 70 previously evaluated candidates
-                        reused from cache and no unnecessary outreach messages
-                        generated. Daily scheduling was configured; the
-                        documented validation covered the manual scheduler run
-                        rather than a later unattended trigger.
-                    </p>
-
-                    <p>
-                        Because the scheduler and cache run locally, the Windows
-                        computer must be available for the automation to
-                        execute.
-                    </p>
-                </div>
-            </section>
-
-            <!-- =================================================
-                 SECTION 08 — VERIFIED RESULTS
-                 ================================================= -->
-
-            <section class="case-section">
-                <div class="section-label">
-                    <p class="eyebrow">08 — Testing & results</p>
-                </div>
-
-                <div class="section-content">
-                    <h2>
-                        A working end-to-end demonstration with real vacancy
-                        data.
-                    </h2>
-
-                    <p class="lead">
-                        The workflow successfully discovered, evaluated, and
-                        saved a qualifying Remote Office Assistant vacancy from
-                        Coalition Technologies through Remotive.
-                    </p>
-
-                    <div class="result-card">
-                        <span class="result-label">
-                            VERIFIED WORKFLOW EXAMPLE
-                        </span>
-
-                        <h3>Remote Office Assistant</h3>
-
-                        <p class="result-company">
-                            Coalition Technologies · Remotive
-                        </p>
-
-                        <div class="result-stages">
-                            <span>Discovered</span>
-                            <span>Evaluated</span>
-                            <span>Draft generated</span>
-                            <span>Saved to Sheets</span>
+                    {milestones.map((m, i) => (
+                        <div
+                            class="tl-panel"
+                            role="tabpanel"
+                            id={`tl-panel-${m.id}`}
+                            aria-labelledby={`tl-tab-${m.id}`}
+                            hidden={i !== milestones.length - 1}
+                        >
+                            <p class="tl-date">{m.tag} · {m.date}</p>
+                            <h3>{m.name}</h3>
+                            <p>{m.summary}</p>
+                            <ul>
+                                {m.points.map((p) => <li>{p}</li>)}
+                            </ul>
                         </div>
+                    ))}
+                </div>
+            </section>
 
+            <!-- =================================================
+                 04 — PIPELINE WALKTHROUGH
+                 ================================================= -->
+
+            <section class="case-section" aria-labelledby="s-pipe">
+                <div class="section-heading">
+                    <p class="eyebrow">04 — The v2 pipeline</p>
+                    <h2 id="s-pipe">Follow one posting through the real stages.</h2>
+                    <p>
+                        Step through the collector in order. Each stage names
+                        the Apps Script module that performs it.
+                    </p>
+                </div>
+
+                <div class="stepper" data-stepper>
+                    <p class="sample-label">
+                        Illustrative posting · fictional employer "Example
+                        Market", invented IDs · real field names and states
+                    </p>
+                    <ol class="step-rail" aria-label="Pipeline stages">
+                        {stages.map((s, i) => (
+                            <li>
+                                <button type="button" class="step-dot" data-step={i} aria-current={i === 0 ? "step" : undefined}>
+                                    <span>{String(i + 1).padStart(2, "0")}</span>
+                                    <small>{s.name}</small>
+                                </button>
+                            </li>
+                        ))}
+                    </ol>
+                    <div class="step-progress" aria-hidden="true"><i></i></div>
+                    <div class="step-stage" aria-live="polite">
+                        {stages.map((s, i) => (
+                            <article class="step-panel" data-panel={i} hidden={i !== 0}>
+                                <div class="step-copy">
+                                    <span class="file-chip">{s.file}</span>
+                                    <h3>{String(i + 1).padStart(2, "0")} · {s.name}</h3>
+                                    <p>{s.text}</p>
+                                </div>
+                                {s.sample === "fingerprint" ? (
+                                    <pre class="code" data-sample-fingerprint>{`{
+  "posting_key": "CO-9001:lever:example-market:3f2c9a1e-5b7d-4c11-9e2a-0b6f1d2c8e44",
+  "title": "Marketplace Operations Specialist",
+  "locations_normalized": "[\\"Remote - Europe\\"]",
+  "description_complete": true,
+  "greece_remote_evidence": "UNKNOWN",
+  "content_fingerprint": "…computing in your browser…"
+}`}</pre>
+                                ) : (
+                                    <pre class="code">{s.sample}</pre>
+                                )}
+                            </article>
+                        ))}
+                    </div>
+                    <div class="step-controls">
+                        <button type="button" class="ctl" data-prev>← Previous</button>
+                        <button type="button" class="ctl" data-play aria-pressed="false">▶ Auto-play</button>
+                        <button type="button" class="ctl ctl-primary" data-next>Next stage →</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- =================================================
+                 05 — ATS ADAPTER EXPLORER
+                 ================================================= -->
+
+            <section id="adapters" class="case-section" aria-labelledby="s-ats">
+                <div class="section-heading">
+                    <p class="eyebrow">05 — ATS adapter explorer</p>
+                    <h2 id="s-ats">Nine job-board formats, one Postings schema.</h2>
+                    <p>
+                        Pick an ATS to see the public endpoint its adapter
+                        calls, how it pages, and the field mapping taken from
+                        the adapter and Normalize.gs. Placeholders in braces
+                        stand for the verified tenant.
+                    </p>
+                </div>
+
+                <div class="ats" data-tabs>
+                    <div class="ats-tabs" role="tablist" aria-label="ATS providers">
+                        {adapters.map((a, i) => (
+                            <button
+                                type="button"
+                                role="tab"
+                                class={`ats-tab fmt-${a.format.toLowerCase()}`}
+                                id={`ats-tab-${a.id}`}
+                                aria-controls={`ats-panel-${a.id}`}
+                                aria-selected={i === 0 ? "true" : "false"}
+                                tabindex={i === 0 ? 0 : -1}
+                            >
+                                <span>{a.name}</span>
+                                <small>{a.format}</small>
+                            </button>
+                        ))}
+                    </div>
+
+                    {adapters.map((a, i) => (
+                        <div
+                            class="ats-panel"
+                            role="tabpanel"
+                            id={`ats-panel-${a.id}`}
+                            aria-labelledby={`ats-tab-${a.id}`}
+                            hidden={i !== 0}
+                        >
+                            <div class="ats-head">
+                                <h3>{a.name}</h3>
+                                <span class={`fmt-badge fmt-${a.format.toLowerCase()}`}>{a.format}</span>
+                                <span class="test-badge">{a.tests}</span>
+                            </div>
+                            <pre class="code endpoint">{a.endpoint}</pre>
+                            <p class="ats-paging"><strong>Paging:</strong> {a.paging}</p>
+
+                            <div class="mapping" role="table" aria-label={`${a.name} field mapping`}>
+                                <div class="map-row map-head" role="row">
+                                    <span role="columnheader">{a.name} field</span>
+                                    <span aria-hidden="true"></span>
+                                    <span role="columnheader">Normalised field</span>
+                                </div>
+                                {a.mapping.map(([from, to], j) => (
+                                    <div class="map-row" role="row" style={`--j:${j}`}>
+                                        <code role="cell">{from}</code>
+                                        <span class="map-arrow" aria-hidden="true"></span>
+                                        <code role="cell" class="to">{to}</code>
+                                    </div>
+                                ))}
+                            </div>
+
+                            <div class="ats-notes">
+                                <p><span class="kicker">Completeness</span>{a.rule}</p>
+                                <p><span class="kicker">Guard</span>{a.guard}</p>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+
+                <p class="footnote">
+                    Shared rules for every adapter: HTTPS only, no redirect
+                    following, provider host allowlist, request/page/byte/time
+                    budgets, and <code>remote_country_eligibility = UNKNOWN</code>{" "}
+                    until there is real evidence. A failure is PARTIAL or
+                    BLOCKED and never closes a job.
+                </p>
+            </section>
+
+            <!-- =================================================
+                 06 — DEDUP & CHANGE DETECTION LAB
+                 ================================================= -->
+
+            <section class="case-section" aria-labelledby="s-dedup">
+                <div class="section-heading">
+                    <p class="eyebrow">06 — Dedup lab</p>
+                    <h2 id="s-dedup">Have I already applied to this job?</h2>
+                    <p>
+                        This runs a JavaScript port of the real{" "}
+                        <code>dedupCanonicalUrl_</code>, title-alias and
+                        match-priority logic from Dedup.gs, next to v1's
+                        company-and-title rule. All values are fictional.
+                    </p>
+                </div>
+
+                <div class="lab" data-dedup-lab>
+                    <div class="presets" role="group" aria-label="Dedup scenarios">
+                        <button type="button" class="chip is-active" data-preset="url">Tracking-link variant</button>
+                        <button type="button" class="chip" data-preset="id">Same posting ID</button>
+                        <button type="button" class="chip" data-preset="title">Same title, new job</button>
+                        <button type="button" class="chip" data-preset="req">Reused requisition</button>
+                        <button type="button" class="chip" data-preset="board">Same ID, other board</button>
+                        <button type="button" class="chip" data-preset="conflict">URL under another employer</button>
+                    </div>
+
+                    <div class="lab-cols">
+                        <fieldset class="lab-box">
+                            <legend>Incoming posting</legend>
+                            <label>Employer ID <input name="in_co" autocomplete="off" /></label>
+                            <label>Posting ID <input name="in_pid" autocomplete="off" /></label>
+                            <label>Requisition ID <input name="in_req" autocomplete="off" /></label>
+                            <label>Job URL <input name="in_url" autocomplete="off" /></label>
+                            <label>Title <input name="in_title" autocomplete="off" /></label>
+                        </fieldset>
+                        <fieldset class="lab-box">
+                            <legend>Dedup Snapshot row</legend>
+                            <label>Origin tab
+                                <select name="h_tab">
+                                    <option>Applications</option>
+                                    <option>Vacancies</option>
+                                    <option>Applied Vacancy Archive</option>
+                                </select>
+                            </label>
+                            <label>Employer ID <input name="h_co" autocomplete="off" /></label>
+                            <label>Posting ID <input name="h_pid" autocomplete="off" /></label>
+                            <label>Requisition ID <input name="h_req" autocomplete="off" /></label>
+                            <label>Job URL <input name="h_url" autocomplete="off" /></label>
+                            <label>Title <input name="h_title" autocomplete="off" /></label>
+                        </fieldset>
+                    </div>
+
+                    <div class="lab-out" aria-live="polite">
+                        <div class="verdict v2">
+                            <span class="kicker">v2 · Dedup.gs</span>
+                            <strong data-out="v2status">—</strong>
+                            <code data-out="v2type"></code>
+                            <p data-out="v2why"></p>
+                        </div>
+                        <div class="verdict v1">
+                            <span class="kicker">v1 · remove_duplicates()</span>
+                            <strong data-out="v1status">—</strong>
+                            <p data-out="v1why"></p>
+                        </div>
+                        <div class="canon">
+                            <span class="kicker">Canonical URLs</span>
+                            <code data-out="canonIn"></code>
+                            <code data-out="canonH"></code>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="lab fp-lab" data-fp-lab>
+                    <div class="fp-copy">
+                        <h3>Change detection fingerprint</h3>
                         <p>
-                            The Google Sheets output contains the job details,
-                            description, source URL, and a personalized outreach
-                            draft.
+                            A port of <code>meaningfulFingerprint</code>: four
+                            FNV-1a streams over a canonical tuple of the
+                            posting's meaningful fields. Edit the text and the
+                            hash changes; refetch it and only{" "}
+                            <code>last_seen_at</code> moves.
                         </p>
+                        <label>Title <input name="fp_title" value="Marketplace Operations Specialist" autocomplete="off" /></label>
+                        <label>Description
+                            <textarea name="fp_desc" rows="3">Own seller onboarding, listing quality and dispute operations for our European marketplace. Remote within Europe.</textarea>
+                        </label>
+                        <button type="button" class="ctl" data-refetch>↻ Refetch unchanged posting</button>
                     </div>
-
-                    <p>
-                        Subsequent testing confirmed early duplicate prevention,
-                        persistent validation caching, and successful manual
-                        execution through Windows Task Scheduler.
-                    </p>
-
-                    <p>
-                        No fictional vacancies were added to the demonstration
-                        dashboard to inflate the number of successful results.
-                    </p>
+                    <div class="fp-out" aria-live="polite">
+                        <div><span>last_seen_at</span><code data-out="seen"></code></div>
+                        <div><span>content_fingerprint</span><code data-out="fp" class="fp-hash"></code></div>
+                        <div><span>lifecycle</span><strong data-out="fpstate">baseline_discovered</strong></div>
+                    </div>
                 </div>
             </section>
 
             <!-- =================================================
-                 SECTION 09 — LIMITATIONS
+                 07 — SCREENING SANDBOX
                  ================================================= -->
 
-            <section class="case-section">
-                <div class="section-label">
-                    <p class="eyebrow">09 — Limitations</p>
+            <section class="case-section" aria-labelledby="s-screen">
+                <div class="section-heading">
+                    <p class="eyebrow">07 — Screening sandbox</p>
+                    <h2 id="s-screen">Exclude only what the text actually says.</h2>
+                    <p>
+                        Type or pick a job description. The sandbox runs a
+                        browser port of five of the fourteen hard-exclusion
+                        rules in Screen.gs (third language, mandatory degree,
+                        unpaid role, US-only hiring, translation-only work)
+                        plus its review flags. Everything else reaches review.
+                    </p>
                 </div>
 
-                <div class="section-content">
-                    <h2>
-                        Working automation, with clear operational boundaries.
-                    </h2>
-
-                    <div class="feature-list">
-                        <div>
-                            <span>01</span>
-                            <div>
-                                <strong>Job-source coverage</strong>
-                                <p>
-                                    Three APIs cannot provide comprehensive
-                                    coverage of every available vacancy.
-                                </p>
-                            </div>
+                <div class="lab screen-lab" data-screen-lab>
+                    <div class="presets" role="group" aria-label="Screening examples">
+                        <button type="button" class="chip is-active" data-sp="remote">Remote EU ops role</button>
+                        <button type="button" class="chip" data-sp="german">German required</button>
+                        <button type="button" class="chip" data-sp="degreeok">Degree or experience</button>
+                        <button type="button" class="chip" data-sp="degree">Degree, no equivalent</button>
+                        <button type="button" class="chip" data-sp="unpaid">Unpaid internship</button>
+                        <button type="button" class="chip" data-sp="teaser">Short teaser</button>
+                    </div>
+                    <div class="screen-cols">
+                        <div class="screen-in">
+                            <label>Title <input name="s_title" autocomplete="off" /></label>
+                            <label>Description <textarea name="s_desc" rows="6"></textarea></label>
+                            <label class="check"><input type="checkbox" name="s_complete" checked /> Full description retrieved: <code>description_complete</code></label>
                         </div>
-
-                        <div>
-                            <span>02</span>
-                            <div>
-                                <strong>Incomplete job information</strong>
-                                <p>
-                                    Some providers return abbreviated
-                                    descriptions, limiting the detail available
-                                    for validation and outreach.
-                                </p>
-                            </div>
-                        </div>
-
-                        <div>
-                            <span>03</span>
-                            <div>
-                                <strong>AI reliability</strong>
-                                <p>
-                                    Language, relevance, and remote-work
-                                    classification can be incorrect. Human
-                                    verification remains important.
-                                </p>
-                            </div>
-                        </div>
-
-                        <div>
-                            <span>04</span>
-                            <div>
-                                <strong>Local execution</strong>
-                                <p>
-                                    Scheduling depends on the Windows computer
-                                    being available. The SQLite validation cache
-                                    is also stored locally.
-                                </p>
-                            </div>
-                        </div>
-
-                        <div>
-                            <span>05</span>
-                            <div>
-                                <strong>Human-controlled outreach</strong>
-                                <p>
-                                    The system generates drafts rather than
-                                    contacting employers or submitting
-                                    applications automatically.
-                                </p>
-                            </div>
+                        <div class="screen-out" aria-live="polite">
+                            <span class="kicker">routePosting()</span>
+                            <strong class="route" data-out="route">AI Review</strong>
+                            <ul class="codes" data-out="codes"></ul>
+                            <div class="evidence" data-out="evidence"></div>
+                            <p class="muted-note">application_ready is always <code>false</code>.</p>
                         </div>
                     </div>
                 </div>
             </section>
 
             <!-- =================================================
-                 SECTION 10 — SKILLS
+                 08 — LIFECYCLE SIMULATOR
                  ================================================= -->
 
-            <section class="case-section">
-                <div class="section-label">
-                    <p class="eyebrow">10 — Skills demonstrated</p>
+            <section class="case-section" aria-labelledby="s-life">
+                <div class="section-heading">
+                    <p class="eyebrow">08 — Lifecycle</p>
+                    <h2 id="s-life">A failed fetch must never close a job.</h2>
+                    <p>
+                        The previous complete run held postings A, B and C.
+                        This run returned A unchanged, B edited and a new D, and
+                        C is missing. Toggle the feed evidence to see what{" "}
+                        <code>compareInventory</code> is allowed to conclude.
+                    </p>
                 </div>
 
-                <div class="section-content">
-                    <h2>Connecting AI with a practical operations workflow.</h2>
-
-                    <SkillLinks
-                        skills={[
-                            "python",
-                            "rest-api-integration",
-                            "google-gemini",
-                            "prompt-design",
-                            "structured-ai-outputs",
-                            "sqlite",
-                            "data-normalization",
-                            "deduplication",
-                            "workflow-automation",
-                            "google-sheets-api",
-                            "google-apps-script",
-                            "powershell",
-                            "debugging",
-                            "documentation",
-                            "output-validation",
-                            "human-oversight",
-                            "caching",
-                            "task-scheduling",
-                        ]}
-                    />
+                <div class="lab life-lab" data-life-lab>
+                    <div class="toggles">
+                        <label class="switch"><input type="checkbox" name="complete" checked /><span></span> Feed complete and count reconciled</label>
+                        <label class="switch"><input type="checkbox" name="scope" checked /><span></span> Same declared scope as the last complete run</label>
+                    </div>
+                    <div class="life-cards" aria-live="polite">
+                        <div class="life-card" data-k="A"><b>A</b><span data-s>unchanged</span></div>
+                        <div class="life-card" data-k="B"><b>B</b><span data-s>changed</span></div>
+                        <div class="life-card" data-k="C"><b>C</b><span data-s>possibly_removed</span></div>
+                        <div class="life-card" data-k="D"><b>D</b><span data-s>new</span></div>
+                    </div>
+                    <p class="life-reason" data-out="lifeReason"></p>
                 </div>
             </section>
 
             <!-- =================================================
-                 PROJECT NAVIGATION
+                 09 — UNATTENDED COLLECTION
                  ================================================= -->
+
+            <section class="case-section" aria-labelledby="s-m2d">
+                <div class="section-heading">
+                    <p class="eyebrow">09 — Unattended collection</p>
+                    <h2 id="s-m2d">One trigger, five batches, fail-closed.</h2>
+                    <p>
+                        The M2D design schedules 15 approved sources across
+                        six ATS platforms. Each six-hourly trigger runs one
+                        batch; cursor 0 first refreshes the dedup snapshot by
+                        reading three tabs of the master spreadsheet. Step the
+                        simulation to see the rules.
+                    </p>
+                </div>
+
+                <div class="lab m2d" data-m2d>
+                    <div class="wheel-wrap">
+                        <svg class="wheel" viewBox="0 0 220 220" role="img" aria-label="Five scheduled batches arranged in a cycle">
+                            <circle cx="110" cy="110" r="86" class="wheel-ring" />
+                            {schedule.map((batch, b) => {
+                                const a = (b / 5) * Math.PI * 2 - Math.PI / 2;
+                                const x = 110 + Math.cos(a) * 86;
+                                const y = 110 + Math.sin(a) * 86;
+                                return (
+                                    <g class="wheel-node" data-batch={b}>
+                                        <circle cx={x} cy={y} r="22" />
+                                        <text x={x} y={y - 2} text-anchor="middle">B{b}</text>
+                                        <text x={x} y={y + 11} text-anchor="middle" class="sub">{batch.length} src</text>
+                                    </g>
+                                );
+                            })}
+                            <g class="wheel-hand"><line x1="110" y1="110" x2="110" y2="44" /></g>
+                            <circle cx="110" cy="110" r="5" class="wheel-hub" />
+                        </svg>
+                        <div class="clock">
+                            <span>Simulated time</span>
+                            <strong data-out="clock">T+0h</strong>
+                            <span>Snapshot age</span>
+                            <strong data-out="age">—</strong>
+                        </div>
+                    </div>
+                    <div class="m2d-side">
+                        <div class="batch-now">
+                            <span class="kicker">Next batch</span>
+                            <div class="chips" data-out="batchChips"></div>
+                        </div>
+                        <div class="m2d-controls">
+                            <button type="button" class="ctl ctl-primary" data-fire>Fire trigger</button>
+                            <button type="button" class="ctl" data-stale>Simulate a 49-hour-old snapshot</button>
+                            <button type="button" class="ctl" data-reset>Reset</button>
+                        </div>
+                        <ol class="log" data-out="log" aria-live="polite" aria-label="Simulated run log"></ol>
+                    </div>
+                </div>
+                <p class="footnote">
+                    Simulation of the documented controller logic in
+                    Automation.gs; employer names are omitted. Activation
+                    itself requires supervised runs of all five batches before
+                    the single trigger is installed.
+                </p>
+            </section>
+
+            <!-- =================================================
+                 10 — EVIDENCE & BOUNDARIES
+                 ================================================= -->
+
+            <section class="case-section" aria-labelledby="s-proof">
+                <div class="section-heading">
+                    <p class="eyebrow">10 — Evidence & boundaries</p>
+                    <h2 id="s-proof">What has been verified, and what has not.</h2>
+                    <p>
+                        Numbers from the README, readiness reports and handoff
+                        notes. Targeted adapter counts were separate harness
+                        runs and are not added to the combined suite total.
+                    </p>
+                </div>
+
+                <div class="proof-grid">
+                    <div class="proof-bars" data-count-group>
+                        {evidence.map((e) => (
+                            <div class="proof-row">
+                                <div class="proof-label">
+                                    <span>{e.label}</span>
+                                    <strong><b data-count={e.pass}>{e.pass}</b>/{e.total}</strong>
+                                </div>
+                                <div class="bar"><i></i></div>
+                                <small>{e.note}</small>
+                            </div>
+                        ))}
+                    </div>
+                    <div class="adapter-tests card">
+                        <h3>Targeted adapter suites (M2.3)</h3>
+                        <ul>
+                            {adapterTests.map((t) => (
+                                <li>
+                                    <span>{t.name}</span>
+                                    <i style={`--w:${(t.n / 26) * 100}%`}></i>
+                                    <strong>{t.n}/{t.n}</strong>
+                                </li>
+                            ))}
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="bounds">
+                    <article class="card bounds-yes">
+                        <h3>Built in</h3>
+                        <ul>
+                            <li>Collector never writes to the master spreadsheet; it reads three tabs for the snapshot only</li>
+                            <li>No automatic applications, employer contact or AI API calls in v2</li>
+                            <li>New sources are registered disabled; enabling is explicit</li>
+                            <li>Formula-like cell values escaped; job text treated as untrusted</li>
+                            <li>Repeated identical runs create no duplicate rows or false removals</li>
+                        </ul>
+                    </article>
+                    <article class="card bounds-no">
+                        <h3>Not claimed</h3>
+                        <ul>
+                            <li>That all 389 registry employers are monitored</li>
+                            <li>Employer-wide coverage from one board</li>
+                            <li>That a "Remote" label means hireable from Greece</li>
+                            <li>Interview probabilities or guaranteed job yield</li>
+                            <li>Live results for steps the documented gates still hold</li>
+                        </ul>
+                    </article>
+                </div>
+            </section>
+
+            <!-- =================================================
+                 11 — SKILLS
+                 ================================================= -->
+
+            <section class="case-section skills-section" aria-labelledby="s-skills">
+                <div class="section-heading centered">
+                    <p class="eyebrow">11 — Skills demonstrated</p>
+                    <h2 id="s-skills">Automation that stays honest about its evidence.</h2>
+                    <p>Select any skill to see where else it appears in the portfolio.</p>
+                </div>
+
+                <SkillLinks
+                    skills={[
+                        "google-apps-script",
+                        "google-sheets-api",
+                        "python",
+                        "rest-api-integration",
+                        "data-normalization",
+                        "deduplication",
+                        "workflow-automation",
+                        "system-architecture",
+                        "task-scheduling",
+                        "human-oversight",
+                        "google-gemini",
+                        "prompt-design",
+                        "structured-ai-outputs",
+                        "output-validation",
+                        "sqlite",
+                        "caching",
+                        "powershell",
+                        "data-quality",
+                        "debugging",
+                        "documentation",
+                        "iterative-development",
+                    ]}
+                />
+            </section>
 
             <section class="project-end">
                 <p class="eyebrow">Explore more</p>
-
                 <h2>Automation built around practical problems.</h2>
-
                 <div class="project-end-links">
-                    {
-                        hasGithub && (
-                            <a
-                                href={githubUrl}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                            >
-                                View GitHub repository ↗
-                            </a>
-                        )
-                    }
-
-                    {
-                        hasDashboard && (
-                            <a
-                                href={dashboardUrl}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                            >
-                                View Google Sheets output ↗
-                            </a>
-                        )
-                    }
-
-                    <a href="/projects/rocketeers/"> Rocketeers overview → </a>
-
-                    <a href="/projects/gym-progress/">
-                        Gym Progress System →
-                    </a>
-
-                    <a href="/#projects"> All projects → </a>
+                    <a href={githubUrl} target="_blank" rel="noopener noreferrer">v1 GitHub repository ↗</a>
+                    <a href="/projects/rocketeers-intelligence/">Marketplace Opportunity Intelligence →</a>
+                    <a href="/projects/rocketeers/">Rocketeers overview →</a>
+                    <a href="/#projects">All projects →</a>
                 </div>
             </section>
         </main>
@@ -880,163 +1227,621 @@ const hasDashboard = dashboardUrl.startsWith("https://");
     </body>
 </html>
 
-<style>
+<script>
     /* =========================================================
-       DESIGN TOKENS
+       Shared helpers
        ========================================================= */
 
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const $ = <T extends Element = HTMLElement>(root: ParentNode, sel: string) => root.querySelector(sel) as T | null;
+    const $$ = <T extends Element = HTMLElement>(root: ParentNode, sel: string) => Array.from(root.querySelectorAll(sel)) as T[];
+    const setText = (root: ParentNode, key: string, value: string) => {
+        const el = $(root, `[data-out="${key}"]`);
+        if (el) el.textContent = value;
+    };
+
+    /* Accessible tabs (timeline + ATS explorer) */
+    $$(document, "[data-tabs]").forEach((group) => {
+        const tabs = $$<HTMLButtonElement>(group, '[role="tab"]');
+        const select = (tab: HTMLButtonElement, focus = false) => {
+            tabs.forEach((t) => {
+                const on = t === tab;
+                t.setAttribute("aria-selected", String(on));
+                t.tabIndex = on ? 0 : -1;
+                const panel = document.getElementById(t.getAttribute("aria-controls") || "");
+                if (panel) panel.hidden = !on;
+            });
+            if (focus) tab.focus();
+        };
+        tabs.forEach((tab, i) => {
+            tab.addEventListener("click", () => select(tab));
+            tab.addEventListener("keydown", (e) => {
+                const k = (e as KeyboardEvent).key;
+                let n = -1;
+                if (k === "ArrowRight" || k === "ArrowDown") n = (i + 1) % tabs.length;
+                if (k === "ArrowLeft" || k === "ArrowUp") n = (i - 1 + tabs.length) % tabs.length;
+                if (k === "Home") n = 0;
+                if (k === "End") n = tabs.length - 1;
+                if (n >= 0) {
+                    e.preventDefault();
+                    select(tabs[n], true);
+                }
+            });
+        });
+    });
+
+    /* Count-up numbers and bars when they scroll into view */
+    const countGroups = $$(document, "[data-count-group]");
+    const runCount = (group: HTMLElement) => {
+        group.classList.add("is-in");
+        $$(group, "[data-count]").forEach((el) => {
+            const target = Number(el.getAttribute("data-count"));
+            if (reduceMotion) { el.textContent = String(target); return; }
+            const start = performance.now();
+            const tick = (now: number) => {
+                const p = Math.min(1, (now - start) / 1100);
+                el.textContent = String(Math.round(target * (1 - Math.pow(1 - p, 3))));
+                if (p < 1) requestAnimationFrame(tick);
+            };
+            requestAnimationFrame(tick);
+        });
+    };
+    if ("IntersectionObserver" in window) {
+        const io = new IntersectionObserver((entries) => {
+            entries.forEach((en) => {
+                if (en.isIntersecting) { runCount(en.target as HTMLElement); io.unobserve(en.target); }
+            });
+        }, { threshold: 0.35 });
+        countGroups.forEach((g) => io.observe(g));
+    } else countGroups.forEach(runCount);
+
+    /* =========================================================
+       Ports of Normalize.gs fingerprint
+       ========================================================= */
+
+    const normText = (v: unknown) => (typeof v === "string" ? v.replace(/\s+/g, " ").trim() : "");
+    const stableEvidence = (value: unknown): string => {
+        if (Array.isArray(value)) return "[" + value.map(stableEvidence).join(",") + "]";
+        if (value && typeof value === "object") {
+            const o = value as Record<string, unknown>;
+            return "{" + Object.keys(o).sort().map((k) => JSON.stringify(k) + ":" + stableEvidence(o[k])).join(",") + "}";
+        }
+        return JSON.stringify(value === undefined ? null : value);
+    };
+    type Posting = Record<string, unknown>;
+    const fingerprint = (p: Posting) => {
+        let evidence: unknown = p.source_evidence_note;
+        if (typeof evidence === "string") { try { evidence = JSON.parse(evidence); } catch { /* keep raw */ } }
+        const canonical = JSON.stringify([
+            p.posting_key, p.co_id, normText(p.title), p.locations_normalized, p.work_arrangement_evidence,
+            p.greece_remote_evidence, normText(p.description_text), p.description_complete === true,
+            p.official_job_url, p.official_application_url_if_known, stableEvidence(evidence),
+        ]);
+        return "fnv128:" + [2166136261, 3758891744, 134775813, 402653189].map((seed) => {
+            let h = seed >>> 0;
+            for (let i = 0; i < canonical.length; i++) { h ^= canonical.charCodeAt(i); h = Math.imul(h, 16777619) >>> 0; }
+            return ("00000000" + h.toString(16)).slice(-8);
+        }).join("");
+    };
+    const samplePosting = (title: string, desc: string): Posting => ({
+        posting_key: "CO-9001:lever:example-market:3f2c9a1e-5b7d-4c11-9e2a-0b6f1d2c8e44",
+        co_id: "CO-9001",
+        title,
+        locations_normalized: JSON.stringify(["Remote - Europe"]),
+        work_arrangement_evidence: JSON.stringify({ workplaceType: "remote", location_text: "Remote - Europe" }),
+        greece_remote_evidence: "UNKNOWN",
+        description_text: desc,
+        description_complete: true,
+        official_job_url: "https://jobs.lever.co/example-market/3f2c9a1e-5b7d-4c11-9e2a-0b6f1d2c8e44",
+        official_application_url_if_known: "",
+        source_evidence_note: JSON.stringify({ provider: "Lever", department: "Operations", team: "Marketplace", commitment: "Full-time", salaryRange: null }),
+    });
+
+    /* =========================================================
+       Pipeline stepper
+       ========================================================= */
+
+    const stepper = $(document, "[data-stepper]");
+    if (stepper) {
+        const dots = $$<HTMLButtonElement>(stepper, ".step-dot");
+        const panels = $$(stepper, ".step-panel");
+        const bar = $(stepper, ".step-progress i");
+        const play = $<HTMLButtonElement>(stepper, "[data-play]");
+        let current = 0;
+        let timer: number | undefined;
+        const fpPre = $(stepper, "[data-sample-fingerprint]");
+        if (fpPre) {
+            const p = samplePosting("Marketplace Operations Specialist", "Own seller onboarding, listing quality and dispute operations for our European marketplace. Remote within Europe.");
+            fpPre.textContent = fpPre.textContent!.replace("…computing in your browser…", fingerprint(p));
+        }
+        const show = (i: number) => {
+            current = (i + panels.length) % panels.length;
+            panels.forEach((p, j) => (p.hidden = j !== current));
+            dots.forEach((d, j) => {
+                d.classList.toggle("is-done", j < current);
+                if (j === current) d.setAttribute("aria-current", "step");
+                else d.removeAttribute("aria-current");
+            });
+            if (bar) bar.style.transform = `scaleX(${(current + 1) / panels.length})`;
+        };
+        const stop = () => {
+            window.clearInterval(timer);
+            timer = undefined;
+            play?.setAttribute("aria-pressed", "false");
+            if (play) play.textContent = "▶ Auto-play";
+        };
+        dots.forEach((d) => d.addEventListener("click", () => { stop(); show(Number(d.dataset.step)); }));
+        $(stepper, "[data-next]")?.addEventListener("click", () => { stop(); show(current + 1); });
+        $(stepper, "[data-prev]")?.addEventListener("click", () => { stop(); show(current - 1); });
+        play?.addEventListener("click", () => {
+            if (timer) { stop(); return; }
+            play.setAttribute("aria-pressed", "true");
+            play.textContent = "❚❚ Pause";
+            timer = window.setInterval(() => show(current + 1), 3200);
+        });
+        show(0);
+    }
+
+    /* =========================================================
+       Dedup lab — port of Dedup.gs (single snapshot row)
+       ========================================================= */
+
+    const canonicalUrl = (input: string) => {
+        if (typeof input !== "string" || !input || /[\s\x00-\x1f]/.test(input)) return "";
+        const parts = /^https:\/\/([^\/?#]+)([^?#]*)(?:\?([^#]*))?(?:#.*)?$/i.exec(input);
+        if (!parts) return "";
+        const host = parts[1].toLowerCase().replace(/:443$/, "");
+        if (!/^[a-z0-9][a-z0-9.-]*\.[a-z]{2,}$/.test(host) || host.indexOf("..") >= 0) return "";
+        let path = parts[2] || "/";
+        if (path.length > 1) path = path.replace(/\/+$/, "");
+        const query = (parts[3] || "").split("&").filter(Boolean).filter((item) => {
+            let key = item.split("=")[0].toLowerCase();
+            try { key = decodeURIComponent(key); } catch { return true; }
+            return !/^utm_|^(?:fbclid|gclid|msclkid|gh_src|lever-source|source|ref|trk)$/.test(key);
+        }).sort();
+        return "https://" + host + path + (query.length ? "?" + query.join("&") : "");
+    };
+    const dedupText = (s: string) => (typeof s === "string" ? s.normalize("NFKC").toLowerCase().replace(/[^\p{L}\p{N}]+/gu, " ").trim().replace(/\s+/g, " ") : "");
+    const titleAlias = (first: string, second: string) => {
+        const a = dedupText(first), b = dedupText(second);
+        if (!a || !b) return false;
+        if (a === b) return true;
+        const aa = Array.from(new Set(a.split(" ").filter(Boolean)));
+        const bb = Array.from(new Set(b.split(" ").filter(Boolean)));
+        const overlap = aa.filter((w) => bb.indexOf(w) >= 0).length;
+        return overlap >= 2 && overlap / Math.max(aa.length, bb.length) >= 0.66;
+    };
+    const hostOf = (url: string) => { const m = /^https:\/\/([^/]+)/.exec(canonicalUrl(url)); return m ? m[1] : ""; };
+
+    type Hist = { tab: string; co: string; pid: string; req: string; url: string; title: string };
+    type Inc = { co: string; pid: string; req: string; url: string; title: string };
+    const matchHistory = (p: Inc, h: Hist) => {
+        const sameEmployer = !!h.co && !!p.co && h.co === p.co;
+        const rowUrl = canonicalUrl(h.url), inUrl = canonicalUrl(p.url);
+        const sameUrl = !!rowUrl && !!inUrl && rowUrl === inUrl;
+        let kind = "";
+        if (sameEmployer && h.pid && p.pid && h.pid === p.pid) {
+            const a = hostOf(h.url), b = hostOf(p.url);
+            kind = a && b && a !== b ? "cross_board_identity_warning" : "provider_posting_id";
+        } else if (sameEmployer && h.req && p.req && h.req === p.req) kind = "internal_requisition_id";
+        else if (sameUrl && sameEmployer) kind = "canonical_job_url";
+        else if (sameUrl && !sameEmployer) kind = "employer_conflict_url";
+        else if (sameEmployer && titleAlias(h.title, p.title)) kind = "title_location_warning";
+        const exact = ["provider_posting_id", "internal_requisition_id", "canonical_job_url"];
+        if (exact.includes(kind)) return { status: h.tab === "Vacancies" ? "already_researched" : "previously_applied", kind };
+        if (kind) return { status: "possible_alias", kind };
+        return { status: "none", kind: "" };
+    };
+    const v1Norm = (v: string) => (v ? v.toLowerCase().replace(/[^a-z0-9]+/g, " ").replace(/\s+/g, " ").trim() : "");
+    const v1Url = (v: string) => (v ? v.trim().split("#", 1)[0].replace(/\/+$/, "") : "");
+
+    const explain: Record<string, string> = {
+        provider_posting_id: "Exact provider posting ID for the same employer on the same board. Routed to Already handled.",
+        internal_requisition_id: "Same employer and requisition ID. Treated as an exact match.",
+        canonical_job_url: "Different raw links, but the canonical URLs match once tracking parameters (utm_*, gh_src, ref…) and trailing slashes are removed.",
+        employer_conflict_url: "Same canonical URL recorded under a different employer. Kept and flagged for a person to resolve.",
+        cross_board_identity_warning: "Same posting ID but on a different host. The snapshot has no ATS namespace, so a human confirms.",
+        title_location_warning: "Titles look alike but nothing proves it is the same posting. Kept, with an alias warning for review.",
+        "": "No identity evidence links the two. The posting continues to screening.",
+    };
+
+    const presets: Record<string, { inc: Inc; hist: Hist }> = {
+        url: {
+            inc: { co: "CO-9001", pid: "", req: "", url: "https://boards.greenhouse.io/examplemarket/jobs/4012345/?utm_source=newsletter&gh_src=a1b2", title: "Catalogue Operations Associate" },
+            hist: { tab: "Applications", co: "CO-9001", pid: "", req: "", url: "https://boards.greenhouse.io/examplemarket/jobs/4012345", title: "Catalogue Ops Associate (EU)" },
+        },
+        id: {
+            inc: { co: "CO-9001", pid: "4012345", req: "", url: "https://boards.greenhouse.io/examplemarket/jobs/4012345", title: "Marketplace Analyst" },
+            hist: { tab: "Applied Vacancy Archive", co: "CO-9001", pid: "4012345", req: "", url: "https://boards.greenhouse.io/examplemarket/jobs/4012345", title: "Marketplace Analyst" },
+        },
+        title: {
+            inc: { co: "CO-9001", pid: "4019999", req: "", url: "https://boards.greenhouse.io/examplemarket/jobs/4019999", title: "Seller Support Specialist" },
+            hist: { tab: "Applications", co: "CO-9001", pid: "3870001", req: "", url: "https://boards.greenhouse.io/examplemarket/jobs/3870001", title: "Seller Support Specialist" },
+        },
+        req: {
+            inc: { co: "CO-9001", pid: "4012777", req: "REQ-2291", url: "https://boards.greenhouse.io/examplemarket/jobs/4012777", title: "Pricing Operations Analyst" },
+            hist: { tab: "Vacancies", co: "CO-9001", pid: "", req: "REQ-2291", url: "", title: "Pricing Analyst" },
+        },
+        board: {
+            inc: { co: "CO-9001", pid: "88123", req: "", url: "https://example-market.pinpointhq.com/postings/88123", title: "Implementation Coordinator" },
+            hist: { tab: "Applications", co: "CO-9001", pid: "88123", req: "", url: "https://apply.workable.com/example-market/j/88123", title: "Implementation Coordinator" },
+        },
+        conflict: {
+            inc: { co: "CO-9001", pid: "", req: "", url: "https://jobs.lever.co/sharedboard/aa11bb22?lever-source=careers", title: "Operations Associate" },
+            hist: { tab: "Applications", co: "CO-9002", pid: "", req: "", url: "https://jobs.lever.co/sharedboard/aa11bb22", title: "Operations Associate" },
+        },
+    };
+
+    const lab = $(document, "[data-dedup-lab]");
+    if (lab) {
+        const field = (n: string) => $<HTMLInputElement | HTMLSelectElement>(lab, `[name="${n}"]`)!;
+        const keys: [keyof Inc, string][] = [["co", "in_co"], ["pid", "in_pid"], ["req", "in_req"], ["url", "in_url"], ["title", "in_title"]];
+        const hkeys: [keyof Hist, string][] = [["tab", "h_tab"], ["co", "h_co"], ["pid", "h_pid"], ["req", "h_req"], ["url", "h_url"], ["title", "h_title"]];
+        const render = () => {
+            const inc = Object.fromEntries(keys.map(([k, n]) => [k, field(n).value.trim()])) as Inc;
+            const hist = Object.fromEntries(hkeys.map(([k, n]) => [k, field(n).value.trim()])) as Hist;
+            const r = matchHistory(inc, hist);
+            setText(lab, "v2status", r.status);
+            setText(lab, "v2type", r.kind || "no match");
+            setText(lab, "v2why", explain[r.kind]);
+            const out = $(lab, ".verdict.v2")!;
+            out.dataset.tone = r.status === "none" ? "go" : r.status === "possible_alias" ? "warn" : "stop";
+            // v1: same normalised URL, or same normalised company + title.
+            const urlDup = !!v1Url(inc.url) && v1Url(inc.url) === v1Url(hist.url);
+            const keyDup = !!v1Norm(inc.title) && v1Norm(inc.co) === v1Norm(hist.co) && v1Norm(inc.title) === v1Norm(hist.title);
+            const v1 = $(lab, ".verdict.v1")!;
+            if (urlDup || keyDup) {
+                setText(lab, "v1status", "dropped as duplicate");
+                setText(lab, "v1why", urlDup ? "Identical URL after removing the fragment and trailing slash." : "Same company and same normalised title, so the job is silently skipped.");
+                v1.dataset.tone = "stop";
+            } else {
+                setText(lab, "v1status", "kept");
+                setText(lab, "v1why", "No identical URL and no identical company/title pair; tracking parameters still make links look different.");
+                v1.dataset.tone = "go";
+            }
+            setText(lab, "canonIn", "incoming → " + (canonicalUrl(inc.url) || "(no valid https URL)"));
+            setText(lab, "canonH", "snapshot → " + (canonicalUrl(hist.url) || "(no valid https URL)"));
+        };
+        const load = (name: string) => {
+            const p = presets[name];
+            keys.forEach(([k, n]) => (field(n).value = p.inc[k]));
+            hkeys.forEach(([k, n]) => (field(n).value = p.hist[k]));
+            render();
+        };
+        $$<HTMLButtonElement>(lab, "[data-preset]").forEach((b) => b.addEventListener("click", () => {
+            $$(lab, "[data-preset]").forEach((x) => x.classList.toggle("is-active", x === b));
+            load(b.dataset.preset!);
+        }));
+        lab.addEventListener("input", render);
+        load("url");
+    }
+
+    /* Fingerprint panel */
+    const fpLab = $(document, "[data-fp-lab]");
+    if (fpLab) {
+        const t = $<HTMLInputElement>(fpLab, '[name="fp_title"]')!;
+        const d = $<HTMLTextAreaElement>(fpLab, '[name="fp_desc"]')!;
+        const base = { title: t.value, desc: d.value };
+        let firstFp = "";
+        let seen = new Date("2026-10-15T06:00:00Z");
+        const render = (refetched = false) => {
+            const fp = fingerprint(samplePosting(t.value, d.value));
+            if (!firstFp) firstFp = fingerprint(samplePosting(base.title, base.desc));
+            setText(fpLab, "seen", seen.toISOString().replace(".000", ""));
+            const hash = $(fpLab, '[data-out="fp"]')!;
+            if (hash.textContent !== fp) {
+                hash.textContent = fp;
+                hash.classList.remove("flash");
+                void (hash as HTMLElement).offsetWidth;
+                hash.classList.add("flash");
+            }
+            setText(fpLab, "fpstate", fp === firstFp ? (refetched ? "unchanged" : "baseline_discovered") : "changed → back to review");
+        };
+        t.addEventListener("input", () => render());
+        d.addEventListener("input", () => render());
+        $(fpLab, "[data-refetch]")?.addEventListener("click", () => {
+            seen = new Date(seen.getTime() + 6 * 3600 * 1000);
+            render(true);
+        });
+        render();
+    }
+
+    /* =========================================================
+       Screening sandbox — subset port of Screen.gs
+       ========================================================= */
+
+    const LANGS = "(?:Spanish|French|German|Italian|Dutch|Portuguese|Polish|Arabic|Mandarin|Chinese|Japanese|Korean|Russian|Turkish|Swedish|Norwegian|Danish|Finnish|Czech|Romanian|Hungarian)";
+    const langRule = (d: string) => {
+        const patterns = [
+            new RegExp("\\b(?:fluent|native(?:-level)?|professional(?:\\s+working)?|business-level|c1|c2)\\s+(?:fluency\\s+|proficiency\\s+)?(?:in\\s+)?(" + LANGS + ")\\s+(?:is\\s+|are\\s+)?(?:required|mandatory|essential)\\b", "i"),
+            new RegExp("\\b(?:must|need to)\\s+(?:speak|write|communicate in)\\s+(" + LANGS + ")\\b", "i"),
+            new RegExp("\\b(" + LANGS + ")\\s+fluency\\s+(?:is\\s+)?(?:required|mandatory|essential)\\b", "i"),
+            new RegExp("\\b(?:required|mandatory)\\s*:\\s*(?:fluent|native|c1|c2)\\s+(" + LANGS + ")\\b", "i"),
+        ];
+        for (const re of patterns) {
+            const m = re.exec(d);
+            if (!m) continue;
+            const near = d.slice(Math.max(0, m.index - 40), Math.min(d.length, m.index + m[0].length + 70));
+            if (/\b(?:not\s+required|optional|preferred\s+(?:but\s+)?not\s+required|a\s+plus)\b/i.test(near)) continue;
+            return m[0];
+        }
+        return "";
+    };
+    const degreeRule = (d: string) => {
+        const patterns = [
+            /\b(?:a\s+)?(?:completed\s+)?(?:bachelor'?s|bsc|master'?s|msc|university|college)\s+degree\s+(?:is\s+)?(?:strictly\s+)?(?:required|mandatory|essential)\b/i,
+            /\b(?:must|required to)\s+(?:have|hold|possess)\s+(?:a\s+)?(?:completed\s+)?(?:bachelor'?s|bsc|master'?s|msc|university|college)\s+degree\b/i,
+        ];
+        for (const re of patterns) {
+            const m = re.exec(d);
+            if (!m) continue;
+            const near = d.slice(Math.max(0, m.index - 80), Math.min(d.length, m.index + m[0].length + 180));
+            const rejects = /\b(?:no|without)\s+(?:equivalent|comparable|relevant)?\s*(?:practical|professional|work)?\s*experience\b|\bequivalent\s+experience\s+(?:will\s+)?not\s+be\s+accepted\b/i.test(near);
+            const accepts = /\b(?:or|and\/or)\s+(?:an?\s+)?(?:equivalent|comparable|relevant)\s+(?:practical\s+|professional\s+|work\s+)?experience\b|\bexperience\s+(?:accepted\s+)?in\s+lieu\s+of\s+(?:a\s+)?degree\b/i.test(near);
+            const ambiguous = /\bor\s+(?:an?\s+)?equivalent\s+qualification\b/i.test(near);
+            if ((accepts || ambiguous) && !rejects) continue;
+            return m[0];
+        }
+        return "";
+    };
+    const hardRules: { code: string; ids: string[]; match: (t: string, d: string) => string }[] = [
+        { code: "MANDATORY_THIRD_LANGUAGE", ids: ["SC-013", "SC-014"], match: (_t, d) => langRule(d) },
+        { code: "UNCOMPENSATED_ROLE", ids: ["SC-022"], match: (_t, d) => {
+            const m = /(?:\b(?:position|role|internship|work)\s+(?:is\s+)?(?:entirely\s+|strictly\s+)?unpaid\b|\bunpaid\s+(?:position|role|internship)\b|\bno\s+(?:salary|wages|compensation)\s+(?:will\s+be\s+)?(?:paid|provided|offered)\b)/i.exec(d);
+            return m ? m[0] : "";
+        } },
+        { code: "MANDATORY_DEGREE_NO_EQUIVALENT", ids: ["SC-015"], match: (_t, d) => degreeRule(d) },
+        { code: "EXCLUDED_TRANSLATION_ONLY", ids: ["SC-038", "SC-075"], match: (t, d) => {
+            const m = /(?:\b(?:exclusively|solely|only)\s+(?:performs?|involves?)\s+(?:[\w-]+\s+){0,3}translation\b|\b(?:translation\s+only|pure\s+translation\s+work)\b)/i.exec(t + "\n" + d);
+            return m ? m[0] : "";
+        } },
+        { code: "EXPLICIT_GEOGRAPHY_EXCLUSION", ids: ["SC-006", "SC-011", "SC-054"], match: (_t, d) => {
+            const m = /(?:\bmust\s+(?:currently\s+)?reside\s+in\s+the\s+United\s+States\b[^.\n]{0,100}\b(?:cannot|can\s+not|unable\s+to)\s+hire\s+outside\s+(?:the\s+)?US\b|\bUS[- ]residents?\s+only\s*[,;.]?\s*no\s+international\s+applicants\b)/i.exec(d);
+            return m ? m[0] : "";
+        } },
+    ];
+
+    const screenPresets: Record<string, [string, string, boolean]> = {
+        remote: ["Marketplace Operations Specialist", "Own seller onboarding, listing quality and dispute operations across our European marketplace. You will work with pricing and catalogue teams. This role is remote within Europe. Strong Excel skills are a plus.", true],
+        german: ["Seller Success Associate", "Support our merchants through onboarding and account health reviews. Fluent German is required for daily calls with DACH sellers. Remote within the EU.", true],
+        degreeok: ["Catalogue Data Analyst", "Maintain product data quality for 40,000 listings. A bachelor's degree is required, or equivalent practical experience in e-commerce operations. Hybrid or remote.", true],
+        degree: ["Pricing Analyst", "Analyse margins and competitor pricing. A completed master's degree is mandatory; equivalent experience will not be accepted. Office based in Madrid.", true],
+        unpaid: ["Operations Intern", "Help the operations team with weekly reporting. This internship is unpaid and runs for three months, fully remote.", true],
+        teaser: ["Implementation Coordinator", "Join our implementation team! Apply to learn more.", false],
+    };
+
+    const sLab = $(document, "[data-screen-lab]");
+    if (sLab) {
+        const ti = $<HTMLInputElement>(sLab, '[name="s_title"]')!;
+        const de = $<HTMLTextAreaElement>(sLab, '[name="s_desc"]')!;
+        const co = $<HTMLInputElement>(sLab, '[name="s_complete"]')!;
+        const render = () => {
+            const title = normText(ti.value), desc = normText(de.value);
+            const complete = co.checked && !!desc;
+            const reasons: string[] = [];
+            const evidence: string[] = [];
+            const add = (c: string) => { if (!reasons.includes(c)) reasons.push(c); };
+            if (!complete) add("DESCRIPTION_INCOMPLETE");
+            if (/\b(?:remote|europe|eu|hybrid|work\s*from\s*home)\b/i.test(desc)) add("GEOGRAPHY_NEEDS_VERIFICATION");
+            if (/\b(?:phone[- ]heavy|phone\s+support|inbound\s+calls|call\s+center|telephone\s+support)\b/i.test(title + " " + desc)) add("PHONE_HEAVY_INCOME_UNVERIFIED");
+            if (/\b(?:senior\s+director|vice\s+president|head\s+of|chief\s+\w+\s+officer)\b/i.test(title)) add("SENIORITY_NEEDS_VERIFICATION");
+            let route = "AI Review";
+            if (!complete || !title) {
+                route = "Source uncertain";
+            } else {
+                const hard = hardRules.map((r) => ({ r, ex: r.match(title, desc) })).filter((x) => x.ex);
+                if (hard.length) {
+                    route = "Hard ineligible";
+                    hard.forEach(({ r, ex }) => { add(r.code); evidence.push(`${r.code} (${r.ids.join(", ")}): “${ex.slice(0, 240)}”`); });
+                } else add("POTENTIALLY_RELEVANT_OR_UNCERTAIN");
+            }
+            const routeEl = $(sLab, '[data-out="route"]')!;
+            routeEl.textContent = route;
+            routeEl.dataset.route = route.replace(/\s+/g, "-").toLowerCase();
+            const list = $(sLab, '[data-out="codes"]')!;
+            list.replaceChildren(...reasons.map((r) => { const li = document.createElement("li"); li.textContent = r; return li; }));
+            const ev = $(sLab, '[data-out="evidence"]')!;
+            ev.replaceChildren(...evidence.map((e) => { const p = document.createElement("p"); p.textContent = e; return p; }));
+        };
+        const load = (k: string) => {
+            const [t, d, c] = screenPresets[k];
+            ti.value = t; de.value = d; co.checked = c;
+            render();
+        };
+        $$<HTMLButtonElement>(sLab, "[data-sp]").forEach((b) => b.addEventListener("click", () => {
+            $$(sLab, "[data-sp]").forEach((x) => x.classList.toggle("is-active", x === b));
+            load(b.dataset.sp!);
+        }));
+        sLab.addEventListener("input", render);
+        sLab.addEventListener("change", render);
+        load("remote");
+    }
+
+    /* =========================================================
+       Lifecycle simulator — compareInventory semantics
+       ========================================================= */
+
+    const lLab = $(document, "[data-life-lab]");
+    if (lLab) {
+        const complete = $<HTMLInputElement>(lLab, '[name="complete"]')!;
+        const scope = $<HTMLInputElement>(lLab, '[name="scope"]')!;
+        const render = () => {
+            const states: Record<string, string> = {};
+            let reason = "";
+            if (!complete.checked) {
+                reason = "INCOMPLETE_OR_UNRECONCILED_FEED: nothing is classified. The prior inventory and the last complete run ID are kept, and C stays open.";
+                ["A", "B", "C"].forEach((k) => (states[k] = "retained_prior"));
+                states.D = "not persisted";
+                scope.disabled = true;
+            } else if (!scope.checked) {
+                scope.disabled = false;
+                reason = "BASELINE_OR_SCOPE_CHANGED: incoming postings become a new baseline; removal is not authorised, so C is retained.";
+                ["A", "B", "D"].forEach((k) => (states[k] = "baseline_discovered"));
+                states.C = "retained_prior";
+            } else {
+                scope.disabled = false;
+                reason = "COMPLETE_MATCHING_SCOPE: removal authorised. C becomes possibly_removed, not closed; confirmed_closed needs separate official evidence.";
+                Object.assign(states, { A: "unchanged", B: "changed", C: "possibly_removed", D: "new" });
+            }
+            $$(lLab, ".life-card").forEach((card) => {
+                const s = states[card.dataset.k!];
+                $(card, "[data-s]")!.textContent = s;
+                card.dataset.state = s.replace(/\s+/g, "_");
+            });
+            setText(lLab, "lifeReason", reason);
+        };
+        lLab.addEventListener("change", render);
+        render();
+    }
+
+    /* =========================================================
+       M2D scheduler simulation
+       ========================================================= */
+
+    const m2d = $(document, "[data-m2d]");
+    if (m2d) {
+        const schedule = [
+            ["Ashby", "Teamtailor", "Personio", "Pinpoint"],
+            ["Greenhouse", "Lever", "Lever", "Ashby"],
+            ["Greenhouse", "Lever", "Ashby"],
+            ["Greenhouse"],
+            ["Ashby", "Greenhouse", "Ashby"],
+        ];
+        const hand = $(m2d, ".wheel-hand") as unknown as SVGGElement;
+        const nodes = $$(m2d, ".wheel-node");
+        const log = $(m2d, '[data-out="log"]')!;
+        let cursor = 0, hours = 0, snapAt: number | null = null, turns = 0;
+        const line = (text: string, tone = "") => {
+            const li = document.createElement("li");
+            li.textContent = text;
+            if (tone) li.dataset.tone = tone;
+            log.prepend(li);
+            while (log.children.length > 9) log.lastElementChild?.remove();
+        };
+        const paint = () => {
+            hand.style.transform = `rotate(${(turns * 5 + cursor) * 72}deg)`;
+            nodes.forEach((n, i) => n.classList.toggle("is-next", i === cursor));
+            setText(m2d, "clock", `T+${hours}h`);
+            setText(m2d, "age", snapAt === null ? "no snapshot" : `${hours - snapAt}h`);
+            const chips = $(m2d, '[data-out="batchChips"]')!;
+            chips.replaceChildren(...schedule[cursor].map((p) => { const s = document.createElement("span"); s.textContent = p; return s; }));
+        };
+        const fire = () => {
+            line(`T+${hours}h · trigger: lock acquired (tryLock 1000 ms)`);
+            const age = snapAt === null ? Infinity : hours - snapAt;
+            if (cursor === 0 || age > 24) {
+                snapAt = hours;
+                line("Dedup Snapshot refreshed: Applications, Vacancies, Applied Vacancy Archive read-only", "info");
+            }
+            const n = schedule[cursor].length;
+            line(`Batch ${cursor}: ${n} source${n > 1 ? "s" : ""} fetched (${schedule[cursor].join(", ")}) → Run Log receipts`, "ok");
+            const next = (cursor + 1) % 5;
+            line(`Cursor committed ${cursor} → ${next}; lock released`);
+            if (next === 0) turns++;
+            cursor = next;
+            hours += 6;
+            paint();
+        };
+        $(m2d, "[data-fire]")?.addEventListener("click", fire);
+        $(m2d, "[data-stale]")?.addEventListener("click", () => {
+            if (cursor === 0) { line("At cursor 0 the snapshot is refreshed first; fire one batch, then try again.", "info"); return; }
+            snapAt = hours - 49;
+            paint();
+            line(`T+${hours}h · trigger: snapshot is 49h old. Refresh fails in this simulation`, "warn");
+            line("Error: scheduled collection requires a complete fresh Dedup Snapshot. No source requested; cursor unchanged", "bad");
+            snapAt = hours - 49;
+        });
+        $(m2d, "[data-reset]")?.addEventListener("click", () => {
+            cursor = 0; hours = 0; snapAt = null; turns = 0;
+            log.replaceChildren();
+            line("Configuration fingerprint matches; automation enabled; cursor 0", "info");
+            paint();
+        });
+        line("Configuration fingerprint matches; automation enabled; cursor 0", "info");
+        paint();
+    }
+</script>
+
+<style>
     :root {
-        --bg: #050d18;
-        --bg-card: #071522;
-        --text: #e8eef5;
-        --muted: #a9bbcc;
-        --subtle: #71869a;
-        --border: #1d354a;
+        --bg: #06111e;
+        --surface: #091b2b;
+        --surface-2: #0b2236;
+        --border: #1f3d57;
+        --text: #d8e4ee;
+        --muted: #9fb2c2;
+        --subtle: #7890a3;
         --blue: #168dff;
         --blue-light: #65baff;
         --orange: #ff8a00;
         --green: #26d5a2;
+        --amber: #ffc24d;
+        --red: #ff6b6b;
+        --violet: #a98bff;
+        --mono: ui-monospace, "Cascadia Code", "SFMono-Regular", Consolas, monospace;
         --page-width: 1240px;
-
-        color: var(--text);
-        background: var(--bg);
-
-        font-family:
-            Inter,
-            ui-sans-serif,
-            system-ui,
-            -apple-system,
-            BlinkMacSystemFont,
-            "Segoe UI",
-            sans-serif;
     }
 
-    /* =========================================================
-       GLOBAL
-       ========================================================= */
+    * { box-sizing: border-box; }
+    [hidden] { display: none !important; }
 
-    * {
-        box-sizing: border-box;
-    }
-
-    html {
-        scroll-behavior: smooth;
-    }
+    html { scroll-behavior: smooth; background: var(--bg); }
 
     body {
         min-height: 100vh;
         margin: 0;
         color: var(--text);
-
         background:
-            radial-gradient(
-                circle at 90% 8%,
-                rgba(22, 141, 255, 0.11),
-                transparent 34rem
-            ),
-            radial-gradient(
-                circle at 12% 38%,
-                rgba(255, 138, 0, 0.035),
-                transparent 30rem
-            ),
+            radial-gradient(circle at 88% 4%, rgba(22, 141, 255, 0.13), transparent 30rem),
+            radial-gradient(circle at 8% 32%, rgba(255, 138, 0, 0.05), transparent 28rem),
+            radial-gradient(circle at 90% 70%, rgba(38, 213, 162, 0.05), transparent 30rem),
             var(--bg);
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     }
 
     main,
     footer {
-        max-width: var(--page-width);
+        width: min(100%, var(--page-width));
         margin-inline: auto;
-
-        padding-left: clamp(1.5rem, 5vw, 4.5rem);
-        padding-right: clamp(1.5rem, 5vw, 4.5rem);
+        padding-inline: clamp(1rem, 5vw, 4.5rem);
     }
 
-    a {
-        color: inherit;
-    }
+    a { color: inherit; text-underline-offset: 0.25em; }
+    a:focus-visible,
+    button:focus-visible,
+    input:focus-visible,
+    select:focus-visible,
+    textarea:focus-visible { outline: 2px solid var(--orange); outline-offset: 3px; }
 
-    a:focus-visible {
-        outline: 2px solid var(--orange);
-        outline-offset: 4px;
-    }
-
-    /* =========================================================
-       NAVIGATION
-       ========================================================= */
-
-    nav {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        min-height: 74px;
-        border-bottom: 1px solid var(--border);
-    }
-
-    .wordmark {
-        color: white;
-        font-size: 1.35rem;
-        font-weight: 850;
-        letter-spacing: -0.08em;
-        text-decoration: none;
-    }
-
-    .wordmark span {
-        color: var(--orange);
-    }
-
-    .nav-links {
-        display: flex;
-        gap: clamp(0.8rem, 3vw, 2.5rem);
-    }
-
-    .nav-links a {
-        color: var(--muted);
-        font-size: 0.9rem;
-        text-decoration: none;
-    }
-
-    .nav-links a:hover {
-        color: white;
-    }
-
-    /* =========================================================
-       TYPOGRAPHY
-       ========================================================= */
-
-    h1,
-    h2,
-    h3,
-    p {
-        margin-top: 0;
-    }
-
-    h1,
-    h2,
-    h3 {
-        color: white;
-        letter-spacing: -0.045em;
-    }
+    h1, h2, h3, p { margin-top: 0; }
+    h1, h3 { color: #fff; }
 
     h1 {
-        max-width: 1050px;
-        margin-bottom: 1.6rem;
-        font-size: clamp(3rem, 7vw, 6.6rem);
-        line-height: 0.98;
+        max-width: 1000px;
+        margin: 0 auto 1.4rem;
+        font-size: clamp(2.5rem, 6.6vw, 5.6rem);
+        line-height: 1;
+        letter-spacing: -0.05em;
         overflow-wrap: anywhere;
     }
 
     h2 {
-        font-size: clamp(2.1rem, 4.7vw, 3.7rem);
-        line-height: 1.08;
+        margin-bottom: 1rem;
+        color: #fff;
+        font-family: Georgia, "Times New Roman", serif;
+        font-size: clamp(2rem, 4.6vw, 3.6rem);
+        font-weight: 400;
+        line-height: 1.05;
+        letter-spacing: -0.045em;
     }
 
-    h3 {
-        font-size: clamp(1.4rem, 2.2vw, 1.8rem);
-        line-height: 1.2;
-    }
+    h3 { font-size: 1.15rem; letter-spacing: -0.01em; }
+
+    code, pre { font-family: var(--mono); }
+    p code, li code { color: var(--blue-light); font-size: 0.88em; }
 
     .eyebrow {
-        margin-bottom: 1.15rem;
+        margin-bottom: 1rem;
         color: var(--orange);
         font-size: 0.75rem;
         font-weight: 800;
@@ -1044,78 +1849,75 @@ const hasDashboard = dashboardUrl.startsWith("https://");
         text-transform: uppercase;
     }
 
-    .lead {
-        color: #dce6ee !important;
-        font-size: 1.1rem;
+    .accent {
+        background: linear-gradient(90deg, var(--blue), var(--blue-light) 60%, var(--green));
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
     }
+
+    .kicker {
+        display: block;
+        margin-bottom: 0.5rem;
+        color: var(--orange);
+        font-size: 0.68rem;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+    }
+    .kicker.green { color: var(--green); }
+
+    .muted-note { color: var(--subtle); font-size: 0.82rem; line-height: 1.6; }
+
+    .card {
+        padding: clamp(1.1rem, 2.5vw, 1.5rem);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        background: linear-gradient(160deg, rgba(14, 40, 62, 0.65), rgba(9, 27, 43, 0.85));
+        transition: border-color 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
+    }
+    .card:hover {
+        border-color: rgba(101, 186, 255, 0.55);
+        transform: translateY(-3px);
+        box-shadow: 0 16px 40px rgba(0, 0, 0, 0.25);
+    }
+    .card p { margin-bottom: 0; color: var(--muted); line-height: 1.65; font-size: 0.92rem; }
+    .card h3 { margin-bottom: 0.5rem; }
 
     /* =========================================================
        HERO
        ========================================================= */
 
     .hero {
-        padding: clamp(4rem, 9vw, 7rem) 0 clamp(3rem, 6vw, 5rem);
+        padding: clamp(3rem, 7vw, 5.5rem) 0 clamp(2.5rem, 5vw, 4rem);
+        text-align: center;
     }
 
     .breadcrumbs {
         display: flex;
+        justify-content: center;
         flex-wrap: wrap;
         gap: 0.6rem;
-        margin-bottom: 3rem;
+        margin-bottom: 2rem;
         color: var(--subtle);
         font-size: 0.8rem;
     }
-
-    .breadcrumbs a {
-        text-decoration: none;
-    }
-
-    .breadcrumbs a:hover {
-        color: white;
-    }
-
-    .breadcrumbs strong {
-        color: var(--blue-light);
-    }
-
-    .accent {
-        color: var(--blue);
-    }
+    .breadcrumbs a { text-decoration: none; }
+    .breadcrumbs a:hover { color: #fff; }
+    .breadcrumbs strong { color: var(--blue-light); }
 
     .hero-lead {
-        max-width: 800px;
+        max-width: 820px;
+        margin: 0 auto;
         color: #dce6ee;
-        font-size: clamp(1.1rem, 2vw, 1.3rem);
-        line-height: 1.65;
-    }
-
-    .hero-context {
-        max-width: 760px;
-        color: var(--muted);
+        font-size: clamp(1.02rem, 1.8vw, 1.2rem);
         line-height: 1.7;
-    }
-
-    .hero-tags,
-    .skills-list {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.6rem;
-        margin-top: 1.6rem;
-    }
-
-    .hero-tags span,
-    .skills-list span {
-        padding: 0.55rem 0.75rem;
-        border: 1px solid #28445c;
-        border-radius: 7px;
-        background: #091b2b;
-        color: #c5d5e3;
-        font-size: 0.74rem;
     }
 
     .hero-actions {
         display: flex;
         flex-wrap: wrap;
+        justify-content: center;
         gap: 0.75rem;
         margin-top: 2rem;
     }
@@ -1127,37 +1929,126 @@ const hasDashboard = dashboardUrl.startsWith("https://");
         min-height: 46px;
         padding: 0.8rem 1.2rem;
         border: 1px solid var(--blue);
-        border-radius: 8px;
+        border-radius: 9px;
+        color: #fff;
         font-size: 0.86rem;
         font-weight: 750;
         text-decoration: none;
-
-        transition:
-            transform 0.2s ease,
-            background 0.2s ease,
-            border-color 0.2s ease;
+        transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease;
     }
+    .button:hover { transform: translateY(-2px); }
+    .button-primary { background: var(--blue); }
+    .button-primary:hover { background: #2a9bff; }
+    .button-secondary { background: rgba(7, 21, 34, 0.8); }
+    .button-secondary:hover { border-color: var(--blue-light); }
 
-    .button:hover {
-        transform: translateY(-2px);
+    /* Animated funnel graphic */
+    .funnel-graphic {
+        position: relative;
+        display: grid;
+        grid-template-columns: minmax(0, 150px) minmax(0, 1fr) auto minmax(0, 150px);
+        align-items: center;
+        gap: 0.6rem;
+        max-width: 820px;
+        margin: 2.4rem auto 0;
+        padding: 1.2rem;
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        background:
+            linear-gradient(rgba(101, 186, 255, 0.05) 1px, transparent 1px) 0 0 / 22px 22px,
+            linear-gradient(90deg, rgba(101, 186, 255, 0.05) 1px, transparent 1px) 0 0 / 22px 22px,
+            rgba(7, 21, 34, 0.75);
     }
-
-    .button-primary {
-        background: var(--blue);
-        color: white;
+    .funnel-sources { display: grid; gap: 0.32rem; }
+    .src {
+        display: block;
+        padding: 0.28rem 0.55rem;
+        border: 1px solid var(--border);
+        border-left: 3px solid var(--blue);
+        border-radius: 6px;
+        background: var(--surface);
+        color: #c9d8e5;
+        font-family: var(--mono);
+        font-size: 0.68rem;
+        text-align: left;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        animation: src-pulse 4.5s ease-in-out calc(var(--i) * 0.4s) infinite;
     }
+    .fmt-xml { --fmt: var(--violet); }
+    .fmt-rss { --fmt: var(--orange); }
+    .fmt-json { --fmt: var(--blue); }
+    .src { border-left-color: var(--fmt); }
 
-    .button-primary:hover {
-        background: #2397ff;
+    .funnel-lanes { display: grid; gap: 0.32rem; }
+    .lane {
+        position: relative;
+        display: block;
+        height: 1.42rem;
+        overflow: hidden;
     }
-
-    .button-secondary {
-        background: rgba(7, 21, 34, 0.8);
-        color: white;
+    .lane::before {
+        content: "";
+        position: absolute;
+        inset: 50% 0 auto;
+        border-top: 1px dashed rgba(101, 186, 255, 0.28);
     }
+    .lane i {
+        position: absolute;
+        top: calc(50% - 3px);
+        left: 0;
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: var(--blue-light);
+        box-shadow: 0 0 10px var(--blue-light);
+        animation: lane-run 2.8s linear calc(var(--i) * -0.31s) infinite;
+    }
+    .funnel-core {
+        display: grid;
+        gap: 0.4rem;
+        padding: 0.7rem;
+        border: 1px solid rgba(101, 186, 255, 0.45);
+        border-radius: 14px;
+        background: rgba(22, 141, 255, 0.08);
+    }
+    .funnel-core span {
+        padding: 0.4rem 0.7rem;
+        border-radius: 8px;
+        background: var(--surface-2);
+        color: #fff;
+        font-size: 0.74rem;
+        font-weight: 700;
+    }
+    .funnel-out {
+        display: grid;
+        place-items: center;
+        gap: 0.2rem;
+        padding: 0.9rem 0.6rem;
+        border: 1px solid rgba(38, 213, 162, 0.55);
+        border-radius: 14px;
+        background: rgba(38, 213, 162, 0.07);
+        color: var(--green);
+        font-weight: 800;
+        font-size: 0.82rem;
+        animation: out-glow 2.8s ease-in-out infinite;
+    }
+    .funnel-out small { color: var(--muted); font-weight: 500; font-size: 0.7rem; }
 
-    .button-secondary:hover {
-        border-color: var(--blue-light);
+    @keyframes lane-run {
+        from { left: -6px; opacity: 0; }
+        15% { opacity: 1; }
+        85% { opacity: 1; }
+        to { left: 100%; opacity: 0; }
+    }
+    @keyframes src-pulse {
+        0%, 100% { background: var(--surface); }
+        10% { background: #12314b; }
+    }
+    @keyframes out-glow {
+        0%, 100% { box-shadow: 0 0 0 rgba(38, 213, 162, 0); }
+        50% { box-shadow: 0 0 26px rgba(38, 213, 162, 0.22); }
     }
 
     /* =========================================================
@@ -1168,568 +2059,777 @@ const hasDashboard = dashboardUrl.startsWith("https://");
         display: grid;
         grid-template-columns: repeat(4, minmax(0, 1fr));
         gap: 1rem;
-        padding-bottom: clamp(4rem, 8vw, 6rem);
+        padding-bottom: clamp(3.5rem, 7vw, 5rem);
+        text-align: center;
     }
-
-    .metric-card,
-    .source-grid article,
-    .criteria-grid article,
-    .output-grid article {
-        padding: 1.4rem;
+    .metric-card {
+        padding: 1.3rem 1rem;
         border: 1px solid var(--border);
-        border-radius: 12px;
-        background: var(--bg-card);
+        border-radius: 14px;
+        background: rgba(9, 27, 43, 0.85);
+        transition: transform 0.25s ease, border-color 0.25s ease;
     }
-
+    .metric-card:hover { transform: translateY(-3px); border-color: var(--blue); }
     .metric-card strong {
         display: block;
-        margin-bottom: 0.5rem;
-        color: var(--blue);
-        font-size: clamp(1.7rem, 3.5vw, 2.5rem);
+        margin-bottom: 0.45rem;
+        color: var(--blue-light);
+        font-size: clamp(1.6rem, 3.2vw, 2.4rem);
+        letter-spacing: -0.03em;
     }
-
-    .metric-card span {
-        color: var(--muted);
-        font-size: 0.85rem;
-        line-height: 1.4;
-    }
+    .metric-card span { color: var(--muted); font-size: 0.82rem; line-height: 1.45; }
 
     /* =========================================================
-       CASE STUDY SECTIONS
+       SECTIONS
        ========================================================= */
 
     .case-section {
-        display: grid;
-        grid-template-columns: minmax(145px, 0.3fr) minmax(0, 1fr);
-        gap: clamp(2rem, 6vw, 5rem);
         padding: clamp(4rem, 8vw, 6.5rem) 0;
-        border-top: 1px solid var(--border);
+        border-top: 1px solid rgba(31, 61, 87, 0.8);
     }
+    .section-heading { max-width: 820px; margin-bottom: 2.2rem; }
+    .section-heading > p:last-child { color: var(--muted); line-height: 1.75; }
+    .section-heading.centered { margin-inline: auto; text-align: center; }
 
-    .section-content {
-        min-width: 0;
+    .footnote {
         max-width: 860px;
-    }
-
-    .section-content > p {
-        color: var(--muted);
-        line-height: 1.75;
-    }
-
-    /* =========================================================
-       WORKFLOW DIAGRAM
-       ========================================================= */
-
-    .workflow {
-        display: grid;
-        gap: 0.5rem;
-        max-width: 700px;
-        margin: 2.5rem 0;
-    }
-
-    .workflow-step {
-        padding: 1.3rem 1.5rem;
-        border: 1px solid #275276;
-        border-radius: 10px;
-        background: #081b2b;
-    }
-
-    .workflow-step > span {
-        display: block;
-        margin-bottom: 0.5rem;
-        color: var(--orange);
-        font-size: 0.7rem;
-        font-weight: 800;
-        letter-spacing: 0.07em;
-    }
-
-    .workflow-step strong {
-        display: block;
-        margin-bottom: 0.4rem;
-        color: white;
-        font-size: 1.05rem;
-    }
-
-    .workflow-step p {
-        margin-bottom: 0;
-        color: var(--muted);
-        font-size: 0.88rem;
-        line-height: 1.55;
-    }
-
-    .workflow-arrow {
-        justify-self: center;
-        color: var(--blue);
-        font-size: 1.2rem;
-    }
-
-    .final-step {
-        border-color: rgba(38, 213, 162, 0.6);
-    }
-
-    /* =========================================================
-       FEATURE GRIDS
-       ========================================================= */
-
-    .source-grid,
-    .criteria-grid,
-    .output-grid {
-        display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 1rem;
-        margin: 2.5rem 0;
-    }
-
-    .source-grid article > span,
-    .criteria-grid article > span,
-    .output-grid article > span {
-        display: block;
-        margin-bottom: 0.65rem;
-        color: var(--orange);
-        font-size: 0.7rem;
-        font-weight: 800;
-        letter-spacing: 0.07em;
-        text-transform: uppercase;
-    }
-
-    .source-grid strong,
-    .criteria-grid strong,
-    .output-grid strong {
-        display: block;
-        margin-bottom: 0.5rem;
-        color: white;
-        font-size: 1.1rem;
-    }
-
-    .source-grid p,
-    .criteria-grid p,
-    .output-grid p {
-        margin-bottom: 0;
-        color: var(--muted);
-        font-size: 0.87rem;
-        line-height: 1.6;
-    }
-
-    /* =========================================================
-       FEATURE LISTS
-       ========================================================= */
-
-    .feature-list {
-        display: grid;
-        margin: 2.2rem 0;
-    }
-
-    .feature-list > div {
-        display: grid;
-        grid-template-columns: 38px minmax(0, 1fr);
-        gap: 1rem;
-        padding: 1.15rem 0;
-        border-bottom: 1px solid var(--border);
-    }
-
-    .feature-list > div > span {
-        color: var(--blue);
-        font-size: 0.74rem;
-        font-weight: 800;
-    }
-
-    .feature-list strong {
-        display: block;
-        margin-bottom: 0.4rem;
-        color: white;
-    }
-
-    .feature-list p {
-        margin-bottom: 0;
-        color: var(--muted);
-        line-height: 1.6;
-    }
-
-    /* =========================================================
-       CACHE COMPARISON
-       ========================================================= */
-
-    .comparison {
-        display: grid;
-        grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
-        align-items: center;
-        gap: 1rem;
-        margin: 2.5rem 0;
-    }
-
-    .comparison article {
-        padding: 1.5rem;
-        border: 1px solid var(--border);
-        border-radius: 11px;
-        background: var(--bg-card);
-    }
-
-    .comparison article > span {
-        display: block;
-        margin-bottom: 0.7rem;
+        margin-top: 1.4rem;
         color: var(--subtle);
-        font-size: 0.76rem;
-    }
-
-    .comparison strong {
-        display: block;
-        color: white;
-        font-size: clamp(1.9rem, 4vw, 2.8rem);
-    }
-
-    .comparison p {
-        margin: 0.6rem 0 0;
-        color: var(--muted);
-        font-size: 0.82rem;
-        line-height: 1.5;
-    }
-
-    .comparison-highlight {
-        border-color: rgba(38, 213, 162, 0.5) !important;
-    }
-
-    .comparison-highlight strong {
-        color: var(--green);
-    }
-
-    .comparison-arrow {
-        color: var(--blue);
-        font-size: 1.4rem;
-    }
-
-    /* =========================================================
-       VERIFIED RESULT
-       ========================================================= */
-
-    .result-card {
-        margin: 2.5rem 0;
-        padding: clamp(1.4rem, 3vw, 2rem);
-        border: 1px solid rgba(38, 213, 162, 0.45);
-        border-radius: 13px;
-
-        background:
-            linear-gradient(135deg, rgba(38, 213, 162, 0.06), transparent),
-            var(--bg-card);
-    }
-
-    .result-label {
-        display: block;
-        margin-bottom: 1rem;
-        color: var(--green);
-        font-size: 0.72rem;
-        font-weight: 800;
-        letter-spacing: 0.07em;
-    }
-
-    .result-card h3 {
-        margin-bottom: 0.5rem;
-    }
-
-    .result-company {
-        color: var(--muted);
-    }
-
-    .result-stages {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.55rem;
-        margin: 1.5rem 0;
-    }
-
-    .result-stages span {
-        padding: 0.5rem 0.65rem;
-        border: 1px solid #245463;
-        border-radius: 6px;
-        color: #c5d5e3;
-        background: #081f2a;
-        font-size: 0.7rem;
-    }
-
-    .result-card > p:last-child {
-        margin-bottom: 0;
-        color: var(--muted);
-        line-height: 1.6;
-    }
-
-    /* =========================================================
-       CALLOUT
-       ========================================================= */
-
-    .callout {
-        margin: 2rem 0;
-        padding: 1.4rem;
-        border-left: 3px solid var(--orange);
-        border-radius: 10px;
-        background: rgba(8, 23, 38, 0.9);
-    }
-
-    .callout strong {
-        display: block;
-        margin-bottom: 0.5rem;
-        color: white;
-    }
-
-    .callout p {
-        margin: 0;
-        color: var(--muted);
+        font-size: 0.84rem;
         line-height: 1.65;
     }
 
-    /* =========================================================
-       PROJECT END / LINKS
-       ========================================================= */
-
-    .project-end {
-        padding: clamp(4rem, 8vw, 7rem) 0;
-        border-top: 1px solid var(--border);
+    /* v1 */
+    .v1-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 1rem;
     }
 
+    .cache-story {
+        display: grid;
+        grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+        gap: clamp(1.2rem, 3vw, 2.4rem);
+        align-items: center;
+        margin-top: 2rem;
+        padding: clamp(1.2rem, 3vw, 2rem);
+        border: 1px solid var(--border);
+        border-radius: 18px;
+        background: rgba(7, 21, 34, 0.7);
+    }
+    .cache-copy p { color: var(--muted); line-height: 1.7; }
+    .cache-copy p:last-child { margin-bottom: 0; }
+    .meter-row {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto auto;
+        align-items: baseline;
+        gap: 0.2rem 0.4rem;
+        margin-bottom: 1.2rem;
+    }
+    .meter-row > span { grid-column: 1 / -1; color: var(--muted); font-size: 0.8rem; }
+    .meter {
+        height: 12px;
+        border-radius: 99px;
+        background: #0d2a42;
+        overflow: hidden;
+        align-self: center;
+    }
+    .meter i {
+        display: block;
+        width: var(--w);
+        height: 100%;
+        border-radius: inherit;
+        background: linear-gradient(90deg, var(--orange), var(--amber));
+        transform: scaleX(0);
+        transform-origin: left;
+        transition: transform 1.1s cubic-bezier(0.2, 0.7, 0.2, 1);
+    }
+    .is-good .meter i { background: linear-gradient(90deg, var(--blue), var(--green)); }
+    .is-in .meter i { transform: scaleX(1); }
+    .meter-row strong { color: #fff; font-size: 1.6rem; font-variant-numeric: tabular-nums; }
+    .meter-row em { color: var(--subtle); font-style: normal; }
+    .is-good strong { color: var(--green); }
+
+    .verified-example {
+        margin-top: 1.2rem;
+        padding: 1.1rem 1.3rem;
+        border-left: 3px solid var(--green);
+        border-radius: 12px;
+        background: rgba(38, 213, 162, 0.06);
+    }
+    .verified-example p { margin: 0; color: var(--muted); line-height: 1.65; }
+
+    /* why */
+    .why-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 1rem;
+    }
+    .why-card p { margin-bottom: 0.8rem; }
+    .why-card p:last-child { margin-bottom: 0; color: #e7f0f7; }
+    .why-from, .why-to {
+        display: block;
+        margin-bottom: 0.35rem;
+        font-size: 0.66rem;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+    }
+    .why-from { color: var(--subtle); text-decoration: line-through; }
+    .why-to { color: var(--green); }
+
+    .registry {
+        display: grid;
+        grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+        gap: 1rem 2rem;
+        align-items: center;
+        margin-top: 2rem;
+        padding: clamp(1.2rem, 3vw, 2rem);
+        border: 1px solid var(--border);
+        border-radius: 18px;
+        background: rgba(7, 21, 34, 0.7);
+    }
+    .registry-copy p { margin: 0; color: var(--muted); line-height: 1.7; }
+    .registry-dots {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(9px, 1fr));
+        gap: 4px;
+    }
+    .registry-dots i, .registry-legend i {
+        display: block;
+        aspect-ratio: 1;
+        border-radius: 50%;
+        background: #1d3a54;
+    }
+    .registry-dots i.known, .registry-legend i.known { background: var(--orange); box-shadow: 0 0 8px rgba(255, 138, 0, 0.5); }
+    .registry-dots i.known { animation: dot-pop 2.6s ease-in-out var(--d) infinite; }
+    .registry-legend {
+        grid-column: 2;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        color: var(--muted);
+        font-size: 0.78rem;
+    }
+    .registry-legend span { display: inline-flex; align-items: center; gap: 0.4rem; }
+    .registry-legend i { width: 10px; }
+    @keyframes dot-pop {
+        0%, 80%, 100% { transform: scale(1); }
+        88% { transform: scale(1.5); }
+    }
+
+    /* timeline */
+    .timeline {
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        background: rgba(7, 21, 34, 0.75);
+        overflow: hidden;
+    }
+    .timeline-track {
+        position: relative;
+        display: grid;
+        grid-template-columns: repeat(9, minmax(0, 1fr));
+        padding: 1.4rem 1rem 1rem;
+        border-bottom: 1px solid var(--border);
+    }
+    .timeline-track::before {
+        content: "";
+        position: absolute;
+        top: calc(1.4rem + 9px);
+        left: 6%;
+        right: 6%;
+        height: 2px;
+        background: linear-gradient(90deg, var(--orange), var(--blue) 30%, var(--green));
+        opacity: 0.6;
+    }
+    .tl-node {
+        position: relative;
+        display: grid;
+        justify-items: center;
+        gap: 0.3rem;
+        padding: 0 0.15rem 0.3rem;
+        border: 0;
+        background: none;
+        color: var(--muted);
+        font: inherit;
+        cursor: pointer;
+    }
+    .tl-dot {
+        width: 18px;
+        height: 18px;
+        border: 2px solid var(--blue);
+        border-radius: 50%;
+        background: var(--bg);
+        transition: transform 0.25s cubic-bezier(0.3, 1.6, 0.5, 1), background 0.25s ease;
+    }
+    .tl-node strong { color: #fff; font-size: 0.85rem; }
+    .tl-node small { font-size: 0.68rem; line-height: 1.25; }
+    .tl-node:hover .tl-dot { transform: scale(1.25); }
+    .tl-node[aria-selected="true"] .tl-dot { background: var(--orange); border-color: var(--orange); transform: scale(1.3); box-shadow: 0 0 0 6px rgba(255, 138, 0, 0.15); }
+    .tl-node[aria-selected="true"] small { color: #fff; }
+    .tl-panel { padding: clamp(1.2rem, 3vw, 2rem); animation: panel-in 0.35s ease both; }
+    .tl-panel p { max-width: 760px; color: var(--muted); line-height: 1.7; }
+    .tl-date { color: var(--orange) !important; font-size: 0.75rem; font-weight: 800; letter-spacing: 0.07em; text-transform: uppercase; }
+    .tl-panel ul { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 0; padding: 0; list-style: none; }
+    .tl-panel li {
+        padding: 0.45rem 0.7rem;
+        border: 1px solid #28506f;
+        border-radius: 999px;
+        background: var(--surface);
+        color: #d1e0ec;
+        font-size: 0.78rem;
+    }
+    @keyframes panel-in {
+        from { opacity: 0; transform: translateY(8px); }
+        to { opacity: 1; transform: none; }
+    }
+
+    /* stepper */
+    .stepper {
+        padding: clamp(1rem, 2.5vw, 1.6rem);
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        background: rgba(7, 21, 34, 0.75);
+    }
+    .sample-label {
+        display: inline-block;
+        margin-bottom: 1rem;
+        padding: 0.35rem 0.7rem;
+        border: 1px dashed rgba(255, 194, 77, 0.6);
+        border-radius: 8px;
+        color: var(--amber);
+        font-size: 0.74rem;
+    }
+    .step-rail {
+        display: grid;
+        grid-template-columns: repeat(8, minmax(0, 1fr));
+        gap: 0.4rem;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+    }
+    .step-dot {
+        display: grid;
+        width: 100%;
+        gap: 0.2rem;
+        padding: 0.55rem 0.4rem;
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        background: var(--surface);
+        color: var(--muted);
+        font: inherit;
+        text-align: left;
+        cursor: pointer;
+        transition: border-color 0.2s ease, background 0.2s ease, transform 0.2s ease;
+    }
+    .step-dot span { color: var(--blue-light); font-family: var(--mono); font-size: 0.72rem; font-weight: 700; }
+    .step-dot small { font-size: 0.7rem; line-height: 1.25; }
+    .step-dot:hover { transform: translateY(-2px); border-color: var(--blue); }
+    .step-dot.is-done { border-color: rgba(38, 213, 162, 0.4); }
+    .step-dot.is-done span { color: var(--green); }
+    .step-dot[aria-current="step"] { border-color: var(--orange); background: #142a3d; color: #fff; }
+    .step-dot[aria-current="step"] span { color: var(--orange); }
+    .step-progress { height: 3px; margin: 0.9rem 0 1.2rem; border-radius: 3px; background: #0f2b43; overflow: hidden; }
+    .step-progress i {
+        display: block;
+        height: 100%;
+        background: linear-gradient(90deg, var(--blue), var(--green));
+        transform: scaleX(0.125);
+        transform-origin: left;
+        transition: transform 0.45s cubic-bezier(0.2, 0.7, 0.2, 1);
+    }
+    .step-panel {
+        display: grid;
+        grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+        gap: 1.4rem;
+        min-height: 260px;
+        animation: panel-in 0.35s ease both;
+    }
+    .step-copy p { color: var(--muted); line-height: 1.7; }
+    .file-chip {
+        display: inline-block;
+        margin-bottom: 0.7rem;
+        padding: 0.25rem 0.6rem;
+        border-radius: 6px;
+        background: rgba(22, 141, 255, 0.14);
+        color: var(--blue-light);
+        font-family: var(--mono);
+        font-size: 0.74rem;
+    }
+    .step-controls { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 0.6rem; margin-top: 1rem; }
+
+    .code {
+        min-width: 0;
+        max-width: 100%;
+        margin: 0;
+        padding: 1rem 1.1rem;
+        overflow-x: auto;
+        border: 1px solid #1c3a55;
+        border-radius: 12px;
+        background: #040c16;
+        color: #bfe0ff;
+        font-size: 0.76rem;
+        line-height: 1.6;
+        white-space: pre;
+    }
+
+    .ctl {
+        min-height: 40px;
+        padding: 0.55rem 0.95rem;
+        border: 1px solid #2b5375;
+        border-radius: 9px;
+        background: var(--surface);
+        color: #e6eef5;
+        font: inherit;
+        font-size: 0.82rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: transform 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+    }
+    .ctl:hover { transform: translateY(-1px); border-color: var(--blue-light); }
+    .ctl-primary { border-color: var(--blue); background: var(--blue); color: #fff; }
+    .ctl-primary:hover { background: #2a9bff; }
+    .ctl[aria-pressed="true"] { border-color: var(--orange); color: var(--orange); }
+
+    /* ATS explorer */
+    .ats {
+        display: grid;
+        grid-template-columns: 210px minmax(0, 1fr);
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        background: rgba(7, 21, 34, 0.75);
+        overflow: hidden;
+    }
+    .ats-tabs {
+        display: grid;
+        align-content: start;
+        gap: 0.3rem;
+        padding: 0.8rem;
+        border-right: 1px solid var(--border);
+        background: rgba(4, 12, 22, 0.5);
+    }
+    .ats-tab {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.5rem;
+        padding: 0.6rem 0.75rem;
+        border: 1px solid transparent;
+        border-left: 3px solid var(--fmt);
+        border-radius: 8px;
+        background: transparent;
+        color: var(--muted);
+        font: inherit;
+        font-size: 0.86rem;
+        font-weight: 650;
+        text-align: left;
+        cursor: pointer;
+        transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+    }
+    .ats-tab small { font-family: var(--mono); font-size: 0.64rem; color: var(--fmt); }
+    .ats-tab:hover { background: var(--surface); color: #fff; transform: translateX(3px); }
+    .ats-tab[aria-selected="true"] { border-color: #2b5375; border-left-color: var(--fmt); background: var(--surface-2); color: #fff; }
+    .ats-panel { min-width: 0; padding: clamp(1.1rem, 3vw, 1.8rem); animation: panel-in 0.35s ease both; }
+    .ats-head { display: flex; flex-wrap: wrap; align-items: center; gap: 0.6rem; margin-bottom: 1rem; }
+    .ats-head h3 { margin: 0 0.4rem 0 0; font-size: 1.5rem; }
+    .fmt-badge, .test-badge {
+        padding: 0.25rem 0.55rem;
+        border-radius: 6px;
+        font-family: var(--mono);
+        font-size: 0.7rem;
+        font-weight: 700;
+    }
+    .fmt-badge { border: 1px solid var(--fmt); color: var(--fmt); }
+    .test-badge { background: rgba(38, 213, 162, 0.12); color: var(--green); }
+    .endpoint { white-space: pre-wrap; overflow-wrap: anywhere; color: #ffd8a8; }
+    .ats-paging { margin: 0.9rem 0 1.2rem; color: var(--muted); font-size: 0.9rem; line-height: 1.6; }
+    .ats-paging strong { color: #fff; }
+    .mapping { display: grid; gap: 0.35rem; }
+    .map-row {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 46px minmax(0, 1fr);
+        align-items: center;
+        gap: 0.4rem;
+        animation: row-in 0.4s ease both;
+        animation-delay: calc(var(--j, 0) * 45ms);
+    }
+    .map-head span { color: var(--subtle); font-size: 0.68rem; font-weight: 800; letter-spacing: 0.07em; text-transform: uppercase; }
+    .map-row code {
+        min-width: 0;
+        padding: 0.42rem 0.6rem;
+        border: 1px solid #1c3a55;
+        border-radius: 7px;
+        background: #071628;
+        color: #d6e6f3;
+        font-size: 0.74rem;
+        overflow-wrap: anywhere;
+    }
+    .map-row code.to { border-color: rgba(38, 213, 162, 0.35); color: #b7f5df; }
+    .map-arrow {
+        position: relative;
+        height: 2px;
+        background: linear-gradient(90deg, rgba(101, 186, 255, 0.2), var(--blue-light));
+        overflow: hidden;
+    }
+    .map-arrow::after {
+        content: "";
+        position: absolute;
+        top: -2px;
+        left: 0;
+        width: 10px;
+        height: 6px;
+        border-radius: 3px;
+        background: #fff;
+        animation: arrow-run 1.8s ease-in-out calc(var(--j, 0) * 0.15s) infinite;
+    }
+    @keyframes arrow-run {
+        from { transform: translateX(-12px); }
+        to { transform: translateX(48px); }
+    }
+    @keyframes row-in {
+        from { opacity: 0; transform: translateX(-8px); }
+        to { opacity: 1; transform: none; }
+    }
+    .ats-notes { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.8rem; margin-top: 1.2rem; }
+    .ats-notes p {
+        margin: 0;
+        padding: 0.9rem 1rem;
+        border-radius: 10px;
+        background: rgba(9, 27, 43, 0.9);
+        color: var(--muted);
+        font-size: 0.86rem;
+        line-height: 1.6;
+    }
+
+    /* labs */
+    .lab {
+        padding: clamp(1rem, 2.5vw, 1.6rem);
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        background: rgba(7, 21, 34, 0.75);
+    }
+    .lab + .lab { margin-top: 1.2rem; }
+    .presets { display: flex; flex-wrap: wrap; gap: 0.45rem; margin-bottom: 1.1rem; }
+    .chip {
+        padding: 0.45rem 0.75rem;
+        border: 1px solid #2b5375;
+        border-radius: 999px;
+        background: var(--surface);
+        color: #cfdeea;
+        font: inherit;
+        font-size: 0.78rem;
+        font-weight: 650;
+        cursor: pointer;
+        transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+    }
+    .chip:hover { transform: translateY(-1px); border-color: var(--blue-light); }
+    .chip.is-active { border-color: var(--orange); background: rgba(255, 138, 0, 0.12); color: #fff; }
+
+    .lab-cols, .screen-cols { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
+    .lab-box { min-width: 0; margin: 0; padding: 0.9rem 1rem 1rem; border: 1px solid #1c3a55; border-radius: 14px; }
+    .lab-box legend { padding: 0 0.4rem; color: var(--blue-light); font-size: 0.75rem; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; }
+    .lab label { display: grid; gap: 0.3rem; margin-bottom: 0.6rem; color: var(--muted); font-size: 0.76rem; font-weight: 650; }
+    .lab label.check { display: flex; align-items: center; gap: 0.5rem; }
+    .lab input:not([type="checkbox"]), .lab select, .lab textarea {
+        width: 100%;
+        min-width: 0;
+        padding: 0.5rem 0.6rem;
+        border: 1px solid #23476a;
+        border-radius: 8px;
+        background: #040c16;
+        color: #e8f1f8;
+        font-family: var(--mono);
+        font-size: 0.78rem;
+    }
+    .lab textarea { resize: vertical; line-height: 1.5; }
+
+    .lab-out {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        gap: 1rem;
+        margin-top: 1rem;
+    }
+    .verdict {
+        padding: 1rem 1.1rem;
+        border: 1px solid #1c3a55;
+        border-left: 4px solid var(--tone, var(--blue));
+        border-radius: 12px;
+        background: #071628;
+        transition: border-color 0.3s ease;
+    }
+    .verdict[data-tone="go"] { --tone: var(--green); }
+    .verdict[data-tone="warn"] { --tone: var(--amber); }
+    .verdict[data-tone="stop"] { --tone: var(--red); }
+    .verdict strong { display: block; color: var(--tone, #fff); font-family: var(--mono); font-size: 1.05rem; }
+    .verdict code { display: inline-block; margin-top: 0.3rem; color: var(--blue-light); font-size: 0.74rem; }
+    .verdict p { margin: 0.5rem 0 0; color: var(--muted); font-size: 0.84rem; line-height: 1.55; }
+    .canon { grid-column: 1 / -1; display: grid; gap: 0.3rem; }
+    .canon code { color: #bfe0ff; font-size: 0.74rem; overflow-wrap: anywhere; }
+
+    .fp-lab { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 1.2rem; align-items: center; }
+    .fp-copy p { color: var(--muted); line-height: 1.65; font-size: 0.9rem; }
+    .fp-out { display: grid; gap: 0.7rem; }
+    .fp-out div { display: grid; gap: 0.25rem; padding: 0.8rem 1rem; border: 1px solid #1c3a55; border-radius: 10px; background: #071628; }
+    .fp-out span { color: var(--subtle); font-size: 0.7rem; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; }
+    .fp-out code { color: #d6e6f3; font-size: 0.8rem; overflow-wrap: anywhere; }
+    .fp-out strong { color: var(--green); font-family: var(--mono); font-size: 0.9rem; }
+    .fp-hash.flash { animation: flash 0.7s ease; }
+    @keyframes flash {
+        from { color: var(--orange); transform: scale(1.02); }
+        to { color: #d6e6f3; transform: none; }
+    }
+
+    /* screening */
+    .screen-out {
+        padding: 1rem 1.1rem;
+        border: 1px solid #1c3a55;
+        border-radius: 14px;
+        background: #071628;
+    }
+    .route {
+        display: inline-block;
+        margin-bottom: 0.8rem;
+        padding: 0.35rem 0.8rem;
+        border-radius: 8px;
+        background: rgba(22, 141, 255, 0.15);
+        color: var(--blue-light);
+        font-size: 1.15rem;
+        transition: background 0.3s ease, color 0.3s ease;
+    }
+    .route[data-route="hard-ineligible"] { background: rgba(255, 107, 107, 0.15); color: var(--red); }
+    .route[data-route="source-uncertain"] { background: rgba(255, 194, 77, 0.15); color: var(--amber); }
+    .route[data-route="ai-review"] { background: rgba(38, 213, 162, 0.13); color: var(--green); }
+    .codes { display: flex; flex-wrap: wrap; gap: 0.35rem; margin: 0 0 0.6rem; padding: 0; list-style: none; }
+    .codes :global(li) {
+        padding: 0.3rem 0.5rem;
+        border: 1px solid #23476a;
+        border-radius: 6px;
+        color: #d6e6f3;
+        font-family: var(--mono);
+        font-size: 0.68rem;
+        animation: row-in 0.3s ease both;
+    }
+    .evidence :global(p) { margin: 0 0 0.4rem; color: #ffb3b3; font-size: 0.8rem; line-height: 1.5; overflow-wrap: anywhere; }
+
+    /* lifecycle */
+    .toggles { display: flex; flex-wrap: wrap; gap: 0.6rem 1.5rem; margin-bottom: 1.2rem; }
+    .switch { display: inline-flex !important; align-items: center; gap: 0.6rem !important; cursor: pointer; color: #e1ebf3 !important; font-size: 0.86rem !important; }
+    .switch input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+    .switch span {
+        position: relative;
+        flex: none;
+        width: 42px;
+        height: 24px;
+        border-radius: 99px;
+        background: #23405a;
+        transition: background 0.25s ease;
+    }
+    .switch span::after {
+        content: "";
+        position: absolute;
+        top: 3px;
+        left: 3px;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        background: #fff;
+        transition: transform 0.25s cubic-bezier(0.3, 1.4, 0.5, 1);
+    }
+    .switch input:checked + span { background: var(--blue); }
+    .switch input:checked + span::after { transform: translateX(18px); }
+    .switch input:focus-visible + span { outline: 2px solid var(--orange); outline-offset: 3px; }
+    .switch input:disabled + span { opacity: 0.4; }
+    .life-cards { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0.8rem; }
+    .life-card {
+        display: grid;
+        place-items: center;
+        gap: 0.4rem;
+        padding: 1.1rem 0.5rem;
+        border: 1px solid #1c3a55;
+        border-radius: 14px;
+        background: #071628;
+        text-align: center;
+        transition: border-color 0.3s ease, transform 0.3s ease;
+    }
+    .life-card b { color: #fff; font-size: 1.6rem; font-family: Georgia, serif; font-weight: 400; }
+    .life-card span { font-family: var(--mono); font-size: 0.72rem; overflow-wrap: anywhere; color: var(--muted); }
+    .life-card[data-state="new"], .life-card[data-state="baseline_discovered"] { border-color: var(--blue); }
+    .life-card[data-state="new"] span, .life-card[data-state="baseline_discovered"] span { color: var(--blue-light); }
+    .life-card[data-state="changed"] { border-color: var(--amber); }
+    .life-card[data-state="changed"] span { color: var(--amber); }
+    .life-card[data-state="unchanged"] span { color: var(--green); }
+    .life-card[data-state="possibly_removed"] { border-color: var(--red); transform: rotate(-2deg); }
+    .life-card[data-state="possibly_removed"] span { color: var(--red); }
+    .life-card[data-state="retained_prior"] span { color: #cfdeea; }
+    .life-card[data-state="not_persisted"] { opacity: 0.5; border-style: dashed; }
+    .life-reason { margin: 1rem 0 0; color: var(--muted); font-size: 0.88rem; line-height: 1.6; }
+
+    /* m2d */
+    .m2d { display: grid; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); gap: 1.4rem; align-items: start; }
+    .wheel-wrap { display: grid; gap: 1rem; justify-items: center; }
+    .wheel { width: min(100%, 280px); height: auto; overflow: visible; }
+    .wheel-ring { fill: none; stroke: #1f4060; stroke-width: 2; stroke-dasharray: 4 6; }
+    .wheel-node circle { fill: #0b2236; stroke: #2b5375; stroke-width: 2; transition: fill 0.3s ease, stroke 0.3s ease; }
+    .wheel-node text { fill: #fff; font-size: 12px; font-weight: 700; font-family: Inter, system-ui, sans-serif; }
+    .wheel-node text.sub { fill: var(--muted); font-size: 8.5px; font-weight: 500; }
+    .wheel-node.is-next circle { fill: rgba(255, 138, 0, 0.18); stroke: var(--orange); }
+    .wheel-hand { transform-origin: 110px 110px; transition: transform 0.6s cubic-bezier(0.3, 1.3, 0.5, 1); }
+    .wheel-hand line { stroke: var(--orange); stroke-width: 3; stroke-linecap: round; }
+    .wheel-hub { fill: var(--orange); }
+    .clock {
+        display: grid;
+        grid-template-columns: auto auto;
+        gap: 0.2rem 1rem;
+        align-items: baseline;
+        color: var(--subtle);
+        font-size: 0.74rem;
+    }
+    .clock strong { color: #fff; font-family: var(--mono); font-size: 0.95rem; }
+    .chips { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+    .chips :global(span) {
+        padding: 0.35rem 0.65rem;
+        border: 1px solid #2b5375;
+        border-radius: 999px;
+        background: var(--surface);
+        color: #fff;
+        font-size: 0.78rem;
+        animation: row-in 0.3s ease both;
+    }
+    .m2d-controls { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 1rem 0; }
+    .log {
+        display: grid;
+        gap: 0.35rem;
+        min-height: 220px;
+        margin: 0;
+        padding: 0.8rem;
+        border: 1px solid #1c3a55;
+        border-radius: 12px;
+        background: #040c16;
+        list-style: none;
+        font-family: var(--mono);
+        font-size: 0.72rem;
+        line-height: 1.5;
+    }
+    .log :global(li) { color: #b9cbd9; overflow-wrap: anywhere; animation: row-in 0.3s ease both; }
+    .log :global(li)::before { content: "› "; color: var(--subtle); }
+    .log :global(li[data-tone="ok"]) { color: var(--green); }
+    .log :global(li[data-tone="info"]) { color: var(--blue-light); }
+    .log :global(li[data-tone="warn"]) { color: var(--amber); }
+    .log :global(li[data-tone="bad"]) { color: var(--red); }
+
+    /* evidence */
+    .proof-grid { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 0.75fr); gap: 1.2rem; }
+    .proof-bars {
+        display: grid;
+        gap: 1.1rem;
+        padding: clamp(1rem, 2.5vw, 1.5rem);
+        border: 1px solid var(--border);
+        border-radius: 18px;
+        background: rgba(7, 21, 34, 0.75);
+    }
+    .proof-label { display: flex; justify-content: space-between; gap: 1rem; color: #e1ebf3; font-size: 0.86rem; }
+    .proof-label strong { color: var(--green); font-family: var(--mono); white-space: nowrap; }
+    .proof-label b { font-weight: inherit; font-variant-numeric: tabular-nums; }
+    .bar { height: 8px; margin: 0.45rem 0 0.3rem; border-radius: 99px; background: #0f2b43; overflow: hidden; }
+    .bar i {
+        display: block;
+        height: 100%;
+        border-radius: inherit;
+        background: linear-gradient(90deg, var(--blue), var(--green));
+        transform: scaleX(0);
+        transform-origin: left;
+        transition: transform 1.2s cubic-bezier(0.2, 0.7, 0.2, 1);
+    }
+    .is-in .bar i { transform: scaleX(1); }
+    .proof-row small { color: var(--subtle); font-size: 0.76rem; line-height: 1.45; }
+    .adapter-tests ul { display: grid; gap: 0.55rem; margin: 0.8rem 0 0; padding: 0; list-style: none; }
+    .adapter-tests li {
+        display: grid;
+        grid-template-columns: 8.5rem minmax(0, 1fr) auto;
+        align-items: center;
+        gap: 0.6rem;
+        color: var(--muted);
+        font-size: 0.8rem;
+    }
+    .adapter-tests li i { display: block; width: var(--w); height: 6px; border-radius: 99px; background: linear-gradient(90deg, var(--violet), var(--blue-light)); }
+    .adapter-tests strong { color: #fff; font-family: var(--mono); font-size: 0.76rem; }
+
+    .bounds { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; margin-top: 1.2rem; }
+    .bounds ul { margin: 0.6rem 0 0; padding-left: 1.1rem; color: var(--muted); line-height: 1.65; font-size: 0.9rem; }
+    .bounds li + li { margin-top: 0.35rem; }
+    .bounds-yes { border-color: rgba(38, 213, 162, 0.4); }
+    .bounds-no { border-color: rgba(255, 138, 0, 0.35); }
+
+    .skills-section :global(.skill-links) { justify-content: center; max-width: 1000px; margin-inline: auto; }
+
+    .project-end {
+        padding: clamp(4rem, 8vw, 6.5rem) 0;
+        border-top: 1px solid rgba(31, 61, 87, 0.8);
+        text-align: center;
+    }
     .project-end-links {
         display: flex;
         flex-wrap: wrap;
+        justify-content: center;
         gap: 1rem 2rem;
         margin-top: 2rem;
     }
-
-    .project-end-links a {
-        color: white;
-        font-size: 0.9rem;
-        font-weight: 700;
-        text-underline-offset: 0.25em;
-    }
-
-    .project-end-links a:hover {
-        color: var(--blue-light);
-    }
+    .project-end-links a { color: #fff; font-size: 0.92rem; font-weight: 700; }
+    .project-end-links a:hover { color: var(--blue-light); }
 
     /* =========================================================
-       FOOTER
+       RESPONSIVE
        ========================================================= */
 
-    footer {
-        display: flex;
-        justify-content: space-between;
-        gap: 2rem;
-        padding-top: 1.6rem;
-        padding-bottom: 1.6rem;
-        border-top: 1px solid var(--border);
-        color: var(--subtle);
-        font-size: 0.72rem;
+    @media (max-width: 1060px) {
+        .v1-grid, .why-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        .step-rail { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+        .timeline-track { grid-template-columns: repeat(5, minmax(0, 1fr)); row-gap: 1rem; }
+        .timeline-track::before { display: none; }
     }
 
-    /* =========================================================
-       RESPONSIVE — TABLET
-       ========================================================= */
-
-    @media (max-width: 1000px) {
-        .case-section {
-            grid-template-columns: 1fr;
-            gap: 1rem;
+    @media (max-width: 860px) {
+        .metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        .cache-story, .registry, .step-panel, .fp-lab, .m2d, .proof-grid { grid-template-columns: minmax(0, 1fr); }
+        .registry-legend { grid-column: auto; }
+        .ats { grid-template-columns: minmax(0, 1fr); }
+        .ats-tabs {
+            grid-auto-flow: column;
+            grid-auto-columns: max-content;
+            overflow-x: auto;
+            border-right: 0;
+            border-bottom: 1px solid var(--border);
         }
-
-        .metrics {
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-        }
+        .ats-tab:hover { transform: none; }
+        .funnel-graphic { grid-template-columns: minmax(0, 140px) minmax(0, 1fr) auto; }
+        .funnel-out { grid-column: 1 / -1; }
     }
 
-    /* =========================================================
-       RESPONSIVE — MOBILE
-       ========================================================= */
-
-    @media (max-width: 620px) {
-        nav {
-            gap: 1rem;
-        }
-
-        .nav-links {
-            gap: 0.8rem;
-        }
-
-        .nav-links a {
-            font-size: 0.8rem;
-        }
-
-        h1 {
-            font-size: clamp(2.6rem, 11vw, 4rem);
-        }
-
-        .metrics,
-        .source-grid,
-        .criteria-grid,
-        .output-grid,
-        .comparison {
-            grid-template-columns: 1fr;
-        }
-
-        .comparison-arrow {
-            justify-self: center;
-            transform: rotate(90deg);
-        }
-
-        .hero-actions .button {
-            width: 100%;
-        }
-
-        footer {
-            flex-direction: column;
-        }
+    @media (max-width: 640px) {
+        .v1-grid, .why-grid, .lab-cols, .screen-cols, .lab-out, .ats-notes, .bounds { grid-template-columns: minmax(0, 1fr); }
+        .life-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        .timeline-track { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+        .step-rail { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+        .step-dot small { display: none; }
+        .step-dot { justify-items: center; }
+        .map-row { grid-template-columns: minmax(0, 1fr) 22px minmax(0, 1fr); }
+        .map-arrow::after { animation: none; }
+        .hero-actions .button { width: 100%; }
+        .funnel-graphic { grid-template-columns: minmax(0, 1fr) 40px minmax(0, 0.9fr); padding: 0.8rem; }
+        .funnel-core span { padding: 0.35rem 0.4rem; font-size: 0.68rem; }
+        .src { font-size: 0.62rem; }
+        .adapter-tests li { grid-template-columns: 7rem minmax(0, 1fr) auto; }
+        .step-controls { justify-content: stretch; }
+        .step-controls .ctl { flex: 1 1 auto; }
     }
-
-    /* =========================================================
-       REDUCED MOTION
-       ========================================================= */
 
     @media (prefers-reduced-motion: reduce) {
-        html {
-            scroll-behavior: auto;
+        html { scroll-behavior: auto; }
+        *, *::before, *::after {
+            animation-duration: 0.001ms !important;
+            animation-iteration-count: 1 !important;
+            transition-duration: 0.001ms !important;
         }
-
-        .button {
-            transition: none;
-        }
-
-        .button:hover {
-            transform: none;
-        }
-    }
-
-    /* =========================================================
-   AI ARCHITECTURE — WIDER TWO-COLUMN WORKFLOW
-
-   Expands only the architecture section.
-   Reuses the existing five workflow cards and their text.
-   ========================================================= */
-
-    .architecture-section {
-        display: block;
-    }
-
-    .architecture-section .section-label {
-        text-align: center;
-    }
-
-    .architecture-section .section-content {
-        width: 100%;
-        max-width: none;
-    }
-
-    .architecture-section .section-content > h2,
-    .architecture-section .section-content > p {
-        max-width: 850px;
-        margin-left: auto;
-        margin-right: auto;
-        text-align: center;
-    }
-
-    /* The existing workflow container becomes a two-column grid. */
-
-    .architecture-section .workflow {
-        display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 1.25rem;
-        width: 100%;
-        max-width: 1100px;
-        margin: 2.5rem auto;
-        align-items: stretch;
-    }
-
-    /* Keep the existing workflow cards readable. */
-
-    .architecture-section .workflow-step {
-        min-width: 0;
-        width: 100%;
-        height: 100%;
-        padding: 1.5rem;
-    }
-
-    /* The final output card spans both columns. */
-
-    .architecture-section .workflow-step:last-child {
-        grid-column: 1 / -1;
-    }
-
-    /* Hide the old between-card arrows.
-   We will use the grid's visual ordering instead. */
-
-    .architecture-section .workflow-arrow {
-        display: none;
-    }
-
-    /* Mobile: restore a straightforward vertical sequence. */
-
-    @media (max-width: 700px) {
-        .architecture-section .workflow {
-            grid-template-columns: 1fr;
-        }
-
-        .architecture-section .workflow-step:last-child {
-            grid-column: auto;
-        }
-    }
-
-    /* =========================================================
-   AI CASE STUDY — CENTERED INTRODUCTION AND ENDING
-   ========================================================= */
-
-    .hero {
-        text-align: center;
-    }
-
-    .hero h1,
-    .hero-lead,
-    .hero-context,
-    .hero .eyebrow {
-        margin-left: auto;
-        margin-right: auto;
-    }
-
-    .breadcrumbs,
-    .hero-tags,
-    .hero-actions {
-        justify-content: center;
-    }
-
-    .metrics {
-        text-align: center;
-    }
-
-    /* Center the skills section without affecting the
-   alignment of ordinary case-study paragraphs. */
-
-    .case-section:has(.skills-list) .section-label,
-    .case-section:has(.skills-list) .section-content {
-        text-align: center;
-    }
-
-    .case-section:has(.skills-list) .section-content > h2 {
-        margin-left: auto;
-        margin-right: auto;
-    }
-
-    .case-section:has(.skills-list) .skills-list {
-        justify-content: center;
-    }
-
-    /* Closing navigation. */
-
-    .project-end {
-        text-align: center;
-    }
-
-    .project-end h2 {
-        margin-left: auto;
-        margin-right: auto;
-    }
-
-    .project-end-links {
-        justify-content: center;
-    }
-
-    /* Footer. */
-
-    footer {
-        justify-content: center;
-        text-align: center;
-        flex-wrap: wrap;
+        .lane i { opacity: 0; }
     }
 </style>
