@@ -116,18 +116,41 @@
         );
 
         let observerResponded = false;
+        const waiting = new Set<HTMLElement>();
+
+        const reveal = (element: HTMLElement) => {
+            element.classList.add("is-visible");
+            observer.unobserve(element);
+            waiting.delete(element);
+        };
 
         const observer = new IntersectionObserver(
             (entries) => {
                 observerResponded = true;
                 for (const entry of entries) {
-                    if (!entry.isIntersecting) continue;
-                    entry.target.classList.add("is-visible");
-                    observer.unobserve(entry.target);
+                    if (entry.isIntersecting) reveal(entry.target as HTMLElement);
                 }
             },
             { rootMargin: "0px 0px -8% 0px", threshold: 0.08 },
         );
+
+        // A fast flick can jump straight past an element between frames, so
+        // anything already scrolled above the fold is revealed on scroll too.
+        let sweepQueued = false;
+        const sweep = () => {
+            sweepQueued = false;
+            for (const element of waiting) {
+                if (element.getBoundingClientRect().top < window.innerHeight) reveal(element);
+            }
+            if (waiting.size === 0) window.removeEventListener("scroll", onScroll);
+        };
+        const onScroll = () => {
+            if (!sweepQueued) {
+                sweepQueued = true;
+                requestAnimationFrame(sweep);
+            }
+        };
+        window.addEventListener("scroll", onScroll, { passive: true });
 
         for (const element of targets) {
             // Skip nested matches and anything already on screen at load.
@@ -138,6 +161,7 @@
             const index = Math.min(siblings.indexOf(element), 4);
             element.style.setProperty("--reveal-delay", `${Math.max(index, 0) * 70}ms`);
             element.classList.add("motion-reveal");
+            waiting.add(element);
             observer.observe(element);
         }
 
