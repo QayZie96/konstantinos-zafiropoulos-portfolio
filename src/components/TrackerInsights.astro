@@ -1,0 +1,650 @@
+---
+/* =========================================================
+   FINANCIAL TRACKER — INTERACTIVE INSIGHTS
+
+   view="years":     2018 vs 2019 comparison with a metric toggle.
+   view="platforms": 2019 channel mix (donut + derived ratios).
+
+   All figures come from the Financial & Operations Tracker
+   workbook (December 2017 – December 2019).
+   ========================================================= */
+
+interface Props {
+    view: "years" | "platforms";
+}
+
+const { view } = Astro.props;
+
+const years = [
+    { year: "2018", turnover: 20_700, orders: 1_728, products: 2_604, profit: 8_700 },
+    { year: "2019", turnover: 33_600, orders: 2_362, products: 3_691, profit: 18_000 },
+];
+
+const platforms = [
+    { name: "PC", turnover: 11_600, orders: 781, products: 1_267, color: "#168dff" },
+    { name: "PS4", turnover: 13_300, orders: 992, products: 1_669, color: "#65baff" },
+    { name: "Xbox", turnover: 8_700, orders: 589, products: 755, color: "#26d5a2" },
+];
+
+const metrics = [
+    { key: "turnover", label: "Turnover", money: true },
+    { key: "orders", label: "Orders", money: false },
+    { key: "products", label: "Products sold", money: false },
+    { key: "profit", label: "Approx. profit", money: true },
+];
+
+const data = { years, platforms };
+const uid = `ti-${view}`;
+---
+
+<div class={`ti ti-${view}`} data-tracker-insights={view} id={uid}>
+    <script type="application/json" data-ti-data set:html={JSON.stringify(data)} />
+
+    {
+        view === "years" && (
+            <div class="ti-card">
+                <div class="ti-head">
+                    <div>
+                        <p class="ti-kicker">2018 vs 2019</p>
+                        <h3>Full-year comparison</h3>
+                    </div>
+                    <div class="ti-toggle" role="group" aria-label="Comparison metric" data-ti-metric>
+                        {metrics.map((metric, index) => (
+                            <button type="button" data-value={metric.key} aria-pressed={index === 0 ? "true" : "false"}>
+                                {metric.label}
+                            </button>
+                        ))}
+                    </div>
+                </div>
+
+                <div class="ti-years" data-ti-years>
+                    {years.map((row) => (
+                        <div class="ti-year-row">
+                            <span class="ti-year">{row.year}</span>
+                            <div class="ti-track">
+                                <span class="ti-fill" data-ti-fill={row.year}></span>
+                            </div>
+                            <strong data-ti-value={row.year}>${(row.turnover / 1000).toFixed(1)}K</strong>
+                        </div>
+                    ))}
+                </div>
+
+                <div class="ti-growth" aria-live="polite">
+                    <strong data-ti-growth>+62%</strong>
+                    <span data-ti-growth-label>turnover growth, 2018 → 2019</span>
+                </div>
+
+                <div class="ti-mini">
+                    {years.map((row) => (
+                        <div>
+                            <span>{row.year} profit margin</span>
+                            <strong>≈{Math.round((row.profit / row.turnover) * 100)}%</strong>
+                            <small>approx. profit ÷ turnover</small>
+                        </div>
+                    ))}
+                    {years.map((row) => (
+                        <div>
+                            <span>{row.year} products per order</span>
+                            <strong>{(row.products / row.orders).toFixed(2)}</strong>
+                            <small>{row.products.toLocaleString("en-US")} ÷ {row.orders.toLocaleString("en-US")}</small>
+                        </div>
+                    ))}
+                </div>
+            </div>
+        )
+    }
+
+    {
+        view === "platforms" && (
+            <div class="ti-card">
+                <div class="ti-head">
+                    <div>
+                        <p class="ti-kicker">2019 by channel</p>
+                        <h3>Three platforms, three operating profiles</h3>
+                    </div>
+                    <div class="ti-toggle" role="group" aria-label="Platform metric" data-ti-pmetric>
+                        {metrics.slice(0, 3).map((metric, index) => (
+                            <button type="button" data-value={metric.key} aria-pressed={index === 0 ? "true" : "false"}>
+                                {metric.label}
+                            </button>
+                        ))}
+                    </div>
+                </div>
+
+                <div class="ti-mix">
+                    <div class="ti-donut" aria-hidden="true">
+                        <svg viewBox="0 0 120 120" data-ti-donut>
+                            <circle cx="60" cy="60" r="46" class="ti-donut-track"></circle>
+                            {platforms.map((platform) => (
+                                <circle
+                                    cx="60"
+                                    cy="60"
+                                    r="46"
+                                    class="ti-arc"
+                                    pathLength="100"
+                                    stroke={platform.color}
+                                    data-ti-arc={platform.name}
+                                ></circle>
+                            ))}
+                        </svg>
+                        <div class="ti-donut-center">
+                            <strong data-ti-center>$33.6K</strong>
+                            <span data-ti-center-label>2019 turnover</span>
+                        </div>
+                    </div>
+
+                    <ul class="ti-platforms">
+                        {platforms.map((platform) => (
+                            <li data-ti-platform={platform.name}>
+                                <div class="ti-platform-top">
+                                    <span><i style={`background: ${platform.color}`}></i>{platform.name}</span>
+                                    <strong data-ti-share={platform.name}></strong>
+                                </div>
+                                <div class="ti-track is-thin">
+                                    <span class="ti-fill" style={`background: ${platform.color}`} data-ti-pfill={platform.name}></span>
+                                </div>
+                                <small>
+                                    {`$${(platform.turnover / 1000).toFixed(1)}K · ${platform.orders.toLocaleString("en-US")} orders · ${platform.products.toLocaleString("en-US")} products`}
+                                </small>
+                                <dl>
+                                    <div>
+                                        <dt>Products / order</dt>
+                                        <dd>{(platform.products / platform.orders).toFixed(2)}</dd>
+                                    </div>
+                                    <div>
+                                        <dt>Avg. order</dt>
+                                        <dd>~${Math.round(platform.turnover / platform.orders)}</dd>
+                                    </div>
+                                </dl>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+
+                <p class="ti-note" aria-live="polite" data-ti-summary></p>
+            </div>
+        )
+    }
+</div>
+
+<script>
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    const whenVisible = (element: Element, callback: () => void) => {
+        if (reduce || !("IntersectionObserver" in window)) return callback();
+        const observer = new IntersectionObserver(
+            (entries) => {
+                if (!entries.some((entry) => entry.isIntersecting)) return;
+                observer.disconnect();
+                callback();
+            },
+            { threshold: 0.25 },
+        );
+        observer.observe(element);
+    };
+
+    const money = (value: number) => `$${(value / 1000).toFixed(1)}K`;
+    const count = (value: number) => value.toLocaleString("en-US");
+    const LABELS: Record<string, string> = {
+        turnover: "turnover",
+        orders: "orders",
+        products: "products sold",
+        profit: "approx. profit",
+    };
+
+    const bindToggle = (group: Element | null, onChange: (value: string) => void) => {
+        if (!group) return;
+        const buttons = Array.from(group.querySelectorAll<HTMLButtonElement>("button"));
+        buttons.forEach((button, index) => {
+            const select = (focus = false) => {
+                buttons.forEach((b) => b.setAttribute("aria-pressed", String(b === button)));
+                if (focus) button.focus();
+                onChange(button.dataset.value ?? "");
+            };
+            button.addEventListener("click", () => select());
+            button.addEventListener("keydown", (event) => {
+                let next = -1;
+                if (event.key === "ArrowRight") next = (index + 1) % buttons.length;
+                if (event.key === "ArrowLeft") next = (index - 1 + buttons.length) % buttons.length;
+                if (next < 0) return;
+                event.preventDefault();
+                buttons[next].click();
+                buttons[next].focus();
+            });
+        });
+    };
+
+    document.querySelectorAll<HTMLElement>("[data-tracker-insights]").forEach((root) => {
+        const data = JSON.parse(root.querySelector("[data-ti-data]")?.textContent ?? "{}");
+        const view = root.dataset.trackerInsights;
+        let visible = false;
+
+        if (view === "years") {
+            let metric = "turnover";
+            const render = () => {
+                const values = data.years.map((row: Record<string, number>) => row[metric]);
+                const max = Math.max(...values);
+                data.years.forEach((row: Record<string, number | string>, i: number) => {
+                    const fill = root.querySelector<HTMLElement>(`[data-ti-fill="${row.year}"]`);
+                    const value = root.querySelector<HTMLElement>(`[data-ti-value="${row.year}"]`);
+                    if (fill) fill.style.transform = `scaleX(${visible ? values[i] / max : 0})`;
+                    if (value) value.textContent = metric === "turnover" || metric === "profit" ? money(values[i]) : count(values[i]);
+                });
+                const growth = values[1] / values[0] - 1;
+                root.querySelector("[data-ti-growth]")!.textContent = `+${Math.round(growth * 100)}%`;
+                root.querySelector("[data-ti-growth-label]")!.textContent = `${LABELS[metric]} growth, 2018 → 2019`;
+            };
+            bindToggle(root.querySelector("[data-ti-metric]"), (value) => {
+                metric = value;
+                render();
+            });
+            render();
+            whenVisible(root, () => {
+                visible = true;
+                render();
+            });
+        }
+
+        if (view === "platforms") {
+            let metric = "turnover";
+            const arcs = Array.from(root.querySelectorAll<SVGCircleElement>("[data-ti-arc]"));
+            const render = () => {
+                const total = data.platforms.reduce((sum: number, p: Record<string, number>) => sum + p[metric], 0);
+                const max = Math.max(...data.platforms.map((p: Record<string, number>) => p[metric]));
+                let offset = 0;
+                data.platforms.forEach((platform: Record<string, number | string>, i: number) => {
+                    const value = platform[metric] as number;
+                    const share = (value / total) * 100;
+                    const arc = arcs[i];
+                    arc.style.strokeDasharray = `${visible ? Math.max(0, share - 0.8) : 0} 100`;
+                    arc.style.strokeDashoffset = `${-offset}`;
+                    offset += share;
+                    const name = platform.name as string;
+                    root.querySelector(`[data-ti-share="${name}"]`)!.textContent = `${share.toFixed(0)}%`;
+                    const fill = root.querySelector<HTMLElement>(`[data-ti-pfill="${name}"]`);
+                    if (fill) fill.style.transform = `scaleX(${visible ? value / max : 0})`;
+                });
+                root.querySelector("[data-ti-center]")!.textContent = metric === "turnover" ? money(total) : count(total);
+                root.querySelector("[data-ti-center-label]")!.textContent = `2019 ${LABELS[metric]}`;
+                const leader = [...data.platforms].sort((a: Record<string, number>, b: Record<string, number>) => b[metric] - a[metric])[0];
+                root.querySelector("[data-ti-summary]")!.textContent =
+                    `${leader.name} led 2019 ${LABELS[metric]} with ${Math.round((leader[metric] / total) * 100)}%. ` +
+                    `PS4 buyers bought the most items per order (1.68); Xbox the fewest (1.28).`;
+            };
+            bindToggle(root.querySelector("[data-ti-pmetric]"), (value) => {
+                metric = value;
+                render();
+            });
+            render();
+            whenVisible(root, () => {
+                visible = true;
+                render();
+            });
+        }
+    });
+</script>
+
+<style>
+    .ti {
+        width: 100%;
+        min-width: 0;
+        margin-top: 2rem;
+    }
+
+    .ti *,
+    .ti *::before,
+    .ti *::after {
+        box-sizing: border-box;
+    }
+
+    .ti-card {
+        box-sizing: border-box;
+        padding: clamp(1rem, 2.8vw, 1.6rem);
+        border: 1px solid #1d354a;
+        border-radius: 14px;
+        background:
+            linear-gradient(150deg, rgba(22, 141, 255, 0.08), transparent 55%),
+            rgba(7, 21, 34, 0.9);
+    }
+
+    .ti-head {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 0.75rem 1rem;
+        margin-bottom: 1.4rem;
+    }
+
+    .ti-kicker {
+        margin: 0 0 0.45rem;
+        color: #ff8a00;
+        font-size: 0.7rem;
+        font-weight: 800;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+    }
+
+    .ti-head h3 {
+        margin: 0;
+        color: #ffffff;
+        font-size: clamp(1.05rem, 2.2vw, 1.35rem);
+    }
+
+    .ti-toggle {
+        display: inline-flex;
+        flex-wrap: wrap;
+        gap: 0.25rem;
+        padding: 0.25rem;
+        border: 1px solid #1f3b55;
+        border-radius: 10px;
+        background: #071626;
+    }
+
+    .ti-toggle button {
+        min-height: 36px;
+        padding: 0.45rem 0.7rem;
+        border: 0;
+        border-radius: 7px;
+        background: transparent;
+        color: #a9bbcc;
+        font: inherit;
+        font-size: 0.74rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition:
+            background-color 0.2s ease,
+            color 0.2s ease;
+    }
+
+    .ti-toggle button[aria-pressed="true"] {
+        background: #168dff;
+        color: #ffffff;
+        box-shadow: 0 6px 18px rgba(22, 141, 255, 0.28);
+    }
+
+    .ti-toggle button:hover:not([aria-pressed="true"]) {
+        color: #ffffff;
+        background: rgba(22, 141, 255, 0.1);
+    }
+
+    .ti-toggle button:focus-visible {
+        outline: 2px solid #ff8a00;
+        outline-offset: 2px;
+    }
+
+    /* ---------- years ---------- */
+
+    .ti-years {
+        display: grid;
+        gap: 0.9rem;
+    }
+
+    .ti-year-row {
+        display: grid;
+        grid-template-columns: 3rem minmax(0, 1fr) 5.5rem;
+        gap: 0.9rem;
+        align-items: center;
+    }
+
+    .ti-year {
+        color: #ffffff;
+        font-weight: 800;
+    }
+
+    .ti-year-row strong {
+        color: #ffffff;
+        font-size: 1.1rem;
+        text-align: right;
+        font-variant-numeric: tabular-nums;
+    }
+
+    .ti-track {
+        height: 28px;
+        overflow: hidden;
+        border-radius: 8px;
+        background: #0c2235;
+    }
+
+    .ti-track.is-thin {
+        height: 7px;
+        border-radius: 999px;
+    }
+
+    .ti-fill {
+        display: block;
+        height: 100%;
+        border-radius: inherit;
+        background: linear-gradient(90deg, #168dff, #65baff);
+        transform: scaleX(0);
+        transform-origin: left center;
+        transition: transform 0.8s cubic-bezier(0.2, 0.7, 0.2, 1);
+    }
+
+    .ti-year-row:last-child .ti-fill {
+        background: linear-gradient(90deg, #ff8a00, #ffb35c);
+    }
+
+    .ti-growth {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: baseline;
+        gap: 0.6rem;
+        margin-top: 1.2rem;
+        padding: 0.9rem 1rem;
+        border: 1px solid rgba(38, 213, 162, 0.35);
+        border-radius: 10px;
+        background: rgba(38, 213, 162, 0.06);
+    }
+
+    .ti-growth strong {
+        color: #26d5a2;
+        font-size: clamp(1.6rem, 4vw, 2.2rem);
+        line-height: 1;
+        font-variant-numeric: tabular-nums;
+    }
+
+    .ti-growth span {
+        color: #c7d5e1;
+        font-size: 0.85rem;
+    }
+
+    .ti-mini {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 0.6rem;
+        margin-top: 1rem;
+    }
+
+    .ti-mini div {
+        display: grid;
+        gap: 0.25rem;
+        padding: 0.8rem;
+        border: 1px solid #172f45;
+        border-radius: 10px;
+        background: rgba(4, 14, 25, 0.6);
+    }
+
+    .ti-mini span,
+    .ti-mini small {
+        color: #71869a;
+        font-size: 0.68rem;
+    }
+
+    .ti-mini span {
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+    }
+
+    .ti-mini strong {
+        color: #ffffff;
+        font-size: 1.3rem;
+    }
+
+    /* ---------- platforms ---------- */
+
+    .ti-mix {
+        display: grid;
+        grid-template-columns: minmax(170px, 0.7fr) minmax(0, 1.3fr);
+        gap: 1.5rem;
+        align-items: center;
+    }
+
+    .ti-donut {
+        position: relative;
+        width: 100%;
+        max-width: 230px;
+        margin: 0 auto;
+    }
+
+    .ti-donut svg {
+        display: block;
+        width: 100%;
+        height: auto;
+        transform: rotate(-90deg);
+    }
+
+    .ti-donut-track {
+        fill: none;
+        stroke: #0c2235;
+        stroke-width: 16;
+    }
+
+    .ti-arc {
+        fill: none;
+        stroke-width: 16;
+        stroke-dasharray: 0 100;
+        transition:
+            stroke-dasharray 0.9s cubic-bezier(0.2, 0.7, 0.2, 1),
+            stroke-dashoffset 0.9s cubic-bezier(0.2, 0.7, 0.2, 1);
+    }
+
+    .ti-donut-center {
+        position: absolute;
+        inset: 0;
+        display: grid;
+        place-content: center;
+        text-align: center;
+    }
+
+    .ti-donut-center strong {
+        color: #ffffff;
+        font-size: clamp(1.2rem, 3vw, 1.6rem);
+        font-variant-numeric: tabular-nums;
+    }
+
+    .ti-donut-center span {
+        color: #94a8ba;
+        font-size: 0.7rem;
+        font-weight: 700;
+    }
+
+    .ti-platforms {
+        display: grid;
+        gap: 0.9rem;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+    }
+
+    .ti-platforms li {
+        padding: 0.85rem;
+        border: 1px solid #172f45;
+        border-radius: 11px;
+        background: rgba(4, 14, 25, 0.6);
+    }
+
+    .ti-platform-top {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 0.45rem;
+        color: #ffffff;
+        font-weight: 750;
+    }
+
+    .ti-platform-top span {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .ti-platform-top i {
+        width: 10px;
+        height: 10px;
+        border-radius: 3px;
+    }
+
+    .ti-platforms small {
+        display: block;
+        margin-top: 0.45rem;
+        color: #94a8ba;
+        font-size: 0.72rem;
+    }
+
+    .ti-platforms dl {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0.5rem;
+        margin: 0.6rem 0 0;
+    }
+
+    .ti-platforms dt {
+        color: #71869a;
+        font-size: 0.64rem;
+        font-weight: 800;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+    }
+
+    .ti-platforms dd {
+        margin: 0.15rem 0 0;
+        color: #ffffff;
+        font-weight: 750;
+    }
+
+    .ti-note {
+        margin: 1.1rem 0 0;
+        color: #b8c7d6;
+        font-size: 0.8rem;
+        line-height: 1.6;
+    }
+
+    @media (max-width: 760px) {
+        .ti-mix {
+            grid-template-columns: minmax(0, 1fr);
+        }
+
+        .ti-donut {
+            max-width: 190px;
+        }
+
+        .ti-mini {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+    }
+
+    @media (max-width: 520px) {
+        .ti-head {
+            display: grid;
+        }
+
+        .ti-toggle {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .ti-year-row {
+            grid-template-columns: 2.6rem minmax(0, 1fr) 4.8rem;
+            gap: 0.6rem;
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .ti-fill,
+        .ti-arc,
+        .ti-toggle button {
+            transition: none;
+        }
+    }
+</style>

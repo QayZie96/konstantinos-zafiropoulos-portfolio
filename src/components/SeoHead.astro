@@ -5,11 +5,22 @@ interface Props {
     title: string;
     description: string;
     type?: "website" | "article";
+    image?: string;
+    imageAlt?: string;
+    robots?: string;
 }
 
-const { title, description, type = "website" } = Astro.props;
+const {
+    title,
+    description,
+    type = "website",
+    image = "/og-image.png",
+    imageAlt = "Konstantinos Zafeiropoulos, Marketplace & E-commerce Operations, Pricing and Automation portfolio",
+    robots = "index, follow",
+} = Astro.props;
 const siteUrl = Astro.site ?? new URL("https://konstantinoszafiropoulos.netlify.app");
 const canonicalUrl = new URL(Astro.url.pathname, siteUrl);
+const imageUrl = new URL(image, siteUrl);
 const isHomepage = Astro.url.pathname === "/";
 const personId = new URL("/#person", siteUrl).href;
 const websiteId = new URL("/#website", siteUrl).href;
@@ -17,7 +28,7 @@ const websiteId = new URL("/#website", siteUrl).href;
 const person = {
     "@type": "Person",
     "@id": personId,
-    name: "Konstantinos Zafiropoulos",
+    name: "Konstantinos Zafeiropoulos",
     url: siteUrl.href,
     jobTitle: "Marketplace Operations, Automation and Data Professional",
     sameAs: [
@@ -44,7 +55,7 @@ const structuredData = {
         {
             "@type": "WebSite",
             "@id": websiteId,
-            name: "Konstantinos Zafiropoulos Portfolio",
+            name: "Konstantinos Zafeiropoulos Portfolio",
             url: siteUrl.href,
             inLanguage: "en",
             publisher: { "@id": personId },
@@ -77,8 +88,8 @@ const structuredData = {
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <meta name="description" content={description} />
-<meta name="author" content="Konstantinos Zafiropoulos" />
-<meta name="robots" content="index, follow" />
+<meta name="author" content="Konstantinos Zafeiropoulos" />
+<meta name="robots" content={robots} />
 <meta name="theme-color" content="#050d18" />
 <link rel="canonical" href={canonicalUrl} />
 <link rel="icon" href="/favicon.ico" sizes="any" />
@@ -87,14 +98,22 @@ const structuredData = {
 
 <meta property="og:type" content={type} />
 <meta property="og:locale" content="en_US" />
-<meta property="og:site_name" content="Konstantinos Zafiropoulos Portfolio" />
+<meta property="og:site_name" content="Konstantinos Zafeiropoulos Portfolio" />
 <meta property="og:title" content={title} />
 <meta property="og:description" content={description} />
 <meta property="og:url" content={canonicalUrl} />
+<meta property="og:image" content={imageUrl} />
+<meta property="og:image:secure_url" content={imageUrl} />
+<meta property="og:image:type" content="image/png" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:image:alt" content={imageAlt} />
 
-<meta name="twitter:card" content="summary" />
+<meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:title" content={title} />
 <meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={imageUrl} />
+<meta name="twitter:image:alt" content={imageAlt} />
 
 <title>{title}</title>
 <script type="application/ld+json" set:html={JSON.stringify(structuredData)} />

@@ -1,0 +1,1984 @@
+---
+/* =========================================================
+   ROCKETEERS — INTERACTIVE eBAY DATA EXPLORER
+
+   Built only from the AGGREGATED sheets of the owner's
+   eBay account analysis workbook (src/data/rocketeers-ebay.json):
+   monthly / annual activity, product mix, retention, cohorts and
+   service quality. No buyer-level or sale-level rows, buyer codes
+   or item IDs are published.
+   ========================================================= */
+
+import data from "../data/rocketeers-ebay.json";
+
+const format = (value: number, digits = 0) =>
+    new Intl.NumberFormat("en-US", {
+        minimumFractionDigits: digits,
+        maximumFractionDigits: digits,
+    }).format(value);
+
+const usd = (value: number, digits = 0) =>
+    new Intl.NumberFormat("en-US", {
+        style: "currency",
+        currency: "USD",
+        minimumFractionDigits: digits,
+        maximumFractionDigits: digits,
+    }).format(value);
+
+const pct = (value: number, digits = 1) => `${(value * 100).toFixed(digits)}%`;
+
+const service = data.service;
+const feedbackTotals = service.feedbackByYear.reduce(
+    (acc, [, positive, neutral, negative]) => ({
+        positive: acc.positive + (positive as number),
+        neutral: acc.neutral + (neutral as number),
+        negative: acc.negative + (negative as number),
+    }),
+    { positive: 0, neutral: 0, negative: 0 },
+);
+const feedbackTotal = feedbackTotals.positive + feedbackTotals.neutral + feedbackTotals.negative;
+const positiveShare = feedbackTotals.positive / feedbackTotal;
+
+const ratings = service.ratings as [string, number, number, number][];
+const itemAsDescribed = ratings.find(([label]) => label === "Item as described")!;
+
+const returnRate = service.returnRequests / data.totals.saleLines;
+const disputeRate = service.disputes / data.totals.saleLines;
+
+const reasonLabels: Record<string, string> = {
+    NO_LONGER_NEED_ITEM: "No longer needed",
+    WRONG_SIZE: "Wrong size",
+    ORDERED_ACCIDENTALLY: "Ordered accidentally",
+    FAKE_OR_COUNTERFEIT: "Reported as fake",
+    ORDERED_WRONG_ITEM: "Ordered wrong item",
+    ARRIVED_LATE: "Arrived late",
+    NOT_AS_DESCRIBED: "Not as described",
+    MISSING_PARTS: "Missing parts",
+    FOUND_BETTER_PRICE: "Found a better price",
+};
+const closureLabels: Record<string, string> = {
+    closedSellerFullRefundPP: "Seller issued full refund (PayPal)",
+    claimBuyerWinsSellerFault: "Decided for buyer (seller fault)",
+    closedBuyerClose: "Closed by buyer",
+    closedSellerFullRefund: "Seller issued full refund",
+    closedGeneralTimeout: "Closed on timeout",
+};
+
+const reasons = (service.returnReasons as [string, number][]).map(([code, cases]) => ({
+    label: reasonLabels[code] ?? code,
+    cases,
+}));
+const maxReason = Math.max(...reasons.map((reason) => reason.cases));
+const closures = (service.disputeClosures as [string, number, number][])
+    .map(([code, cases, amount]) => ({ label: closureLabels[code] ?? code, cases, amount }))
+    .sort((a, b) => b.cases - a.cases);
+const maxClosure = Math.max(...closures.map((closure) => closure.cases));
+
+const retention = data.retention;
+const segments = retention.segments as [string, number, number, number, number][];
+const segmentBuyerTotal = segments.reduce((sum, row) => sum + row[1], 0);
+const segmentUsdTotal = segments.reduce((sum, row) => sum + row[4], 0);
+
+const cohorts = retention.cohorts as { year: string; newBuyers: number; active: number[] }[];
+const maxCohortCols = Math.max(...cohorts.map((cohort) => cohort.active.length));
+
+const months = data.monthly as [string, number, number, number, number, number, number, number, number][];
+const years = [...new Set(months.map((month) => month[0].slice(0, 4)))];
+---
+
+<div class="rx" data-rocketeers-explorer>
+    <script type="application/json" data-rx-data set:html={JSON.stringify(data)} />
+
+    <div class="rx-intro">
+        <p class="rx-eyebrow">Interactive account explorer</p>
+        <h2>62 months of marketplace data you can explore.</h2>
+        <p>
+            Built from the aggregated sheets of my eBay account analysis
+            workbook (20 April 2017 – 20 May 2022). Only monthly, annual and
+            category roll-ups are shown, with no buyer-level or
+            order-level rows. Gross sales are before fees, item costs, taxes and
+            refunds; USD, EUR and GBP are never converted into one total.
+        </p>
+    </div>
+
+    <!-- ===================== MONTHLY ===================== -->
+
+    <article class="rx-card rx-monthly" aria-labelledby="rx-monthly-title">
+        <div class="rx-card-head">
+            <div>
+                <p class="rx-kicker">Monthly activity</p>
+                <h3 id="rx-monthly-title">Month by month, April 2017 – May 2022</h3>
+            </div>
+            <div class="rx-toggle" role="group" aria-label="Monthly metric" data-rx-metric>
+                <button type="button" data-value="usd" aria-pressed="true">USD gross</button>
+                <button type="button" data-value="units" aria-pressed="false">Units</button>
+                <button type="button" data-value="active" aria-pressed="false">Active buyers</button>
+                <button type="button" data-value="first" aria-pressed="false">First-time buyers</button>
+            </div>
+        </div>
+
+        <div class="rx-range">
+            <div class="rx-range-selects">
+                <label>
+                    <span>From</span>
+                    <select data-rx-from aria-label="First year shown">
+                        {years.map((year, index) => <option value={year} selected={index === 0}>{year}</option>)}
+                    </select>
+                </label>
+                <label>
+                    <span>To</span>
+                    <select data-rx-to aria-label="Last year shown">
+                        {years.map((year, index) => <option value={year} selected={index === years.length - 1}>{year}</option>)}
+                    </select>
+                </label>
+            </div>
+            <div class="rx-presets" role="group" aria-label="Range presets" data-rx-presets>
+                <button type="button" data-from="2017" data-to="2022" aria-pressed="true">All</button>
+                <button type="button" data-from="2018" data-to="2019" aria-pressed="false">2018–19</button>
+                <button type="button" data-from="2020" data-to="2021" aria-pressed="false">2020–21 peak</button>
+            </div>
+        </div>
+
+        <div class="rx-range-totals" data-rx-totals aria-live="polite"></div>
+
+        <div class="rx-chart-wrap">
+            <div
+                class="rx-chart"
+                data-rx-chart
+                tabindex="0"
+                role="group"
+                aria-roledescription="interactive chart"
+                aria-label="Monthly chart. Use left and right arrow keys to move between months."
+                aria-describedby="rx-monthly-summary"
+            ></div>
+            <div class="rx-tooltip" data-rx-tooltip hidden role="status"></div>
+        </div>
+        <p class="rx-summary" id="rx-monthly-summary" aria-live="polite" data-rx-summary></p>
+
+        <div class="sr-only"><table data-rx-table></table></div>
+
+        <p class="rx-footnote">
+            <strong>Definitions.</strong> USD gross = unit price × quantity +
+            shipping for USD sale lines. Units = quantity across all currencies.
+            Active buyers = distinct buyers who bought in that month (not
+            additive across months). First-time buyers = buyers whose first
+            purchase fell in that month. The September 2020 marker is outside
+            context: Rocket League became free-to-play on 23 September 2020.
+        </p>
+    </article>
+
+    <div class="rx-grid">
+        <!-- ===================== MIX ===================== -->
+
+        <article class="rx-card rx-mix" aria-labelledby="rx-mix-title">
+            <div class="rx-card-head">
+                <div>
+                    <p class="rx-kicker">Product mix</p>
+                    <h3 id="rx-mix-title">Where the USD came from</h3>
+                </div>
+                <div class="rx-toggle" role="group" aria-label="Mix breakdown" data-rx-mix-mode>
+                    <button type="button" data-value="platforms" aria-pressed="true">Platform</button>
+                    <button type="button" data-value="itemTypes" aria-pressed="false">Item type</button>
+                </div>
+            </div>
+            <div class="rx-mix-body">
+                <div class="rx-donut" data-rx-donut></div>
+                <ul class="rx-legend" data-rx-legend></ul>
+            </div>
+            <p class="rx-footnote">
+                Platform comes from the bracketed title prefix ([PC], [XBOX],
+                [PS4/PS5]…); item types are keyword groups. This workbook
+                classification files a few titles differently from the platform
+                chart above (Xbox +$34.23, Switch +$12.16, Other −$46.39); the
+                USD total is identical. Top 10 exact titles =
+                {` ${pct(data.concentration.top10TitlesUsdShare)}`} of USD gross; the top 100
+                buyers = {pct(data.concentration.top100BuyersUsdShare)}.
+            </p>
+        </article>
+
+        <!-- ===================== SERVICE ===================== -->
+
+        <article class="rx-card rx-service" aria-labelledby="rx-service-title">
+            <div class="rx-card-head">
+                <div>
+                    <p class="rx-kicker">Service quality</p>
+                    <h3 id="rx-service-title">What buyers said</h3>
+                </div>
+            </div>
+
+            <div class="rx-service-top">
+                <div class="rx-ring" style={`--p: ${positiveShare.toFixed(4)}`} aria-hidden="true">
+                    <svg viewBox="0 0 120 120">
+                        <circle cx="60" cy="60" r="52" class="rx-ring-track"></circle>
+                        <circle cx="60" cy="60" r="52" class="rx-ring-fill" pathLength="1"></circle>
+                    </svg>
+                </div>
+                <div class="rx-ring-text">
+                    <strong><span data-count={(positiveShare * 100).toFixed(1)} data-decimals="1" data-suffix="%">{(positiveShare * 100).toFixed(1)}%</span></strong>
+                    <span>
+                        {`positive: ${format(feedbackTotals.positive)} of ${format(feedbackTotal)} feedback entries`} received as seller in the export
+                        ({feedbackTotals.neutral} neutral, {feedbackTotals.negative} negative)
+                    </span>
+                </div>
+            </div>
+
+            <ul class="rx-ratings">
+                {
+                    ratings.map(([label, count, average, fiveStar]) => (
+                        <li>
+                            <div class="rx-rating-top">
+                                <span>{label}</span>
+                                <strong>{average.toFixed(2)}<small> / 5</small></strong>
+                            </div>
+                            <div class="rx-bar" aria-hidden="true">
+                                <span style={`--w: ${fiveStar.toFixed(4)}`}></span>
+                            </div>
+                            <small>{pct(fiveStar)} five-star · {format(count)} ratings</small>
+                        </li>
+                    ))
+                }
+            </ul>
+
+            <div class="rx-service-stats">
+                <div>
+                    <strong data-count={service.returnRequests}>{service.returnRequests}</strong>
+                    <span>return requests · {pct(returnRate, 2)} of sale lines</span>
+                </div>
+                <div>
+                    <strong data-count={service.disputes}>{service.disputes}</strong>
+                    <span>disputes · {pct(disputeRate, 2)} of sale lines · {usd(service.disputedUsd, 2)} disputed</span>
+                </div>
+            </div>
+
+            <details class="rx-details">
+                <summary>Return reasons and dispute outcomes</summary>
+                <div class="rx-details-grid">
+                    <div>
+                        <h4>Return requests by reason</h4>
+                        <ul class="rx-mini-bars">
+                            {
+                                reasons.map((reason) => (
+                                    <li>
+                                        <span>{reason.label}</span>
+                                        <div class="rx-bar" aria-hidden="true">
+                                            <span style={`--w: ${(reason.cases / maxReason).toFixed(3)}`}></span>
+                                        </div>
+                                        <strong>{reason.cases}</strong>
+                                    </li>
+                                ))
+                            }
+                        </ul>
+                    </div>
+                    <div>
+                        <h4>Dispute closures</h4>
+                        <ul class="rx-mini-bars">
+                            {
+                                closures.map((closure) => (
+                                    <li>
+                                        <span>{closure.label}</span>
+                                        <div class="rx-bar is-orange" aria-hidden="true">
+                                            <span style={`--w: ${(closure.cases / maxClosure).toFixed(3)}`}></span>
+                                        </div>
+                                        <strong>{closure.cases}</strong>
+                                    </li>
+                                ))
+                            }
+                        </ul>
+                    </div>
+                </div>
+            </details>
+
+            <p class="rx-footnote">
+                Detailed seller ratings are averages of the ratings recorded in
+                the export. The final live profile (6,454 positive, 1 neutral, 0
+                negative) differs from this historical export because public
+                feedback changes after removals and eBay scoring rules.
+            </p>
+        </article>
+    </div>
+
+    <!-- ===================== RETENTION ===================== -->
+
+    <article class="rx-card rx-retention" aria-labelledby="rx-retention-title">
+        <div class="rx-card-head">
+            <div>
+                <p class="rx-kicker">Retention</p>
+                <h3 id="rx-retention-title">Do buyers come back?</h3>
+            </div>
+            <div class="rx-toggle" role="group" aria-label="Cohort values" data-rx-cohort-mode>
+                <button type="button" data-value="pct" aria-pressed="true">% of cohort</button>
+                <button type="button" data-value="count" aria-pressed="false">Buyers</button>
+            </div>
+        </div>
+
+        <div class="rx-retention-grid">
+            <div class="rx-ret-col">
+                <h4>Return after first purchase</h4>
+                <ul class="rx-windows">
+                    {
+                        (retention.windows as [number, number, number][]).map(([days, eligible, returning]) => (
+                            <li>
+                                <div class="rx-rating-top">
+                                    <span>Within {days} days</span>
+                                    <strong>{pct(returning / eligible)}</strong>
+                                </div>
+                                <div class="rx-bar" aria-hidden="true">
+                                    <span style={`--w: ${(returning / eligible / 0.4).toFixed(4)}`}></span>
+                                </div>
+                                <small>{format(returning)} of {format(eligible)} eligible buyers</small>
+                            </li>
+                        ))
+                    }
+                </ul>
+
+                <h4>Purchase frequency</h4>
+                <div class="rx-seg-legend" aria-hidden="true">
+                    <span><i class="is-blue"></i>Share of buyers</span>
+                    <span><i class="is-orange"></i>Share of USD gross</span>
+                </div>
+                <ul class="rx-segments">
+                    {
+                        segments.map(([label, buyers, , , gross]) => (
+                            <li>
+                                <span class="rx-seg-label">{label.replace("-", "–")}</span>
+                                <div class="rx-seg-bars">
+                                    <div class="rx-bar" aria-hidden="true">
+                                        <span style={`--w: ${(buyers / segmentBuyerTotal / 0.7).toFixed(4)}`}></span>
+                                    </div>
+                                    <div class="rx-bar is-orange" aria-hidden="true">
+                                        <span style={`--w: ${(gross / segmentUsdTotal / 0.7).toFixed(4)}`}></span>
+                                    </div>
+                                </div>
+                                <small>
+                                    {pct(buyers / segmentBuyerTotal)} of buyers ·
+                                    {` ${pct(gross / segmentUsdTotal)}`} of USD
+                                </small>
+                            </li>
+                        ))
+                    }
+                </ul>
+            </div>
+
+            <div class="rx-ret-col">
+                <h4>Calendar-year cohorts</h4>
+                <div class="rx-cohort-scroll">
+                    <table class="rx-cohort" data-rx-cohort>
+                        <caption class="sr-only">
+                            Buyers by first purchase year who bought again on another
+                            day in the same year (Y+0) and who were active in each later year.
+                        </caption>
+                        <thead>
+                            <tr>
+                                <th scope="col">First year</th>
+                                <th scope="col">New buyers</th>
+                                {Array.from({ length: maxCohortCols }, (_, index) => <th scope="col">Y+{index}</th>)}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {
+                                cohorts.map((cohort) => (
+                                    <tr>
+                                        <th scope="row">{cohort.year}</th>
+                                        <td class="rx-cohort-n">{format(cohort.newBuyers)}</td>
+                                        {Array.from({ length: maxCohortCols }, (_, index) => {
+                                            const value = cohort.active[index];
+                                            if (value === undefined) {
+                                                return <td class="is-unobserved"><span class="sr-only">not observed</span></td>;
+                                            }
+                                            const share = value / cohort.newBuyers;
+                                            return (
+                                                <td
+                                                    data-count-value={value}
+                                                    data-share={share.toFixed(4)}
+                                                    style={`--s: ${Math.min(1, share / 0.32).toFixed(3)}`}
+                                                >
+                                                    {pct(share)}
+                                                </td>
+                                            );
+                                        })}
+                                    </tr>
+                                ))
+                            }
+                        </tbody>
+                    </table>
+                </div>
+                <p class="rx-footnote">
+                    Y+0 = bought again on a different day in their first calendar
+                    year; Y+1… = active in a later calendar year. Hatched cells
+                    are not yet observable before the export ends (20 May 2022),
+                    and 2021's Y+1 and 2022's Y+0 are partial.
+                </p>
+            </div>
+        </div>
+
+        <div class="rx-defs">
+            <h4>Three “repeat” measures, defined</h4>
+            <dl>
+                <div>
+                    <dt>{pct(retention.account.buyersTwoPlusLines / retention.account.buyers)}</dt>
+                    <dd>
+                        of buyers have 2+ sale lines ({format(retention.account.buyersTwoPlusLines)} of
+                        {` ${format(retention.account.buyers)}`}), the “repeat purchases” figure
+                        used above.
+                    </dd>
+                </div>
+                <div>
+                    <dt>{pct(retention.account.returnedAnotherDay / retention.account.buyers)}</dt>
+                    <dd>
+                        {`returned on a different calendar day (${format(retention.account.returnedAnotherDay)} buyers)`}, the workbook's stricter repeat-visit measure.
+                    </dd>
+                </div>
+                <div>
+                    <dt>{pct(retention.account.usdFromEventualRepeat / data.totals.usd)}</dt>
+                    <dd>
+                        of USD gross came from buyers who eventually returned on
+                        another day; the 80.2% above counts buyers with 2+ sale lines.
+                    </dd>
+                </div>
+            </dl>
+        </div>
+    </article>
+
+    <!-- ===================== TOP PRODUCTS ===================== -->
+
+    <article class="rx-card rx-top" aria-labelledby="rx-top-title">
+        <div class="rx-card-head">
+            <div>
+                <p class="rx-kicker">Best sellers</p>
+                <h3 id="rx-top-title">Top 10 listing titles by USD gross</h3>
+            </div>
+        </div>
+        <div class="rx-table-scroll">
+            <table class="rx-top-table" data-rx-top>
+                <caption class="sr-only">
+                    Top 10 exact listing titles by USD gross. Column headers are buttons that sort the table.
+                </caption>
+                <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Listing title</th>
+                        <th scope="col" aria-sort="none"><button type="button" data-sort="units">Units</button></th>
+                        <th scope="col" aria-sort="none"><button type="button" data-sort="buyers">Buyers</button></th>
+                        <th scope="col" aria-sort="none"><button type="button" data-sort="perUnit">USD / unit</button></th>
+                        <th scope="col" aria-sort="descending"><button type="button" data-sort="usd">USD gross</button></th>
+                    </tr>
+                </thead>
+                <tbody data-rx-top-body>
+                    {
+                        (data.topTitles as [string, number, number, number, number][]).map(([title, , units, gross, buyers], index) => (
+                            <tr>
+                                <td>{index + 1}</td>
+                                <th scope="row">{title}</th>
+                                <td>{format(units)}</td>
+                                <td>{format(buyers)}</td>
+                                <td>{usd(gross / units, 2)}</td>
+                                <td>{usd(gross, 2)}</td>
+                            </tr>
+                        ))
+                    }
+                </tbody>
+            </table>
+        </div>
+        <p class="rx-footnote">
+            Grouped by exact listing title (several listings can share a
+            title). Titles and totals only; listing IDs are not published.
+        </p>
+    </article>
+</div>
+
+<script>
+    import {
+        bindToggleGroup,
+        el,
+        formatCompact,
+        formatNumber,
+        formatUsd,
+        niceTicks,
+        onReveal,
+        onWidthChange,
+        placeTooltip,
+        prefersReducedMotion,
+        setUpCountUps,
+        svg,
+    } from "../scripts/explorer-utils";
+
+    type Month = [string, number, number, number, number, number, number, number, number];
+
+    const MONTH_NAMES = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    const monthName = (key: string, long = false) => {
+        const [year, month] = key.split("-");
+        return long ? `${MONTH_NAMES[Number(month) - 1]} ${year}` : `${MONTH_NAMES[Number(month) - 1]} ’${year.slice(2)}`;
+    };
+
+    const METRICS: Record<string, { label: string; index: number; money?: boolean }> = {
+        usd: { label: "USD gross", index: 5, money: true },
+        units: { label: "Units", index: 2 },
+        active: { label: "Active buyers", index: 3 },
+        first: { label: "First-time buyers", index: 4 },
+    };
+
+    const ANNOTATIONS: Record<string, string> = {
+        "2020-09": "Rocket League goes free-to-play",
+        "2022-05": "Export ends 20 May",
+    };
+
+    const PLATFORM_COLORS = ["#168dff", "#65baff", "#26d5a2", "#ff8a00", "#71869a"];
+    const TYPE_COLORS = ["#168dff", "#3fa2ff", "#65baff", "#9fd6ff", "#ff8a00", "#ffae4d", "#26d5a2", "#7be3c4", "#c8a8ff", "#8c7cf0", "#71869a"];
+
+    document.querySelectorAll<HTMLElement>("[data-rocketeers-explorer]").forEach((root) => {
+        const dataNode = root.querySelector("[data-rx-data]");
+        if (!dataNode?.textContent) return;
+        const data = JSON.parse(dataNode.textContent);
+        const months: Month[] = data.monthly;
+        const reduce = prefersReducedMotion();
+
+        /* ================= MONTHLY CHART ================= */
+        const state = { metric: "usd", from: "2017", to: "2022", focus: -1 };
+        const chartNode = root.querySelector<HTMLElement>("[data-rx-chart]")!;
+        const tooltip = root.querySelector<HTMLElement>("[data-rx-tooltip]")!;
+        const summary = root.querySelector<HTMLElement>("[data-rx-summary]")!;
+        const totalsNode = root.querySelector<HTMLElement>("[data-rx-totals]")!;
+        const tableNode = root.querySelector<HTMLTableElement>("[data-rx-table]")!;
+        const fromSelect = root.querySelector<HTMLSelectElement>("[data-rx-from]")!;
+        const toSelect = root.querySelector<HTMLSelectElement>("[data-rx-to]")!;
+        const presetButtons = Array.from(root.querySelectorAll<HTMLButtonElement>("[data-rx-presets] button"));
+
+        const fmtMetric = (value: number, metric = METRICS[state.metric]) =>
+            metric.money ? formatUsd(value) : formatNumber(value);
+
+        const visibleMonths = () => months.filter(([key]) => key.slice(0, 4) >= state.from && key.slice(0, 4) <= state.to);
+
+        const animateNumber = (node: HTMLElement, target: number, render: (v: number) => string) => {
+            const from = Number(node.dataset.value ?? 0);
+            node.dataset.value = String(target);
+            if (reduce) {
+                node.textContent = render(target);
+                return;
+            }
+            const start = performance.now();
+            const tick = (now: number) => {
+                const t = Math.min(1, (now - start) / 700);
+                const eased = 1 - (1 - t) ** 3;
+                node.textContent = render(from + (target - from) * eased);
+                if (t < 1) requestAnimationFrame(tick);
+            };
+            requestAnimationFrame(tick);
+        };
+
+        const totalItems = [
+            { key: "usd", label: "USD gross", render: (v: number) => formatUsd(v) },
+            { key: "units", label: "Units", render: (v: number) => formatNumber(v) },
+            { key: "lines", label: "Sale lines", render: (v: number) => formatNumber(v) },
+            { key: "first", label: "First-time buyers", render: (v: number) => formatNumber(v) },
+        ];
+        const totalNodes = totalItems.map((item) => {
+            const box = el("div", "", undefined, totalsNode);
+            const strong = el("strong", "", "0", box);
+            el("span", "", item.label, box);
+            return { ...item, strong };
+        });
+
+        const renderTotals = () => {
+            const rows = visibleMonths();
+            const sums = {
+                usd: rows.reduce((sum, row) => sum + row[5], 0),
+                units: rows.reduce((sum, row) => sum + row[2], 0),
+                lines: rows.reduce((sum, row) => sum + row[1], 0),
+                first: rows.reduce((sum, row) => sum + row[4], 0),
+            };
+            totalNodes.forEach((node) => animateNumber(node.strong, sums[node.key as keyof typeof sums], node.render));
+        };
+
+        const renderChart = (animate = false) => {
+            const metric = METRICS[state.metric];
+            const rows = visibleMonths();
+            const width = Math.max(300, chartNode.clientWidth);
+            const height = width < 560 ? 270 : 340;
+            const pad = { top: 34, right: 12, bottom: 32, left: width < 560 ? 44 : 58 };
+            const innerW = width - pad.left - pad.right;
+            const innerH = height - pad.top - pad.bottom;
+            const values = rows.map((row) => row[metric.index]);
+            const max = Math.max(...values, 1);
+            const ticks = niceTicks(0, max * 1.08, 4);
+            const yMax = ticks[ticks.length - 1];
+            const slot = innerW / rows.length;
+            const barW = Math.max(2, slot * 0.72);
+            const x = (i: number) => pad.left + i * slot + (slot - barW) / 2;
+            const y = (value: number) => pad.top + innerH - (value / yMax) * innerH;
+
+            const chart = svg("svg", { width, height, viewBox: `0 0 ${width} ${height}`, "aria-hidden": "true", class: "rx-svg" });
+            const defs = svg("defs", {}, chart);
+            const gradient = svg("linearGradient", { id: "rx-bar-gradient", x1: 0, x2: 0, y1: 0, y2: 1 }, defs);
+            svg("stop", { offset: "0%", "stop-color": "#65baff" }, gradient);
+            svg("stop", { offset: "100%", "stop-color": "#168dff", "stop-opacity": 0.55 }, gradient);
+
+            ticks.forEach((tick) => {
+                svg("line", { x1: pad.left, x2: pad.left + innerW, y1: y(tick), y2: y(tick), class: "rx-grid" }, chart);
+                const label = svg("text", { x: pad.left - 8, y: y(tick) + 4, class: "rx-axis", "text-anchor": "end" }, chart);
+                label.textContent = metric.money ? `$${formatCompact(tick)}` : formatCompact(tick);
+            });
+
+            // Year separators + labels.
+            rows.forEach((row, i) => {
+                const [year, month] = row[0].split("-");
+                if (month === "01" || i === 0) {
+                    const sx = pad.left + i * slot;
+                    if (i > 0) svg("line", { x1: sx, x2: sx, y1: pad.top, y2: pad.top + innerH, class: "rx-year-line" }, chart);
+                    const label = svg("text", { x: sx + 4, y: height - 10, class: "rx-axis" }, chart);
+                    label.textContent = rows.length > 30 && width < 560 ? `’${year.slice(2)}` : year;
+                }
+            });
+
+            const peakIndex = values.indexOf(max);
+            const bars: SVGRectElement[] = [];
+            rows.forEach((row, i) => {
+                const value = row[metric.index];
+                const bar = svg("rect", {
+                    x: x(i),
+                    y: y(value),
+                    width: barW,
+                    height: Math.max(0, pad.top + innerH - y(value)),
+                    rx: Math.min(3, barW / 3),
+                    class: `rx-bar-rect${i === peakIndex ? " is-peak" : ""}`,
+                    fill: i === peakIndex ? undefined : "url(#rx-bar-gradient)",
+                }, chart);
+                if (animate && !reduce) {
+                    bar.style.transformOrigin = `0 ${pad.top + innerH}px`;
+                    bar.style.transform = "scaleY(0)";
+                    bar.style.transition = `transform 0.6s cubic-bezier(0.2, 0.7, 0.2, 1) ${Math.min(0.6, i * 0.012)}s`;
+                    requestAnimationFrame(() => requestAnimationFrame(() => (bar.style.transform = "scaleY(1)")));
+                }
+                bars.push(bar);
+            });
+
+            // Annotations: the peak of the visible range, plus fixed context markers.
+            const notes: [number, string, boolean][] = [];
+            notes.push([peakIndex, `Peak ${monthName(rows[peakIndex][0])}: ${fmtMetric(max)}`, true]);
+            rows.forEach((row, i) => {
+                if (ANNOTATIONS[row[0]] && i !== peakIndex) notes.push([i, ANNOTATIONS[row[0]], false]);
+            });
+            notes.forEach(([i, text, isPeak], n) => {
+                const cx = x(i) + barW / 2;
+                const top = y(rows[i][metric.index]);
+                const labelY = isPeak ? 14 : 26 + n * 0;
+                svg("line", { x1: cx, x2: cx, y1: labelY + 4, y2: top - 4, class: isPeak ? "rx-note-line is-peak" : "rx-note-line" }, chart);
+                const anchor = cx > width * 0.7 ? "end" : cx < width * 0.25 ? "start" : "middle";
+                const label = svg("text", { x: anchor === "end" ? cx + 4 : anchor === "start" ? cx - 4 : cx, y: labelY, class: isPeak ? "rx-note is-peak" : "rx-note", "text-anchor": anchor }, chart);
+                label.textContent = width < 420 && !isPeak ? text.split(" ").slice(0, 3).join(" ") + "…" : text;
+            });
+
+            const marker = svg("rect", { class: "rx-hover", visibility: "hidden", y: pad.top, height: innerH, width: slot }, chart);
+            chart.insertBefore(marker, chart.firstChild?.nextSibling ?? null);
+
+            chartNode.replaceChildren(chart);
+            tooltip.hidden = true;
+
+            const show = (i: number, announce = false) => {
+                if (i < 0 || i >= rows.length) return;
+                state.focus = i;
+                const row = rows[i];
+                marker.setAttribute("visibility", "visible");
+                marker.setAttribute("x", String(pad.left + i * slot));
+                bars.forEach((bar, index) => bar.classList.toggle("is-dim", index !== i));
+                tooltip.replaceChildren();
+                el("strong", "", monthName(row[0], true), tooltip);
+                const lines: [string, string, boolean][] = [
+                    ["USD gross", formatUsd(row[5]), state.metric === "usd"],
+                    ["Units", formatNumber(row[2]), state.metric === "units"],
+                    ["Sale lines", formatNumber(row[1]), false],
+                    ["Active buyers", formatNumber(row[3]), state.metric === "active"],
+                    ["First-time buyers", formatNumber(row[4]), state.metric === "first"],
+                    ["USD on repeat purchase days", row[5] ? `${((row[8] / row[5]) * 100).toFixed(0)}%` : "—", false],
+                ];
+                if (row[6]) lines.push(["EUR gross (separate)", `€${row[6].toFixed(2)}`, false]);
+                lines.forEach(([label, value, active]) => {
+                    const line = el("span", active ? "is-active" : "", undefined, tooltip);
+                    el("em", "", label, line);
+                    el("b", "", value, line);
+                });
+                if (ANNOTATIONS[row[0]]) el("span", "rx-tip-note", ANNOTATIONS[row[0]], tooltip);
+                placeTooltip(tooltip, tooltip.parentElement as HTMLElement, x(i) + barW / 2, Math.max(pad.top + 20, y(row[METRICS[state.metric].index])));
+                if (announce) summary.textContent = `${monthName(row[0], true)}: ${metric.label} ${fmtMetric(row[metric.index])}.`;
+            };
+            const hide = () => {
+                tooltip.hidden = true;
+                marker.setAttribute("visibility", "hidden");
+                bars.forEach((bar) => bar.classList.remove("is-dim"));
+            };
+            const indexAt = (clientX: number) => {
+                const rect = chart.getBoundingClientRect();
+                return Math.max(0, Math.min(rows.length - 1, Math.floor((clientX - rect.left - pad.left) / slot)));
+            };
+            chart.addEventListener("pointermove", (event) => show(indexAt(event.clientX)));
+            chart.addEventListener("pointerdown", (event) => show(indexAt(event.clientX)));
+            chart.addEventListener("pointerleave", (event) => {
+                if (event.pointerType === "mouse") hide();
+            });
+            chartNode.onkeydown = (event) => {
+                let next = state.focus;
+                if (event.key === "ArrowRight") next = Math.min(rows.length - 1, state.focus + 1);
+                else if (event.key === "ArrowLeft") next = state.focus < 0 ? rows.length - 1 : Math.max(0, state.focus - 1);
+                else if (event.key === "Home") next = 0;
+                else if (event.key === "End") next = rows.length - 1;
+                else if (event.key === "Escape") return hide();
+                else return;
+                event.preventDefault();
+                show(next, true);
+            };
+            chartNode.onblur = hide;
+
+            const total = values.reduce((sum, value) => sum + value, 0);
+            summary.textContent =
+                `${metric.label}, ${monthName(rows[0][0], true)} – ${monthName(rows[rows.length - 1][0], true)} (${rows.length} months): ` +
+                `${state.metric === "active" ? `average ${formatNumber(total / rows.length)} per month` : `total ${fmtMetric(total)}`}; ` +
+                `peak ${monthName(rows[peakIndex][0], true)} at ${fmtMetric(max)}.`;
+
+            // Accessible table for the visible range.
+            const caption = el("caption", "", `${metric.label} by month`);
+            const head = el("thead");
+            const hr = el("tr", "", undefined, head);
+            ["Month", "USD gross", "Units", "Active buyers", "First-time buyers"].forEach((label) => {
+                const th = el("th", "", label, hr);
+                th.scope = "col";
+            });
+            const body = el("tbody");
+            rows.forEach((row) => {
+                const tr = el("tr", "", undefined, body);
+                const th = el("th", "", monthName(row[0], true), tr);
+                th.scope = "row";
+                [formatUsd(row[5], 2), formatNumber(row[2]), formatNumber(row[3]), formatNumber(row[4])].forEach((value) => el("td", "", value, tr));
+            });
+            tableNode.replaceChildren(caption, head, body);
+        };
+
+        bindToggleGroup(root.querySelector("[data-rx-metric]")!, "button", (value) => {
+            state.metric = value;
+            state.focus = -1;
+            renderChart(true);
+        });
+
+        const syncPresets = () =>
+            presetButtons.forEach((button) =>
+                button.setAttribute("aria-pressed", String(button.dataset.from === state.from && button.dataset.to === state.to)),
+            );
+        const setRange = (from: string, to: string) => {
+            if (from > to) [from, to] = [to, from];
+            state.from = from;
+            state.to = to;
+            fromSelect.value = from;
+            toSelect.value = to;
+            state.focus = -1;
+            syncPresets();
+            renderTotals();
+            renderChart(true);
+        };
+        fromSelect.addEventListener("change", () => setRange(fromSelect.value, toSelect.value));
+        toSelect.addEventListener("change", () => setRange(fromSelect.value, toSelect.value));
+        presetButtons.forEach((button) => button.addEventListener("click", () => setRange(button.dataset.from!, button.dataset.to!)));
+
+        /* ================= MIX DONUT ================= */
+        const donutNode = root.querySelector<HTMLElement>("[data-rx-donut]")!;
+        const legendNode = root.querySelector<HTMLElement>("[data-rx-legend]")!;
+        let mixMode = "platforms";
+
+        const renderMix = (animate = false) => {
+            const rows: [string, number, number, number, number][] = data[mixMode];
+            const colors = mixMode === "platforms" ? PLATFORM_COLORS : TYPE_COLORS;
+            const total = rows.reduce((sum, row) => sum + row[4], 0);
+            const size = 220;
+            const r = 84;
+            const stroke = 30;
+            const circumference = 2 * Math.PI * r;
+            const donut = svg("svg", { viewBox: `0 0 ${size} ${size}`, class: "rx-donut-svg", "aria-hidden": "true" });
+            svg("circle", { cx: size / 2, cy: size / 2, r, class: "rx-donut-track", "stroke-width": stroke }, donut);
+            const group = svg("g", { transform: `rotate(-90 ${size / 2} ${size / 2})` }, donut);
+            let offset = 0;
+            const arcs: SVGCircleElement[] = [];
+            rows.forEach((row, i) => {
+                const share = row[4] / total;
+                const length = Math.max(0, share * circumference - 2);
+                const arc = svg("circle", {
+                    cx: size / 2,
+                    cy: size / 2,
+                    r,
+                    fill: "none",
+                    stroke: colors[i % colors.length],
+                    "stroke-width": stroke,
+                    "stroke-dasharray": `${animate && !reduce ? 0 : length} ${circumference}`,
+                    "stroke-dashoffset": -offset,
+                    class: "rx-arc",
+                }, group);
+                if (animate && !reduce) {
+                    arc.style.transition = `stroke-dasharray 0.9s cubic-bezier(0.2, 0.7, 0.2, 1) ${i * 0.08}s, opacity 0.2s ease`;
+                    requestAnimationFrame(() => requestAnimationFrame(() => arc.setAttribute("stroke-dasharray", `${length} ${circumference}`)));
+                }
+                offset += share * circumference;
+                arcs.push(arc);
+            });
+            const centerValue = svg("text", { x: size / 2, y: size / 2 - 2, class: "rx-donut-value", "text-anchor": "middle" }, donut);
+            const centerLabel = svg("text", { x: size / 2, y: size / 2 + 20, class: "rx-donut-label", "text-anchor": "middle" }, donut);
+            const resetCenter = () => {
+                centerValue.textContent = `$${formatCompact(total)}`;
+                centerLabel.textContent = "USD gross";
+                arcs.forEach((arc) => arc.classList.remove("is-dim"));
+            };
+            resetCenter();
+            donutNode.replaceChildren(donut);
+
+            legendNode.replaceChildren();
+            const max = Math.max(...rows.map((row) => row[4]));
+            rows.forEach((row, i) => {
+                const li = el("li", "", undefined, legendNode);
+                const button = el("button", "rx-legend-item", undefined, li);
+                button.type = "button";
+                const share = row[4] / total;
+                button.setAttribute("aria-label", `${row[0]}: ${formatUsd(row[4])}, ${(share * 100).toFixed(1)}% of USD gross, ${formatNumber(row[2])} units, ${formatNumber(row[3])} buyers`);
+                const top = el("span", "rx-legend-top", undefined, button);
+                const name = el("span", "rx-legend-name", undefined, top);
+                const swatch = el("i", "", undefined, name);
+                swatch.style.background = colors[i % colors.length];
+                name.append(row[0]);
+                el("b", "", `${(share * 100).toFixed(1)}%`, top);
+                const track = el("span", "rx-legend-track", undefined, button);
+                const fill = el("span", "", undefined, track);
+                fill.style.setProperty("--w", (row[4] / max).toFixed(4));
+                fill.style.background = colors[i % colors.length];
+                el("small", "", `${formatUsd(row[4])} · ${formatNumber(row[2])} units · ${formatNumber(row[3])} buyers`, button);
+                const focus = () => {
+                    centerValue.textContent = `${(share * 100).toFixed(1)}%`;
+                    centerLabel.textContent = row[0];
+                    arcs.forEach((arc, index) => arc.classList.toggle("is-dim", index !== i));
+                };
+                button.addEventListener("mouseenter", focus);
+                button.addEventListener("focus", focus);
+                button.addEventListener("click", focus);
+                button.addEventListener("mouseleave", resetCenter);
+                button.addEventListener("blur", resetCenter);
+            });
+            legendNode.classList.remove("bars-ready");
+            requestAnimationFrame(() => requestAnimationFrame(() => legendNode.classList.add("bars-ready")));
+        };
+        bindToggleGroup(root.querySelector("[data-rx-mix-mode]")!, "button", (value) => {
+            mixMode = value;
+            renderMix(true);
+        });
+
+        /* ================= COHORT TOGGLE ================= */
+        const cohortTable = root.querySelector<HTMLTableElement>("[data-rx-cohort]")!;
+        bindToggleGroup(root.querySelector("[data-rx-cohort-mode]")!, "button", (value) => {
+            cohortTable.querySelectorAll<HTMLTableCellElement>("td[data-share]").forEach((cell) => {
+                cell.textContent =
+                    value === "pct"
+                        ? `${(Number(cell.dataset.share) * 100).toFixed(1)}%`
+                        : formatNumber(Number(cell.dataset.countValue));
+            });
+        });
+
+        /* ================= TOP TABLE SORT ================= */
+        const topBody = root.querySelector<HTMLElement>("[data-rx-top-body]")!;
+        const topRows: [string, number, number, number, number][] = data.topTitles;
+        const maxUsd = Math.max(...topRows.map((row) => row[3]));
+        let sortKey = "usd";
+        let sortDir = -1;
+        const renderTop = () => {
+            const rows = topRows.map((row) => ({
+                title: row[0],
+                units: row[2],
+                usd: row[3],
+                buyers: row[4],
+                perUnit: row[3] / row[2],
+            }));
+            const rank = new Map(rows.map((row, i) => [row.title, i + 1]));
+            rows.sort((a, b) => sortDir * ((a[sortKey as keyof typeof a] as number) - (b[sortKey as keyof typeof b] as number)));
+            topBody.replaceChildren();
+            rows.forEach((row) => {
+                const tr = el("tr", "", undefined, topBody);
+                el("td", "rx-rank", String(rank.get(row.title)), tr);
+                const th = el("th", "", undefined, tr);
+                th.scope = "row";
+                const platform = row.title.match(/^\[([^\]]+)\]/)?.[1] ?? "";
+                if (platform) el("span", "rx-platform", platform.trim(), th);
+                th.append(row.title.replace(/^\[[^\]]+\]\s*/, ""));
+                el("td", "", formatNumber(row.units), tr);
+                el("td", "", formatNumber(row.buyers), tr);
+                el("td", "", formatUsd(row.perUnit, 2), tr);
+                const usdCell = el("td", "rx-usd-cell", undefined, tr);
+                el("span", "", formatUsd(row.usd, 2), usdCell);
+                const bar = el("i", "", undefined, usdCell);
+                bar.style.setProperty("--w", (row.usd / maxUsd).toFixed(4));
+            });
+            root.querySelectorAll<HTMLTableCellElement>(".rx-top-table th[aria-sort]").forEach((th) => {
+                const key = th.querySelector<HTMLButtonElement>("button")?.dataset.sort;
+                th.setAttribute("aria-sort", key === sortKey ? (sortDir < 0 ? "descending" : "ascending") : "none");
+            });
+        };
+        root.querySelectorAll<HTMLButtonElement>(".rx-top-table [data-sort]").forEach((button) => {
+            button.addEventListener("click", () => {
+                const key = button.dataset.sort!;
+                sortDir = key === sortKey ? -sortDir : -1;
+                sortKey = key;
+                renderTop();
+            });
+        });
+
+        /* ================= BOOT ================= */
+        renderTotals();
+        renderChart(false);
+        renderMix(false);
+        renderTop();
+        onReveal(chartNode, () => renderChart(true), 0.2);
+        onReveal(donutNode, () => renderMix(true), 0.3);
+        onWidthChange(chartNode, () => renderChart(false));
+        setUpCountUps(root);
+        root.querySelectorAll(".rx-ratings, .rx-windows, .rx-segments, .rx-mini-bars, .rx-top-table, .rx-cohort, .rx-ring").forEach((node) => {
+            if (reduce) node.classList.add("bars-ready");
+            else onReveal(node, () => node.classList.add("bars-ready"), 0.2);
+        });
+        root.classList.add("is-ready");
+    });
+</script>
+
+<style>
+    .rx {
+        --rx-card: rgba(7, 21, 34, 0.88);
+        --rx-border: #1d354a;
+        --rx-blue: #168dff;
+        --rx-blue-light: #65baff;
+        --rx-orange: #ff8a00;
+        --rx-green: #26d5a2;
+        --rx-muted: #a9bbcc;
+        --rx-subtle: #71869a;
+
+        display: grid;
+        gap: 1.25rem;
+        width: 100%;
+        min-width: 0;
+    }
+
+    .rx *,
+    .rx *::before,
+    .rx *::after {
+        box-sizing: border-box;
+    }
+
+    .rx-intro {
+        max-width: 860px;
+    }
+
+    .rx-eyebrow,
+    .rx-kicker {
+        margin: 0 0 0.6rem;
+        color: var(--rx-orange);
+        font-size: 0.72rem;
+        font-weight: 800;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+    }
+
+    .rx-intro h2 {
+        margin: 0;
+        color: #ffffff;
+        font-size: clamp(1.9rem, 4.2vw, 3.2rem);
+        line-height: 1.04;
+    }
+
+    .rx-intro > p:last-child {
+        margin: 1rem 0 0;
+        color: var(--rx-muted);
+        line-height: 1.75;
+    }
+
+    .rx-card {
+        min-width: 0;
+        padding: clamp(1rem, 2.6vw, 1.6rem);
+        border: 1px solid var(--rx-border);
+        border-radius: 14px;
+        background:
+            linear-gradient(150deg, rgba(22, 141, 255, 0.07), transparent 55%),
+            var(--rx-card);
+    }
+
+    .rx-card-head {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 0.75rem 1rem;
+        margin-bottom: 1.1rem;
+    }
+
+    .rx-card-head h3 {
+        margin: 0;
+        color: #ffffff;
+        font-size: clamp(1.1rem, 2.2vw, 1.45rem);
+        line-height: 1.25;
+    }
+
+    .rx h4 {
+        margin: 0 0 0.75rem;
+        color: #ffffff;
+        font-size: 0.86rem;
+    }
+
+    .rx-toggle,
+    .rx-presets {
+        display: inline-flex;
+        flex-wrap: wrap;
+        gap: 0.25rem;
+        padding: 0.25rem;
+        border: 1px solid #1f3b55;
+        border-radius: 10px;
+        background: #071626;
+    }
+
+    .rx-toggle button,
+    .rx-presets button {
+        min-height: 36px;
+        padding: 0.45rem 0.75rem;
+        border: 0;
+        border-radius: 7px;
+        background: transparent;
+        color: var(--rx-muted);
+        font: inherit;
+        font-size: 0.76rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition:
+            background-color 0.2s ease,
+            color 0.2s ease;
+    }
+
+    .rx-toggle button[aria-pressed="true"],
+    .rx-presets button[aria-pressed="true"] {
+        background: var(--rx-blue);
+        color: #ffffff;
+        box-shadow: 0 6px 18px rgba(22, 141, 255, 0.28);
+    }
+
+    .rx-presets button[aria-pressed="true"] {
+        background: rgba(255, 138, 0, 0.16);
+        box-shadow: inset 0 0 0 1px var(--rx-orange);
+    }
+
+    .rx-toggle button:hover:not([aria-pressed="true"]),
+    .rx-presets button:hover:not([aria-pressed="true"]) {
+        color: #ffffff;
+        background: rgba(22, 141, 255, 0.1);
+    }
+
+    .rx :global(button:focus-visible),
+    .rx select:focus-visible,
+    .rx-chart:focus-visible,
+    .rx summary:focus-visible {
+        outline: 2px solid var(--rx-orange);
+        outline-offset: 2px;
+    }
+
+    /* ---------- range ---------- */
+
+    .rx-range {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.75rem;
+        margin-bottom: 1rem;
+    }
+
+    .rx-range-selects {
+        display: flex;
+        gap: 0.6rem;
+    }
+
+    .rx-range label {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.45rem;
+        color: var(--rx-subtle);
+        font-size: 0.72rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    .rx-range select {
+        min-height: 36px;
+        padding: 0.35rem 0.6rem;
+        border: 1px solid #284b69;
+        border-radius: 8px;
+        background: #091a2a;
+        color: #ffffff;
+        font: inherit;
+        font-size: 0.8rem;
+    }
+
+    .rx-range-totals {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 0.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .rx-range-totals :global(div) {
+        min-width: 0;
+        padding: 0.7rem 0.8rem;
+        border: 1px solid #172f45;
+        border-radius: 9px;
+        background: rgba(4, 14, 25, 0.6);
+    }
+
+    .rx-range-totals :global(strong) {
+        display: block;
+        color: #ffffff;
+        font-size: clamp(1rem, 2vw, 1.3rem);
+        font-variant-numeric: tabular-nums;
+    }
+
+    .rx-range-totals :global(span) {
+        color: var(--rx-subtle);
+        font-size: 0.68rem;
+        font-weight: 700;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+    }
+
+    /* ---------- chart ---------- */
+
+    .rx-chart-wrap {
+        position: relative;
+    }
+
+    .rx-chart {
+        min-height: 270px;
+        border-radius: 10px;
+        background: linear-gradient(180deg, rgba(4, 13, 24, 0.6), rgba(4, 13, 24, 0.2));
+        touch-action: pan-y;
+    }
+
+    .rx-chart :global(svg) {
+        display: block;
+    }
+
+    .rx :global(.rx-grid) {
+        stroke: rgba(113, 134, 154, 0.18);
+    }
+
+    .rx :global(.rx-year-line) {
+        stroke: rgba(113, 134, 154, 0.25);
+        stroke-dasharray: 2 4;
+    }
+
+    .rx :global(.rx-axis) {
+        fill: #7f95aa;
+        font-size: 10.5px;
+        font-family: inherit;
+    }
+
+    .rx :global(.rx-bar-rect) {
+        transition: opacity 0.15s ease;
+    }
+
+    .rx :global(.rx-bar-rect.is-peak) {
+        fill: var(--rx-orange);
+    }
+
+    .rx :global(.rx-bar-rect.is-dim) {
+        opacity: 0.45;
+    }
+
+    .rx :global(.rx-hover) {
+        fill: rgba(255, 255, 255, 0.05);
+    }
+
+    .rx :global(.rx-note) {
+        fill: #b8c7d6;
+        font-size: 10.5px;
+        font-weight: 700;
+    }
+
+    .rx :global(.rx-note.is-peak) {
+        fill: var(--rx-orange);
+    }
+
+    .rx :global(.rx-note-line) {
+        stroke: rgba(184, 199, 214, 0.45);
+        stroke-dasharray: 2 3;
+    }
+
+    .rx :global(.rx-note-line.is-peak) {
+        stroke: rgba(255, 138, 0, 0.7);
+    }
+
+    .rx-tooltip {
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 5;
+        display: grid;
+        gap: 0.12rem;
+        min-width: 200px;
+        max-width: 250px;
+        padding: 0.6rem 0.75rem;
+        border: 1px solid #2b5277;
+        border-radius: 9px;
+        background: rgba(5, 16, 28, 0.96);
+        box-shadow: 0 14px 34px rgba(0, 0, 0, 0.45);
+        color: #c7d5e1;
+        font-size: 0.72rem;
+        line-height: 1.45;
+        pointer-events: none;
+    }
+
+    .rx-tooltip[hidden] {
+        display: none;
+    }
+
+    .rx-tooltip :global(strong) {
+        margin-bottom: 0.2rem;
+        color: #ffffff;
+        font-size: 0.8rem;
+    }
+
+    .rx-tooltip :global(span) {
+        display: flex;
+        justify-content: space-between;
+        gap: 0.75rem;
+    }
+
+    .rx-tooltip :global(em) {
+        font-style: normal;
+        color: #94a8ba;
+    }
+
+    .rx-tooltip :global(b) {
+        color: #ffffff;
+        font-variant-numeric: tabular-nums;
+    }
+
+    .rx-tooltip :global(.is-active em),
+    .rx-tooltip :global(.is-active b) {
+        color: var(--rx-blue-light);
+    }
+
+    .rx-tooltip :global(.rx-tip-note) {
+        margin-top: 0.2rem;
+        color: var(--rx-orange);
+        font-size: 0.68rem;
+    }
+
+    .rx-summary {
+        margin: 0.85rem 0 0;
+        color: #b8c7d6;
+        font-size: 0.8rem;
+        line-height: 1.6;
+    }
+
+    .rx-footnote {
+        margin: 0.9rem 0 0;
+        padding-top: 0.85rem;
+        border-top: 1px solid #142a3e;
+        color: var(--rx-subtle);
+        font-size: 0.72rem;
+        line-height: 1.6;
+    }
+
+    .rx-footnote strong {
+        color: #c7d5e1;
+    }
+
+    /* ---------- grid ---------- */
+
+    .rx-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        gap: 1.25rem;
+    }
+
+    /* ---------- mix ---------- */
+
+    .rx-mix-body {
+        display: grid;
+        grid-template-columns: minmax(160px, 0.8fr) minmax(0, 1fr);
+        gap: 1rem;
+        align-items: center;
+    }
+
+    .rx-donut {
+        max-width: 240px;
+        width: 100%;
+        margin: 0 auto;
+    }
+
+    .rx-donut :global(svg) {
+        display: block;
+        width: 100%;
+        height: auto;
+    }
+
+    .rx :global(.rx-donut-track) {
+        fill: none;
+        stroke: #0c2235;
+    }
+
+    .rx :global(.rx-arc) {
+        transition: opacity 0.2s ease;
+    }
+
+    .rx :global(.rx-arc.is-dim) {
+        opacity: 0.25;
+    }
+
+    .rx :global(.rx-donut-value) {
+        fill: #ffffff;
+        font-size: 24px;
+        font-weight: 800;
+    }
+
+    .rx :global(.rx-donut-label) {
+        fill: #94a8ba;
+        font-size: 11px;
+        font-weight: 700;
+    }
+
+    .rx-legend {
+        display: grid;
+        gap: 0.3rem;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+    }
+
+    .rx-legend :global(.rx-legend-item) {
+        display: grid;
+        gap: 0.25rem;
+        width: 100%;
+        padding: 0.45rem 0.55rem;
+        border: 1px solid transparent;
+        border-radius: 8px;
+        background: transparent;
+        color: inherit;
+        font: inherit;
+        text-align: left;
+        cursor: pointer;
+    }
+
+    .rx-legend :global(.rx-legend-item:hover),
+    .rx-legend :global(.rx-legend-item:focus-visible) {
+        border-color: #2b5277;
+        background: rgba(4, 14, 25, 0.6);
+    }
+
+    .rx-legend :global(.rx-legend-top) {
+        display: flex;
+        justify-content: space-between;
+        gap: 0.5rem;
+        color: #e8eef5;
+        font-size: 0.78rem;
+        font-weight: 650;
+    }
+
+    .rx-legend :global(.rx-legend-name) {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.45rem;
+    }
+
+    .rx-legend :global(i) {
+        width: 9px;
+        height: 9px;
+        border-radius: 3px;
+    }
+
+    .rx-legend :global(b) {
+        font-variant-numeric: tabular-nums;
+    }
+
+    .rx-legend :global(.rx-legend-track) {
+        height: 4px;
+        overflow: hidden;
+        border-radius: 999px;
+        background: #0c2235;
+    }
+
+    .rx-legend :global(.rx-legend-track span) {
+        display: block;
+        width: calc(var(--w) * 100%);
+        height: 100%;
+        border-radius: inherit;
+        transform: scaleX(0);
+        transform-origin: left;
+        transition: transform 0.8s cubic-bezier(0.2, 0.7, 0.2, 1);
+    }
+
+    .rx-legend:global(.bars-ready) :global(.rx-legend-track span) {
+        transform: scaleX(1);
+    }
+
+    .rx-legend :global(small) {
+        color: var(--rx-subtle);
+        font-size: 0.66rem;
+        font-variant-numeric: tabular-nums;
+    }
+
+    /* ---------- shared bars ---------- */
+
+    .rx-bar {
+        height: 7px;
+        overflow: hidden;
+        border-radius: 999px;
+        background: #0c2235;
+    }
+
+    .rx-bar span {
+        display: block;
+        width: calc(min(var(--w), 1) * 100%);
+        height: 100%;
+        border-radius: inherit;
+        background: linear-gradient(90deg, #168dff, #65baff);
+        transform: scaleX(0);
+        transform-origin: left;
+        transition: transform 0.9s cubic-bezier(0.2, 0.7, 0.2, 1);
+    }
+
+    .rx-bar.is-orange span {
+        background: linear-gradient(90deg, #ff8a00, #ffb35c);
+    }
+
+    :global(.bars-ready) .rx-bar span {
+        transform: scaleX(1);
+    }
+
+    /* ---------- service ---------- */
+
+    .rx-service-top {
+        display: grid;
+        grid-template-columns: 96px minmax(0, 1fr);
+        gap: 1rem;
+        align-items: center;
+        margin-bottom: 1.1rem;
+    }
+
+    .rx-ring svg {
+        display: block;
+        width: 96px;
+        height: 96px;
+        transform: rotate(-90deg);
+    }
+
+    .rx-ring-track {
+        fill: none;
+        stroke: #0c2235;
+        stroke-width: 12;
+    }
+
+    .rx-ring-fill {
+        fill: none;
+        stroke: var(--rx-green);
+        stroke-width: 12;
+        stroke-linecap: round;
+        stroke-dasharray: 1;
+        stroke-dashoffset: 1;
+        transition: stroke-dashoffset 1.4s cubic-bezier(0.2, 0.7, 0.2, 1);
+    }
+
+    .rx-ring:global(.bars-ready) .rx-ring-fill {
+        stroke-dashoffset: calc(1 - var(--p));
+    }
+
+    .rx-ring-text strong {
+        display: block;
+        color: var(--rx-green);
+        font-size: clamp(1.8rem, 4vw, 2.4rem);
+        line-height: 1;
+        font-variant-numeric: tabular-nums;
+    }
+
+    .rx-ring-text > span {
+        display: block;
+        margin-top: 0.4rem;
+        color: #94a8ba;
+        font-size: 0.74rem;
+        line-height: 1.5;
+    }
+
+    .rx-ratings,
+    .rx-windows,
+    .rx-segments,
+    .rx-mini-bars {
+        display: grid;
+        gap: 0.7rem;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+    }
+
+    .rx-rating-top {
+        display: flex;
+        justify-content: space-between;
+        gap: 0.75rem;
+        margin-bottom: 0.3rem;
+        color: #c7d5e1;
+        font-size: 0.78rem;
+    }
+
+    .rx-rating-top strong {
+        color: #ffffff;
+        font-variant-numeric: tabular-nums;
+    }
+
+    .rx-rating-top small {
+        color: var(--rx-subtle);
+        font-weight: 600;
+    }
+
+    .rx-ratings li > small,
+    .rx-windows li > small,
+    .rx-segments li > small {
+        display: block;
+        margin-top: 0.3rem;
+        color: var(--rx-subtle);
+        font-size: 0.68rem;
+    }
+
+    .rx-service-stats {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0.5rem;
+        margin-top: 1.1rem;
+    }
+
+    .rx-service-stats div {
+        padding: 0.75rem;
+        border: 1px solid #172f45;
+        border-radius: 9px;
+        background: rgba(4, 14, 25, 0.6);
+    }
+
+    .rx-service-stats strong {
+        display: block;
+        color: #ffffff;
+        font-size: 1.35rem;
+    }
+
+    .rx-service-stats span {
+        color: var(--rx-subtle);
+        font-size: 0.7rem;
+        line-height: 1.45;
+    }
+
+    .rx-details {
+        margin-top: 1rem;
+        border: 1px solid #172f45;
+        border-radius: 10px;
+        background: rgba(4, 14, 25, 0.55);
+    }
+
+    .rx-details summary {
+        padding: 0.75rem 0.9rem;
+        color: #e8eef5;
+        font-size: 0.8rem;
+        font-weight: 700;
+        cursor: pointer;
+    }
+
+    .rx-details-grid {
+        display: grid;
+        gap: 1.1rem;
+        padding: 0 0.9rem 0.9rem;
+    }
+
+    .rx-mini-bars li {
+        display: grid;
+        grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr) 2rem;
+        gap: 0.6rem;
+        align-items: center;
+        color: #c7d5e1;
+        font-size: 0.72rem;
+    }
+
+    .rx-mini-bars strong {
+        color: #ffffff;
+        text-align: right;
+        font-variant-numeric: tabular-nums;
+    }
+
+    .rx-details :global(.rx-bar span) {
+        transform: scaleX(1);
+    }
+
+    /* ---------- retention ---------- */
+
+    .rx-retention-grid {
+        display: grid;
+        grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+        gap: 1.5rem;
+    }
+
+    .rx-ret-col {
+        min-width: 0;
+    }
+
+    .rx-windows {
+        margin-bottom: 1.4rem;
+    }
+
+    .rx-seg-legend {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.4rem 1rem;
+        margin-bottom: 0.6rem;
+        color: var(--rx-subtle);
+        font-size: 0.68rem;
+    }
+
+    .rx-seg-legend span {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+    }
+
+    .rx-seg-legend i {
+        width: 10px;
+        height: 10px;
+        border-radius: 3px;
+    }
+
+    .rx-seg-legend .is-blue {
+        background: var(--rx-blue);
+    }
+
+    .rx-seg-legend .is-orange {
+        background: var(--rx-orange);
+    }
+
+    .rx-segments li {
+        display: grid;
+        grid-template-columns: 5.5rem minmax(0, 1fr);
+        gap: 0.2rem 0.75rem;
+        align-items: center;
+    }
+
+    .rx-seg-label {
+        color: #c7d5e1;
+        font-size: 0.76rem;
+        font-weight: 650;
+    }
+
+    .rx-seg-bars {
+        display: grid;
+        gap: 3px;
+    }
+
+    .rx-seg-bars .rx-bar {
+        height: 6px;
+    }
+
+    .rx-segments li > small {
+        grid-column: 2;
+        margin-top: 0 !important;
+    }
+
+    .rx-cohort-scroll,
+    .rx-table-scroll {
+        position: relative;
+        overflow-x: auto;
+        overscroll-behavior-x: contain;
+    }
+
+    .rx-cohort {
+        width: 100%;
+        min-width: 440px;
+        border-collapse: separate;
+        border-spacing: 3px;
+        font-size: 0.74rem;
+        font-variant-numeric: tabular-nums;
+    }
+
+    .rx-cohort th {
+        padding: 0.4rem;
+        color: var(--rx-subtle);
+        font-size: 0.68rem;
+        font-weight: 700;
+        text-align: center;
+    }
+
+    .rx-cohort tbody th {
+        color: #ffffff;
+        text-align: left;
+    }
+
+    .rx-cohort td {
+        height: 38px;
+        padding: 0.3rem;
+        border-radius: 6px;
+        color: #ffffff;
+        text-align: center;
+        background: rgba(22, 141, 255, calc(0.1 + var(--s, 0) * 0.8));
+        transition:
+            transform 0.5s cubic-bezier(0.2, 0.7, 0.2, 1),
+            opacity 0.5s ease;
+    }
+
+    .rx-cohort td.rx-cohort-n {
+        background: rgba(4, 14, 25, 0.6);
+        color: #c7d5e1;
+    }
+
+    .rx-cohort td.is-unobserved {
+        background: repeating-linear-gradient(135deg, rgba(113, 134, 154, 0.12) 0 4px, transparent 4px 9px);
+    }
+
+    .rx:global(.is-ready) .rx-cohort:not(:global(.bars-ready)) td[data-share] {
+        opacity: 0;
+        transform: scale(0.7);
+    }
+
+    .rx-defs {
+        margin-top: 1.4rem;
+        padding-top: 1.1rem;
+        border-top: 1px solid #142a3e;
+    }
+
+    .rx-defs dl {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 0.6rem;
+        margin: 0;
+    }
+
+    .rx-defs dl div {
+        padding: 0.85rem;
+        border: 1px solid #172f45;
+        border-radius: 10px;
+        background: rgba(4, 14, 25, 0.6);
+    }
+
+    .rx-defs dt {
+        color: var(--rx-blue-light);
+        font-size: 1.35rem;
+        font-weight: 800;
+    }
+
+    .rx-defs dd {
+        margin: 0.35rem 0 0;
+        color: #94a8ba;
+        font-size: 0.72rem;
+        line-height: 1.55;
+    }
+
+    /* ---------- top table ---------- */
+
+    .rx-top-table {
+        width: 100%;
+        min-width: 640px;
+        border-collapse: collapse;
+        font-size: 0.76rem;
+        font-variant-numeric: tabular-nums;
+    }
+
+    .rx-top-table thead th {
+        padding: 0.5rem;
+        border-bottom: 1px solid #1f3b55;
+        color: var(--rx-subtle);
+        font-size: 0.68rem;
+        text-align: right;
+        white-space: nowrap;
+    }
+
+    .rx-top-table thead th:nth-child(-n + 2) {
+        text-align: left;
+    }
+
+    .rx-top-table thead button {
+        padding: 0.25rem 0.4rem;
+        border: 0;
+        border-radius: 5px;
+        background: transparent;
+        color: inherit;
+        font: inherit;
+        font-weight: 800;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        cursor: pointer;
+    }
+
+    .rx-top-table thead button::after {
+        content: " ↕";
+        opacity: 0.45;
+    }
+
+    .rx-top-table th[aria-sort="descending"] button::after {
+        content: " ↓";
+        opacity: 1;
+        color: var(--rx-orange);
+    }
+
+    .rx-top-table th[aria-sort="ascending"] button::after {
+        content: " ↑";
+        opacity: 1;
+        color: var(--rx-orange);
+    }
+
+    .rx-top-table th[aria-sort="descending"] button,
+    .rx-top-table th[aria-sort="ascending"] button {
+        color: #ffffff;
+    }
+
+    .rx-top-table :global(tbody tr) {
+        transition: background-color 0.2s ease;
+    }
+
+    .rx-top-table :global(tbody tr:hover) {
+        background: rgba(22, 141, 255, 0.07);
+    }
+
+    .rx-top-table :global(tbody th),
+    .rx-top-table :global(tbody td) {
+        padding: 0.65rem 0.5rem;
+        border-bottom: 1px solid #142a3e;
+        color: #c7d5e1;
+        text-align: right;
+    }
+
+    .rx-top-table :global(tbody th) {
+        color: #e8eef5;
+        font-weight: 600;
+        text-align: left;
+        line-height: 1.4;
+    }
+
+    .rx-top-table :global(.rx-rank) {
+        color: var(--rx-subtle);
+        text-align: left;
+    }
+
+    .rx-top-table :global(.rx-platform) {
+        display: inline-block;
+        margin-right: 0.45rem;
+        padding: 0.1rem 0.4rem;
+        border: 1px solid #2b5277;
+        border-radius: 5px;
+        color: var(--rx-blue-light);
+        font-size: 0.62rem;
+        font-weight: 800;
+    }
+
+    .rx-top-table :global(.rx-usd-cell) {
+        position: relative;
+        min-width: 120px;
+        color: #ffffff;
+        font-weight: 750;
+    }
+
+    .rx-top-table :global(.rx-usd-cell i) {
+        position: absolute;
+        right: 0.5rem;
+        bottom: 0.3rem;
+        width: calc(var(--w) * 100px);
+        height: 3px;
+        border-radius: 999px;
+        background: linear-gradient(90deg, #168dff, #ff8a00);
+        transform: scaleX(0);
+        transform-origin: right;
+        transition: transform 0.8s cubic-bezier(0.2, 0.7, 0.2, 1);
+    }
+
+    .rx-top-table:global(.bars-ready) :global(.rx-usd-cell i) {
+        transform: scaleX(1);
+    }
+
+    .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        margin: -1px;
+        padding: 0;
+        overflow: hidden;
+        clip: rect(0 0 0 0);
+        white-space: nowrap;
+        border: 0;
+    }
+
+    /* ---------- responsive ---------- */
+
+    @media (max-width: 1000px) {
+        .rx-grid,
+        .rx-retention-grid {
+            grid-template-columns: minmax(0, 1fr);
+        }
+    }
+
+    @media (max-width: 640px) {
+        .rx-card-head {
+            display: grid;
+        }
+
+        .rx-toggle {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .rx-range,
+        .rx-range-selects {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            width: 100%;
+        }
+
+        .rx-range-selects {
+            grid-column: 1 / -1;
+        }
+
+        .rx-range label {
+            justify-content: space-between;
+        }
+
+        .rx-range select {
+            flex: 1;
+        }
+
+        .rx-presets {
+            grid-column: 1 / -1;
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+
+        .rx-range-totals {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .rx-mix-body {
+            grid-template-columns: minmax(0, 1fr);
+        }
+
+        .rx-donut {
+            max-width: 200px;
+        }
+
+        .rx-defs dl {
+            grid-template-columns: minmax(0, 1fr);
+        }
+
+        .rx-service-stats {
+            grid-template-columns: minmax(0, 1fr);
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .rx *,
+        .rx :global(*) {
+            animation: none !important;
+            transition: none !important;
+        }
+
+        .rx-bar span,
+        .rx-legend :global(.rx-legend-track span),
+        .rx-top-table :global(.rx-usd-cell i) {
+            transform: none;
+        }
+
+        .rx-ring-fill {
+            stroke-dashoffset: calc(1 - var(--p));
+        }
+    }
+</style>

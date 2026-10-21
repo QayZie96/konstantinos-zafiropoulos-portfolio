@@ -1,0 +1,561 @@
+---
+/* =========================================================
+   SERVICE QUALITY — TABBED CUSTOMER-OPERATIONS PANEL
+
+   Feedback by year, detailed seller ratings, return reasons
+   and dispute outcomes from the aggregated eBay export.
+   ========================================================= */
+
+import data from "../data/rocketeers-ebay.json";
+
+const service = data.service;
+const saleLines = data.totals.saleLines;
+
+const feedback = (service.feedbackByYear as [string, number, number, number][]).map(
+    ([year, positive, neutral, negative]) => ({ year, positive, neutral, negative, total: positive + neutral + negative }),
+);
+const maxFeedback = Math.max(...feedback.map((row) => row.total));
+const totals = feedback.reduce(
+    (acc, row) => ({
+        positive: acc.positive + row.positive,
+        total: acc.total + row.total,
+    }),
+    { positive: 0, total: 0 },
+);
+
+const ratings = service.ratings as [string, number, number, number][];
+
+const reasonLabels: Record<string, string> = {
+    NO_LONGER_NEED_ITEM: "No longer needed",
+    WRONG_SIZE: "Wrong size",
+    ORDERED_ACCIDENTALLY: "Ordered accidentally",
+    FAKE_OR_COUNTERFEIT: "Reported as fake",
+    ORDERED_WRONG_ITEM: "Ordered the wrong item",
+    ARRIVED_LATE: "Arrived late",
+    NOT_AS_DESCRIBED: "Not as described",
+    MISSING_PARTS: "Missing parts",
+    FOUND_BETTER_PRICE: "Found a better price",
+};
+const reasons = (service.returnReasons as [string, number][]).map(([code, cases]) => ({
+    label: reasonLabels[code] ?? code,
+    cases,
+}));
+const maxReason = Math.max(...reasons.map((row) => row.cases));
+const buyerSide = reasons
+    .filter((row) => ["No longer needed", "Wrong size", "Ordered accidentally", "Ordered the wrong item", "Found a better price"].includes(row.label))
+    .reduce((sum, row) => sum + row.cases, 0);
+
+const closureLabels: Record<string, string> = {
+    closedSellerFullRefundPP: "Full refund issued (PayPal)",
+    claimBuyerWinsSellerFault: "Decided for the buyer",
+    closedBuyerClose: "Closed by the buyer",
+    closedSellerFullRefund: "Full refund issued",
+    closedGeneralTimeout: "Closed on timeout",
+};
+const closures = (service.disputeClosures as [string, number, number][])
+    .map(([code, cases, amount]) => ({ label: closureLabels[code] ?? code, cases, amount }))
+    .sort((a, b) => b.cases - a.cases);
+const maxClosure = Math.max(...closures.map((row) => row.cases));
+
+const tabs = [
+    { id: "feedback", label: "Feedback" },
+    { id: "ratings", label: "Seller ratings" },
+    { id: "returns", label: "Returns" },
+    { id: "disputes", label: "Disputes" },
+];
+
+const pct = (value: number, digits = 1) => `${(value * 100).toFixed(digits)}%`;
+---
+
+<div class="sq" data-service-quality>
+    <div class="sq-head">
+        <div>
+            <p class="sq-kicker">Customer operations · eBay export 2017–2022</p>
+            <h3>What the service record looks like</h3>
+        </div>
+    </div>
+
+    <div class="sq-tabs" role="tablist" aria-label="Service measures">
+        {
+            tabs.map((tab, index) => (
+                <button
+                    type="button"
+                    role="tab"
+                    id={`sq-tab-${tab.id}`}
+                    aria-controls={`sq-panel-${tab.id}`}
+                    aria-selected={index === 0 ? "true" : "false"}
+                    tabindex={index === 0 ? "0" : "-1"}
+                    data-sq-tab={tab.id}
+                >
+                    {tab.label}
+                </button>
+            ))
+        }
+    </div>
+
+    <!-- Feedback -->
+    <div class="sq-panel" role="tabpanel" id="sq-panel-feedback" aria-labelledby="sq-tab-feedback" data-sq-panel="feedback">
+        <div class="sq-lead-stat">
+            <strong>{pct(totals.positive / totals.total)}</strong>
+            <span>
+                {`positive across ${totals.total.toLocaleString("en-US")} feedback entries received as a seller`}
+            </span>
+        </div>
+        <ul class="sq-years">
+            {
+                feedback.map((row) => (
+                    <li>
+                        <span class="sq-year">{row.year}</span>
+                        <div class="sq-track">
+                            <span class="sq-fill" style={`--w: ${(row.total / maxFeedback).toFixed(4)}`}></span>
+                        </div>
+                        <span class="sq-count">
+                            {row.positive.toLocaleString("en-US")}
+                            {(row.neutral || row.negative) ? <small>{` · ${row.neutral} neutral · ${row.negative} negative`}</small> : null}
+                        </span>
+                    </li>
+                ))
+            }
+        </ul>
+        <p class="sq-note">
+            Bars show feedback received each year. The final live profile
+            stood at 6,454 positive, 1 neutral and 0 negative.
+        </p>
+    </div>
+
+    <!-- Ratings -->
+    <div class="sq-panel" role="tabpanel" id="sq-panel-ratings" aria-labelledby="sq-tab-ratings" data-sq-panel="ratings" hidden>
+        <ul class="sq-ratings">
+            {
+                ratings.map(([label, count, average, fiveStar]) => (
+                    <li>
+                        <div class="sq-rating-top">
+                            <span>{label}</span>
+                            <strong>{average.toFixed(2)}<small> / 5</small></strong>
+                        </div>
+                        <div class="sq-stars" aria-hidden="true" style={`--r: ${(average / 5).toFixed(4)}`}>
+                            <span>★★★★★</span>
+                            <span class="sq-stars-fill">★★★★★</span>
+                        </div>
+                        <small>{`${pct(fiveStar)} five-star · ${count.toLocaleString("en-US")} ratings`}</small>
+                    </li>
+                ))
+            }
+        </ul>
+    </div>
+
+    <!-- Returns -->
+    <div class="sq-panel" role="tabpanel" id="sq-panel-returns" aria-labelledby="sq-tab-returns" data-sq-panel="returns" hidden>
+        <div class="sq-lead-stat">
+            <strong>{service.returnRequests}</strong>
+            <span>
+                {`return requests across ${saleLines.toLocaleString("en-US")} sale lines (${pct(service.returnRequests / saleLines, 2)}). ${buyerSide} of them were buyer-side reasons such as changing their mind or ordering the wrong item.`}
+            </span>
+        </div>
+        <ul class="sq-bars">
+            {
+                reasons.map((row) => (
+                    <li>
+                        <span>{row.label}</span>
+                        <div class="sq-track is-thin">
+                            <span class="sq-fill" style={`--w: ${(row.cases / maxReason).toFixed(4)}`}></span>
+                        </div>
+                        <strong>{row.cases}</strong>
+                    </li>
+                ))
+            }
+        </ul>
+    </div>
+
+    <!-- Disputes -->
+    <div class="sq-panel" role="tabpanel" id="sq-panel-disputes" aria-labelledby="sq-tab-disputes" data-sq-panel="disputes" hidden>
+        <div class="sq-lead-stat">
+            <strong>{service.disputes}</strong>
+            <span>
+                {`disputes across ${saleLines.toLocaleString("en-US")} sale lines (${pct(service.disputes / saleLines, 2)}), covering $${service.disputedUsd.toFixed(2)} in total.`}
+            </span>
+        </div>
+        <ul class="sq-bars">
+            {
+                closures.map((row) => (
+                    <li>
+                        <span>{row.label}</span>
+                        <div class="sq-track is-thin is-orange">
+                            <span class="sq-fill" style={`--w: ${(row.cases / maxClosure).toFixed(4)}`}></span>
+                        </div>
+                        <strong>{row.cases}</strong>
+                    </li>
+                ))
+            }
+        </ul>
+    </div>
+</div>
+
+<script>
+    document.querySelectorAll<HTMLElement>("[data-service-quality]").forEach((root) => {
+        const tabs = Array.from(root.querySelectorAll<HTMLButtonElement>("[data-sq-tab]"));
+        const panels = Array.from(root.querySelectorAll<HTMLElement>("[data-sq-panel]"));
+        const activate = (tab: HTMLButtonElement, focus = false) => {
+            tabs.forEach((candidate) => {
+                const selected = candidate === tab;
+                candidate.setAttribute("aria-selected", String(selected));
+                candidate.tabIndex = selected ? 0 : -1;
+            });
+            panels.forEach((panel) => {
+                const show = panel.dataset.sqPanel === tab.dataset.sqTab;
+                panel.hidden = !show;
+                if (show) {
+                    panel.classList.remove("is-shown");
+                    requestAnimationFrame(() => requestAnimationFrame(() => panel.classList.add("is-shown")));
+                }
+            });
+            if (focus) tab.focus();
+        };
+        tabs.forEach((tab, index) => {
+            tab.addEventListener("click", () => activate(tab));
+            tab.addEventListener("keydown", (event) => {
+                let next = -1;
+                if (event.key === "ArrowRight") next = (index + 1) % tabs.length;
+                if (event.key === "ArrowLeft") next = (index - 1 + tabs.length) % tabs.length;
+                if (event.key === "Home") next = 0;
+                if (event.key === "End") next = tabs.length - 1;
+                if (next < 0) return;
+                event.preventDefault();
+                activate(tabs[next], true);
+            });
+        });
+
+        const reveal = () => panels.find((panel) => !panel.hidden)?.classList.add("is-shown");
+        const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        if (reduce || !("IntersectionObserver" in window)) {
+            root.classList.add("no-motion");
+            panels.forEach((panel) => panel.classList.add("is-shown"));
+            return;
+        }
+        const observer = new IntersectionObserver(
+            (entries) => {
+                if (!entries.some((entry) => entry.isIntersecting)) return;
+                observer.disconnect();
+                reveal();
+            },
+            { threshold: 0.25 },
+        );
+        observer.observe(root);
+    });
+</script>
+
+<style>
+    .sq {
+        box-sizing: border-box;
+        width: 100%;
+        min-width: 0;
+        margin-top: 2rem;
+        padding: clamp(1rem, 2.8vw, 1.6rem);
+        border: 1px solid #1d354a;
+        border-radius: 14px;
+        background:
+            linear-gradient(150deg, rgba(38, 213, 162, 0.07), transparent 55%),
+            rgba(7, 21, 34, 0.9);
+    }
+
+    .sq *,
+    .sq *::before,
+    .sq *::after {
+        box-sizing: border-box;
+    }
+
+    .sq-kicker {
+        margin: 0 0 0.45rem;
+        color: #ff8a00;
+        font-size: 0.7rem;
+        font-weight: 800;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+    }
+
+    .sq-head h3 {
+        margin: 0;
+        color: #ffffff;
+        font-size: clamp(1.05rem, 2.2vw, 1.35rem);
+    }
+
+    .sq-tabs {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.25rem;
+        margin: 1.1rem 0 1.25rem;
+        padding: 0.25rem;
+        border: 1px solid #1f3b55;
+        border-radius: 10px;
+        background: #071626;
+    }
+
+    .sq-tabs button {
+        flex: 1 1 auto;
+        min-height: 38px;
+        padding: 0.45rem 0.7rem;
+        border: 0;
+        border-radius: 7px;
+        background: transparent;
+        color: #a9bbcc;
+        font: inherit;
+        font-size: 0.76rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition:
+            background-color 0.2s ease,
+            color 0.2s ease;
+    }
+
+    .sq-tabs button[aria-selected="true"] {
+        background: #168dff;
+        color: #ffffff;
+        box-shadow: 0 6px 18px rgba(22, 141, 255, 0.28);
+    }
+
+    .sq-tabs button:hover:not([aria-selected="true"]) {
+        color: #ffffff;
+        background: rgba(22, 141, 255, 0.1);
+    }
+
+    .sq-tabs button:focus-visible {
+        outline: 2px solid #ff8a00;
+        outline-offset: 2px;
+    }
+
+    .sq-panel {
+        animation: sq-in 0.4s cubic-bezier(0.2, 0.7, 0.2, 1);
+    }
+
+    @keyframes sq-in {
+        from {
+            opacity: 0;
+            transform: translateY(8px);
+        }
+        to {
+            opacity: 1;
+            transform: none;
+        }
+    }
+
+    .sq-lead-stat {
+        display: grid;
+        grid-template-columns: auto minmax(0, 1fr);
+        gap: 1rem;
+        align-items: center;
+        margin-bottom: 1.2rem;
+    }
+
+    .sq-lead-stat strong {
+        color: #26d5a2;
+        font-size: clamp(1.9rem, 5vw, 2.6rem);
+        line-height: 1;
+        font-variant-numeric: tabular-nums;
+    }
+
+    .sq-lead-stat span {
+        color: #b8c7d6;
+        font-size: 0.82rem;
+        line-height: 1.55;
+    }
+
+    .sq-years,
+    .sq-bars,
+    .sq-ratings {
+        display: grid;
+        gap: 0.65rem;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+    }
+
+    .sq-years li {
+        display: grid;
+        grid-template-columns: 2.8rem minmax(0, 1fr) minmax(5.5rem, auto);
+        gap: 0.75rem;
+        align-items: center;
+    }
+
+    .sq-year {
+        color: #ffffff;
+        font-weight: 800;
+        font-size: 0.82rem;
+    }
+
+    .sq-count {
+        color: #ffffff;
+        font-size: 0.82rem;
+        font-weight: 750;
+        text-align: right;
+        font-variant-numeric: tabular-nums;
+    }
+
+    .sq-count small {
+        display: block;
+        color: #ffb35c;
+        font-size: 0.66rem;
+        font-weight: 650;
+    }
+
+    .sq-track {
+        height: 14px;
+        overflow: hidden;
+        border-radius: 999px;
+        background: #0c2235;
+    }
+
+    .sq-track.is-thin {
+        height: 8px;
+    }
+
+    .sq-fill {
+        display: block;
+        width: calc(var(--w) * 100%);
+        height: 100%;
+        border-radius: inherit;
+        background: linear-gradient(90deg, #1fb88c, #26d5a2);
+        transform: scaleX(0);
+        transform-origin: left center;
+        transition: transform 0.85s cubic-bezier(0.2, 0.7, 0.2, 1);
+    }
+
+    .sq-bars .sq-fill {
+        background: linear-gradient(90deg, #168dff, #65baff);
+    }
+
+    .sq-track.is-orange .sq-fill {
+        background: linear-gradient(90deg, #ff8a00, #ffb35c);
+    }
+
+    .sq-panel.is-shown .sq-fill {
+        transform: scaleX(1);
+    }
+
+    .sq-years li:nth-child(2) .sq-fill,
+    .sq-bars li:nth-child(2) .sq-fill { transition-delay: 0.05s; }
+    .sq-years li:nth-child(3) .sq-fill,
+    .sq-bars li:nth-child(3) .sq-fill { transition-delay: 0.1s; }
+    .sq-years li:nth-child(4) .sq-fill,
+    .sq-bars li:nth-child(4) .sq-fill { transition-delay: 0.15s; }
+    .sq-years li:nth-child(5) .sq-fill,
+    .sq-bars li:nth-child(5) .sq-fill { transition-delay: 0.2s; }
+    .sq-years li:nth-child(6) .sq-fill,
+    .sq-bars li:nth-child(n + 6) .sq-fill { transition-delay: 0.25s; }
+
+    .sq-bars li {
+        display: grid;
+        grid-template-columns: minmax(0, 11rem) minmax(0, 1fr) 2.2rem;
+        gap: 0.75rem;
+        align-items: center;
+        color: #c7d5e1;
+        font-size: 0.78rem;
+    }
+
+    .sq-bars strong {
+        color: #ffffff;
+        text-align: right;
+        font-variant-numeric: tabular-nums;
+    }
+
+    .sq-ratings {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0.75rem;
+    }
+
+    .sq-ratings li {
+        display: grid;
+        gap: 0.35rem;
+        padding: 0.9rem;
+        border: 1px solid #172f45;
+        border-radius: 11px;
+        background: rgba(4, 14, 25, 0.6);
+    }
+
+    .sq-rating-top {
+        display: flex;
+        justify-content: space-between;
+        gap: 0.5rem;
+        color: #c7d5e1;
+        font-size: 0.8rem;
+    }
+
+    .sq-rating-top strong {
+        color: #ffffff;
+        font-size: 1.1rem;
+    }
+
+    .sq-rating-top small {
+        color: #71869a;
+        font-size: 0.7rem;
+    }
+
+    .sq-stars {
+        position: relative;
+        width: max-content;
+        color: #1d3b57;
+        font-size: 1.15rem;
+        letter-spacing: 0.12em;
+        line-height: 1;
+    }
+
+    .sq-stars-fill {
+        position: absolute;
+        inset: 0;
+        overflow: hidden;
+        width: 0;
+        color: #ffb347;
+        white-space: nowrap;
+        transition: width 1s cubic-bezier(0.2, 0.7, 0.2, 1);
+    }
+
+    .sq-panel.is-shown .sq-stars-fill {
+        width: calc(var(--r) * 100%);
+    }
+
+    .sq-ratings small {
+        color: #71869a;
+        font-size: 0.7rem;
+    }
+
+    .sq-note {
+        margin: 1rem 0 0;
+        color: #8fa3b6;
+        font-size: 0.76rem;
+        line-height: 1.55;
+    }
+
+    @media (max-width: 560px) {
+        .sq-lead-stat {
+            grid-template-columns: minmax(0, 1fr);
+            gap: 0.4rem;
+        }
+
+        .sq-tabs button {
+            flex-basis: calc(50% - 0.25rem);
+        }
+
+        .sq-bars li {
+            grid-template-columns: minmax(0, 1fr) 2.2rem;
+            gap: 0.3rem 0.75rem;
+        }
+
+        .sq-bars li .sq-track {
+            grid-column: 1 / -1;
+            grid-row: 2;
+        }
+
+        .sq-ratings {
+            grid-template-columns: minmax(0, 1fr);
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .sq-panel,
+        .sq-fill,
+        .sq-stars-fill,
+        .sq-tabs button {
+            animation: none;
+            transition: none;
+        }
+    }
+</style>

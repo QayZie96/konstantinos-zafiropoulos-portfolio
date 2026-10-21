@@ -9,16 +9,17 @@ import SiteFooter from "../../components/SiteFooter.astro";
 import SeoHead from "../../components/SeoHead.astro";
 import SkillLinks from "../../components/SkillLinks.astro";
 import RocketeersPerformance from "../../components/RocketeersPerformance.astro";
+import RocketeersExplorer from "../../components/RocketeersExplorer.astro";
 import {
   rocketeersFeedbackMetrics,
   rocketeersHeadlineMetrics,
 } from "../../data/rocketeers";
 
 const title =
-  "Rocketeers | Marketplace Business & Operations | Konstantinos Zafiropoulos";
+  "Rocketeers | Marketplace Business & Operations | Konstantinos Zafeiropoulos";
 
 const description =
-  "Overview of Rocketeers — a digital marketplace business and the operational systems built around it.";
+  "Overview of Rocketeers, a digital marketplace business and the operational systems built around it.";
 
 const metrics = rocketeersHeadlineMetrics;
 ---
@@ -139,6 +140,20 @@ const metrics = rocketeersHeadlineMetrics;
         </div>
       </section>
 
+      <!-- =================================================
+                 INTERACTIVE DATA EXPLORER
+                 ================================================= -->
+
+      <section class="case-section explorer-section" id="explorer">
+        <div class="section-label">
+          <p class="eyebrow">Data explorer</p>
+        </div>
+
+        <div class="section-content">
+          <RocketeersExplorer />
+        </div>
+      </section>
+
       <!-- =====================================================
      PROJECT VISUALS — HISTORICAL STOREFRONT
      ===================================================== -->
@@ -202,7 +217,7 @@ const metrics = rocketeersHeadlineMetrics;
               <h3>Business & Marketplace Operations</h3>
 
               <p>
-                How the business was planned, launched, operated, and scaled —
+                How the business was planned, launched, operated, and scaled,
                 including sourcing, listings, pricing, inventory, fulfilment,
                 customer support, disputes, and seller performance.
               </p>
@@ -1567,5 +1582,18 @@ const metrics = rocketeersHeadlineMetrics;
     justify-content: center;
     text-align: center;
     flex-wrap: wrap;
+  }
+  /* =========================================================
+       INTERACTIVE EXPLORER — FULL-WIDTH SECTION
+       ========================================================= */
+
+  .explorer-section {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1.25rem;
+  }
+
+  .explorer-section .section-content {
+    max-width: none;
+    min-width: 0;
   }
 </style>

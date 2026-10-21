@@ -10,10 +10,36 @@ import SkillLinks from "../components/SkillLinks.astro";
 import SkillTagList from "../components/SkillTagList.astro";
 
 const title =
-    "Konstantinos Zafiropoulos | Marketplace Operations, Automation, Data & Web";
+    "Konstantinos Zafeiropoulos | Marketplace Operations, Automation, Data & Web";
+
+const toolbelt = [
+    "Excel & VBA",
+    "Python",
+    "SQL",
+    "PostgreSQL",
+    "n8n",
+    "Google Apps Script",
+    "Power BI",
+    "DuckDB",
+    "WooCommerce",
+    "WordPress",
+    "Gemini API",
+    "Astro",
+    "Git & GitHub",
+];
+
+// Decorative card art for the maths lab (computed at build time).
+const mathOrbitPath = Array.from({ length: 361 }, (_, i) => {
+    const t = (i / 360) * Math.PI * 2;
+    const x = 100 + 82 * Math.sin(3 * t + Math.PI / 2);
+    const y = 60 + 46 * Math.sin(4 * t);
+    return `${i === 0 ? "M" : "L"}${x.toFixed(1)} ${y.toFixed(1)}`;
+}).join(" ");
+
+const mandalaPetals = Array.from({ length: 12 }, (_, i) => i * 30);
 
 const description =
-    "Portfolio of Konstantinos Zafiropoulos — marketplace operations, AI workflow implementation, Excel/VBA, data analysis, and web development.";
+    "Portfolio of Konstantinos Zafeiropoulos: marketplace and e-commerce operations, pricing systems, Excel/VBA, data analysis, and process automation.";
 ---
 
 <html lang="en">
@@ -73,6 +99,15 @@ const description =
                 </div>
             </section>
 
+            <div class="toolbelt" aria-label="Tools I work with">
+                <ul class="toolbelt-track">
+                    {toolbelt.map((tool) => <li>{tool}</li>)}
+                </ul>
+                <ul class="toolbelt-track" aria-hidden="true">
+                    {toolbelt.map((tool) => <li>{tool}</li>)}
+                </ul>
+            </div>
+
             <!-- =================================================
                  PROJECTS
                  ================================================= -->
@@ -92,8 +127,8 @@ const description =
                     <h2 id="projects-title">Featured Projects</h2>
 
                     <p class="section-intro">
-                        Real projects, real operating experience, and practical
-                        systems built around actual problems.
+                        A marketplace business I ran for seven years, and the
+                        systems I have built since.
                     </p>
                 </div>
 
@@ -228,7 +263,7 @@ const description =
 
                             <p>
                                 How Rocketeers was planned, launched, operated,
-                                and scaled — covering marketplace strategy,
+                                and scaled, covering marketplace strategy,
                                 sourcing, listings, pricing, inventory,
                                 fulfilment, customer experience, disputes, and
                                 seller performance.
@@ -359,12 +394,11 @@ const description =
                             </p>
 
                             <div class="metrics">
-                                <div><strong>$55.6K</strong><span>historical eBay turnover</span></div>
+                                <div><strong>$55.6K</strong><span>eBay turnover, 2017–2019</span></div>
                                 <div><strong>4,154</strong><span>historical orders</span></div>
                                 <div><strong>25</strong><span>populated months</span></div>
                             </div>
 
-                            <!-- Historical financial totals are covered on the case study, not presented as lifetime figures. -->
 
                             <SkillTagList
                                 skills={[
@@ -398,28 +432,139 @@ const description =
                             Practical systems beyond Rocketeers.
                         </h3>
 
-                        <p>Web development, data, AI, and automation.</p>
+                        <p>Automation, e-commerce, data, and a little maths.</p>
                     </div>
 
+                    <div class="track-filter" role="group" aria-label="Filter projects by area">
+                        <button type="button" aria-pressed="true" data-track-filter="all">All</button>
+                        <button type="button" aria-pressed="false" data-track-filter="automation">Automation</button>
+                        <button type="button" aria-pressed="false" data-track-filter="ecommerce">E-commerce & web</button>
+                        <button type="button" aria-pressed="false" data-track-filter="data">Data & analytics</button>
+                        <button type="button" aria-pressed="false" data-track-filter="lab">Maths lab</button>
+                    </div>
+                    <p class="visually-hidden" aria-live="polite" data-track-status></p>
+
                     <div class="other-project-grid">
+                        <!-- =====================================
+                             AI JOB DISCOVERY & OUTREACH AUTOMATION
+                             ===================================== -->
+
+                        <article class="other-project-card project-link" data-track="automation">
+                            <a
+                                class="card-cover-link"
+                                href="/projects/ai-job-outreach/"
+                                aria-label="View the AI Job Discovery and Outreach Automation case study"
+                            ></a>
+                            <div class="project-visual ai-visual">
+                                <svg class="funnel-icon" viewBox="0 0 120 100" aria-hidden="true">
+                                    <path class="funnel-shape" d="M14 14 H106 L72 52 V82 L48 92 V52 Z" />
+                                    <circle class="funnel-drop d1" cx="34" cy="6" r="4" />
+                                    <circle class="funnel-drop d2" cx="60" cy="6" r="4" />
+                                    <circle class="funnel-drop d3" cx="86" cy="6" r="4" />
+                                    <circle class="funnel-out" cx="60" cy="96" r="4" />
+                                </svg>
+                            </div>
+
+                            <div class="other-project-body">
+                                <h4>
+                                    <a
+                                        class="card-title-link"
+                                        href="/projects/ai-job-outreach/"
+                                    >
+                                        AI Job Discovery & Outreach Automation
+                                        <span
+                                            class="inline-arrow blue"
+                                            aria-hidden="true">→</span
+                                        >
+                                    </a>
+                                </h4>
+
+                                <p>
+                                    From a Python and Gemini job-API prototype
+                                    to a nine-ATS Google Apps Script job funnel
+                                    with deduplication, conservative screening,
+                                    and human review batches.
+                                </p>
+
+                                <SkillTagList
+                                    skills={[
+                                        "google-apps-script",
+                                        "python",
+                                        "deduplication",
+                                        "ai-workflow-implementation",
+                                    ]}
+                                />
+
+                                <a
+                                    class="view-link"
+                                    href="/projects/ai-job-outreach/"
+                                    >View case study ↗</a
+                                >
+                            </div>
+                        </article>
+
+                        <!-- =====================================
+                             MARKETPLACE OPPORTUNITY INTELLIGENCE
+                             ===================================== -->
+
+                        <article class="other-project-card project-link" data-track="automation">
+                            <a
+                                class="card-cover-link"
+                                href="/projects/rocketeers-intelligence/"
+                                aria-label="View the Marketplace Opportunity Intelligence case study"
+                            ></a>
+                            <div class="project-visual intel-visual">
+                                <svg class="intel-graph" viewBox="0 0 160 100" aria-hidden="true">
+                                    <path d="M22 50 L70 22 L70 78 Z M70 22 L132 50 L70 78" />
+                                    <circle cx="22" cy="50" r="9" />
+                                    <circle cx="70" cy="22" r="9" />
+                                    <circle cx="70" cy="78" r="9" />
+                                    <rect x="118" y="36" width="28" height="28" rx="6" />
+                                </svg>
+                            </div>
+
+                            <div class="other-project-body">
+                                <h4>
+                                    <a class="card-title-link" href="/projects/rocketeers-intelligence/">
+                                        Marketplace Opportunity Intelligence
+                                        <span class="inline-arrow blue" aria-hidden="true">→</span>
+                                    </a>
+                                </h4>
+
+                                <p>
+                                    An n8n and PostgreSQL pipeline that turns
+                                    public-domain museum archives into
+                                    reviewable product-niche evidence, with
+                                    idempotent ingestion and append-only human
+                                    reviews.
+                                </p>
+
+                                <SkillTagList
+                                    skills={["workflow-automation", "sql", "rest-api-integration", "human-oversight"]}
+                                />
+
+                                <a class="view-link" href="/projects/rocketeers-intelligence/">View case study ↗</a>
+                            </div>
+                        </article>
+
                         <!-- =====================================
                              RAME
                              ===================================== -->
 
-                        <article class="other-project-card project-link">
+                        <article class="other-project-card project-link" data-track="ecommerce">
                             <a
                                 class="card-cover-link"
                                 href="/projects/rame/"
                                 aria-label="View the RAMÉ Creative Space case study"
                             ></a>
                             <div class="project-visual rame-visual">
-                                <div class="storefront-icon" aria-hidden="true">
-                                    <span class="storefront-awning">
-                                        <i></i>
-                                        <i></i>
-                                        <i></i>
-                                    </span>
-                                    <span class="storefront-base"></span>
+                                <div class="rame-mini" aria-hidden="true">
+                                    <span class="rame-mini-word">RAMÉ</span>
+                                    <span class="rame-mini-pill">Creative Space</span>
+                                    <svg class="rame-mini-star" viewBox="0 0 100 100">
+                                        <path d="M50 4 L60 40 L96 50 L60 60 L50 96 L40 60 L4 50 L40 40 Z" />
+                                    </svg>
+                                    <span class="rame-mini-dot"></span>
                                 </div>
                             </div>
 
@@ -440,7 +585,7 @@ const description =
                                 <p>
                                     An in-progress client store built with
                                     WordPress, WooCommerce, Elementor, and
-                                    targeted CSS—covering responsive pages,
+                                    targeted CSS, covering responsive pages,
                                     custom-order inquiries, side-cart styling,
                                     and practical site maintenance.
                                 </p>
@@ -461,57 +606,43 @@ const description =
                         </article>
 
                         <!-- =====================================
-                             AI JOB DISCOVERY & OUTREACH AUTOMATION
+                             CHESS ANALYTICS
                              ===================================== -->
 
-                        <article class="other-project-card project-link">
+                        <article class="other-project-card project-link" data-track="data">
                             <a
                                 class="card-cover-link"
-                                href="/projects/ai-job-outreach/"
-                                aria-label="View the AI Job Discovery and Outreach Automation case study"
+                                href="/projects/chess-analytics/"
+                                aria-label="View the Chess Analytics case study"
                             ></a>
-                            <div class="project-visual ai-visual">
-                                <div class="ai-circle" aria-hidden="true">
-                                    AI
+
+                            <div class="project-visual data-visual">
+                                <div class="chess-icon" aria-hidden="true">
+                                    <span class="chess-ring"></span>
+                                    <span class="chess-knight">♞</span>
                                 </div>
                             </div>
 
                             <div class="other-project-body">
                                 <h4>
-                                    <a
-                                        class="card-title-link"
-                                        href="/projects/ai-job-outreach/"
-                                    >
-                                        AI Job Discovery & Outreach Automation
-                                        <span
-                                            class="inline-arrow blue"
-                                            aria-hidden="true">→</span
-                                        >
+                                    <a class="card-title-link" href="/projects/chess-analytics/">
+                                        Chess Analytics
+                                        <span class="inline-arrow blue" aria-hidden="true">→</span>
                                     </a>
                                 </h4>
 
                                 <p>
-                                    An end-to-end Python workflow combining
-                                    three job APIs with Gemini-based relevance
-                                    assessment, structured prompts, reusable
-                                    validation, and human-reviewed outreach
-                                    drafts in Google Sheets.
+                                    Analysis of a 500,000-game Lichess sample,
+                                    exploring rating upsets and opening
+                                    performance through Python, DuckDB SQL,
+                                    Power BI, and interactive web dashboards.
                                 </p>
 
                                 <SkillTagList
-                                    skills={[
-                                        "python",
-                                        "google-gemini",
-                                        "prompt-design",
-                                        "ai-workflow-implementation",
-                                    ]}
+                                    skills={["python", "sql", "power-bi", "data-visualisation"]}
                                 />
 
-                                <a
-                                    class="view-link"
-                                    href="/projects/ai-job-outreach/"
-                                    >View case study ↗</a
-                                >
+                                <a class="view-link" href="/projects/chess-analytics/">View case study ↗</a>
                             </div>
                         </article>
 
@@ -519,14 +650,19 @@ const description =
                              GYM PROGRESS SYSTEM
                              ===================================== -->
 
-                        <article class="other-project-card project-link">
+                        <article class="other-project-card project-link" data-track="data">
                             <a
                                 class="card-cover-link"
                                 href="/projects/gym-progress/"
                                 aria-label="View the Gym Progress System case study"
                             ></a>
                             <div class="project-visual gym-visual">
-                                <span aria-hidden="true"> KG </span>
+                                <svg class="gym-icon" viewBox="0 0 140 90" aria-hidden="true">
+                                    <path class="gym-grid" d="M10 80 H130 M10 55 H130 M10 30 H130" />
+                                    <polyline class="gym-line" points="12,74 32,68 50,70 68,54 86,50 104,36 126,22" />
+                                    <circle class="gym-dot" cx="126" cy="22" r="5" />
+                                    <text class="gym-label" x="12" y="20">kg</text>
+                                </svg>
                             </div>
 
                             <div class="other-project-body">
@@ -564,44 +700,35 @@ const description =
                                 >
                             </div>
                         </article>
+                    </div>
 
-                        <!-- =====================================
-                             CHESS ANALYTICS
-                             ===================================== -->
+                    <div class="lab-strip" data-track="lab">
+                        <p class="lab-label">Maths lab · generative side projects</p>
 
-                        <article class="other-project-card project-link">
-                            <a
-                                class="card-cover-link"
-                                href="/projects/chess-analytics/"
-                                aria-label="View the Chess Analytics case study"
-                            ></a>
+                        <div class="lab-grid">
+                            <a class="lab-card math-card" href="/projects/math-wallpapers/">
+                                <svg class="math-orbit" viewBox="0 0 200 120" aria-hidden="true">
+                                    <path d={mathOrbitPath} />
+                                </svg>
+                                <span class="lab-copy">
+                                    <strong>Mathematical OLED Wallpapers <span aria-hidden="true">→</span></strong>
+                                    <span>Volume 1: six true-black fractal wallpapers in 4K, built with a tested Python engine and JWildfire. Run the engines live in your browser.</span>
+                                </span>
+                            </a>
 
-                            <div class="project-visual data-visual">
-                                <div class="chess-icon" aria-hidden="true">♞</div>
-                            </div>
-
-                            <div class="other-project-body">
-                                <h4>
-                                    <a class="card-title-link" href="/projects/chess-analytics/">
-                                        Chess Analytics
-                                        <span class="inline-arrow blue" aria-hidden="true">→</span>
-                                    </a>
-                                </h4>
-
-                                <p>
-                                    Analysis of a 500,000-game Lichess sample,
-                                    exploring rating upsets and opening
-                                    performance through Python, DuckDB SQL,
-                                    Power BI, and interactive web dashboards.
-                                </p>
-
-                                <SkillTagList
-                                    skills={["python", "sql", "power-bi", "data-visualisation"]}
-                                />
-
-                                <a class="view-link" href="/projects/chess-analytics/">View case study ↗</a>
-                            </div>
-                        </article>
+                            <a class="lab-card mandala-card" href="/projects/mandala-generator/">
+                                <svg class="mandala-mini" viewBox="-60 -60 120 120" aria-hidden="true">
+                                    {mandalaPetals.map((angle) => (
+                                        <ellipse cx="0" cy="-28" rx="9" ry="24" transform={`rotate(${angle})`} />
+                                    ))}
+                                    <circle r="12" />
+                                </svg>
+                                <span class="lab-copy">
+                                    <strong>Mandala & Coloring Puzzle Generator <span aria-hidden="true">→</span></strong>
+                                    <span>Printable, reproducible mandala colouring pages from polar geometry. Colour the real SVGs or generate a new one.</span>
+                                </span>
+                            </a>
+                        </div>
                     </div>
                 </section>
             </section>
@@ -638,7 +765,7 @@ const description =
                     </div>
                     <div>
                         <strong>Current focus</strong>
-                        <span>Python, AI-assisted workflows, data, and the web.</span>
+                        <span>Workflow automation, data, and e-commerce operations.</span>
                     </div>
                 </div>
 <p>
@@ -667,12 +794,12 @@ const description =
                 </p>
 
                 <p>
-                    In my AI automation project, I designed a workflow that uses
-                    a language model for defined tasks, connects it to job data
-                    and spreadsheet outputs, and keeps final outreach decisions
-                    with a human reviewer. I focus on making AI useful in a
-                    repeatable process rather than treating a generated answer
-                    as a finished solution.
+                    My recent automation work runs on Google Apps Script, n8n,
+                    and PostgreSQL: a job funnel that reads nine applicant
+                    tracking systems, and a pipeline that turns public museum
+                    archives into reviewable product evidence. Language models
+                    handle clearly defined steps, deduplication and validation
+                    keep the data clean, and people make the final calls.
                 </p>
 
                 <!-- Professional focus areas -->
@@ -737,10 +864,10 @@ const description =
                                 >AI implementation &amp; automation</a>
                         </h3>
                         <p>
-                            Applying LLMs to defined workflow steps, prompt
-                            design, structured outputs, API integration,
-                            validation, caching, and deliberate human review
-                            inside a reliable end-to-end process.
+                            Apps Script and n8n pipelines, API integration,
+                            deduplication, validation, and language models used
+                            for defined steps, with people making the final
+                            calls.
                         </p>
                         <a href="/projects/ai-job-outreach/"
                             >See AI automation ↗</a
@@ -752,11 +879,9 @@ const description =
                                 >Python, data &amp; web</a>
                         </h3>
                         <p>
-                            Python scripting, API data handling, SQLite caching,
-                            Google Sheets integration, WordPress/WooCommerce
-                            development, and building a responsive Astro
-                            portfolio, plus Python, SQL, Power BI, and
-                            interactive analysis through Chess Analytics.
+                            Python, SQL and PostgreSQL, API data handling,
+                            Power BI dashboards, WordPress and WooCommerce
+                            builds, and this responsive Astro site.
                         </p>
                         <a href="/projects/chess-analytics/">See Chess Analytics ↗</a>
                     </article>
@@ -782,9 +907,9 @@ const description =
                 <h2 id="contact-title">Let’s connect.</h2>
 
                 <p class="section-lead">
-                    Open to marketplace and business operations, analyst roles,
-                    AI workflow implementation, automation, and
-                    technical-operations roles.
+                    Open to operations, e-commerce and marketplace operations,
+                    and implementation roles, in Greece, remote, or with EU
+                    relocation.
                 </p>
 
                 <p>
@@ -808,6 +933,16 @@ const description =
                         LinkedIn
                         <span aria-hidden="true">↗</span>
                     </a>
+
+                    <a
+                        class="text-link"
+                        href="https://github.com/QayZie96"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
+                        GitHub
+                        <span aria-hidden="true">↗</span>
+                    </a>
                 </div>
             </section>
         </main>
@@ -815,6 +950,70 @@ const description =
         <SiteFooter />
     </body>
 </html>
+
+<script>
+    // Project track filter: shows one area of work at a time.
+    const filterButtons = document.querySelectorAll<HTMLButtonElement>("[data-track-filter]");
+    const projectGrid = document.querySelector<HTMLElement>(".other-project-grid");
+    const trackItems = document.querySelectorAll<HTMLElement>(".other-project-grid > [data-track], .lab-strip[data-track]");
+    const trackStatus = document.querySelector<HTMLElement>("[data-track-status]");
+
+    for (const button of filterButtons) {
+        button.addEventListener("click", () => {
+            const track = button.dataset.trackFilter ?? "all";
+            let shown = 0;
+
+            for (const other of filterButtons) {
+                other.setAttribute("aria-pressed", String(other === button));
+            }
+
+            for (const item of trackItems) {
+                const visible = track === "all" || item.dataset.track === track;
+                const lab = item.classList.contains("lab-strip");
+                item.hidden = !visible;
+                item.classList.remove("is-entering");
+                if (visible) {
+                    void item.offsetWidth;
+                    item.classList.add("is-entering");
+                    shown += lab ? item.querySelectorAll(".lab-card").length : 1;
+                }
+            }
+
+            projectGrid?.classList.toggle("is-filtered", track !== "all");
+            if (projectGrid) projectGrid.hidden = track === "lab";
+            if (trackStatus) trackStatus.textContent = `${shown} projects shown`;
+        });
+    }
+
+    // Count the hero figures up from zero; the final text is already in the HTML.
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    if (!reduceMotion) {
+        for (const figure of document.querySelectorAll<HTMLElement>(".proof-strip strong")) {
+            const finalText = figure.textContent ?? "";
+            const match = finalText.match(/^([^\d]*)([\d.]+)(.*)$/);
+            if (!match) continue;
+
+            const [, prefix, numberText, suffix] = match;
+            const target = Number(numberText);
+            const decimals = numberText.split(".")[1]?.length ?? 0;
+            const duration = 1300;
+            const start = performance.now();
+
+            figure.setAttribute("aria-label", finalText);
+
+            const tick = (now: number) => {
+                const progress = Math.min((now - start) / duration, 1);
+                const eased = 1 - Math.pow(1 - progress, 3);
+                figure.textContent =
+                    progress < 1 ? `${prefix}${(target * eased).toFixed(decimals)}${suffix}` : finalText;
+                if (progress < 1) requestAnimationFrame(tick);
+            };
+
+            requestAnimationFrame(tick);
+        }
+    }
+</script>
 
 <style>
     /* =========================================================
@@ -1048,10 +1247,30 @@ const description =
         justify-items: center;
         align-items: center;
 
+        position: relative;
+        isolation: isolate;
         min-height: auto;
-        padding: clamp(5rem, 10vw, 8rem) 0;
+        padding: clamp(5rem, 10vw, 8rem) 0 clamp(2.5rem, 5vw, 3.5rem);
 
         text-align: center;
+    }
+
+    .hero::before {
+        content: "";
+        position: absolute;
+        inset: 8% 10%;
+        z-index: -1;
+        background:
+            radial-gradient(circle at 30% 40%, rgba(22, 141, 255, 0.16), transparent 55%),
+            radial-gradient(circle at 72% 62%, rgba(255, 138, 0, 0.08), transparent 50%);
+        filter: blur(40px);
+        animation: hero-glow 14s ease-in-out infinite alternate;
+        pointer-events: none;
+    }
+
+    @keyframes hero-glow {
+        from { transform: translate3d(-4%, -2%, 0) scale(1); }
+        to { transform: translate3d(4%, 3%, 0) scale(1.08); }
     }
 
     .hero-copy {
@@ -1065,7 +1284,18 @@ const description =
     }
 
     .hero-accent {
+        background: linear-gradient(90deg, var(--blue), #65baff, #9fd4ff, #65baff, var(--blue));
+        background-size: 250% 100%;
+        -webkit-background-clip: text;
+        background-clip: text;
         color: var(--blue);
+        -webkit-text-fill-color: transparent;
+        animation: accent-shimmer 7s ease-in-out infinite;
+    }
+
+    @keyframes accent-shimmer {
+        0%, 100% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
     }
 
     .intro {
@@ -1677,8 +1907,266 @@ const description =
     }
     .other-project-grid {
         display: grid;
-        grid-template-columns: repeat(4, minmax(0, 1fr));
+        grid-template-columns: repeat(6, minmax(0, 1fr));
         gap: 1rem;
+    }
+
+    /* Automation work leads as two wide cards; the rest sit three across. */
+    .other-project-grid > .other-project-card { grid-column: span 2; }
+    .other-project-grid > [data-track="automation"] { grid-column: span 3; }
+    .other-project-grid.is-filtered > .other-project-card { grid-column: span 2; }
+
+    .other-project-card[hidden],
+    .lab-strip[hidden] {
+        display: none;
+    }
+
+    .other-project-card.is-entering,
+    .lab-strip.is-entering {
+        animation: card-enter 0.45s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+    }
+
+    @keyframes card-enter {
+        from { opacity: 0; transform: translateY(14px) scale(0.98); }
+        to { opacity: 1; transform: none; }
+    }
+
+    /* =========================================================
+       TOOLBELT MARQUEE
+       ========================================================= */
+
+    .toolbelt {
+        display: flex;
+        align-items: center;
+        overflow: hidden;
+        padding: 1.1rem 0;
+        border-top: 1px solid var(--border);
+        mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent);
+    }
+
+    .toolbelt-track {
+        display: flex;
+        flex: 0 0 auto;
+        gap: 2.2rem;
+        margin: 0;
+        padding: 0 1.1rem;
+        list-style: none;
+        animation: toolbelt-scroll 38s linear infinite;
+    }
+
+    .toolbelt:hover .toolbelt-track {
+        animation-play-state: paused;
+    }
+
+    .toolbelt li {
+        color: var(--muted);
+        font-size: 0.86rem;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    .toolbelt li::before {
+        content: "◆";
+        margin-right: 0.7rem;
+        color: var(--blue);
+        font-size: 0.6rem;
+        vertical-align: 0.15em;
+    }
+
+    @keyframes toolbelt-scroll {
+        to { transform: translateX(-100%); }
+    }
+
+    /* =========================================================
+       PROJECT TRACK FILTER
+       ========================================================= */
+
+    .track-filter {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 0.5rem;
+        margin: 0 auto 2rem;
+    }
+
+    .track-filter button {
+        min-height: 40px;
+        padding: 0 1rem;
+        border: 1px solid var(--border);
+        border-radius: 999px;
+        background: rgba(9, 27, 43, 0.7);
+        color: var(--muted);
+        font: inherit;
+        font-size: 0.82rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease, transform 0.2s ease;
+    }
+
+    .track-filter button:hover {
+        color: #ffffff;
+        border-color: #2a5d84;
+        transform: translateY(-1px);
+    }
+
+    .track-filter button[aria-pressed="true"] {
+        border-color: var(--blue);
+        background: var(--blue);
+        color: #ffffff;
+    }
+
+    .track-filter button:focus-visible {
+        outline: 2px solid var(--orange);
+        outline-offset: 3px;
+    }
+
+    /* =========================================================
+       INTELLIGENCE CARD VISUAL
+       ========================================================= */
+
+    .intel-graph {
+        width: 150px;
+        overflow: visible;
+    }
+
+    .intel-graph path {
+        fill: none;
+        stroke: #2c6a9c;
+        stroke-width: 2;
+        stroke-dasharray: 6 6;
+        animation: intel-flow 2.4s linear infinite;
+    }
+
+    .intel-graph circle {
+        fill: #0b2338;
+        stroke: var(--blue-light);
+        stroke-width: 2.5;
+    }
+
+    .intel-graph rect {
+        fill: rgba(255, 138, 0, 0.14);
+        stroke: var(--orange);
+        stroke-width: 2.5;
+    }
+
+    @keyframes intel-flow {
+        to { stroke-dashoffset: -24; }
+    }
+
+    /* =========================================================
+       MATHS LAB STRIP
+       ========================================================= */
+
+    .lab-strip {
+        margin-top: 1.4rem;
+    }
+
+    .lab-label {
+        margin: 0 0 0.8rem;
+        color: var(--subtle);
+        font-size: 0.72rem;
+        font-weight: 800;
+        letter-spacing: 0.1em;
+        text-align: left;
+        text-transform: uppercase;
+    }
+
+    .lab-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 1rem;
+    }
+
+    .lab-card {
+        display: flex;
+        align-items: center;
+        gap: 1.2rem;
+        min-width: 0;
+        padding: 1rem 1.2rem;
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        background: var(--bg-card);
+        color: inherit;
+        text-align: left;
+        text-decoration: none;
+        transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+    }
+
+    .lab-card:hover {
+        transform: translateY(-3px);
+        border-color: #2a5d84;
+        box-shadow: 0 14px 32px rgba(0, 0, 0, 0.3);
+    }
+
+    .lab-card:focus-visible {
+        outline: 3px solid var(--orange);
+        outline-offset: 3px;
+    }
+
+    .lab-card svg {
+        flex: 0 0 auto;
+        width: 96px;
+        height: 72px;
+        overflow: visible;
+    }
+
+    .math-orbit {
+        border-radius: 10px;
+        background: #000000;
+    }
+
+    .math-orbit path {
+        fill: none;
+        stroke: #b48cff;
+        stroke-width: 1.4;
+        stroke-dasharray: 1400;
+        stroke-dashoffset: 1400;
+        filter: drop-shadow(0 0 3px rgba(180, 140, 255, 0.8));
+        animation: orbit-draw 6s ease-in-out infinite alternate;
+    }
+
+    @keyframes orbit-draw {
+        to { stroke-dashoffset: 0; }
+    }
+
+    .mandala-mini ellipse,
+    .mandala-mini circle {
+        fill: rgba(255, 252, 239, 0.04);
+        stroke: #e9e2cf;
+        stroke-width: 1.6;
+        transition: fill 0.3s ease;
+    }
+
+    .mandala-mini {
+        animation: mandala-turn 30s linear infinite;
+    }
+
+    .mandala-card:hover .mandala-mini ellipse:nth-child(odd) { fill: #f4a7cf; }
+    .mandala-card:hover .mandala-mini ellipse:nth-child(even) { fill: #65baff; }
+    .mandala-card:hover .mandala-mini circle { fill: #ff8a00; }
+
+    @keyframes mandala-turn {
+        to { transform: rotate(360deg); }
+    }
+
+    .lab-copy {
+        display: flex;
+        flex-direction: column;
+        gap: 0.35rem;
+        min-width: 0;
+    }
+
+    .lab-copy strong {
+        color: #ffffff;
+        font-size: 0.98rem;
+    }
+
+    .lab-copy strong span { color: var(--blue); }
+
+    .lab-copy > span {
+        color: var(--muted);
+        font-size: 0.84rem;
+        line-height: 1.55;
     }
 
     .other-project-card {
@@ -1698,9 +2186,10 @@ const description =
         text-align: left;
 
         transition:
-            transform 0.2s ease,
-            border-color 0.2s ease,
-            background 0.2s ease;
+            transform 0.25s ease,
+            border-color 0.25s ease,
+            background 0.25s ease,
+            box-shadow 0.25s ease;
     }
 
     .other-project-card:hover {
@@ -1710,6 +2199,10 @@ const description =
     .project-link:hover {
         transform: translateY(-4px);
         border-color: #2a5d84;
+        box-shadow:
+            0 18px 40px rgba(0, 0, 0, 0.35),
+            0 0 0 1px rgba(22, 141, 255, 0.18),
+            0 0 32px rgba(22, 141, 255, 0.12);
     }
 
     .card-cover-link {
@@ -1753,14 +2246,83 @@ const description =
             #071523;
     }
 
-    .storefront-icon {
+    /* RAMÉ card keeps the client's wordmark on the shared dark panel */
+
+    .rame-mini {
         position: relative;
-        width: 76px;
-        height: 72px;
-        color: var(--blue);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        transition: transform 0.35s cubic-bezier(0.3, 1.5, 0.5, 1);
+    }
+
+    .rame-mini-word {
+        color: #f4a7cf;
+        font-family: "Arial Rounded MT Bold", "Arial Black", system-ui, sans-serif;
+        font-size: 3.1rem;
+        font-weight: 900;
+        line-height: 1;
+        letter-spacing: 0.02em;
+        -webkit-text-stroke: 2px #1c1416;
+        paint-order: stroke fill;
+        text-shadow: 3px 3px 0 #000000, 0 0 24px rgba(244, 167, 207, 0.25);
+    }
+
+    .rame-mini-pill {
+        margin-top: -0.2rem;
+        padding: 0.15rem 0.7rem;
+        border: 2px solid #1c1416;
+        border-radius: 999px;
+        background: #fffcef;
+        box-shadow: 2px 2px 0 #1c1416;
+        color: #2e9a2a;
+        font-size: 0.62rem;
+        font-weight: 900;
+        letter-spacing: 0.2em;
+        rotate: -3deg;
+    }
+
+    .rame-mini-star {
+        position: absolute;
+        top: -1.6rem;
+        right: -2.2rem;
+        width: 42px;
+        height: 42px;
+        overflow: visible;
+        transition: rotate 0.6s cubic-bezier(0.3, 1.5, 0.5, 1);
+    }
+
+    .rame-mini-star path {
+        fill: #fde84f;
+        stroke: #1c1416;
+        stroke-width: 5;
+        stroke-linejoin: round;
+    }
+
+    .rame-mini-dot {
+        position: absolute;
+        bottom: -0.9rem;
+        left: -1.4rem;
+        width: 20px;
+        height: 20px;
+        border: 2px solid #1c1416;
+        border-radius: 50%;
+        background: #cdb8f7;
+    }
+
+    .project-link:hover .rame-mini { transform: rotate(-3deg) scale(1.06); }
+    .project-link:hover .rame-mini-star { rotate: 180deg; }
+
+    .project-visual > :not(.rame-mini) {
+        transition: transform 0.35s cubic-bezier(0.3, 1.5, 0.5, 1);
+    }
+
+    .project-link:hover .project-visual > :not(.rame-mini) {
+        transform: scale(1.08) rotate(-4deg);
     }
 
     .chess-icon {
+        position: relative;
         display: grid;
         width: 76px;
         height: 76px;
@@ -1774,60 +2336,130 @@ const description =
         line-height: 1;
     }
 
-    .storefront-awning {
+    .chess-ring {
         position: absolute;
-        z-index: 1;
-        top: 8px;
-        left: 5px;
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        width: 66px;
-        height: 25px;
-        overflow: hidden;
-        border: 3px solid currentColor;
-        border-radius: 5px 5px 10px 10px;
+        inset: -9px;
+        border: 1.5px dashed rgba(101, 186, 255, 0.45);
+        border-radius: 50%;
+        animation: icon-spin 16s linear infinite;
     }
 
-    .storefront-awning i {
-        border-right: 3px solid currentColor;
-        background: rgba(22, 141, 255, 0.16);
+    .chess-knight {
+        display: inline-block;
+        animation: knight-hop 3.2s ease-in-out infinite;
     }
 
-    .storefront-awning i:last-child {
-        border-right: 0;
+    @keyframes knight-hop {
+        0%, 60%, 100% { transform: translate(0, 0) rotate(0deg); }
+        70% { transform: translate(3px, -9px) rotate(-8deg); }
+        82% { transform: translate(6px, 0) rotate(0deg); }
+        90% { transform: translate(3px, 0); }
     }
 
-    .storefront-base {
-        position: absolute;
-        right: 11px;
-        bottom: 5px;
-        left: 11px;
-        height: 43px;
-        border: 3px solid currentColor;
-        border-top: 0;
-        border-radius: 0 0 4px 4px;
+    @keyframes icon-spin {
+        to { transform: rotate(360deg); }
     }
 
-    .storefront-base::before,
-    .storefront-base::after {
-        content: "";
-        position: absolute;
-        bottom: 0;
-        border: 3px solid currentColor;
-        border-bottom: 0;
+    .funnel-icon {
+        width: 112px;
+        overflow: visible;
     }
 
-    .storefront-base::before {
-        top: 12px;
-        left: 7px;
-        width: 18px;
+    .funnel-shape {
+        fill: rgba(22, 141, 255, 0.08);
+        stroke: var(--blue-light);
+        stroke-width: 2.5;
+        stroke-linejoin: round;
     }
 
-    .storefront-base::after {
-        top: 12px;
-        right: 7px;
-        width: 10px;
-        background: rgba(22, 141, 255, 0.16);
+    .funnel-drop {
+        fill: var(--blue-light);
+        animation: funnel-drop 3s ease-in infinite;
+    }
+
+    .funnel-drop.d2 { animation-delay: 1s; }
+    .funnel-drop.d3 { animation-delay: 2s; }
+
+    .funnel-out {
+        fill: var(--orange);
+        animation: funnel-out 3s ease-out infinite;
+    }
+
+    @keyframes funnel-drop {
+        0% { opacity: 0; transform: translate(0, 0); }
+        15% { opacity: 1; }
+        55% { opacity: 1; transform: translate(0, 34px); }
+        70%, 100% { opacity: 0; transform: translate(0, 40px); }
+    }
+
+    .funnel-drop.d1 { animation-name: funnel-drop-left; }
+    .funnel-drop.d3 { animation-name: funnel-drop-right; }
+
+    @keyframes funnel-drop-left {
+        0% { opacity: 0; transform: translate(0, 0); }
+        15% { opacity: 1; }
+        55% { opacity: 1; transform: translate(22px, 36px); }
+        70%, 100% { opacity: 0; transform: translate(26px, 44px); }
+    }
+
+    @keyframes funnel-drop-right {
+        0% { opacity: 0; transform: translate(0, 0); }
+        15% { opacity: 1; }
+        55% { opacity: 1; transform: translate(-22px, 36px); }
+        70%, 100% { opacity: 0; transform: translate(-26px, 44px); }
+    }
+
+    @keyframes funnel-out {
+        0%, 60% { opacity: 0; transform: translateY(-8px); }
+        75% { opacity: 1; transform: translateY(0); }
+        100% { opacity: 0; transform: translateY(6px); }
+    }
+
+    .gym-icon {
+        width: 136px;
+        overflow: visible;
+    }
+
+    .gym-grid {
+        stroke: rgba(101, 186, 255, 0.14);
+        stroke-width: 1;
+    }
+
+    .gym-line {
+        fill: none;
+        stroke: var(--blue-light);
+        stroke-width: 3;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+        stroke-dasharray: 160;
+        stroke-dashoffset: 160;
+        animation: gym-draw 4.5s ease-in-out infinite;
+    }
+
+    .gym-dot {
+        fill: var(--orange);
+        transform-box: fill-box;
+        transform-origin: center;
+        animation: gym-dot 4.5s ease-in-out infinite;
+    }
+
+    .gym-label {
+        fill: #edf4fa;
+        font-size: 15px;
+        font-weight: 850;
+    }
+
+    @keyframes gym-draw {
+        0% { stroke-dashoffset: 160; }
+        55%, 85% { stroke-dashoffset: 0; }
+        100% { stroke-dashoffset: 0; opacity: 0; }
+    }
+
+    @keyframes gym-dot {
+        0%, 50% { opacity: 0; transform: scale(0.3); }
+        60% { opacity: 1; transform: scale(1.35); }
+        70%, 88% { opacity: 1; transform: scale(1); }
+        100% { opacity: 0; transform: scale(1); }
     }
 
     .bar-chart {
@@ -2125,6 +2757,12 @@ const description =
         .other-project-grid {
             grid-template-columns: repeat(2, minmax(0, 1fr));
         }
+
+        .other-project-grid > .other-project-card,
+        .other-project-grid > [data-track="automation"],
+        .other-project-grid.is-filtered > .other-project-card {
+            grid-column: auto;
+        }
     }
 
     /* =========================================================
@@ -2145,7 +2783,7 @@ const description =
         }
 
         .hero {
-            padding: 4rem 0 5rem;
+            padding: 4rem 0 2.5rem;
         }
 
         h1 {
@@ -2178,7 +2816,8 @@ const description =
             grid-template-columns: 1fr;
         }
 
-        .other-project-grid {
+        .other-project-grid,
+        .lab-grid {
             grid-template-columns: 1fr;
         }
 
@@ -2221,6 +2860,39 @@ const description =
         .rocketeers-title-link:hover h3 span,
         .contact-links .text-link:hover {
             transform: none;
+        }
+
+        .chess-ring,
+        .chess-knight,
+        .funnel-drop,
+        .funnel-out,
+        .gym-line,
+        .gym-dot,
+        .toolbelt-track,
+        .hero::before,
+        .hero-accent,
+        .intel-graph path,
+        .math-orbit path,
+        .mandala-mini,
+        .other-project-card.is-entering,
+        .lab-strip.is-entering {
+            animation: none;
+        }
+
+        .math-orbit path,
+        .gym-line {
+            stroke-dashoffset: 0;
+        }
+
+        .funnel-out,
+        .gym-dot {
+            opacity: 1;
+        }
+
+        .rame-mini,
+        .rame-mini-star,
+        .project-visual > * {
+            transition: none;
         }
     }
 

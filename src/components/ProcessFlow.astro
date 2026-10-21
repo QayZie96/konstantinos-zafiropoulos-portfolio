@@ -1,0 +1,806 @@
+---
+/* =========================================================
+   PROCESS FLOW — RESPONSIVE, ANIMATED STEPPER
+
+   Horizontal stepper with a progress connector on wide
+   screens; vertical timeline on phones. When a step has a
+   matching named slot (`detail-1`, `detail-2`, …) the step
+   becomes a disclosure button and its detail opens beneath
+   the row (desktop) or directly under the step (phone).
+   ========================================================= */
+
+interface Step {
+    title: string;
+    text: string;
+    tag?: string;
+}
+
+interface Props {
+    steps: Step[];
+    label: string;
+    id: string;
+    loopLabel?: string;
+    detailHint?: string;
+}
+
+const { steps, label, id, loopLabel, detailHint } = Astro.props;
+
+const details = await Promise.all(
+    steps.map((_, index) =>
+        Astro.slots.has(`detail-${index + 1}`)
+            ? Astro.slots.render(`detail-${index + 1}`)
+            : Promise.resolve(null),
+    ),
+);
+const interactive = details.some(Boolean);
+---
+
+<div
+    class:list={["pf", { "is-interactive": interactive, "has-loop": loopLabel }]}
+    style={`--n: ${steps.length}`}
+    data-process-flow
+>
+    {interactive && detailHint && <p class="pf-hint">{detailHint}</p>}
+
+    <div class="pf-track">
+    <span class="pf-rail" aria-hidden="true"><span class="pf-rail-fill"></span></span>
+    <ol class="pf-steps" aria-label={label}>
+        {
+            steps.map((step, index) => {
+                const number = String(index + 1).padStart(2, "0");
+                const detail = details[index];
+                const detailId = `${id}-detail-${index + 1}`;
+                return (
+                    <li class="pf-item" style={`--i: ${index}`}>
+                        {detail ? (
+                            <button
+                                type="button"
+                                class="pf-step"
+                                aria-expanded={index === 0 ? "true" : "false"}
+                                aria-controls={detailId}
+                                data-pf-step={index}
+                            >
+                                <span class="pf-dot" aria-hidden="true">{number}</span>
+                                <span class="pf-body">
+                                    {step.tag && <span class="pf-tag">{step.tag}</span>}
+                                    <strong>{step.title}</strong>
+                                    <span class="pf-text">{step.text}</span>
+                                </span>
+                            </button>
+                        ) : (
+                            <div class="pf-step">
+                                <span class="pf-dot" aria-hidden="true">{number}</span>
+                                <span class="pf-body">
+                                    {step.tag && <span class="pf-tag">{step.tag}</span>}
+                                    <strong>{step.title}</strong>
+                                    <span class="pf-text">{step.text}</span>
+                                </span>
+                            </div>
+                        )}
+                        {detail && (
+                            <div
+                                class="pf-detail"
+                                id={detailId}
+                                role="region"
+                                aria-label={`Step ${number}: ${step.title}`}
+                                hidden={index !== 0}
+                            >
+                                <div class="pf-detail-inner">
+                                    <div class="pf-detail-head">
+                                        <span>Step {number} of {String(steps.length).padStart(2, "0")}</span>
+                                        <strong>{step.title}</strong>
+                                    </div>
+                                    <Fragment set:html={detail} />
+                                    <div class="pf-nav">
+                                        <button type="button" data-pf-prev disabled={index === 0}>
+                                            ← Previous
+                                        </button>
+                                        <button type="button" data-pf-next disabled={index === steps.length - 1}>
+                                            Next step →
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+                    </li>
+                );
+            })
+        }
+    </ol>
+    </div>
+
+    {
+        loopLabel && (
+            <p class="pf-loop">
+                <span aria-hidden="true">↺</span>
+                {loopLabel}
+            </p>
+        )
+    }
+</div>
+
+<script>
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    document.querySelectorAll<HTMLElement>("[data-process-flow]").forEach((flow) => {
+        const steps = Array.from(flow.querySelectorAll<HTMLButtonElement>("button[data-pf-step]"));
+        const count = flow.querySelectorAll(".pf-item").length;
+
+        const setProgress = (index: number) => {
+            flow.style.setProperty("--progress", count > 1 ? String(index / (count - 1)) : "1");
+            flow.querySelectorAll<HTMLElement>(".pf-item").forEach((item, i) => {
+                item.classList.toggle("is-done", i < index);
+                item.classList.toggle("is-active", i === index);
+            });
+        };
+
+        const open = (index: number, focus = false) => {
+            steps.forEach((button, i) => {
+                const selected = i === index;
+                button.setAttribute("aria-expanded", String(selected));
+                const panel = document.getElementById(button.getAttribute("aria-controls") ?? "");
+                if (panel) panel.hidden = !selected;
+            });
+            setProgress(index);
+            if (focus) steps[index]?.focus();
+        };
+
+        steps.forEach((button, index) => {
+            button.addEventListener("click", () => open(index));
+            button.addEventListener("keydown", (event) => {
+                let next = -1;
+                if (event.key === "ArrowRight" || event.key === "ArrowDown") next = Math.min(steps.length - 1, index + 1);
+                if (event.key === "ArrowLeft" || event.key === "ArrowUp") next = Math.max(0, index - 1);
+                if (event.key === "Home") next = 0;
+                if (event.key === "End") next = steps.length - 1;
+                if (next < 0 || next === index) return;
+                event.preventDefault();
+                open(next, true);
+            });
+        });
+
+        flow.querySelectorAll<HTMLButtonElement>("[data-pf-next], [data-pf-prev]").forEach((button) => {
+            button.addEventListener("click", () => {
+                const current = steps.findIndex((step) => step.getAttribute("aria-expanded") === "true");
+                const next = button.hasAttribute("data-pf-next") ? current + 1 : current - 1;
+                if (next < 0 || next >= steps.length) return;
+                open(next, true);
+            });
+        });
+
+        // Start fully drawn for the static variant; the interactive one tracks the open step.
+        if (steps.length) setProgress(0);
+        else flow.style.setProperty("--progress", "1");
+
+        if (reduce || !("IntersectionObserver" in window)) {
+            flow.classList.add("is-in");
+            return;
+        }
+        const observer = new IntersectionObserver(
+            (entries) => {
+                if (!entries.some((entry) => entry.isIntersecting)) return;
+                observer.disconnect();
+                flow.classList.add("is-in");
+            },
+            { threshold: 0.2 },
+        );
+        observer.observe(flow);
+    });
+</script>
+
+<style>
+    .pf {
+        --pf-blue: #168dff;
+        --pf-blue-light: #65baff;
+        --pf-orange: #ff8a00;
+        --pf-border: #1d354a;
+        --progress: 0;
+
+        position: relative;
+        width: 100%;
+        min-width: 0;
+        margin-top: 2.25rem;
+    }
+
+    .pf *,
+    .pf *::before,
+    .pf *::after {
+        box-sizing: border-box;
+    }
+
+    .pf-hint {
+        margin: 0 0 1rem;
+        color: #71869a;
+        font-size: 0.74rem;
+        font-weight: 700;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+    }
+
+    .pf-track {
+        position: relative;
+    }
+
+    .pf-steps {
+        position: relative;
+        display: grid;
+        grid-template-columns: repeat(var(--n), minmax(0, 1fr));
+        gap: 0.75rem;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+    }
+
+    /* ---------- connector rail ---------- */
+
+    .pf-rail {
+        position: absolute;
+        top: 22px;
+        left: calc(100% / var(--n) / 2);
+        right: calc(100% / var(--n) / 2);
+        height: 2px;
+        border-radius: 2px;
+        background: #16304a;
+        pointer-events: none;
+    }
+
+    .pf-rail-fill {
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        background: linear-gradient(90deg, var(--pf-blue), var(--pf-blue-light) 70%, var(--pf-orange));
+        transform: scaleX(0);
+        transform-origin: left center;
+        transition: transform 0.9s cubic-bezier(0.2, 0.7, 0.2, 1);
+    }
+
+    .pf.is-in .pf-rail-fill {
+        transform: scaleX(var(--progress));
+    }
+
+    .pf:not(.is-interactive).is-in .pf-rail-fill {
+        transition-duration: 1.6s;
+    }
+
+    /* ---------- steps ---------- */
+
+    .pf-item {
+        display: contents;
+    }
+
+    .pf-step {
+        position: relative;
+        z-index: 1;
+        display: grid;
+        grid-template-rows: auto 1fr;
+        justify-items: center;
+        gap: 0.9rem;
+        width: 100%;
+        min-width: 0;
+        height: 100%;
+        padding: 0;
+        border: 0;
+        background: none;
+        color: inherit;
+        font: inherit;
+        text-align: center;
+        grid-row: 1;
+        opacity: 0;
+        transform: translateY(14px);
+        transition:
+            opacity 0.55s ease,
+            transform 0.55s cubic-bezier(0.2, 0.7, 0.2, 1);
+        transition-delay: calc(var(--i) * 90ms);
+    }
+
+    .pf.is-in .pf-step {
+        opacity: 1;
+        transform: none;
+    }
+
+    button.pf-step {
+        cursor: pointer;
+    }
+
+    .pf-dot {
+        display: grid;
+        place-items: center;
+        width: 46px;
+        height: 46px;
+        border: 2px solid #22476a;
+        border-radius: 50%;
+        background: #071626;
+        color: #a9bbcc;
+        font-size: 0.78rem;
+        font-weight: 800;
+        font-variant-numeric: tabular-nums;
+        transition:
+            background-color 0.3s ease,
+            border-color 0.3s ease,
+            color 0.3s ease,
+            box-shadow 0.3s ease,
+            transform 0.3s ease;
+    }
+
+    .pf-body {
+        display: grid;
+        align-content: start;
+        gap: 0.4rem;
+        width: 100%;
+        height: 100%;
+        padding: 1rem 0.9rem;
+        border: 1px solid var(--pf-border);
+        border-radius: 12px;
+        background: rgba(7, 21, 34, 0.88);
+        transition:
+            border-color 0.3s ease,
+            background-color 0.3s ease,
+            transform 0.3s ease;
+    }
+
+    .pf-tag {
+        color: var(--pf-orange);
+        font-size: 0.64rem;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+    }
+
+    .pf-body strong {
+        color: #ffffff;
+        font-size: 0.95rem;
+        line-height: 1.25;
+    }
+
+    .pf-text {
+        color: #94a8ba;
+        font-size: 0.78rem;
+        line-height: 1.5;
+    }
+
+    .pf:not(.is-interactive) .pf-dot {
+        border-color: var(--pf-blue);
+        color: #ffffff;
+    }
+
+    .pf-item.is-done .pf-dot {
+        border-color: var(--pf-blue);
+        background: rgba(22, 141, 255, 0.18);
+        color: #ffffff;
+    }
+
+    .pf-item.is-active .pf-dot {
+        border-color: var(--pf-orange);
+        background: var(--pf-orange);
+        color: #1a0d00;
+        box-shadow: 0 0 0 6px rgba(255, 138, 0, 0.16);
+        transform: scale(1.06);
+    }
+
+    .pf-item.is-active .pf-body {
+        border-color: rgba(255, 138, 0, 0.65);
+        background:
+            linear-gradient(160deg, rgba(255, 138, 0, 0.1), transparent 60%),
+            rgba(7, 21, 34, 0.95);
+    }
+
+    button.pf-step:hover .pf-body {
+        border-color: #2f6290;
+        transform: translateY(-3px);
+    }
+
+    button.pf-step:focus-visible {
+        outline: none;
+    }
+
+    button.pf-step:focus-visible .pf-body {
+        outline: 2px solid var(--pf-orange);
+        outline-offset: 3px;
+    }
+
+    /* ---------- detail panel ---------- */
+
+    .pf-detail {
+        grid-column: 1 / -1;
+        grid-row: 2;
+        min-width: 0;
+        margin-top: 0.75rem;
+    }
+
+    .pf-detail[hidden] {
+        display: none;
+    }
+
+    .pf-detail-inner {
+        padding: clamp(1rem, 2.6vw, 1.5rem);
+        border: 1px solid #234766;
+        border-radius: 14px;
+        background:
+            radial-gradient(circle at 100% 0%, rgba(22, 141, 255, 0.14), transparent 45%),
+            rgba(5, 16, 28, 0.94);
+        animation: pf-panel 0.45s cubic-bezier(0.2, 0.7, 0.2, 1);
+    }
+
+    @keyframes pf-panel {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        to {
+            opacity: 1;
+            transform: none;
+        }
+    }
+
+    .pf-detail-head {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: baseline;
+        gap: 0.4rem 0.8rem;
+        margin-bottom: 1rem;
+    }
+
+    .pf-detail-head span {
+        color: var(--pf-orange);
+        font-size: 0.68rem;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+    }
+
+    .pf-detail-head strong {
+        color: #ffffff;
+        font-size: 1.1rem;
+    }
+
+    .pf-nav {
+        display: flex;
+        justify-content: space-between;
+        gap: 0.75rem;
+        margin-top: 1.25rem;
+        padding-top: 1rem;
+        border-top: 1px solid #142a3e;
+    }
+
+    .pf-nav button {
+        min-height: 38px;
+        padding: 0.45rem 0.85rem;
+        border: 1px solid #284b69;
+        border-radius: 8px;
+        background: #091a2a;
+        color: #c7d5e1;
+        font: inherit;
+        font-size: 0.76rem;
+        font-weight: 700;
+        cursor: pointer;
+    }
+
+    .pf-nav button:hover:not(:disabled) {
+        border-color: var(--pf-blue);
+        color: #ffffff;
+    }
+
+    .pf-nav button:disabled {
+        opacity: 0.35;
+        cursor: default;
+    }
+
+    .pf-nav button:focus-visible {
+        outline: 2px solid var(--pf-orange);
+        outline-offset: 2px;
+    }
+
+    /* ---------- loop note ---------- */
+
+    .pf-loop {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.6rem;
+        margin: 1.1rem 0 0;
+        padding: 0.65rem 1rem;
+        border: 1px dashed rgba(255, 138, 0, 0.45);
+        border-radius: 999px;
+        color: #c7d5e1;
+        font-size: 0.78rem;
+        font-weight: 650;
+    }
+
+    .pf-loop span {
+        color: var(--pf-orange);
+        font-size: 1.1rem;
+        display: inline-block;
+    }
+
+    .pf.is-in .pf-loop span {
+        animation: pf-spin 1.4s cubic-bezier(0.2, 0.7, 0.2, 1) 0.8s;
+    }
+
+    @keyframes pf-spin {
+        from {
+            transform: rotate(0deg);
+        }
+        to {
+            transform: rotate(-360deg);
+        }
+    }
+
+    /* ---------- shared example blocks (used inside detail slots) ---------- */
+
+    .pf :global(.pf-ex) {
+        display: grid;
+        gap: 0.9rem;
+        color: #b8c7d6;
+        font-size: 0.82rem;
+        line-height: 1.6;
+    }
+
+    .pf :global(.pf-ex p) {
+        margin: 0;
+    }
+
+    .pf :global(.pf-ex-label) {
+        display: inline-block;
+        justify-self: start;
+        padding: 0.2rem 0.5rem;
+        border: 1px solid rgba(255, 138, 0, 0.45);
+        border-radius: 999px;
+        color: #ffb35c;
+        font-size: 0.64rem;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+    }
+
+    .pf :global(.pf-ex-chain) {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: stretch;
+        gap: 0.5rem;
+    }
+
+    .pf :global(.pf-ex-box) {
+        display: grid;
+        gap: 0.2rem;
+        flex: 1 1 140px;
+        min-width: 0;
+        padding: 0.75rem 0.85rem;
+        border: 1px solid #1f3b55;
+        border-radius: 10px;
+        background: rgba(7, 21, 34, 0.9);
+    }
+
+    .pf :global(.pf-ex-box small) {
+        color: #71869a;
+        font-size: 0.66rem;
+        font-weight: 800;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+    }
+
+    .pf :global(.pf-ex-box b) {
+        color: #ffffff;
+        font-size: 1.05rem;
+        font-variant-numeric: tabular-nums;
+        overflow-wrap: anywhere;
+    }
+
+    .pf :global(.pf-ex-box.is-result) {
+        border-color: rgba(38, 213, 162, 0.5);
+    }
+
+    .pf :global(.pf-ex-box.is-result b) {
+        color: #26d5a2;
+    }
+
+    .pf :global(.pf-ex-op) {
+        align-self: center;
+        color: #ff8a00;
+        font-weight: 800;
+    }
+
+    .pf :global(.pf-ex-code) {
+        margin: 0;
+        padding: 0.85rem 1rem;
+        overflow-x: auto;
+        border: 1px solid #1f3b55;
+        border-radius: 10px;
+        background: #030b14;
+        color: #cfe6ff;
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+        font-size: 0.74rem;
+        line-height: 1.7;
+        white-space: pre;
+    }
+
+    .pf :global(.pf-ex-code em) {
+        color: #ffb35c;
+        font-style: normal;
+    }
+
+    .pf :global(.pf-ex-swatches) {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(118px, 1fr));
+        gap: 0.35rem;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        counter-reset: swatch;
+    }
+
+    .pf :global(.pf-ex-swatches li) {
+        display: flex;
+        justify-content: space-between;
+        gap: 0.4rem;
+        padding: 0.4rem 0.55rem;
+        border: 1px solid #1a3550;
+        border-radius: 7px;
+        background: rgba(7, 21, 34, 0.9);
+        color: #c7d5e1;
+        font-size: 0.72rem;
+        counter-increment: swatch;
+    }
+
+    .pf :global(.pf-ex-swatches li::before) {
+        content: counter(swatch, decimal-leading-zero);
+        color: #71869a;
+        font-weight: 700;
+    }
+
+    .pf :global(.pf-ex-swatches li span) {
+        flex: 1;
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .pf :global(.pf-ex-swatches li b) {
+        color: #ffffff;
+        font-variant-numeric: tabular-nums;
+    }
+
+    .pf :global(.pf-ex-status) {
+        display: grid;
+        gap: 0.5rem;
+    }
+
+    .pf :global(.pf-ex-stack) {
+        display: flex;
+        height: 12px;
+        overflow: hidden;
+        border-radius: 999px;
+        background: #0c2235;
+    }
+
+    .pf :global(.pf-ex-stack span) {
+        height: 100%;
+    }
+
+    .pf :global(.pf-ex-legend) {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.4rem 1rem;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        font-size: 0.74rem;
+    }
+
+    .pf :global(.pf-ex-legend li) {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+    }
+
+    .pf :global(.pf-ex-legend i) {
+        width: 10px;
+        height: 10px;
+        border-radius: 3px;
+    }
+
+    .pf :global(.pf-ex-legend b) {
+        color: #ffffff;
+    }
+
+    .pf :global(.pf-link) {
+        justify-self: start;
+        color: #65baff;
+        font-size: 0.8rem;
+        font-weight: 750;
+        text-decoration: none;
+        border-bottom: 1px solid rgba(101, 186, 255, 0.4);
+    }
+
+    .pf :global(.pf-link:hover) {
+        color: #ffffff;
+        border-color: #ff8a00;
+    }
+
+    .pf {
+        margin-bottom: 1.75rem;
+    }
+
+    /* ---------- phones: vertical timeline ---------- */
+
+    @media (max-width: 860px) {
+        .pf-steps {
+            grid-template-columns: minmax(0, 1fr);
+            gap: 0;
+        }
+
+        .pf-rail {
+            top: 23px;
+            bottom: 23px;
+            left: 22px;
+            right: auto;
+            width: 2px;
+            height: auto;
+        }
+
+        .pf-rail-fill {
+            transform: scaleY(0);
+            transform-origin: center top;
+            background: linear-gradient(180deg, var(--pf-blue), var(--pf-blue-light) 70%, var(--pf-orange));
+        }
+
+        .pf.is-in .pf-rail-fill {
+            transform: scaleY(var(--progress));
+        }
+
+        .pf-item {
+            display: block;
+            padding-bottom: 0.75rem;
+        }
+
+        .pf-item:last-child {
+            padding-bottom: 0;
+        }
+
+        .pf-step {
+            grid-template-columns: 46px minmax(0, 1fr);
+            grid-template-rows: none;
+            align-items: start;
+            justify-items: stretch;
+            gap: 0.85rem;
+            height: auto;
+            text-align: left;
+            transform: translateX(-12px);
+        }
+
+        .pf-body {
+            height: auto;
+        }
+
+        .pf-detail {
+            margin: 0.6rem 0 0 calc(46px + 0.85rem);
+        }
+
+        .pf-nav button {
+            flex: 1;
+        }
+    }
+
+    @media (max-width: 420px) {
+        .pf-detail {
+            margin-left: 0;
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .pf-step,
+        .pf-rail-fill,
+        .pf-dot,
+        .pf-body,
+        .pf-detail-inner,
+        .pf-loop span {
+            transition: none !important;
+            animation: none !important;
+        }
+
+        .pf-step {
+            opacity: 1;
+            transform: none;
+        }
+    }
+</style>

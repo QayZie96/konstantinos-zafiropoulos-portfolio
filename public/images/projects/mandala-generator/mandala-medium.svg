@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="210mm" height="297mm" viewBox="0 0 210 297" version="1.1">
+  <title>Rocketeers radial mandala</title>
+  <metadata>{
+  "complexity": 2,
+  "curvature": 0.75,
+  "difficulty": "medium",
+  "generator_id": "radial-mandala",
+  "generator_version": "3.0.0",
+  "layers": 4,
+  "margin_mm": 15.0,
+  "page_size": "A4",
+  "seed": 20261010,
+  "spacing_mm": 2.5,
+  "stroke_mm": 0.45,
+  "symmetry": 8
+}
+</metadata>
+  <rect width="210" height="297" fill="white" />
+  <g transform="translate(105 148.5)" fill="none" stroke="black" stroke-width="0.45" stroke-linejoin="round" stroke-linecap="round">
+    <circle cx="0" cy="0" r="4.80000" />
+    <path d="M -3.70928 -8.95500 L 0.00000 -17.91000" data-motif="star" />
+    <path d="M 3.70928 -8.95500 L 0.00000 -17.91000" data-motif="star" />
+    <path d="M -1.83688 -4.43462 L -3.70928 -8.95500" data-motif="centre-spoke" />
+    <path d="M 0.00000 -22.91000 A 23.09905 23.09905 0.00000 0 1 16.79196 -40.53937" data-motif="arc-lotus" />
+    <path d="M 16.19982 -16.19982 A 23.09905 23.09905 0.00000 0 0 16.79196 -40.53937" data-motif="arc-lotus" />
+    <path d="M 0.00000 -17.91000 L 0.00000 -22.91000" data-motif="shared-join" />
+    <path d="M 7.81057 -18.85638 A 10.66337 10.66337 0.00000 0 1 14.87854 -35.91997 A 10.66337 10.66337 0.00000 0 1 7.81057 -18.85638 Z" data-motif="circle-lens" />
+    <path d="M -19.14687 -46.22463 L 0.00000 -65.37150" data-motif="star-band" />
+    <path d="M 19.14687 -46.22463 L 0.00000 -65.37150" data-motif="star-band" />
+    <path d="M 16.79196 -40.53937 L 19.14687 -46.22463" data-motif="shared-join" />
+    <path d="M 0.00000 -36.49768 L -4.72974 -44.14075 L 0.00000 -51.78382 L 4.72974 -44.14075 Z" data-motif="polygon-gem" />
+    <path d="M 0.00000 -77.90850 C 0.00000 -85.39488 20.09246 -85.21317 33.06988 -79.83774" data-motif="scallop" />
+    <path d="M 55.08963 -55.08963 C 60.38330 -60.38330 46.04729 -74.46232 33.06988 -79.83774" data-motif="scallop" />
+    <path d="M 0.00000 -65.37150 L 0.00000 -77.90850" data-motif="shared-join" />
+    <path d="M 3.70928 -8.95500 L 12.66428 -12.66428" data-motif="star" />
+    <path d="M 8.95500 -3.70928 L 12.66428 -12.66428" data-motif="star" />
+    <path d="M 1.83688 -4.43462 L 3.70928 -8.95500" data-motif="centre-spoke" />
+    <path d="M 16.19982 -16.19982 A 23.09905 23.09905 0.00000 0 1 40.53937 -16.79196" data-motif="arc-lotus" />
+    <path d="M 22.91000 0.00000 A 23.09905 23.09905 0.00000 0 0 40.53937 -16.79196" data-motif="arc-lotus" />
+    <path d="M 12.66428 -12.66428 L 16.19982 -16.19982" data-motif="shared-join" />
+    <path d="M 18.85638 -7.81057 A 10.66337 10.66337 0.00000 0 1 35.91997 -14.87854 A 10.66337 10.66337 0.00000 0 1 18.85638 -7.81057 Z" data-motif="circle-lens" />
+    <path d="M 19.14687 -46.22463 L 46.22463 -46.22463" data-motif="star-band" />
+    <path d="M 46.22463 -19.14687 L 46.22463 -46.22463" data-motif="star-band" />
+    <path d="M 40.53937 -16.79196 L 46.22463 -19.14687" data-motif="shared-join" />
+    <path d="M 25.80776 -25.80776 L 27.86779 -34.55666 L 36.61669 -36.61669 L 34.55666 -27.86779 Z" data-motif="polygon-gem" />
+    <path d="M 55.08963 -55.08963 C 60.38330 -60.38330 74.46232 -46.04729 79.83774 -33.06988" data-motif="scallop" />
+    <path d="M 77.90850 0.00000 C 85.39488 0.00000 85.21317 -20.09246 79.83774 -33.06988" data-motif="scallop" />
+    <path d="M 46.22463 -46.22463 L 55.08963 -55.08963" data-motif="shared-join" />
+    <path d="M 8.95500 -3.70928 L 17.91000 0.00000" data-motif="star" />
+    <path d="M 8.95500 3.70928 L 17.91000 0.00000" data-motif="star" />
+    <path d="M 4.43462 -1.83688 L 8.95500 -3.70928" data-motif="centre-spoke" />
+    <path d="M 22.91000 0.00000 A 23.09905 23.09905 0.00000 0 1 40.53937 16.79196" data-motif="arc-lotus" />
+    <path d="M 16.19982 16.19982 A 23.09905 23.09905 0.00000 0 0 40.53937 16.79196" data-motif="arc-lotus" />
+    <path d="M 17.91000 0.00000 L 22.91000 0.00000" data-motif="shared-join" />
+    <path d="M 18.85638 7.81057 A 10.66337 10.66337 0.00000 0 1 35.91997 14.87854 A 10.66337 10.66337 0.00000 0 1 18.85638 7.81057 Z" data-motif="circle-lens" />
+    <path d="M 46.22463 -19.14687 L 65.37150 0.00000" data-motif="star-band" />
+    <path d="M 46.22463 19.14687 L 65.37150 0.00000" data-motif="star-band" />
+    <path d="M 40.53937 16.79196 L 46.22463 19.14687" data-motif="shared-join" />
+    <path d="M 36.49768 0.00000 L 44.14075 -4.72974 L 51.78382 0.00000 L 44.14075 4.72974 Z" data-motif="polygon-gem" />
+    <path d="M 77.90850 0.00000 C 85.39488 0.00000 85.21317 20.09246 79.83774 33.06988" data-motif="scallop" />
+    <path d="M 55.08963 55.08963 C 60.38330 60.38330 74.46232 46.04729 79.83774 33.06988" data-motif="scallop" />
+    <path d="M 65.37150 0.00000 L 77.90850 0.00000" data-motif="shared-join" />
+    <path d="M 8.95500 3.70928 L 12.66428 12.66428" data-motif="star" />
+    <path d="M 3.70928 8.95500 L 12.66428 12.66428" data-motif="star" />
+    <path d="M 4.43462 1.83688 L 8.95500 3.70928" data-motif="centre-spoke" />
+    <path d="M 16.19982 16.19982 A 23.09905 23.09905 0.00000 0 1 16.79196 40.53937" data-motif="arc-lotus" />
+    <path d="M 0.00000 22.91000 A 23.09905 23.09905 0.00000 0 0 16.79196 40.53937" data-motif="arc-lotus" />
+    <path d="M 12.66428 12.66428 L 16.19982 16.19982" data-motif="shared-join" />
+    <path d="M 7.81057 18.85638 A 10.66337 10.66337 0.00000 0 1 14.87854 35.91997 A 10.66337 10.66337 0.00000 0 1 7.81057 18.85638 Z" data-motif="circle-lens" />
+    <path d="M 46.22463 19.14687 L 46.22463 46.22463" data-motif="star-band" />
+    <path d="M 19.14687 46.22463 L 46.22463 46.22463" data-motif="star-band" />
+    <path d="M 16.79196 40.53937 L 19.14687 46.22463" data-motif="shared-join" />
+    <path d="M 25.80776 25.80776 L 34.55666 27.86779 L 36.61669 36.61669 L 27.86779 34.55666 Z" data-motif="polygon-gem" />
+    <path d="M 55.08963 55.08963 C 60.38330 60.38330 46.04729 74.46232 33.06988 79.83774" data-motif="scallop" />
+    <path d="M 0.00000 77.90850 C 0.00000 85.39488 20.09246 85.21317 33.06988 79.83774" data-motif="scallop" />
+    <path d="M 46.22463 46.22463 L 55.08963 55.08963" data-motif="shared-join" />
+    <path d="M 3.70928 8.95500 L 0.00000 17.91000" data-motif="star" />
+    <path d="M -3.70928 8.95500 L 0.00000 17.91000" data-motif="star" />
+    <path d="M 1.83688 4.43462 L 3.70928 8.95500" data-motif="centre-spoke" />
+    <path d="M 0.00000 22.91000 A 23.09905 23.09905 0.00000 0 1 -16.79196 40.53937" data-motif="arc-lotus" />
+    <path d="M -16.19982 16.19982 A 23.09905 23.09905 0.00000 0 0 -16.79196 40.53937" data-motif="arc-lotus" />
+    <path d="M 0.00000 17.91000 L 0.00000 22.91000" data-motif="shared-join" />
+    <path d="M -7.81057 18.85638 A 10.66337 10.66337 0.00000 0 1 -14.87854 35.91997 A 10.66337 10.66337 0.00000 0 1 -7.81057 18.85638 Z" data-motif="circle-lens" />
+    <path d="M 19.14687 46.22463 L 0.00000 65.37150" data-motif="star-band" />
+    <path d="M -19.14687 46.22463 L 0.00000 65.37150" data-motif="star-band" />
+    <path d="M -16.79196 40.53937 L -19.14687 46.22463" data-motif="shared-join" />
+    <path d="M 0.00000 36.49768 L 4.72974 44.14075 L 0.00000 51.78382 L -4.72974 44.14075 Z" data-motif="polygon-gem" />
+    <path d="M 0.00000 77.90850 C 0.00000 85.39488 -20.09246 85.21317 -33.06988 79.83774" data-motif="scallop" />
+    <path d="M -55.08963 55.08963 C -60.38330 60.38330 -46.04729 74.46232 -33.06988 79.83774" data-motif="scallop" />
+    <path d="M 0.00000 65.37150 L 0.00000 77.90850" data-motif="shared-join" />
+    <path d="M -3.70928 8.95500 L -12.66428 12.66428" data-motif="star" />
+    <path d="M -8.95500 3.70928 L -12.66428 12.66428" data-motif="star" />
+    <path d="M -1.83688 4.43462 L -3.70928 8.95500" data-motif="centre-spoke" />
+    <path d="M -16.19982 16.19982 A 23.09905 23.09905 0.00000 0 1 -40.53937 16.79196" data-motif="arc-lotus" />
+    <path d="M -22.91000 0.00000 A 23.09905 23.09905 0.00000 0 0 -40.53937 16.79196" data-motif="arc-lotus" />
+    <path d="M -12.66428 12.66428 L -16.19982 16.19982" data-motif="shared-join" />
+    <path d="M -18.85638 7.81057 A 10.66337 10.66337 0.00000 0 1 -35.91997 14.87854 A 10.66337 10.66337 0.00000 0 1 -18.85638 7.81057 Z" data-motif="circle-lens" />
+    <path d="M -19.14687 46.22463 L -46.22463 46.22463" data-motif="star-band" />
+    <path d="M -46.22463 19.14687 L -46.22463 46.22463" data-motif="star-band" />
+    <path d="M -40.53937 16.79196 L -46.22463 19.14687" data-motif="shared-join" />
+    <path d="M -25.80776 25.80776 L -27.86779 34.55666 L -36.61669 36.61669 L -34.55666 27.86779 Z" data-motif="polygon-gem" />
+    <path d="M -55.08963 55.08963 C -60.38330 60.38330 -74.46232 46.04729 -79.83774 33.06988" data-motif="scallop" />
+    <path d="M -77.90850 0.00000 C -85.39488 0.00000 -85.21317 20.09246 -79.83774 33.06988" data-motif="scallop" />
+    <path d="M -46.22463 46.22463 L -55.08963 55.08963" data-motif="shared-join" />
+    <path d="M -8.95500 3.70928 L -17.91000 0.00000" data-motif="star" />
+    <path d="M -8.95500 -3.70928 L -17.91000 0.00000" data-motif="star" />
+    <path d="M -4.43462 1.83688 L -8.95500 3.70928" data-motif="centre-spoke" />
+    <path d="M -22.91000 0.00000 A 23.09905 23.09905 0.00000 0 1 -40.53937 -16.79196" data-motif="arc-lotus" />
+    <path d="M -16.19982 -16.19982 A 23.09905 23.09905 0.00000 0 0 -40.53937 -16.79196" data-motif="arc-lotus" />
+    <path d="M -17.91000 0.00000 L -22.91000 0.00000" data-motif="shared-join" />
+    <path d="M -18.85638 -7.81057 A 10.66337 10.66337 0.00000 0 1 -35.91997 -14.87854 A 10.66337 10.66337 0.00000 0 1 -18.85638 -7.81057 Z" data-motif="circle-lens" />
+    <path d="M -46.22463 19.14687 L -65.37150 0.00000" data-motif="star-band" />
+    <path d="M -46.22463 -19.14687 L -65.37150 0.00000" data-motif="star-band" />
+    <path d="M -40.53937 -16.79196 L -46.22463 -19.14687" data-motif="shared-join" />
+    <path d="M -36.49768 0.00000 L -44.14075 4.72974 L -51.78382 0.00000 L -44.14075 -4.72974 Z" data-motif="polygon-gem" />
+    <path d="M -77.90850 0.00000 C -85.39488 0.00000 -85.21317 -20.09246 -79.83774 -33.06988" data-motif="scallop" />
+    <path d="M -55.08963 -55.08963 C -60.38330 -60.38330 -74.46232 -46.04729 -79.83774 -33.06988" data-motif="scallop" />
+    <path d="M -65.37150 0.00000 L -77.90850 0.00000" data-motif="shared-join" />
+    <path d="M -8.95500 -3.70928 L -12.66428 -12.66428" data-motif="star" />
+    <path d="M -3.70928 -8.95500 L -12.66428 -12.66428" data-motif="star" />
+    <path d="M -4.43462 -1.83688 L -8.95500 -3.70928" data-motif="centre-spoke" />
+    <path d="M -16.19982 -16.19982 A 23.09905 23.09905 0.00000 0 1 -16.79196 -40.53937" data-motif="arc-lotus" />
+    <path d="M -0.00000 -22.91000 A 23.09905 23.09905 0.00000 0 0 -16.79196 -40.53937" data-motif="arc-lotus" />
+    <path d="M -12.66428 -12.66428 L -16.19982 -16.19982" data-motif="shared-join" />
+    <path d="M -7.81057 -18.85638 A 10.66337 10.66337 0.00000 0 1 -14.87854 -35.91997 A 10.66337 10.66337 0.00000 0 1 -7.81057 -18.85638 Z" data-motif="circle-lens" />
+    <path d="M -46.22463 -19.14687 L -46.22463 -46.22463" data-motif="star-band" />
+    <path d="M -19.14687 -46.22463 L -46.22463 -46.22463" data-motif="star-band" />
+    <path d="M -16.79196 -40.53937 L -19.14687 -46.22463" data-motif="shared-join" />
+    <path d="M -25.80776 -25.80776 L -34.55666 -27.86779 L -36.61669 -36.61669 L -27.86779 -34.55666 Z" data-motif="polygon-gem" />
+    <path d="M -55.08963 -55.08963 C -60.38330 -60.38330 -46.04729 -74.46232 -33.06988 -79.83774" data-motif="scallop" />
+    <path d="M -0.00000 -77.90850 C -0.00000 -85.39488 -20.09246 -85.21317 -33.06988 -79.83774" data-motif="scallop" />
+    <path d="M -46.22463 -46.22463 L -55.08963 -55.08963" data-motif="shared-join" />
+  </g>
+</svg>
