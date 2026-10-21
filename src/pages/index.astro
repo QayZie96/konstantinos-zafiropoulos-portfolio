@@ -413,13 +413,13 @@ const description =
                                 aria-label="View the RAMÉ Creative Space case study"
                             ></a>
                             <div class="project-visual rame-visual">
-                                <div class="storefront-icon" aria-hidden="true">
-                                    <span class="storefront-awning">
-                                        <i></i>
-                                        <i></i>
-                                        <i></i>
-                                    </span>
-                                    <span class="storefront-base"></span>
+                                <div class="rame-mini" aria-hidden="true">
+                                    <span class="rame-mini-word">RAMÉ</span>
+                                    <span class="rame-mini-pill">Creative Space</span>
+                                    <svg class="rame-mini-star" viewBox="0 0 100 100">
+                                        <path d="M50 4 L60 40 L96 50 L60 60 L50 96 L40 60 L4 50 L40 40 Z" />
+                                    </svg>
+                                    <span class="rame-mini-dot"></span>
                                 </div>
                             </div>
 
@@ -826,6 +826,37 @@ const description =
     </body>
 </html>
 
+<script>
+    // Count the hero figures up from zero; the final text is already in the HTML.
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    if (!reduceMotion) {
+        for (const figure of document.querySelectorAll<HTMLElement>(".proof-strip strong")) {
+            const finalText = figure.textContent ?? "";
+            const match = finalText.match(/^([^\d]*)([\d.]+)(.*)$/);
+            if (!match) continue;
+
+            const [, prefix, numberText, suffix] = match;
+            const target = Number(numberText);
+            const decimals = numberText.split(".")[1]?.length ?? 0;
+            const duration = 1300;
+            const start = performance.now();
+
+            figure.setAttribute("aria-label", finalText);
+
+            const tick = (now: number) => {
+                const progress = Math.min((now - start) / duration, 1);
+                const eased = 1 - Math.pow(1 - progress, 3);
+                figure.textContent =
+                    progress < 1 ? `${prefix}${(target * eased).toFixed(decimals)}${suffix}` : finalText;
+                if (progress < 1) requestAnimationFrame(tick);
+            };
+
+            requestAnimationFrame(tick);
+        }
+    }
+</script>
+
 <style>
     /* =========================================================
        DESIGN TOKENS
@@ -1058,10 +1089,30 @@ const description =
         justify-items: center;
         align-items: center;
 
+        position: relative;
+        isolation: isolate;
         min-height: auto;
         padding: clamp(5rem, 10vw, 8rem) 0;
 
         text-align: center;
+    }
+
+    .hero::before {
+        content: "";
+        position: absolute;
+        inset: 8% 10%;
+        z-index: -1;
+        background:
+            radial-gradient(circle at 30% 40%, rgba(22, 141, 255, 0.16), transparent 55%),
+            radial-gradient(circle at 72% 62%, rgba(255, 138, 0, 0.08), transparent 50%);
+        filter: blur(40px);
+        animation: hero-glow 14s ease-in-out infinite alternate;
+        pointer-events: none;
+    }
+
+    @keyframes hero-glow {
+        from { transform: translate3d(-4%, -2%, 0) scale(1); }
+        to { transform: translate3d(4%, 3%, 0) scale(1.08); }
     }
 
     .hero-copy {
@@ -1075,7 +1126,18 @@ const description =
     }
 
     .hero-accent {
+        background: linear-gradient(90deg, var(--blue), #65baff, #9fd4ff, #65baff, var(--blue));
+        background-size: 250% 100%;
+        -webkit-background-clip: text;
+        background-clip: text;
         color: var(--blue);
+        -webkit-text-fill-color: transparent;
+        animation: accent-shimmer 7s ease-in-out infinite;
+    }
+
+    @keyframes accent-shimmer {
+        0%, 100% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
     }
 
     .intro {
@@ -1708,9 +1770,10 @@ const description =
         text-align: left;
 
         transition:
-            transform 0.2s ease,
-            border-color 0.2s ease,
-            background 0.2s ease;
+            transform 0.25s ease,
+            border-color 0.25s ease,
+            background 0.25s ease,
+            box-shadow 0.25s ease;
     }
 
     .other-project-card:hover {
@@ -1720,6 +1783,10 @@ const description =
     .project-link:hover {
         transform: translateY(-4px);
         border-color: #2a5d84;
+        box-shadow:
+            0 18px 40px rgba(0, 0, 0, 0.35),
+            0 0 0 1px rgba(22, 141, 255, 0.18),
+            0 0 32px rgba(22, 141, 255, 0.12);
     }
 
     .card-cover-link {
@@ -1763,11 +1830,86 @@ const description =
             #071523;
     }
 
-    .storefront-icon {
+    /* RAMÉ card borrows the client's sticker style */
+    .rame-visual {
+        background-color: #fffcef;
+        background-image:
+            linear-gradient(rgba(28, 20, 22, 0.07) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(28, 20, 22, 0.07) 1px, transparent 1px);
+        background-size: 22px 22px;
+    }
+
+    .rame-mini {
         position: relative;
-        width: 76px;
-        height: 72px;
-        color: var(--blue);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        transition: transform 0.35s cubic-bezier(0.3, 1.5, 0.5, 1);
+    }
+
+    .rame-mini-word {
+        color: #f4a7cf;
+        font-family: "Arial Rounded MT Bold", "Arial Black", system-ui, sans-serif;
+        font-size: 3.1rem;
+        font-weight: 900;
+        line-height: 1;
+        letter-spacing: 0.02em;
+        -webkit-text-stroke: 2px #1c1416;
+        paint-order: stroke fill;
+        text-shadow: 3px 3px 0 #1c1416;
+    }
+
+    .rame-mini-pill {
+        margin-top: -0.2rem;
+        padding: 0.15rem 0.7rem;
+        border: 2px solid #1c1416;
+        border-radius: 999px;
+        background: #fffcef;
+        box-shadow: 2px 2px 0 #1c1416;
+        color: #2e9a2a;
+        font-size: 0.62rem;
+        font-weight: 900;
+        letter-spacing: 0.2em;
+        rotate: -3deg;
+    }
+
+    .rame-mini-star {
+        position: absolute;
+        top: -1.6rem;
+        right: -2.2rem;
+        width: 42px;
+        height: 42px;
+        overflow: visible;
+        transition: rotate 0.6s cubic-bezier(0.3, 1.5, 0.5, 1);
+    }
+
+    .rame-mini-star path {
+        fill: #fde84f;
+        stroke: #1c1416;
+        stroke-width: 5;
+        stroke-linejoin: round;
+    }
+
+    .rame-mini-dot {
+        position: absolute;
+        bottom: -0.9rem;
+        left: -1.4rem;
+        width: 20px;
+        height: 20px;
+        border: 2px solid #1c1416;
+        border-radius: 50%;
+        background: #cdb8f7;
+    }
+
+    .project-link:hover .rame-mini { transform: rotate(-3deg) scale(1.06); }
+    .project-link:hover .rame-mini-star { rotate: 180deg; }
+
+    .project-visual > :not(.rame-mini) {
+        transition: transform 0.35s cubic-bezier(0.3, 1.5, 0.5, 1);
+    }
+
+    .project-link:hover .project-visual > :not(.rame-mini) {
+        transform: scale(1.08) rotate(-4deg);
     }
 
     .chess-icon {
@@ -1782,62 +1924,6 @@ const description =
         font-family: Georgia, "Times New Roman", serif;
         font-size: 2.65rem;
         line-height: 1;
-    }
-
-    .storefront-awning {
-        position: absolute;
-        z-index: 1;
-        top: 8px;
-        left: 5px;
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        width: 66px;
-        height: 25px;
-        overflow: hidden;
-        border: 3px solid currentColor;
-        border-radius: 5px 5px 10px 10px;
-    }
-
-    .storefront-awning i {
-        border-right: 3px solid currentColor;
-        background: rgba(22, 141, 255, 0.16);
-    }
-
-    .storefront-awning i:last-child {
-        border-right: 0;
-    }
-
-    .storefront-base {
-        position: absolute;
-        right: 11px;
-        bottom: 5px;
-        left: 11px;
-        height: 43px;
-        border: 3px solid currentColor;
-        border-top: 0;
-        border-radius: 0 0 4px 4px;
-    }
-
-    .storefront-base::before,
-    .storefront-base::after {
-        content: "";
-        position: absolute;
-        bottom: 0;
-        border: 3px solid currentColor;
-        border-bottom: 0;
-    }
-
-    .storefront-base::before {
-        top: 12px;
-        left: 7px;
-        width: 18px;
-    }
-
-    .storefront-base::after {
-        top: 12px;
-        right: 7px;
-        width: 10px;
-        background: rgba(22, 141, 255, 0.16);
     }
 
     .bar-chart {
@@ -2231,6 +2317,17 @@ const description =
         .rocketeers-title-link:hover h3 span,
         .contact-links .text-link:hover {
             transform: none;
+        }
+
+        .hero::before,
+        .hero-accent {
+            animation: none;
+        }
+
+        .rame-mini,
+        .rame-mini-star,
+        .project-visual > * {
+            transition: none;
         }
     }
 
