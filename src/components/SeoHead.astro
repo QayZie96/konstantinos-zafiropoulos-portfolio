@@ -7,6 +7,7 @@ interface Props {
     type?: "website" | "article";
     image?: string;
     imageAlt?: string;
+    robots?: string;
 }
 
 const {
@@ -14,7 +15,8 @@ const {
     description,
     type = "website",
     image = "/og-image.png",
-    imageAlt = "Konstantinos Zafiropoulos — Marketplace Operations, Automation, Data Analysis and Web Development portfolio",
+    imageAlt = "Konstantinos Zafeiropoulos, Marketplace & E-commerce Operations, Pricing and Automation portfolio",
+    robots = "index, follow",
 } = Astro.props;
 const siteUrl = Astro.site ?? new URL("https://konstantinoszafiropoulos.netlify.app");
 const canonicalUrl = new URL(Astro.url.pathname, siteUrl);
@@ -26,7 +28,7 @@ const websiteId = new URL("/#website", siteUrl).href;
 const person = {
     "@type": "Person",
     "@id": personId,
-    name: "Konstantinos Zafiropoulos",
+    name: "Konstantinos Zafeiropoulos",
     url: siteUrl.href,
     jobTitle: "Marketplace Operations, Automation and Data Professional",
     sameAs: [
@@ -53,7 +55,7 @@ const structuredData = {
         {
             "@type": "WebSite",
             "@id": websiteId,
-            name: "Konstantinos Zafiropoulos Portfolio",
+            name: "Konstantinos Zafeiropoulos Portfolio",
             url: siteUrl.href,
             inLanguage: "en",
             publisher: { "@id": personId },
@@ -86,8 +88,8 @@ const structuredData = {
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <meta name="description" content={description} />
-<meta name="author" content="Konstantinos Zafiropoulos" />
-<meta name="robots" content="index, follow" />
+<meta name="author" content="Konstantinos Zafeiropoulos" />
+<meta name="robots" content={robots} />
 <meta name="theme-color" content="#050d18" />
 <link rel="canonical" href={canonicalUrl} />
 <link rel="icon" href="/favicon.ico" sizes="any" />
@@ -96,7 +98,7 @@ const structuredData = {
 
 <meta property="og:type" content={type} />
 <meta property="og:locale" content="en_US" />
-<meta property="og:site_name" content="Konstantinos Zafiropoulos Portfolio" />
+<meta property="og:site_name" content="Konstantinos Zafeiropoulos Portfolio" />
 <meta property="og:title" content={title} />
 <meta property="og:description" content={description} />
 <meta property="og:url" content={canonicalUrl} />
