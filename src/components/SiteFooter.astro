@@ -15,8 +15,8 @@ import AnalyticsConsent from "./AnalyticsConsent.astro";
         <span>© {new Date().getFullYear()}</span>
         <span aria-hidden="true">·</span>
         <span>
-            Built with <a href="/skills/#astro">Astro</a>,
-            <a href="/skills/#git-github">Git &amp; GitHub</a>, and
+            Built with <a href="/skills/#astro">Astro</a>,{" "}
+            <a href="/skills/#git-github">Git &amp; GitHub</a>, and{" "}
             <a href="/skills/#netlify">Netlify</a>
         </span>
         <span aria-hidden="true">·</span>
@@ -33,6 +33,7 @@ import AnalyticsConsent from "./AnalyticsConsent.astro";
         justify-content: center;
         flex-wrap: wrap;
         gap: 1rem 2rem;
+        box-sizing: border-box;
         width: min(100%, 1240px);
         margin-inline: auto;
         padding: 1.7rem clamp(1.4rem, 5vw, 4.5rem);
