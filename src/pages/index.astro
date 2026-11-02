@@ -6,11 +6,10 @@
 import SiteHeader from "../components/SiteHeader.astro";
 import SiteFooter from "../components/SiteFooter.astro";
 import SeoHead from "../components/SeoHead.astro";
-import SkillLinks from "../components/SkillLinks.astro";
 import SkillTagList from "../components/SkillTagList.astro";
 
 const title =
-    "Konstantinos Zafeiropoulos | Marketplace Operations, Automation, Data & Web";
+    "Konstantinos Zafeiropoulos | Marketplace Operations, Automation & Data";
 
 const toolbelt = [
     "Excel & VBA",
@@ -65,19 +64,19 @@ const description =
 
             <section class="hero" aria-labelledby="intro-title">
                 <div class="hero-copy">
-                    <p class="eyebrow">Hello, I'm Konstantinos</p>
+                    <p class="hero-name">Konstantinos Zafeiropoulos</p>
 
                     <p class="hero-role">Operations systems · Automation · Data</p>
 
                     <h1 id="intro-title">
-                        I combine <span class="hero-accent">marketplace experience</span>{" "}
-                        with data, automation, and the web.
+                        Marketplace operations,{" "}
+                        <span class="hero-accent">built on systems.</span>
                     </h1>
 
                     <p class="intro">
-                        Seven years of marketplace ownership, supported by real
-                        projects in Excel/VBA, AI workflow implementation, data
-                        analysis, and web development.
+                        I founded and ran a digital marketplace business, and
+                        built the pricing, reporting, and automation tools that
+                        kept it running.
                     </p>
 
                     <ul class="proof-strip" aria-label="Career highlights">
@@ -133,448 +132,189 @@ const description =
                 </div>
 
                 <!-- =============================================
-                     ROCKETEERS UMBRELLA
+                     ROCKETEERS UMBRELLA (LEFT) + OTHER PROJECTS (RIGHT)
                      ============================================= -->
 
-                <section
-                    class="rocketeers-feature"
-                    aria-labelledby="rocketeers-title"
-                >
-                    <!-- =========================================
-                         ROCKETEERS OVERVIEW
-                         ========================================= -->
+                <div class="projects-split">
+                    <section
+                        class="rocketeers-feature"
+                        aria-labelledby="rocketeers-title"
+                    >
+                        <!-- =========================================
+                             ROCKETEERS OVERVIEW
+                             ========================================= -->
 
-                    <div class="rocketeers-hero">
-                        <div class="rocketeers-copy">
-                            <p class="featured-label">
-                                Featured project · 2017–2024
-                            </p>
+                        <div class="rocketeers-hero">
+                            <div class="rocketeers-copy">
+                                <p class="featured-label">
+                                    Featured project · 2017–2024
+                                </p>
 
-                            <!--
-                                The title leads to the Rocketeers
-                                umbrella/overview page.
-                            -->
+                                <!--
+                                    The title leads to the Rocketeers
+                                    umbrella/overview page.
+                                -->
 
-                            <a
-                                class="rocketeers-title-link"
-                                href="/projects/rocketeers/"
-                            >
-                                <h3 id="rocketeers-title">
-                                    Rocketeers
+                                <a
+                                    class="rocketeers-title-link"
+                                    href="/projects/rocketeers/"
+                                >
+                                    <h3 id="rocketeers-title">
+                                        Rocketeers
+                                        <span aria-hidden="true">↗</span>
+                                    </h3>
+                                </a>
+
+                                <p class="rocketeers-tagline">
+                                    A real marketplace business and the systems
+                                    behind it.
+                                </p>
+
+                                <p class="rocketeers-description">
+                                    I founded and operated Rocketeers, a
+                                    cross-platform marketplace business with
+                                    thousands of listings, trading in-game items
+                                    for Rocket League. It combined business planning,
+                                    marketplace execution, pricing, inventory,
+                                    customer operations, automation, analytics, and
+                                    commercial decision-making.
+                                </p>
+                                <p class="split-blurb">A cross-platform marketplace business with thousands of listings, run end to end from pricing to customer service.</p>
+
+                                <p class="rocketeers-description">
+                                    Explore the business itself and the operational
+                                    systems I built to help manage and scale it.
+                                </p>
+
+                                <!--
+                                    Main Rocketeers overview button.
+                                    Orange makes this distinct from the
+                                    individual project links below.
+                                -->
+
+                                <a
+                                    class="button button-primary rocketeers-overview-button"
+                                    href="/projects/rocketeers/"
+                                >
+                                    Explore the Rocketeers project hub
                                     <span aria-hidden="true">↗</span>
-                                </h3>
-                            </a>
+                                </a>
+                            </div>
 
-                            <p class="rocketeers-tagline">
-                                A real marketplace business and the systems
-                                behind it.
-                            </p>
-
-                            <p class="rocketeers-description">
-                                I founded and operated Rocketeers, a digital
-                                marketplace business focused on Rocket League
-                                items. The project combined business planning,
-                                marketplace execution, pricing, inventory,
-                                customer operations, automation, analytics, and
-                                commercial decision-making.
-                            </p>
-
-                            <p class="rocketeers-description">
-                                Explore the business itself and the operational
-                                systems I built to help manage and scale it.
-                            </p>
-
-                            <!--
-                                Main Rocketeers overview button.
-                                Orange makes this distinct from the
-                                individual project links below.
-                            -->
+                            <!-- The entire visual panel links to the Rocketeers overview. -->
 
                             <a
-                                class="button button-primary rocketeers-overview-button"
+                                class="rocketeers-visual rocketeers-visual-link"
                                 href="/projects/rocketeers/"
+                                aria-label="Explore the Rocketeers project hub"
                             >
-                                Explore the Rocketeers project hub
-                                <span aria-hidden="true">↗</span>
-                            </a>
-                        </div>
+                                <span class="visual-label"> The Rocketeers </span>
 
-                        <!-- The entire visual panel links to the Rocketeers overview. -->
-
-                        <a
-                            class="rocketeers-visual rocketeers-visual-link"
-                            href="/projects/rocketeers/"
-                            aria-label="Explore the Rocketeers project hub"
-                        >
-                            <span class="visual-label"> The Rocketeers </span>
-
-                            <div class="visual-center">
-                                <strong>23K+</strong>
-                                <span>items sold</span>
-                            </div>
-
-                            <span class="visual-footer">
-                                Business · Marketplace · Systems
-                            </span>
-
-                            <span
-                                class="visual-link-indicator"
-                                aria-hidden="true"
-                            >
-                                Explore project hub ↗
-                            </span>
-                        </a>
-                    </div>
-
-                    <!-- =========================================
-                         THREE ROCKETEERS PROJECTS
-                         ========================================= -->
-
-                    <div class="rocketeers-grid">
-                        <!-- =====================================
-                             01 — BUSINESS & MARKETPLACE OPERATIONS
-                             ===================================== -->
-
-                        <a
-                            class="rocketeers-card card-business"
-                            href="/projects/rocketeers/business-operations/"
-                            aria-label="View the Business and Marketplace Operations case study"
-                        >
-                            <div class="card-top">
-                                <span class="card-number orange"> 01 </span>
-
-                                <span
-                                    class="card-symbol orange"
-                                    aria-hidden="true"
-                                >
-                                    ◫
-                                </span>
-                            </div>
-
-                            <h4>
-                                Business & Marketplace Operations
-                                <span
-                                    class="inline-arrow orange"
-                                    aria-hidden="true"
-                                >
-                                    →
-                                </span>
-                            </h4>
-
-                            <p>
-                                How Rocketeers was planned, launched, operated,
-                                and scaled, covering marketplace strategy,
-                                sourcing, listings, pricing, inventory,
-                                fulfilment, customer experience, disputes, and
-                                seller performance.
-                            </p>
-
-                            <div class="metrics">
-                                <div>
+                                <div class="visual-center">
                                     <strong>23K+</strong>
                                     <span>items sold</span>
                                 </div>
 
-                                <div>
-                                    <strong>$219.8K</strong>
-                                    <span>documented USD sales</span>
-                                </div>
-
-                                <div>
-                                    <strong>0</strong>
-                                    <span>negative feedback on final live profile</span>
-                                </div>
-                            </div>
-
-                            <div class="view-link">View case study ↗</div>
-                        </a>
-
-                        <!-- =====================================
-                             02 — MARKETPLACE REPRICING ENGINE
-                             ===================================== -->
-
-                        <article class="rocketeers-card card-repricing project-link">
-                            <a
-                                class="card-cover-link"
-                                href="/projects/rocketeers/repricing/"
-                                aria-label="View the Marketplace Repricing Engine case study"
-                            ></a>
-                            <div class="card-top">
-                                <span class="card-number blue"> 02 </span>
+                                <span class="visual-footer">
+                                    Business · Marketplace · Systems
+                                </span>
 
                                 <span
-                                    class="card-symbol blue"
+                                    class="visual-link-indicator"
                                     aria-hidden="true"
                                 >
-                                    ⚙
+                                    Explore project hub ↗
                                 </span>
-                            </div>
+                            </a>
+                        </div>
 
-                            <h4>
+                        <!-- =========================================
+                             THREE ROCKETEERS PROJECTS
+                             ========================================= -->
+
+                        <div class="rocketeers-grid">
+                            <!-- =====================================
+                                 01 — BUSINESS & MARKETPLACE OPERATIONS
+                                 ===================================== -->
+
+                            <a
+                                class="rocketeers-card card-business"
+                                href="/projects/rocketeers/business-operations/"
+                                aria-label="View the Business and Marketplace Operations case study"
+                            >
+                                <div class="card-top">
+                                    <span class="card-number orange"> 01 </span>
+
+                                    <span
+                                        class="card-symbol orange"
+                                        aria-hidden="true"
+                                    >
+                                        ◫
+                                    </span>
+                                </div>
+
+                                <h4>
+                                    Business & Marketplace Operations
+                                    <span
+                                        class="inline-arrow orange"
+                                        aria-hidden="true"
+                                    >
+                                        →
+                                    </span>
+                                </h4>
+
+                                <p>
+                                    How Rocketeers was planned, launched, operated,
+                                    and scaled, covering marketplace strategy,
+                                    sourcing, listings, pricing, inventory,
+                                    fulfilment, customer experience, disputes, and
+                                    seller performance.
+                                </p>
+                                <p class="split-blurb">Planning, sourcing, listings, pricing, fulfilment, and seller performance.</p>
+
+                                <div class="metrics">
+                                    <div>
+                                        <strong>23K+</strong>
+                                        <span>items sold</span>
+                                    </div>
+
+                                    <div>
+                                        <strong>$219.8K</strong>
+                                        <span>documented USD sales</span>
+                                    </div>
+
+                                </div>
+
+                                <div class="view-link">View case study ↗</div>
+                            </a>
+
+                            <!-- =====================================
+                                 02 — MARKETPLACE REPRICING ENGINE
+                                 ===================================== -->
+
+                            <article class="rocketeers-card card-repricing project-link">
                                 <a
-                                    class="card-title-link"
+                                    class="card-cover-link"
                                     href="/projects/rocketeers/repricing/"
-                                >
-                                    Marketplace Repricing Engine
+                                    aria-label="View the Marketplace Repricing Engine case study"
+                                ></a>
+                                <div class="card-top">
+                                    <span class="card-number blue"> 02 </span>
+
                                     <span
-                                        class="inline-arrow blue"
-                                        aria-hidden="true">→</span
+                                        class="card-symbol blue"
+                                        aria-hidden="true"
                                     >
-                                </a>
-                            </h4>
-
-                            <p>
-                                An Excel-based pricing system built to manage
-                                1,000+ live listings and 10,000+ priced
-                                variations using imported market data,
-                                structured pricing logic, and bulk-update
-                                workflows.
-                            </p>
-
-                            <div class="metrics">
-                                <div><strong>1,000+</strong><span>live listings</span></div>
-                                <div><strong>10K+</strong><span>priced variations</span></div>
-                                <div><strong>16K+</strong><span>prices refreshed per run</span></div>
-                            </div>
-
-                            <SkillTagList
-                                skills={[
-                                    "excel",
-                                    "pricing-operations",
-                                    "operational-scaling",
-                                ]}
-                            />
-
-                            <a
-                                class="view-link"
-                                href="/projects/rocketeers/repricing/"
-                                >View case study ↗</a
-                            >
-                        </article>
-
-                        <!-- =====================================
-                             03 — FINANCIAL & OPERATIONS TRACKER
-                             ===================================== -->
-
-                        <article class="rocketeers-card card-finance project-link">
-                            <a
-                                class="card-cover-link"
-                                href="/projects/rocketeers/financial-tracker/"
-                                aria-label="View the Financial and Operations Tracker case study"
-                            ></a>
-                            <div class="card-top">
-                                <span class="card-number green"> 03 </span>
-
-                                <span
-                                    class="card-symbol green"
-                                    aria-hidden="true"
-                                >
-                                    ↗
-                                </span>
-                            </div>
-
-                            <h4>
-                                <a
-                                    class="card-title-link"
-                                    href="/projects/rocketeers/financial-tracker/"
-                                >
-                                    Financial & Operations Tracker
-                                    <span
-                                        class="inline-arrow green"
-                                        aria-hidden="true">→</span
-                                    >
-                                </a>
-                            </h4>
-
-                            <p>
-                                A multi-sheet Excel tracker covering turnover,
-                                orders, inventory, trading activity, fees,
-                                cancellations, and approximate profitability
-                                across the growing operation.
-                            </p>
-
-                            <div class="metrics">
-                                <div><strong>$55.6K</strong><span>eBay turnover, 2017–2019</span></div>
-                                <div><strong>4,154</strong><span>historical orders</span></div>
-                                <div><strong>25</strong><span>populated months</span></div>
-                            </div>
-
-
-                            <SkillTagList
-                                skills={[
-                                    "excel",
-                                    "commercial-analysis",
-                                    "operational-reporting",
-                                ]}
-                            />
-
-                            <a
-                                class="view-link"
-                                href="/projects/rocketeers/financial-tracker/"
-                                >View case study ↗</a
-                            >
-                        </article>
-                    </div>
-                </section>
-
-                <!-- =============================================
-                     OTHER PROJECTS
-                     ============================================= -->
-
-                <section
-                    class="other-projects"
-                    aria-labelledby="other-projects-title"
-                >
-                    <div class="other-projects-heading">
-                        <p class="eyebrow">Selected systems</p>
-
-                        <h3 id="other-projects-title">
-                            Practical systems beyond Rocketeers.
-                        </h3>
-
-                        <p>Automation, e-commerce, data, and a little maths.</p>
-                    </div>
-
-                    <div class="track-filter" role="group" aria-label="Filter projects by area">
-                        <button type="button" aria-pressed="true" data-track-filter="all">All</button>
-                        <button type="button" aria-pressed="false" data-track-filter="automation">Automation</button>
-                        <button type="button" aria-pressed="false" data-track-filter="ecommerce">E-commerce & web</button>
-                        <button type="button" aria-pressed="false" data-track-filter="data">Data & analytics</button>
-                        <button type="button" aria-pressed="false" data-track-filter="lab">Maths lab</button>
-                    </div>
-                    <p class="visually-hidden" aria-live="polite" data-track-status></p>
-
-                    <div class="other-project-grid">
-                        <!-- =====================================
-                             AI JOB DISCOVERY & OUTREACH AUTOMATION
-                             ===================================== -->
-
-                        <article class="other-project-card project-link" data-track="automation">
-                            <a
-                                class="card-cover-link"
-                                href="/projects/ai-job-outreach/"
-                                aria-label="View the AI Job Discovery and Outreach Automation case study"
-                            ></a>
-                            <div class="project-visual ai-visual">
-                                <svg class="funnel-icon" viewBox="0 0 120 100" aria-hidden="true">
-                                    <path class="funnel-shape" d="M14 14 H106 L72 52 V82 L48 92 V52 Z" />
-                                    <circle class="funnel-drop d1" cx="34" cy="6" r="4" />
-                                    <circle class="funnel-drop d2" cx="60" cy="6" r="4" />
-                                    <circle class="funnel-drop d3" cx="86" cy="6" r="4" />
-                                    <circle class="funnel-out" cx="60" cy="96" r="4" />
-                                </svg>
-                            </div>
-
-                            <div class="other-project-body">
-                                <h4>
-                                    <a
-                                        class="card-title-link"
-                                        href="/projects/ai-job-outreach/"
-                                    >
-                                        AI Job Discovery & Outreach Automation
-                                        <span
-                                            class="inline-arrow blue"
-                                            aria-hidden="true">→</span
-                                        >
-                                    </a>
-                                </h4>
-
-                                <p>
-                                    From a Python and Gemini job-API prototype
-                                    to a nine-ATS Google Apps Script job funnel
-                                    with deduplication, conservative screening,
-                                    and human review batches.
-                                </p>
-
-                                <SkillTagList
-                                    skills={[
-                                        "google-apps-script",
-                                        "python",
-                                        "deduplication",
-                                        "ai-workflow-implementation",
-                                    ]}
-                                />
-
-                                <a
-                                    class="view-link"
-                                    href="/projects/ai-job-outreach/"
-                                    >View case study ↗</a
-                                >
-                            </div>
-                        </article>
-
-                        <!-- =====================================
-                             MARKETPLACE OPPORTUNITY INTELLIGENCE
-                             ===================================== -->
-
-                        <article class="other-project-card project-link" data-track="automation">
-                            <a
-                                class="card-cover-link"
-                                href="/projects/rocketeers-intelligence/"
-                                aria-label="View the Marketplace Opportunity Intelligence case study"
-                            ></a>
-                            <div class="project-visual intel-visual">
-                                <svg class="intel-graph" viewBox="0 0 160 100" aria-hidden="true">
-                                    <path d="M22 50 L70 22 L70 78 Z M70 22 L132 50 L70 78" />
-                                    <circle cx="22" cy="50" r="9" />
-                                    <circle cx="70" cy="22" r="9" />
-                                    <circle cx="70" cy="78" r="9" />
-                                    <rect x="118" y="36" width="28" height="28" rx="6" />
-                                </svg>
-                            </div>
-
-                            <div class="other-project-body">
-                                <h4>
-                                    <a class="card-title-link" href="/projects/rocketeers-intelligence/">
-                                        Marketplace Opportunity Intelligence
-                                        <span class="inline-arrow blue" aria-hidden="true">→</span>
-                                    </a>
-                                </h4>
-
-                                <p>
-                                    An n8n and PostgreSQL pipeline that turns
-                                    public-domain museum archives into
-                                    reviewable product-niche evidence, with
-                                    idempotent ingestion and append-only human
-                                    reviews.
-                                </p>
-
-                                <SkillTagList
-                                    skills={["workflow-automation", "sql", "rest-api-integration", "human-oversight"]}
-                                />
-
-                                <a class="view-link" href="/projects/rocketeers-intelligence/">View case study ↗</a>
-                            </div>
-                        </article>
-
-                        <!-- =====================================
-                             RAME
-                             ===================================== -->
-
-                        <article class="other-project-card project-link" data-track="ecommerce">
-                            <a
-                                class="card-cover-link"
-                                href="/projects/rame/"
-                                aria-label="View the RAMÉ Creative Space case study"
-                            ></a>
-                            <div class="project-visual rame-visual">
-                                <div class="rame-mini" aria-hidden="true">
-                                    <span class="rame-mini-word">RAMÉ</span>
-                                    <span class="rame-mini-pill">Creative Space</span>
-                                    <svg class="rame-mini-star" viewBox="0 0 100 100">
-                                        <path d="M50 4 L60 40 L96 50 L60 60 L50 96 L40 60 L4 50 L40 40 Z" />
-                                    </svg>
-                                    <span class="rame-mini-dot"></span>
+                                        ⚙
+                                    </span>
                                 </div>
-                            </div>
 
-                            <div class="other-project-body">
                                 <h4>
                                     <a
                                         class="card-title-link"
-                                        href="/projects/rame/"
+                                        href="/projects/rocketeers/repricing/"
                                     >
-                                        RAMÉ Creative Space
+                                        Marketplace Repricing Engine
                                         <span
                                             class="inline-arrow blue"
                                             aria-hidden="true">→</span
@@ -583,154 +323,425 @@ const description =
                                 </h4>
 
                                 <p>
-                                    An in-progress client store built with
-                                    WordPress, WooCommerce, Elementor, and
-                                    targeted CSS, covering responsive pages,
-                                    custom-order inquiries, side-cart styling,
-                                    and practical site maintenance.
+                                    An Excel-based pricing system built to manage
+                                    1,000+ live listings and 10,000+ priced
+                                    variations using imported market data,
+                                    structured pricing logic, and bulk-update
+                                    workflows.
                                 </p>
+                                <p class="split-blurb">Excel pricing for 1,000+ live listings and 10,000+ priced variations.</p>
 
-                                <SkillTagList
-                                    skills={[
-                                        "wordpress",
-                                        "woocommerce",
-                                        "elementor",
-                                        "theme-customization",
-                                    ]}
-                                />
-
-                                <a class="view-link" href="/projects/rame/"
-                                    >View case study ↗</a
-                                >
-                            </div>
-                        </article>
-
-                        <!-- =====================================
-                             CHESS ANALYTICS
-                             ===================================== -->
-
-                        <article class="other-project-card project-link" data-track="data">
-                            <a
-                                class="card-cover-link"
-                                href="/projects/chess-analytics/"
-                                aria-label="View the Chess Analytics case study"
-                            ></a>
-
-                            <div class="project-visual data-visual">
-                                <div class="chess-icon" aria-hidden="true">
-                                    <span class="chess-ring"></span>
-                                    <span class="chess-knight">♞</span>
+                                <div class="metrics">
+                                    <div><strong>1,000+</strong><span>live listings</span></div>
+                                    <div><strong>10K+</strong><span>priced variations</span></div>
                                 </div>
-                            </div>
-
-                            <div class="other-project-body">
-                                <h4>
-                                    <a class="card-title-link" href="/projects/chess-analytics/">
-                                        Chess Analytics
-                                        <span class="inline-arrow blue" aria-hidden="true">→</span>
-                                    </a>
-                                </h4>
-
-                                <p>
-                                    Analysis of a 500,000-game Lichess sample,
-                                    exploring rating upsets and opening
-                                    performance through Python, DuckDB SQL,
-                                    Power BI, and interactive web dashboards.
-                                </p>
-
-                                <SkillTagList
-                                    skills={["python", "sql", "power-bi", "data-visualisation"]}
-                                />
-
-                                <a class="view-link" href="/projects/chess-analytics/">View case study ↗</a>
-                            </div>
-                        </article>
-
-                        <!-- =====================================
-                             GYM PROGRESS SYSTEM
-                             ===================================== -->
-
-                        <article class="other-project-card project-link" data-track="data">
-                            <a
-                                class="card-cover-link"
-                                href="/projects/gym-progress/"
-                                aria-label="View the Gym Progress System case study"
-                            ></a>
-                            <div class="project-visual gym-visual">
-                                <svg class="gym-icon" viewBox="0 0 140 90" aria-hidden="true">
-                                    <path class="gym-grid" d="M10 80 H130 M10 55 H130 M10 30 H130" />
-                                    <polyline class="gym-line" points="12,74 32,68 50,70 68,54 86,50 104,36 126,22" />
-                                    <circle class="gym-dot" cx="126" cy="22" r="5" />
-                                    <text class="gym-label" x="12" y="20">kg</text>
-                                </svg>
-                            </div>
-
-                            <div class="other-project-body">
-                                <h4>
-                                    <a
-                                        class="card-title-link"
-                                        href="/projects/gym-progress/"
-                                    >
-                                        Gym Progress System
-                                        <span
-                                            class="inline-arrow blue"
-                                            aria-hidden="true">→</span
-                                        >
-                                    </a>
-                                </h4>
-
-                                <p>
-                                    An Excel/VBA analytics system for tracking
-                                    workouts, progression, historical data,
-                                    diagnostics, and performance trends.
-                                </p>
 
                                 <SkillTagList
                                     skills={[
                                         "excel",
-                                        "vba",
-                                        "data-visualisation",
+                                        "pricing-operations",
+                                        "operational-scaling",
                                     ]}
                                 />
 
                                 <a
                                     class="view-link"
-                                    href="/projects/gym-progress/"
+                                    href="/projects/rocketeers/repricing/"
                                     >View case study ↗</a
                                 >
-                            </div>
-                        </article>
-                    </div>
+                            </article>
 
-                    <div class="lab-strip" data-track="lab">
-                        <p class="lab-label">Maths lab · generative side projects</p>
+                            <!-- =====================================
+                                 03 — FINANCIAL & OPERATIONS TRACKER
+                                 ===================================== -->
 
-                        <div class="lab-grid">
-                            <a class="lab-card math-card" href="/projects/math-wallpapers/">
-                                <svg class="math-orbit" viewBox="0 0 200 120" aria-hidden="true">
-                                    <path d={mathOrbitPath} />
-                                </svg>
-                                <span class="lab-copy">
-                                    <strong>Mathematical OLED Wallpapers <span aria-hidden="true">→</span></strong>
-                                    <span>Volume 1: six true-black fractal wallpapers in 4K, built with a tested Python engine and JWildfire. Run the engines live in your browser.</span>
-                                </span>
-                            </a>
+                            <article class="rocketeers-card card-finance project-link">
+                                <a
+                                    class="card-cover-link"
+                                    href="/projects/rocketeers/financial-tracker/"
+                                    aria-label="View the Financial and Operations Tracker case study"
+                                ></a>
+                                <div class="card-top">
+                                    <span class="card-number green"> 03 </span>
 
-                            <a class="lab-card mandala-card" href="/projects/mandala-generator/">
-                                <svg class="mandala-mini" viewBox="-60 -60 120 120" aria-hidden="true">
-                                    {mandalaPetals.map((angle) => (
-                                        <ellipse cx="0" cy="-28" rx="9" ry="24" transform={`rotate(${angle})`} />
-                                    ))}
-                                    <circle r="12" />
-                                </svg>
-                                <span class="lab-copy">
-                                    <strong>Mandala & Coloring Puzzle Generator <span aria-hidden="true">→</span></strong>
-                                    <span>Printable, reproducible mandala colouring pages from polar geometry. Colour the real SVGs or generate a new one.</span>
-                                </span>
-                            </a>
+                                    <span
+                                        class="card-symbol green"
+                                        aria-hidden="true"
+                                    >
+                                        ↗
+                                    </span>
+                                </div>
+
+                                <h4>
+                                    <a
+                                        class="card-title-link"
+                                        href="/projects/rocketeers/financial-tracker/"
+                                    >
+                                        Financial & Operations Tracker
+                                        <span
+                                            class="inline-arrow green"
+                                            aria-hidden="true">→</span
+                                        >
+                                    </a>
+                                </h4>
+
+                                <p>
+                                    A multi-sheet Excel tracker covering turnover,
+                                    orders, inventory, trading activity, fees,
+                                    cancellations, and approximate profitability
+                                    across the growing operation.
+                                </p>
+                                <p class="split-blurb">Turnover, orders, inventory, fees, and profitability in one Excel tracker.</p>
+
+                                <div class="metrics">
+                                    <div><strong>$55.6K</strong><span>eBay turnover, 2017–2019</span></div>
+                                    <div><strong>4,154</strong><span>historical orders</span></div>
+                                </div>
+
+
+                                <SkillTagList
+                                    skills={[
+                                        "excel",
+                                        "commercial-analysis",
+                                        "operational-reporting",
+                                    ]}
+                                />
+
+                                <a
+                                    class="view-link"
+                                    href="/projects/rocketeers/financial-tracker/"
+                                    >View case study ↗</a
+                                >
+                            </article>
                         </div>
-                    </div>
-                </section>
+                    </section>
+
+                    <!-- =============================================
+                         OTHER PROJECTS
+                         ============================================= -->
+
+                    <section
+                        class="other-projects"
+                        aria-labelledby="other-projects-title"
+                    >
+                        <div class="other-projects-heading">
+                            <p class="eyebrow">Selected systems</p>
+
+                            <h3 id="other-projects-title">
+                                Practical systems beyond Rocketeers.
+                            </h3>
+
+                        </div>
+
+                        <div class="track-filter" role="group" aria-label="Filter projects by area">
+                            <button type="button" aria-pressed="true" data-track-filter="all">All</button>
+                            <button type="button" aria-pressed="false" data-track-filter="automation">Automation</button>
+                            <button type="button" aria-pressed="false" data-track-filter="ecommerce">E-commerce & web</button>
+                            <button type="button" aria-pressed="false" data-track-filter="data">Data & analytics</button>
+                            <button type="button" aria-pressed="false" data-track-filter="lab">Maths lab</button>
+                        </div>
+                        <p class="visually-hidden" aria-live="polite" data-track-status></p>
+
+                        <div class="other-project-grid">
+                            <!-- =====================================
+                                 AI JOB DISCOVERY & OUTREACH AUTOMATION
+                                 ===================================== -->
+
+                            <article class="other-project-card project-link" data-track="automation">
+                                <a
+                                    class="card-cover-link"
+                                    href="/projects/ai-job-outreach/"
+                                    aria-label="View the AI Job Discovery and Outreach Automation case study"
+                                ></a>
+                                <div class="project-visual ai-visual">
+                                    <svg class="funnel-icon" viewBox="0 0 120 100" aria-hidden="true">
+                                        <path class="funnel-shape" d="M14 14 H106 L72 52 V82 L48 92 V52 Z" />
+                                        <circle class="funnel-drop d1" cx="34" cy="6" r="4" />
+                                        <circle class="funnel-drop d2" cx="60" cy="6" r="4" />
+                                        <circle class="funnel-drop d3" cx="86" cy="6" r="4" />
+                                        <circle class="funnel-out" cx="60" cy="96" r="4" />
+                                    </svg>
+                                </div>
+
+                                <div class="other-project-body">
+                                    <h4>
+                                        <a
+                                            class="card-title-link"
+                                            href="/projects/ai-job-outreach/"
+                                        >
+                                            AI Job Discovery & Outreach Automation
+                                            <span
+                                                class="inline-arrow blue"
+                                                aria-hidden="true">→</span
+                                            >
+                                        </a>
+                                    </h4>
+                                    <p class="card-stat">9 ATS adapters · 500/500 tests</p>
+
+                                    <p>
+                                        From a Python and Gemini job-API prototype
+                                        to a nine-ATS Google Apps Script job funnel
+                                        with deduplication, conservative screening,
+                                        and human review batches.
+                                    </p>
+                                    <p class="split-blurb">A nine-ATS Google Apps Script job funnel with deduplication, screening, and human review.</p>
+
+                                    <SkillTagList
+                                        skills={[
+                                            "google-apps-script",
+                                            "python",
+                                            "deduplication",
+                                            "ai-workflow-implementation",
+                                        ]}
+                                    />
+
+                                    <a
+                                        class="view-link"
+                                        href="/projects/ai-job-outreach/"
+                                        >View case study ↗</a
+                                    >
+                                </div>
+                            </article>
+
+                            <!-- =====================================
+                                 MARKETPLACE OPPORTUNITY INTELLIGENCE
+                                 ===================================== -->
+
+                            <article class="other-project-card project-link" data-track="automation">
+                                <a
+                                    class="card-cover-link"
+                                    href="/projects/rocketeers-intelligence/"
+                                    aria-label="View the Marketplace Opportunity Intelligence case study"
+                                ></a>
+                                <div class="project-visual intel-visual">
+                                    <svg class="intel-graph" viewBox="0 0 160 100" aria-hidden="true">
+                                        <path d="M22 50 L70 22 L70 78 Z M70 22 L132 50 L70 78" />
+                                        <circle cx="22" cy="50" r="9" />
+                                        <circle cx="70" cy="22" r="9" />
+                                        <circle cx="70" cy="78" r="9" />
+                                        <rect x="118" y="36" width="28" height="28" rx="6" />
+                                    </svg>
+                                </div>
+
+                                <div class="other-project-body">
+                                    <h4>
+                                        <a class="card-title-link" href="/projects/rocketeers-intelligence/">
+                                            Marketplace Opportunity Intelligence
+                                            <span class="inline-arrow blue" aria-hidden="true">→</span>
+                                        </a>
+                                    </h4>
+                                    <p class="card-stat">0 duplicates on re-runs</p>
+
+                                    <p>
+                                        An n8n and PostgreSQL pipeline that turns
+                                        public-domain museum archives into
+                                        reviewable product-niche evidence, with
+                                        idempotent ingestion and append-only human
+                                        reviews.
+                                    </p>
+                                    <p class="split-blurb">n8n and PostgreSQL turning museum archives into product-niche evidence.</p>
+
+                                    <SkillTagList
+                                        skills={["workflow-automation", "sql", "rest-api-integration", "human-oversight"]}
+                                    />
+
+                                    <a class="view-link" href="/projects/rocketeers-intelligence/">View case study ↗</a>
+                                </div>
+                            </article>
+
+                            <!-- =====================================
+                                 RAME
+                                 ===================================== -->
+
+                            <article class="other-project-card project-link" data-track="ecommerce">
+                                <a
+                                    class="card-cover-link"
+                                    href="/projects/rame/"
+                                    aria-label="View the RAMÉ Creative Space case study"
+                                ></a>
+                                <div class="project-visual rame-visual">
+                                    <div class="rame-mini" aria-hidden="true">
+                                        <span class="rame-mini-word">RAMÉ</span>
+                                        <span class="rame-mini-pill">Creative Space</span>
+                                        <svg class="rame-mini-star" viewBox="0 0 100 100">
+                                            <path d="M50 4 L60 40 L96 50 L60 60 L50 96 L40 60 L4 50 L40 40 Z" />
+                                        </svg>
+                                        <span class="rame-mini-dot"></span>
+                                    </div>
+                                </div>
+
+                                <div class="other-project-body">
+                                    <h4>
+                                        <a
+                                            class="card-title-link"
+                                            href="/projects/rame/"
+                                        >
+                                            RAMÉ Creative Space
+                                            <span
+                                                class="inline-arrow blue"
+                                                aria-hidden="true">→</span
+                                            >
+                                        </a>
+                                    </h4>
+                                    <p class="card-stat">Client store · in progress</p>
+
+                                    <p>
+                                        An in-progress client store built with
+                                        WordPress, WooCommerce, Elementor, and
+                                        targeted CSS, covering responsive pages,
+                                        custom-order inquiries, side-cart styling,
+                                        and practical site maintenance.
+                                    </p>
+                                    <p class="split-blurb">A client WooCommerce store built with WordPress, Elementor, and custom CSS.</p>
+
+                                    <SkillTagList
+                                        skills={[
+                                            "wordpress",
+                                            "woocommerce",
+                                            "elementor",
+                                            "theme-customization",
+                                        ]}
+                                    />
+
+                                    <a class="view-link" href="/projects/rame/"
+                                        >View case study ↗</a
+                                    >
+                                </div>
+                            </article>
+
+                            <!-- =====================================
+                                 CHESS ANALYTICS
+                                 ===================================== -->
+
+                            <article class="other-project-card project-link" data-track="data">
+                                <a
+                                    class="card-cover-link"
+                                    href="/projects/chess-analytics/"
+                                    aria-label="View the Chess Analytics case study"
+                                ></a>
+
+                                <div class="project-visual data-visual">
+                                    <div class="chess-icon" aria-hidden="true">
+                                        <span class="chess-ring"></span>
+                                        <span class="chess-knight">♞</span>
+                                    </div>
+                                </div>
+
+                                <div class="other-project-body">
+                                    <h4>
+                                        <a class="card-title-link" href="/projects/chess-analytics/">
+                                            Chess Analytics
+                                            <span class="inline-arrow blue" aria-hidden="true">→</span>
+                                        </a>
+                                    </h4>
+                                    <p class="card-stat">500K games analysed</p>
+
+                                    <p>
+                                        Analysis of a 500,000-game Lichess sample,
+                                        exploring rating upsets and opening
+                                        performance through Python, DuckDB SQL,
+                                        Power BI, and interactive web dashboards.
+                                    </p>
+                                    <p class="split-blurb">500,000 Lichess games analysed with Python, DuckDB, and Power BI.</p>
+
+                                    <SkillTagList
+                                        skills={["python", "sql", "power-bi", "data-visualisation"]}
+                                    />
+
+                                    <a class="view-link" href="/projects/chess-analytics/">View case study ↗</a>
+                                </div>
+                            </article>
+
+                            <!-- =====================================
+                                 GYM PROGRESS SYSTEM
+                                 ===================================== -->
+
+                            <article class="other-project-card project-link" data-track="data">
+                                <a
+                                    class="card-cover-link"
+                                    href="/projects/gym-progress/"
+                                    aria-label="View the Gym Progress System case study"
+                                ></a>
+                                <div class="project-visual gym-visual">
+                                    <svg class="gym-icon" viewBox="0 0 140 90" aria-hidden="true">
+                                        <path class="gym-grid" d="M10 80 H130 M10 55 H130 M10 30 H130" />
+                                        <polyline class="gym-line" points="12,74 32,68 50,70 68,54 86,50 104,36 126,22" />
+                                        <circle class="gym-dot" cx="126" cy="22" r="5" />
+                                        <text class="gym-label" x="12" y="20">kg</text>
+                                    </svg>
+                                </div>
+
+                                <div class="other-project-body">
+                                    <h4>
+                                        <a
+                                            class="card-title-link"
+                                            href="/projects/gym-progress/"
+                                        >
+                                            Gym Progress System
+                                            <span
+                                                class="inline-arrow blue"
+                                                aria-hidden="true">→</span
+                                            >
+                                        </a>
+                                    </h4>
+                                    <p class="card-stat">1,212 historical records</p>
+
+                                    <p>
+                                        An Excel/VBA analytics system for tracking
+                                        workouts, progression, historical data,
+                                        diagnostics, and performance trends.
+                                    </p>
+                                    <p class="split-blurb">Excel/VBA tracking of workouts, progression, and performance trends.</p>
+
+                                    <SkillTagList
+                                        skills={[
+                                            "excel",
+                                            "vba",
+                                            "data-visualisation",
+                                        ]}
+                                    />
+
+                                    <a
+                                        class="view-link"
+                                        href="/projects/gym-progress/"
+                                        >View case study ↗</a
+                                    >
+                                </div>
+                            </article>
+                        </div>
+
+                        <div class="lab-strip" data-track="lab">
+                            <p class="lab-label">Maths lab · generative side projects</p>
+
+                            <div class="lab-grid">
+                                <a class="lab-card math-card" href="/projects/math-wallpapers/">
+                                    <svg class="math-orbit" viewBox="0 0 200 120" aria-hidden="true">
+                                        <path d={mathOrbitPath} />
+                                    </svg>
+                                    <span class="lab-copy">
+                                        <strong>Mathematical OLED Wallpapers <span aria-hidden="true">→</span></strong>
+                                        <em class="card-stat">6 works in 4K</em>
+                                        <span>Volume 1: six true-black fractal wallpapers in 4K, built with a tested Python engine and JWildfire. Run the engines live in your browser.</span>
+                                    </span>
+                                </a>
+
+                                <a class="lab-card mandala-card" href="/projects/mandala-generator/">
+                                    <svg class="mandala-mini" viewBox="-60 -60 120 120" aria-hidden="true">
+                                        {mandalaPetals.map((angle) => (
+                                            <ellipse cx="0" cy="-28" rx="9" ry="24" transform={`rotate(${angle})`} />
+                                        ))}
+                                        <circle r="12" />
+                                    </svg>
+                                    <span class="lab-copy">
+                                        <strong>Mandala & Colouring Puzzle Generator <span aria-hidden="true">→</span></strong>
+                                        <em class="card-stat">Versions 1.0 to 3.0</em>
+                                        <span>Printable, reproducible mandala colouring pages from polar geometry. Colour the real SVGs or generate a new one.</span>
+                                    </span>
+                                </a>
+                            </div>
+                        </div>
+                    </section>
+                </div>
             </section>
 
             <!-- =================================================
@@ -750,14 +761,14 @@ const description =
 
                 <p class="section-lead">
                     I'm Konstantinos, an operations-focused professional with a
-                    background in e-commerce, marketplace management, data,
-                    automation, and practical technology.
+                    background in e-commerce, marketplace management, data, and
+                    automation.
                 </p>
 
                 <div class="about-summary" aria-label="Professional summary">
                     <div>
                         <strong>Business ownership</strong>
-                        <span>Seven years of direct marketplace operations.</span>
+                        <span>Founded and ran Rocketeers, 2017 to 2024.</span>
                     </div>
                     <div>
                         <strong>Systems thinking</strong>
@@ -768,54 +779,15 @@ const description =
                         <span>Workflow automation, data, and e-commerce operations.</span>
                     </div>
                 </div>
-<p>
-                    From 2017 to 2024, I founded and operated Rocketeers, a
-                    digital marketplace business that sold more than 23,000
-                    items. Running the business gave me hands-on experience
-                    across sourcing, pricing, inventory, order management,
-                    customer experience, and commercial decision-making.
-                </p>
 
-                <p>
-                    As the operation grew, I became increasingly interested in
-                    solving the problems behind the work itself. I developed
-                    Excel-based systems to streamline repricing, organize
-                    inventory, and track business performance. That same
-                    interest has since expanded into Python, AI-assisted
-                    workflows, data analysis, and web development.
+                <p class="about-story">
+                    I ran Rocketeers end to end: sourcing, pricing, inventory,
+                    orders, customer service, and disputes. As it grew, I built
+                    the Excel systems that kept it manageable, and I now bring
+                    the same approach to Python, SQL, Google Apps Script, and
+                    n8n: clear processes, clean data, and people making the
+                    final calls.
                 </p>
-
-                <p>
-                    I enjoy combining an understanding of real operational
-                    problems with the technical tools needed to solve them.
-                    Whether I'm working with spreadsheets, code, data, or
-                    marketplace systems, my goal is to make processes clearer,
-                    more reliable, and easier to scale.
-                </p>
-
-                <p>
-                    My recent automation work runs on Google Apps Script, n8n,
-                    and PostgreSQL: a job funnel that reads nine applicant
-                    tracking systems, and a pipeline that turns public museum
-                    archives into reviewable product evidence. Language models
-                    handle clearly defined steps, deduplication and validation
-                    keep the data clean, and people make the final calls.
-                </p>
-
-                <!-- Professional focus areas -->
-                <SkillLinks
-                    variant="highlight"
-                    skills={[
-                        "marketplace-operations",
-                        "excel",
-                        "vba",
-                        "ai-workflow-implementation",
-                        "python",
-                        "wordpress",
-                        "operational-reporting",
-                        "responsive-web-design",
-                    ]}
-                />
             </section>
             <!-- =================================================
                   SKILLS — CAPABILITIES SHOWN IN THE PROJECTS
@@ -840,9 +812,8 @@ const description =
                                 >Operations &amp; e-commerce</a>
                         </h3>
                         <p>
-                            Marketplace management, digital inventory, pricing,
-                            order fulfilment, customer issue resolution, seller
-                            performance, and process design.
+                            Marketplace management, pricing, fulfilment,
+                            customer issues, and seller performance.
                         </p>
                         <a href="/projects/rocketeers/">See Rocketeers ↗</a>
                     </article>
@@ -852,9 +823,8 @@ const description =
                                 >Excel, VBA &amp; analytics</a>
                         </h3>
                         <p>
-                            Operational workbooks, formulas, reporting, data
-                            organisation, chart automation, and interactive
-                            workbook interfaces.
+                            Operational workbooks, reporting, and chart
+                            automation.
                         </p>
                         <a href="/projects/gym-progress/">See Gym Progress ↗</a>
                     </article>
@@ -864,10 +834,8 @@ const description =
                                 >AI implementation &amp; automation</a>
                         </h3>
                         <p>
-                            Apps Script and n8n pipelines, API integration,
-                            deduplication, validation, and language models used
-                            for defined steps, with people making the final
-                            calls.
+                            Apps Script and n8n pipelines, APIs, and language
+                            models for clearly defined steps.
                         </p>
                         <a href="/projects/ai-job-outreach/"
                             >See AI automation ↗</a
@@ -879,9 +847,8 @@ const description =
                                 >Python, data &amp; web</a>
                         </h3>
                         <p>
-                            Python, SQL and PostgreSQL, API data handling,
-                            Power BI dashboards, WordPress and WooCommerce
-                            builds, and this responsive Astro site.
+                            Python, SQL, PostgreSQL, Power BI, and WordPress
+                            and WooCommerce builds.
                         </p>
                         <a href="/projects/chess-analytics/">See Chess Analytics ↗</a>
                     </article>
@@ -1304,6 +1271,15 @@ const description =
 
         font-size: clamp(1.02rem, 1.6vw, 1.25rem);
         line-height: 1.7;
+    }
+
+    .hero-name {
+        margin-bottom: 0.65rem;
+        color: var(--orange);
+        font-size: clamp(0.95rem, 1.5vw, 1.15rem);
+        font-weight: 850;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
     }
 
     .hero-role {
@@ -1753,7 +1729,7 @@ const description =
 
     .rocketeers-card .metrics {
         display: grid;
-        grid-template-columns: repeat(3, minmax(0, 1fr));
+        grid-template-columns: repeat(2, minmax(0, 1fr));
         gap: 0.8rem;
 
         margin-top: auto;
@@ -1868,15 +1844,6 @@ const description =
 
     .other-projects-heading h3 {
         margin-bottom: 0;
-    }
-
-    .other-projects-heading > p:last-child {
-        max-width: 500px;
-        margin-bottom: 0;
-
-        color: var(--subtle);
-        font-size: 0.84rem;
-        line-height: 1.5;
     }
 
     .currently-building {
@@ -2594,6 +2561,11 @@ const description =
         line-height: 1.75;
     }
 
+    .about .about-story {
+        max-width: 720px;
+        text-align: left;
+    }
+
     .about .section-lead {
         color: #e4edf5;
         font-size: clamp(1.1rem, 1.8vw, 1.3rem);
@@ -2629,7 +2601,7 @@ const description =
        ========================================================= */
 
     .contact {
-        padding-top: clamp(5rem, 9vw, 8rem);
+        padding-top: clamp(3rem, 6vw, 5rem);
         padding-bottom: clamp(6rem, 10vw, 9rem);
 
         text-align: center;
@@ -2745,6 +2717,290 @@ const description =
        RESPONSIVE — TABLET
        ========================================================= */
 
+    /* =========================================================
+       PROJECTS SPLIT — ROCKETEERS LEFT, OTHER PROJECTS RIGHT
+       On wide screens both columns are equal-height panels that
+       fit one laptop screen, so all the work is visible at once.
+       Below 1100px the columns stack as before.
+       ========================================================= */
+
+    .split-blurb {
+        display: none;
+    }
+
+    @media (min-width: 1101px) {
+        .projects-split {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr);
+            gap: clamp(1.25rem, 2vw, 1.75rem);
+            margin-top: 2.5rem;
+        }
+
+        .projects-split > .rocketeers-feature,
+        .projects-split > .other-projects {
+            display: flex;
+            flex-direction: column;
+            margin-top: 0;
+            padding: 1.4rem;
+        }
+
+        /* Left column: a compact Rocketeers panel */
+
+        .projects-split .rocketeers-hero {
+            gap: 0;
+            margin-bottom: 1rem;
+        }
+
+        .projects-split .rocketeers-copy {
+            padding: 0;
+        }
+
+        .projects-split .featured-label {
+            margin-bottom: 0.4rem;
+        }
+
+        .projects-split .rocketeers-title-link h3 {
+            margin-bottom: 0.3rem;
+            font-size: clamp(2rem, 2.8vw, 2.6rem);
+        }
+
+        .projects-split .rocketeers-tagline {
+            margin-bottom: 0.6rem;
+            font-size: 1rem;
+        }
+
+        .projects-split .rocketeers-description,
+        .projects-split .rocketeers-visual,
+        .projects-split .rocketeers-card > p:not(.split-blurb),
+        .projects-split .other-project-body > p:not(.split-blurb, .card-stat) {
+            display: none;
+        }
+
+        .projects-split .split-blurb {
+            display: block;
+            margin-bottom: 0;
+            color: var(--muted);
+            font-size: 0.8rem;
+            line-height: 1.45;
+        }
+
+        .projects-split .rocketeers-copy .split-blurb {
+            max-width: 460px;
+            margin: 0 auto 0.85rem;
+            font-size: 0.86rem;
+        }
+
+        .projects-split .rocketeers-overview-button {
+            min-height: 42px;
+            padding-block: 0.55rem;
+            font-size: 0.86rem;
+        }
+
+        .projects-split .rocketeers-grid {
+            flex: 1;
+            grid-template-columns: 1fr;
+            gap: 0.7rem;
+        }
+
+        .projects-split .rocketeers-card {
+            justify-content: center;
+            min-height: 0;
+            padding: 0.7rem 1rem;
+        }
+
+        .projects-split .rocketeers-card .card-top {
+            position: absolute;
+            top: 0.7rem;
+            right: 1rem;
+            margin: 0;
+        }
+
+        .projects-split .rocketeers-card .card-number {
+            display: none;
+        }
+
+        .projects-split .rocketeers-card .card-symbol {
+            font-size: 1.1rem;
+        }
+
+        .projects-split .rocketeers-card h4 {
+            margin-bottom: 0.3rem;
+            padding-right: 1.8rem;
+            font-size: 1rem;
+        }
+
+        .projects-split .rocketeers-card .metrics {
+            gap: 0.6rem;
+            margin-top: 0.5rem;
+            padding-top: 0.5rem;
+        }
+
+        .projects-split .rocketeers-card .metrics strong {
+            font-size: 0.98rem;
+        }
+
+        .projects-split .rocketeers-card .metrics span {
+            margin-top: 0.1rem;
+            font-size: 0.66rem;
+        }
+
+        .projects-split .rocketeers-card :global(.skill-tag-list),
+        .projects-split .rocketeers-card .view-link {
+            display: none;
+        }
+
+        /* Right column: everything beyond Rocketeers */
+
+        .projects-split > .other-projects {
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            background: linear-gradient(160deg, rgba(10, 26, 43, 0.7), rgba(5, 14, 24, 0.7));
+        }
+
+        .projects-split .other-projects-heading {
+            align-items: flex-start;
+            gap: 0.3rem;
+            margin-bottom: 0.9rem;
+            text-align: left;
+        }
+
+        .projects-split .other-projects-heading h3 {
+            font-size: clamp(1.4rem, 2vw, 1.75rem);
+        }
+
+        .projects-split .track-filter {
+            display: none;
+        }
+
+        .projects-split .other-project-grid {
+            flex: 1;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 0.7rem;
+        }
+
+        .projects-split .other-project-grid > .other-project-card,
+        .projects-split .other-project-grid > [data-track="automation"],
+        .projects-split .other-project-grid.is-filtered > .other-project-card {
+            grid-column: auto;
+        }
+
+        .projects-split .other-project-grid.is-filtered {
+            align-content: start;
+        }
+
+        /* The flagship automation project runs full width */
+        .projects-split .other-project-grid:not(.is-filtered) > .other-project-card:first-child {
+            grid-column: 1 / -1;
+        }
+
+        .projects-split .other-project-card {
+            flex-direction: row;
+        }
+
+        .projects-split .project-visual {
+            flex: 0 0 84px;
+            min-height: 0;
+            border-right: 1px solid var(--border);
+            border-bottom: 0;
+        }
+
+        .projects-split .project-visual > * {
+            zoom: 0.5;
+        }
+
+        .projects-split .project-visual > .rame-mini {
+            zoom: 0.34;
+        }
+
+        .projects-split .other-project-body {
+            justify-content: center;
+            padding: 0.75rem 0.95rem;
+        }
+
+        .projects-split .other-project-body h4 {
+            margin-bottom: 0.3rem;
+            font-size: 0.95rem;
+            line-height: 1.3;
+        }
+
+        .projects-split .other-project-body :global(.skill-tag-list),
+        .projects-split .other-project-body .view-link {
+            display: none;
+        }
+
+        .projects-split .lab-strip {
+            margin-top: 0.9rem;
+        }
+
+        .projects-split .lab-label {
+            margin-bottom: 0.5rem;
+            font-size: 0.66rem;
+        }
+
+        .projects-split .lab-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 0.7rem;
+        }
+
+        .projects-split .lab-card {
+            gap: 0.75rem;
+            padding: 0.65rem 0.8rem;
+        }
+
+        .projects-split .lab-card svg {
+            width: 52px;
+            height: 40px;
+        }
+
+        .projects-split .lab-copy strong {
+            font-size: 0.85rem;
+        }
+
+        .projects-split .lab-copy > span {
+            display: none;
+        }
+    }
+
+    .other-project-body > .card-stat,
+    .lab-copy .card-stat {
+        display: block;
+        margin: 0 0 0.45rem;
+        color: var(--orange);
+        font-size: 0.72rem;
+        font-style: normal;
+        font-weight: 800;
+        letter-spacing: 0.04em;
+    }
+
+    /* Phones: short summaries instead of full descriptions, no tag clouds */
+    @media (max-width: 650px) {
+        .rocketeers-description,
+        .rocketeers-visual,
+        .rocketeers-card > p:not(.split-blurb),
+        .other-project-body > p:not(.split-blurb, .card-stat),
+        .lab-copy > span,
+        .rocketeers-card :global(.skill-tag-list),
+        .other-project-body :global(.skill-tag-list) {
+            display: none;
+        }
+
+        .split-blurb {
+            display: block;
+            margin-bottom: 0.4rem;
+            color: var(--muted);
+            font-size: 0.88rem;
+            line-height: 1.5;
+        }
+
+        .rocketeers-copy .split-blurb {
+            margin-bottom: 1rem;
+        }
+
+        .project-visual {
+            min-height: 120px;
+        }
+    }
+
     @media (max-width: 1100px) {
         .rocketeers-grid {
             grid-template-columns: 1fr;
@@ -2790,7 +3046,6 @@ const description =
             font-size: clamp(2.7rem, 12vw, 4rem);
         }
 
-        .proof-strip,
         .about-summary,
         .currently-building-grid {
             grid-template-columns: 1fr;
@@ -2812,8 +3067,17 @@ const description =
             width: 100%;
         }
 
-        .rocketeers-card .metrics {
-            grid-template-columns: 1fr;
+        .proof-strip {
+            gap: 0.45rem;
+        }
+
+        .proof-strip li {
+            padding: 0.65rem 0.55rem;
+            text-align: center;
+        }
+
+        .proof-strip span {
+            font-size: 0.66rem;
         }
 
         .other-project-grid,
@@ -2901,6 +3165,7 @@ const description =
         ========================================================= */
 
     .skills {
+        padding-bottom: clamp(3rem, 6vw, 5rem);
         text-align: center;
     }
 

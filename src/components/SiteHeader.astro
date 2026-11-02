@@ -96,26 +96,22 @@ const onProjectPage = pathname.startsWith("/projects");
         border-radius: 3px;
     }
 
+    /* Phones: keep the header to one row so it covers less of the screen */
     @media (max-width: 560px) {
         .site-nav {
-            align-items: flex-start;
-            padding: 0.65rem 0;
-        }
-
-        .wordmark {
-            padding-top: 0.28rem;
+            gap: 0.75rem;
+            min-height: 56px;
         }
 
         .nav-links {
-            display: grid;
-            grid-template-columns: repeat(2, auto);
-            gap: 0.18rem 1.05rem;
+            gap: clamp(0.6rem, 3.4vw, 1rem);
         }
 
         .nav-links a {
-            min-height: 44px;
             display: inline-flex;
             align-items: center;
+            min-height: 44px;
+            font-size: 0.82rem;
         }
     }
 

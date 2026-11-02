@@ -40,7 +40,7 @@ export const projects = {
         href: "/projects/math-wallpapers/",
     },
     mandala: {
-        title: "Mandala & Coloring Puzzle Generator",
+        title: "Mandala & Colouring Puzzle Generator",
         href: "/projects/mandala-generator/",
     },
     portfolio: {
@@ -261,7 +261,7 @@ export const skills = [
         id: "data-transformation",
         label: "Data Transformation",
         umbrella: "excel-vba-analytics",
-        description: "Normalizing and reshaping raw source data into structures suitable for analysis, matching, and bulk operations.",
+        description: "Normalising and reshaping raw source data into structures suitable for analysis, matching, and bulk operations.",
         projects: ["repricing", "aiOutreach", "chess"],
     },
     {
@@ -352,7 +352,7 @@ export const skills = [
         id: "ai-workflow-implementation",
         label: "AI Workflow Implementation",
         umbrella: "ai-automation",
-        description: "Using an LLM for bounded suitability evaluation and outreach drafting inside a wider deterministic workflow.",
+        description: "Using language models for clearly defined steps, such as fit screening, inside deterministic, human-reviewed workflows.",
         projects: ["aiOutreach"],
     },
     {
@@ -476,7 +476,7 @@ export const skills = [
     },
     {
         id: "data-normalization",
-        label: "Data Normalization",
+        label: "Data Normalisation",
         umbrella: "python-data-web",
         description: "Mapping different provider formats into one consistent internal record structure.",
         projects: ["aiOutreach", "intelligence"],
@@ -539,7 +539,7 @@ export const skills = [
     },
     {
         id: "theme-customization",
-        label: "Theme & CSS Customization",
+        label: "Theme & CSS Customisation",
         umbrella: "python-data-web",
         description: "Adapting Blocksy, Elementor, and plugin interfaces with targeted CSS so the storefront feels visually coherent.",
         projects: ["rame"],
@@ -583,7 +583,7 @@ export const skills = [
         id: "astro",
         label: "Astro",
         umbrella: "python-data-web",
-        description: "Building this multi-page static portfolio with reusable components and centralized content data.",
+        description: "Building this multi-page static portfolio with reusable components and centralised content data.",
         projects: ["portfolio"],
     },
     {
