@@ -283,10 +283,6 @@ const description =
                                         <span>documented USD sales</span>
                                     </div>
 
-                                    <div>
-                                        <strong>0</strong>
-                                        <span>negative feedback on final live profile</span>
-                                    </div>
                                 </div>
 
                                 <div class="view-link">View case study ↗</div>
@@ -338,7 +334,6 @@ const description =
                                 <div class="metrics">
                                     <div><strong>1,000+</strong><span>live listings</span></div>
                                     <div><strong>10K+</strong><span>priced variations</span></div>
-                                    <div><strong>16K+</strong><span>prices refreshed per run</span></div>
                                 </div>
 
                                 <SkillTagList
@@ -401,7 +396,6 @@ const description =
                                 <div class="metrics">
                                     <div><strong>$55.6K</strong><span>eBay turnover, 2017–2019</span></div>
                                     <div><strong>4,154</strong><span>historical orders</span></div>
-                                    <div><strong>25</strong><span>populated months</span></div>
                                 </div>
 
 
@@ -437,7 +431,6 @@ const description =
                                 Practical systems beyond Rocketeers.
                             </h3>
 
-                            <p>Automation, e-commerce, data, and a little maths.</p>
                         </div>
 
                         <div class="track-filter" role="group" aria-label="Filter projects by area">
@@ -1764,7 +1757,7 @@ const description =
 
     .rocketeers-card .metrics {
         display: grid;
-        grid-template-columns: repeat(3, minmax(0, 1fr));
+        grid-template-columns: repeat(2, minmax(0, 1fr));
         gap: 0.8rem;
 
         margin-top: auto;
@@ -1879,15 +1872,6 @@ const description =
 
     .other-projects-heading h3 {
         margin-bottom: 0;
-    }
-
-    .other-projects-heading > p:last-child {
-        max-width: 500px;
-        margin-bottom: 0;
-
-        color: var(--subtle);
-        font-size: 0.84rem;
-        line-height: 1.5;
     }
 
     .currently-building {
@@ -2908,15 +2892,7 @@ const description =
         }
 
         .projects-split .track-filter {
-            justify-content: flex-start;
-            gap: 0.4rem;
-            margin: 0 0 0.9rem;
-        }
-
-        .projects-split .track-filter button {
-            min-height: 32px;
-            padding: 0 0.75rem;
-            font-size: 0.74rem;
+            display: none;
         }
 
         .projects-split .other-project-grid {
