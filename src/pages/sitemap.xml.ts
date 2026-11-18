@@ -9,6 +9,8 @@ const routes = [
     "/projects/rocketeers/repricing/",
     "/projects/rocketeers/financial-tracker/",
     "/projects/rame/",
+    "/projects/job-scout/",
+    "/projects/print-price-calculator/",
     "/projects/ai-job-outreach/",
     "/projects/rocketeers-intelligence/",
     "/projects/math-wallpapers/",

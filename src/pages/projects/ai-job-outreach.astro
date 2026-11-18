@@ -16,7 +16,7 @@ import SeoHead from "../../components/SeoHead.astro";
 import SkillLinks from "../../components/SkillLinks.astro";
 
 const title =
-    "AI Job Discovery & Outreach Automation | Python, Gemini & Apps Script | Konstantinos Zafeiropoulos";
+    "Job Scout: Earlier Versions | Python, Gemini & Apps Script | Konstantinos Zafeiropoulos";
 
 const description =
     "How a three-API Python and Gemini prototype evolved into a nine-adapter Google Apps Script job funnel with source verification, deduplication, conservative screening, review batches and scheduled collection.";
@@ -438,7 +438,9 @@ const schedule = [
                 <div class="breadcrumbs">
                     <a href="/#projects">Projects</a>
                     <span aria-hidden="true">→</span>
-                    <strong>AI Job Discovery & Outreach</strong>
+                    <a href="/projects/job-scout/">Job Scout</a>
+                    <span aria-hidden="true">→</span>
+                    <strong>Earlier versions</strong>
                 </div>
 
                 <p class="eyebrow">Python · Google Apps Script · Workflow automation</p>
@@ -449,7 +451,9 @@ const schedule = [
                 </h1>
 
                 <p class="hero-lead">
-                    Version 1 was a Python and Gemini automation that pulled
+                    These are the two versions that came before
+                    <a href="/projects/job-scout/">Job Scout</a>, the live
+                    pipeline I use today. Version 1 was a Python and Gemini automation that pulled
                     vacancies from three job APIs and drafted outreach. Version
                     2 is a Google Apps Script collector that reads employers'
                     own job boards across nine ATS platforms, deduplicates
@@ -1803,7 +1807,7 @@ const schedule = [
     footer {
         width: min(100%, var(--page-width));
         margin-inline: auto;
-        padding-inline: clamp(1rem, 5vw, 4.5rem);
+        padding-inline: clamp(1.5rem, 7vw, 7rem);
     }
 
     a { color: inherit; text-underline-offset: 0.25em; }
