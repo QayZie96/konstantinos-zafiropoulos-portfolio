@@ -24,7 +24,7 @@ export const projects = {
         href: "/projects/job-scout/",
     },
     calculator: {
-        title: "Print Price Calculator",
+        title: "3D Print Price Calculator",
         href: "/projects/print-price-calculator/",
     },
     aiOutreach: {
