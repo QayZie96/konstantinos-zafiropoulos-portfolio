@@ -66,7 +66,7 @@ const description =
                 <div class="hero-copy">
                     <p class="hero-name">Konstantinos Zafeiropoulos</p>
 
-                    <p class="hero-role">Operations systems · Automation · Data</p>
+                    <p class="hero-role">Marketplace operations · Automation · Data</p>
 
                     <h1 id="intro-title">
                         Marketplace operations,{" "}
@@ -171,20 +171,15 @@ const description =
                                 </p>
 
                                 <p class="rocketeers-description">
-                                    I founded and operated Rocketeers, a
-                                    cross-platform marketplace business with
-                                    thousands of listings, trading in-game items
-                                    for Rocket League. It combined business planning,
-                                    marketplace execution, pricing, inventory,
-                                    customer operations, automation, analytics, and
-                                    commercial decision-making.
+                                    I founded and ran Rocketeers for seven years:
+                                    a cross-platform marketplace business with
+                                    thousands of listings and 6,944 eBay customers,
+                                    47.3% of whom came back to buy again. It sold
+                                    in-game items, mainly for Rocket League, and I
+                                    ran pricing, inventory, orders and customer
+                                    service end to end.
                                 </p>
-                                <p class="split-blurb">A cross-platform marketplace business with thousands of listings, run end to end from pricing to customer service.</p>
-
-                                <p class="rocketeers-description">
-                                    Explore the business itself and the operational
-                                    systems I built to help manage and scale it.
-                                </p>
+                                <p class="split-blurb">Seven years, 6,944 eBay customers, 47.3% repeat buyers and zero negative feedback, run end to end from pricing to customer service.</p>
 
                                 <!--
                                     Main Rocketeers overview button.
@@ -438,20 +433,20 @@ const description =
                             <button type="button" aria-pressed="false" data-track-filter="automation">Automation</button>
                             <button type="button" aria-pressed="false" data-track-filter="ecommerce">E-commerce & web</button>
                             <button type="button" aria-pressed="false" data-track-filter="data">Data & analytics</button>
-                            <button type="button" aria-pressed="false" data-track-filter="lab">Maths lab</button>
+                            <button type="button" aria-pressed="false" data-track-filter="lab">Side projects</button>
                         </div>
                         <p class="visually-hidden" aria-live="polite" data-track-status></p>
 
                         <div class="other-project-grid">
                             <!-- =====================================
-                                 AI JOB DISCOVERY & OUTREACH AUTOMATION
+                                 JOB SCOUT (LIVE)
                                  ===================================== -->
 
                             <article class="other-project-card project-link" data-track="automation">
                                 <a
                                     class="card-cover-link"
-                                    href="/projects/ai-job-outreach/"
-                                    aria-label="View the AI Job Discovery and Outreach Automation case study"
+                                    href="/projects/job-scout/"
+                                    aria-label="View the Job Scout case study"
                                 ></a>
                                 <div class="project-visual ai-visual">
                                     <svg class="funnel-icon" viewBox="0 0 120 100" aria-hidden="true">
@@ -467,38 +462,99 @@ const description =
                                     <h4>
                                         <a
                                             class="card-title-link"
-                                            href="/projects/ai-job-outreach/"
+                                            href="/projects/job-scout/"
                                         >
-                                            AI Job Discovery & Outreach Automation
+                                            Job Scout: daily job-search pipeline
                                             <span
                                                 class="inline-arrow blue"
                                                 aria-hidden="true">→</span
                                             >
                                         </a>
                                     </h4>
-                                    <p class="card-stat">9 ATS adapters · 500/500 tests</p>
+                                    <p class="card-stat">Live · 2 daily users · 770+ companies</p>
 
                                     <p>
-                                        From a Python and Gemini job-API prototype
-                                        to a nine-ATS Google Apps Script job funnel
-                                        with deduplication, conservative screening,
-                                        and human review batches.
+                                        A scheduled Python pipeline that reads job
+                                        boards and the hiring feeds of 770+
+                                        companies every weekday, removes
+                                        deal-breakers, scores fit with rules and
+                                        Gemini, and hands a ranked list to a person
+                                        in Google Sheets.
                                     </p>
-                                    <p class="split-blurb">A nine-ATS Google Apps Script job funnel with deduplication, screening, and human review.</p>
+                                    <p class="split-blurb">Reads hundreds of hiring feeds each weekday, removes deal-breakers and ranks the rest for a person to review.</p>
 
                                     <SkillTagList
                                         skills={[
-                                            "google-apps-script",
                                             "python",
-                                            "deduplication",
-                                            "ai-workflow-implementation",
+                                            "google-gemini",
+                                            "google-sheets-api",
+                                            "human-oversight",
                                         ]}
                                     />
 
                                     <a
                                         class="view-link"
-                                        href="/projects/ai-job-outreach/"
+                                        href="/projects/job-scout/"
                                         >View case study ↗</a
+                                    >
+                                </div>
+                            </article>
+
+                            <!-- =====================================
+                                 PRINT PRICE CALCULATOR (LIVE WEB APP)
+                                 ===================================== -->
+
+                            <article class="other-project-card project-link" data-track="ecommerce">
+                                <a
+                                    class="card-cover-link"
+                                    href="https://3dpricingcalculator.netlify.app/"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    aria-label="Open the Print Price Calculator web app (opens in a new tab)"
+                                ></a>
+                                <div class="project-visual calc-visual">
+                                    <svg class="calc-icon" viewBox="0 0 120 100" aria-hidden="true">
+                                        <rect class="calc-body" x="30" y="8" width="60" height="84" rx="8" />
+                                        <rect class="calc-screen" x="38" y="16" width="44" height="18" rx="3" />
+                                        <circle cx="46" cy="48" r="4" /><circle cx="60" cy="48" r="4" /><circle cx="74" cy="48" r="4" />
+                                        <circle cx="46" cy="62" r="4" /><circle cx="60" cy="62" r="4" /><circle cx="74" cy="62" r="4" />
+                                        <circle cx="46" cy="76" r="4" /><circle cx="60" cy="76" r="4" /><circle class="calc-key" cx="74" cy="76" r="4" />
+                                    </svg>
+                                </div>
+
+                                <div class="other-project-body">
+                                    <h4>
+                                        <a
+                                            class="card-title-link"
+                                            href="https://3dpricingcalculator.netlify.app/"
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                        >
+                                            Print Price Calculator
+                                            <span class="inline-arrow blue" aria-hidden="true">↗</span>
+                                        </a>
+                                    </h4>
+                                    <p class="card-stat">Live web app · subscriptions</p>
+
+                                    <p>
+                                        A web app that prices 3D prints from
+                                        filament, electricity, machine wear, failed
+                                        prints, labour and marketplace fees, with a
+                                        Pro subscription (RevenueCat) for STL
+                                        upload, batch quotes and CSV export.
+                                    </p>
+                                    <p class="split-blurb">Prices 3D prints from materials, wear, failures and fees, with a Pro subscription.</p>
+
+                                    <SkillTagList
+                                        skills={["pricing-operations", "commercial-analysis", "html-css", "netlify"]}
+                                    />
+
+                                    <a
+                                        class="view-link"
+                                        href="https://3dpricingcalculator.netlify.app/"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        >Open the app ↗</a
                                     >
                                 </div>
                             </article>
@@ -652,68 +708,25 @@ const description =
                                 </div>
                             </article>
 
-                            <!-- =====================================
-                                 GYM PROGRESS SYSTEM
-                                 ===================================== -->
+</div>
 
-                            <article class="other-project-card project-link" data-track="data">
-                                <a
-                                    class="card-cover-link"
-                                    href="/projects/gym-progress/"
-                                    aria-label="View the Gym Progress System case study"
-                                ></a>
-                                <div class="project-visual gym-visual">
+                        <div class="lab-strip" data-track="lab">
+                            <p class="lab-label">Side projects</p>
+
+                            <div class="lab-grid">
+                                <a class="lab-card gym-card" href="/projects/gym-progress/">
                                     <svg class="gym-icon" viewBox="0 0 140 90" aria-hidden="true">
                                         <path class="gym-grid" d="M10 80 H130 M10 55 H130 M10 30 H130" />
                                         <polyline class="gym-line" points="12,74 32,68 50,70 68,54 86,50 104,36 126,22" />
                                         <circle class="gym-dot" cx="126" cy="22" r="5" />
-                                        <text class="gym-label" x="12" y="20">kg</text>
                                     </svg>
-                                </div>
+                                    <span class="lab-copy">
+                                        <strong>Gym Progress System <span aria-hidden="true">→</span></strong>
+                                        <em class="card-stat">1,212 historical records</em>
+                                        <span>An Excel/VBA analytics system for workouts, progression and performance trends.</span>
+                                    </span>
+                                </a>
 
-                                <div class="other-project-body">
-                                    <h4>
-                                        <a
-                                            class="card-title-link"
-                                            href="/projects/gym-progress/"
-                                        >
-                                            Gym Progress System
-                                            <span
-                                                class="inline-arrow blue"
-                                                aria-hidden="true">→</span
-                                            >
-                                        </a>
-                                    </h4>
-                                    <p class="card-stat">1,212 historical records</p>
-
-                                    <p>
-                                        An Excel/VBA analytics system for tracking
-                                        workouts, progression, historical data,
-                                        diagnostics, and performance trends.
-                                    </p>
-                                    <p class="split-blurb">Excel/VBA tracking of workouts, progression, and performance trends.</p>
-
-                                    <SkillTagList
-                                        skills={[
-                                            "excel",
-                                            "vba",
-                                            "data-visualisation",
-                                        ]}
-                                    />
-
-                                    <a
-                                        class="view-link"
-                                        href="/projects/gym-progress/"
-                                        >View case study ↗</a
-                                    >
-                                </div>
-                            </article>
-                        </div>
-
-                        <div class="lab-strip" data-track="lab">
-                            <p class="lab-label">Maths lab · generative side projects</p>
-
-                            <div class="lab-grid">
                                 <a class="lab-card math-card" href="/projects/math-wallpapers/">
                                     <svg class="math-orbit" viewBox="0 0 200 120" aria-hidden="true">
                                         <path d={mathOrbitPath} />
@@ -776,7 +789,7 @@ const description =
                     </div>
                     <div>
                         <strong>Current focus</strong>
-                        <span>Workflow automation, data, and e-commerce operations.</span>
+                        <span>E-commerce, revenue and customer operations, with automation.</span>
                     </div>
                 </div>
 
@@ -787,6 +800,14 @@ const description =
                     the same approach to Python, SQL, Google Apps Script, and
                     n8n: clear processes, clean data, and people making the
                     final calls.
+                </p>
+
+                <p class="about-story">
+                    I enjoy the people side as much as the systems. I handled
+                    orders, questions and disputes for 6,944 buyers myself, and on
+                    client work I turn a non-technical owner's requests into
+                    something that works and explain the trade-offs in plain
+                    language.
                 </p>
             </section>
             <!-- =================================================
@@ -826,7 +847,7 @@ const description =
                             Operational workbooks, reporting, and chart
                             automation.
                         </p>
-                        <a href="/projects/gym-progress/">See Gym Progress ↗</a>
+                        <a href="/projects/rocketeers/repricing/">See the Repricing Engine ↗</a>
                     </article>
                     <article class="skill-group">
                         <h3>
@@ -837,9 +858,7 @@ const description =
                             Apps Script and n8n pipelines, APIs, and language
                             models for clearly defined steps.
                         </p>
-                        <a href="/projects/ai-job-outreach/"
-                            >See AI automation ↗</a
-                        >
+                        <a href="/projects/job-scout/">See Job Scout ↗</a>
                     </article>
                     <article class="skill-group">
                         <h3>
@@ -874,9 +893,9 @@ const description =
                 <h2 id="contact-title">Let’s connect.</h2>
 
                 <p class="section-lead">
-                    Open to operations, e-commerce and marketplace operations,
-                    and implementation roles, in Greece, remote, or with EU
-                    relocation.
+                    Open to e-commerce and marketplace operations, revenue
+                    operations, customer success and account management roles,
+                    in Greece, remote, or with EU relocation.
                 </p>
 
                 <p>
@@ -888,6 +907,16 @@ const description =
                 <div class="contact-links">
                     <a class="text-link" href="mailto:kwstaszaf@hotmail.com">
                         Email me
+                        <span aria-hidden="true">↗</span>
+                    </a>
+
+                    <a
+                        class="text-link"
+                        href="/cv/Konstantinos_Zafeiropoulos_CV.pdf"
+                        target="_blank"
+                        rel="noopener"
+                    >
+                        Download CV (PDF)
                         <span aria-hidden="true">↗</span>
                     </a>
 
@@ -2040,7 +2069,7 @@ const description =
 
     .lab-grid {
         display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
         gap: 1rem;
     }
 
@@ -2380,6 +2409,33 @@ const description =
         0%, 60% { opacity: 0; transform: translateY(-8px); }
         75% { opacity: 1; transform: translateY(0); }
         100% { opacity: 0; transform: translateY(6px); }
+    }
+
+    .calc-icon {
+        width: 120px;
+        height: 100px;
+    }
+
+    .calc-icon .calc-body {
+        fill: none;
+        stroke: var(--blue);
+        stroke-width: 3;
+    }
+
+    .calc-icon .calc-screen {
+        fill: rgba(42, 167, 255, 0.18);
+        stroke: var(--blue);
+        stroke-width: 2;
+    }
+
+    .calc-icon circle {
+        fill: var(--blue);
+        opacity: 0.7;
+    }
+
+    .calc-icon .calc-key {
+        fill: var(--orange);
+        opacity: 1;
     }
 
     .gym-icon {
@@ -2938,7 +2994,7 @@ const description =
         }
 
         .projects-split .lab-grid {
-            grid-template-columns: repeat(2, minmax(0, 1fr));
+            grid-template-columns: repeat(3, minmax(0, 1fr));
             gap: 0.7rem;
         }
 
@@ -2948,8 +3004,7 @@ const description =
         }
 
         .projects-split .lab-card svg {
-            width: 52px;
-            height: 40px;
+            display: none;
         }
 
         .projects-split .lab-copy strong {
