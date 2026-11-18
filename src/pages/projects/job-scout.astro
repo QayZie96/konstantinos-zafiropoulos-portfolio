@@ -1,30 +1,60 @@
 ---
 /* =========================================================
    JOB SCOUT: CASE STUDY
+   Real numbers come from the job-scout repository and the
+   live Jobs / Filtered out tabs on 18 November 2026. Sample
+   jobs in the walk-through and the sheet preview are
+   fictional and labelled as such.
    ========================================================= */
 import SiteHeader from "../../components/SiteHeader.astro";
 import SiteFooter from "../../components/SiteFooter.astro";
 import SeoHead from "../../components/SeoHead.astro";
 import SkillLinks from "../../components/SkillLinks.astro";
+import "../../styles/case-study.css";
 
 const title =
     "Job Scout | Daily Job-Search Pipeline (Python, Gemini, Google Sheets) | Konstantinos Zafeiropoulos";
 
 const description =
-    "A live, scheduled pipeline that reads job boards and company hiring systems every weekday, removes deal-breakers, scores fit with rules and Gemini, and writes a ranked list to Google Sheets for two people.";
+    "A live, scheduled pipeline that reads 10 job boards and the hiring systems of 770+ companies every weekday, removes deal-breakers, scores fit with rules and Gemini, and writes a ranked list to Google Sheets for two people.";
 
 const metrics = [
     { value: "2", label: "people using it every weekday" },
-    { value: "10+", label: "job boards read each run" },
-    { value: "9", label: "hiring systems (ATS) supported" },
+    { value: "10", label: "job boards read each run" },
+    { value: "9", label: "company hiring systems (ATS) read" },
     { value: "770+", label: "companies tracked" },
+];
+
+const boards = [
+    "Workable (Athens & Greece)",
+    "Indeed Greece",
+    "Jobfind.gr",
+    "Himalayas",
+    "Jobicy",
+    "Remotive",
+    "Arbeitnow",
+    "Remote OK",
+    "We Work Remotely",
+    "RemoteJobs.org",
+];
+
+const atsList = [
+    "Greenhouse",
+    "Lever",
+    "Ashby",
+    "Workable",
+    "SmartRecruiters",
+    "Personio",
+    "Recruitee",
+    "Teamtailor",
+    "Workday",
 ];
 
 const steps = [
     {
         number: "01",
         title: "Collect",
-        text: "Reads public job boards (Workable, Himalayas, Remotive, Remote OK, We Work Remotely, Indeed Greece and more) and the public hiring feeds of hundreds of companies on Greenhouse, Lever, Ashby, Workable, SmartRecruiters, Personio, Recruitee, Teamtailor and Workday.",
+        text: "Reads the 10 job boards and the public hiring feeds of every tracked company. A weekly job works out which hiring system a new company uses, so adding a company is one row in the sheet.",
     },
     {
         number: "02",
@@ -41,6 +71,66 @@ const steps = [
         title: "Hand over to a person",
         text: "New jobs land at the top of a Google Sheet, with a Best tab for the last three days' strongest matches. It never applies to anything: I read, decide and apply by hand.",
     },
+];
+
+/* Fictional sample jobs for the walk-through */
+const samples = [
+    {
+        id: "ops",
+        label: "Marketplace Operations Specialist",
+        meta: "Athens, hybrid · from a company's Greenhouse feed",
+        steps: [
+            ["Collect", "Found in a tracked company's own hiring feed.", "ok"],
+            ["Deal-breakers", "Athens works, operations is a target field, no degree requirement found.", "ok"],
+            ["Rule score", "62 / 100: operations family, Athens, Excel and SQL named, posted today.", "ok"],
+            ["AI fit", "84: marketplace pricing and catalogue work match seven years of Rocketeers.", "ok"],
+        ],
+        result: "Top of the Jobs tab and in Best. I read it first.",
+        tone: "ok",
+    },
+    {
+        id: "cs",
+        label: "Customer Success Associate",
+        meta: "Remote, EU · from an Ashby feed",
+        steps: [
+            ["Collect", "Found in a tracked company's Ashby feed.", "ok"],
+            ["Deal-breakers", "Remote within the EU works; customer success is a target field.", "ok"],
+            ["Rule score", "48 / 100: customer family, remote, HubSpot named.", "ok"],
+            ["AI fit", "71: strong customer record, but SaaS experience is thin.", "ok"],
+        ],
+        result: "Kept, with the AI's reason shown next to the score so I can disagree with it.",
+        tone: "ok",
+    },
+    {
+        id: "degree",
+        label: "Senior Data Engineer",
+        meta: "Berlin, on-site · from a job board",
+        steps: [
+            ["Collect", "Found on a job board.", "ok"],
+            ["Deal-breakers", "Asks for a degree in computer science with no alternative, and 6+ years.", "stop"],
+        ],
+        result: "Moved to Filtered out with the reason, never sent to the AI.",
+        tone: "stop",
+    },
+    {
+        id: "sales",
+        label: "Sales Development Rep",
+        meta: "Remote · from a job board",
+        steps: [
+            ["Collect", "Found on a job board.", "ok"],
+            ["Deal-breakers", "Commission-only pay and cold calling.", "stop"],
+        ],
+        result: "Moved to Filtered out with the reason.",
+        tone: "stop",
+    },
+];
+
+/* Fictional rows for the sheet preview */
+const sheetRows = [
+    ["18 Nov", "Example Marketplace Co.", "Marketplace Operations Specialist", "Athens", "Greenhouse", "62", "84", "Pricing and catalogue work match the Rocketeers record.", "New"],
+    ["18 Nov", "Sample SaaS Ltd", "Customer Success Associate", "Remote EU", "Ashby", "48", "71", "Strong customer record; SaaS experience thin.", "New"],
+    ["17 Nov", "Demo Retail Group", "E-commerce Coordinator", "Athens", "Workable", "55", "68", "Hands-on e-shop work fits; role is junior.", "Applied"],
+    ["17 Nov", "Placeholder Logistics", "Revenue Operations Analyst", "Remote", "Lever", "51", "64", "HubSpot and reporting fit; SQL depth unclear.", "New"],
 ];
 
 const decisions = [
@@ -66,8 +156,15 @@ const decisions = [
     },
     {
         title: "Honest about the AI",
-        text: "The first AI scores were too generous, so the rules do the filtering and the AI only ranks. Its reason is shown next to every score so I can disagree with it.",
+        text: "The first AI scores were too generous, so the rules do the filtering and the AI only ranks. Its reason is shown next to every score.",
     },
+];
+
+const timeline = [
+    ["Before", "Two earlier versions: a Python and Gemini prototype on three job APIs, then a Google Apps Script funnel over company hiring systems."],
+    ["16 Nov 2026", "Job Scout goes live: weekday morning runs write the Jobs, Filtered out and Settings tabs."],
+    ["17 Nov", "A second profile for an HR job seeker, 64 more companies from best-workplace and remote-first lists, and a fix so 'or a related field' no longer hides a degree requirement."],
+    ["18 Nov", "Found that GitHub's schedule had never fired, so I added the backup start from Apps Script. Audited the scores against 3,461 kept and 18,565 filtered jobs, and started tightening the AI fit."],
 ];
 ---
 
@@ -88,9 +185,10 @@ const decisions = [
                 <h1>Job Scout</h1>
 
                 <p class="hero-subtitle">
-                    A daily pipeline that reads hundreds of hiring feeds, removes
-                    the jobs that can't work, ranks the rest and hands a short list
-                    to a person every weekday morning.
+                    A daily pipeline that reads 10 job boards and the hiring
+                    systems of 770+ companies, removes the jobs that can't work,
+                    ranks the rest and hands a short list to a person every
+                    weekday morning.
                 </p>
 
                 <SkillLinks
@@ -138,7 +236,41 @@ const decisions = [
 
             <section class="case-section">
                 <div class="section-label">
-                    <p class="eyebrow">02 — How it works</p>
+                    <p class="eyebrow">02 — Sources</p>
+                </div>
+                <div class="section-content">
+                    <h2>10 job boards plus the hiring systems companies use themselves.</h2>
+                    <p>
+                        Boards catch volume; company feeds catch the roles that never
+                        reach a board. Reading a company's own hiring system also means
+                        the tool notices when a job closes.
+                    </p>
+                    <div class="chip-columns">
+                        <div class="chip-panel">
+                            <h3>Job boards ({boards.length})</h3>
+                            <p>Public feeds, APIs and RSS, read every run.</p>
+                            <ul class="chips">
+                                {boards.map((b) => <li>{b}</li>)}
+                            </ul>
+                        </div>
+                        <div class="chip-panel">
+                            <h3>Company hiring systems ({atsList.length})</h3>
+                            <p>The public job feeds behind 770+ companies' careers pages.</p>
+                            <ul class="chips">
+                                {atsList.map((a) => <li>{a}</li>)}
+                            </ul>
+                        </div>
+                    </div>
+                    <p class="note">
+                        Kariera.gr and Skywalker.gr block automated readers, so they
+                        stay as email alerts instead of being scraped.
+                    </p>
+                </div>
+            </section>
+
+            <section class="case-section">
+                <div class="section-label">
+                    <p class="eyebrow">03 — How it works</p>
                 </div>
                 <div class="section-content">
                     <h2>Collect, remove, score, hand over.</h2>
@@ -156,7 +288,111 @@ const decisions = [
 
             <section class="case-section">
                 <div class="section-label">
-                    <p class="eyebrow">03 — Decisions</p>
+                    <p class="eyebrow">04 — Walk a job through</p>
+                </div>
+                <div class="section-content">
+                    <h2>What happens to one job.</h2>
+                    <p>Pick a sample job to see each step it goes through. The jobs are fictional; the steps are the real ones.</p>
+
+                    <div class="walk" data-walk>
+                        <div class="walk-tabs" role="tablist" aria-label="Sample jobs">
+                            {samples.map((s, i) => (
+                                <button
+                                    type="button"
+                                    role="tab"
+                                    id={`walk-tab-${s.id}`}
+                                    aria-controls={`walk-panel-${s.id}`}
+                                    aria-selected={i === 0 ? "true" : "false"}
+                                    tabindex={i === 0 ? 0 : -1}
+                                    data-walk-tab={s.id}
+                                >
+                                    {s.label}
+                                </button>
+                            ))}
+                        </div>
+
+                        {samples.map((s, i) => (
+                            <div
+                                class="walk-panel"
+                                role="tabpanel"
+                                id={`walk-panel-${s.id}`}
+                                aria-labelledby={`walk-tab-${s.id}`}
+                                hidden={i !== 0}
+                                data-walk-panel={s.id}
+                            >
+                                <p class="walk-meta">{s.label} · {s.meta}</p>
+                                <ol class="walk-steps">
+                                    {s.steps.map(([name, text, tone]) => (
+                                        <li class={`walk-step is-${tone}`}>
+                                            <span class="walk-dot" aria-hidden="true">{tone === "stop" ? "✕" : "✓"}</span>
+                                            <div>
+                                                <strong>{name}</strong>
+                                                <span>{text}</span>
+                                            </div>
+                                        </li>
+                                    ))}
+                                </ol>
+                                <p class={`walk-result is-${s.tone}`}>{s.result}</p>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </section>
+
+            <section class="case-section">
+                <div class="section-label">
+                    <p class="eyebrow">05 — The sheet</p>
+                </div>
+                <div class="section-content">
+                    <h2>The output is a spreadsheet, on purpose.</h2>
+                    <p>
+                        Everyone already knows how to filter and sort a Google Sheet,
+                        and the second user isn't a developer. The Jobs tab looks like
+                        this (sample rows, not real companies):
+                    </p>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Found</th>
+                                    <th>Company</th>
+                                    <th>Title</th>
+                                    <th>Location</th>
+                                    <th>Source</th>
+                                    <th>Score</th>
+                                    <th>AI fit</th>
+                                    <th>Why this score</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {sheetRows.map((r) => (
+                                    <tr>
+                                        <td>{r[0]}</td>
+                                        <td>{r[1]}</td>
+                                        <td>{r[2]}</td>
+                                        <td>{r[3]}</td>
+                                        <td>{r[4]}</td>
+                                        <td class="num">{r[5]}</td>
+                                        <td class="num">{r[6]}</td>
+                                        <td>{r[7]}</td>
+                                        <td>{r[8]}</td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                    <p class="note">
+                        Other tabs: Best (the last three days' strongest matches),
+                        Filtered out (every removed job and why), Old jobs, Scout
+                        Companies (which companies are tracked and why) and Settings.
+                    </p>
+                </div>
+            </section>
+
+            <section class="case-section">
+                <div class="section-label">
+                    <p class="eyebrow">06 — Decisions</p>
                 </div>
                 <div class="section-content">
                     <h2>What makes it something people can rely on.</h2>
@@ -173,7 +409,24 @@ const decisions = [
 
             <section class="case-section">
                 <div class="section-label">
-                    <p class="eyebrow">04 — How I built it</p>
+                    <p class="eyebrow">07 — First week</p>
+                </div>
+                <div class="section-content">
+                    <h2>Running it daily is where the real work started.</h2>
+                    <ol class="timeline">
+                        {timeline.map(([when, what]) => (
+                            <li>
+                                <strong>{when}</strong>
+                                <span>{what}</span>
+                            </li>
+                        ))}
+                    </ol>
+                </div>
+            </section>
+
+            <section class="case-section">
+                <div class="section-label">
+                    <p class="eyebrow">08 — How I built it</p>
                 </div>
                 <div class="section-content">
                     <h2>AI coding tools, my scoping and testing.</h2>
@@ -202,197 +455,103 @@ const decisions = [
         </main>
 
         <SiteFooter />
+
+        <script>
+            document.querySelectorAll<HTMLElement>("[data-walk]").forEach((root) => {
+                const tabs = Array.from(root.querySelectorAll<HTMLButtonElement>("[data-walk-tab]"));
+                const panels = Array.from(root.querySelectorAll<HTMLElement>("[data-walk-panel]"));
+                const select = (id: string, focus = false) => {
+                    tabs.forEach((t) => {
+                        const on = t.dataset.walkTab === id;
+                        t.setAttribute("aria-selected", on ? "true" : "false");
+                        t.tabIndex = on ? 0 : -1;
+                        if (on && focus) t.focus();
+                    });
+                    panels.forEach((p) => (p.hidden = p.dataset.walkPanel !== id));
+                };
+                tabs.forEach((t, i) => {
+                    t.addEventListener("click", () => select(t.dataset.walkTab!));
+                    t.addEventListener("keydown", (e) => {
+                        if (e.key !== "ArrowRight" && e.key !== "ArrowLeft") return;
+                        e.preventDefault();
+                        const next = tabs[(i + (e.key === "ArrowRight" ? 1 : tabs.length - 1)) % tabs.length];
+                        select(next.dataset.walkTab!, true);
+                    });
+                });
+            });
+        </script>
     </body>
 </html>
 
 <style>
-    :root {
-        --color-bg: #050b14;
-        --color-text: #e8edf3;
-        --color-heading: #ffffff;
-        --color-muted: #a9bbcc;
-        --color-border: #203247;
-        --color-blue: #2aa7ff;
-        --color-orange: #ff8a00;
-        --page-width: 1200px;
-
-        color: var(--color-text);
-        background: var(--color-bg);
-        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    }
-
-    * { box-sizing: border-box; }
-
-    body {
-        min-height: 100vh;
-        margin: 0;
-        color: var(--color-text);
-        background:
-            radial-gradient(circle at top right, rgba(42, 167, 255, 0.12), transparent 34rem),
-            radial-gradient(circle at 15% 35%, rgba(255, 138, 0, 0.045), transparent 30rem),
-            var(--color-bg);
-    }
-
-    main {
-        max-width: var(--page-width);
-        margin-inline: auto;
-        padding-inline: clamp(1rem, 5vw, 4.5rem);
-    }
-
-    a { color: inherit; text-underline-offset: 0.25em; }
-
-    a:focus-visible {
-        outline: 2px solid var(--color-orange);
-        outline-offset: 5px;
-    }
-
-    h1, h2, h3 { color: var(--color-heading); }
-
-    .eyebrow {
-        margin: 0 0 0.8rem;
-        color: var(--color-orange);
-        font-size: 0.78rem;
-        font-weight: 800;
-        letter-spacing: 0.12em;
-        text-transform: uppercase;
-    }
-
-    .hero { padding: clamp(2.5rem, 7vw, 5rem) 0 2.5rem; }
-
-    .back-link {
-        display: inline-block;
-        margin-bottom: 2rem;
-        color: var(--color-muted);
-        font-size: 0.9rem;
-        text-decoration: none;
-    }
-
-    .back-link:hover { color: #ffffff; }
-
-    h1 {
-        margin: 0 0 1rem;
-        font-size: clamp(2.6rem, 7vw, 4.6rem);
-        line-height: 1;
-        letter-spacing: -0.05em;
-    }
-
-    .hero-subtitle {
-        max-width: 720px;
-        margin: 0 0 1.6rem;
-        color: var(--color-muted);
-        font-size: clamp(1.05rem, 2vw, 1.25rem);
-        line-height: 1.6;
-    }
-
-    .metrics {
-        display: grid;
-        grid-template-columns: repeat(4, minmax(0, 1fr));
-        gap: 1rem;
-        margin-bottom: 3rem;
-    }
-
-    .metric-card {
-        padding: 1.3rem;
-        border: 1px solid var(--color-border);
-        border-radius: 16px;
-        background: rgba(10, 26, 43, 0.6);
-    }
-
-    .metric-card strong {
-        display: block;
-        color: var(--color-blue);
-        font-size: clamp(1.8rem, 4vw, 2.4rem);
-        letter-spacing: -0.04em;
-    }
-
-    .metric-card span {
-        color: var(--color-muted);
-        font-size: 0.88rem;
-    }
-
-    .case-section {
-        display: grid;
-        grid-template-columns: 200px minmax(0, 1fr);
-        gap: 2rem;
-        padding: 3rem 0;
-        border-top: 1px solid var(--color-border);
-    }
-
-    .section-content h2 {
-        margin: 0 0 1rem;
-        font-size: clamp(1.6rem, 3.4vw, 2.3rem);
-        line-height: 1.15;
-        letter-spacing: -0.03em;
-    }
-
-    .section-content p {
-        max-width: 760px;
-        color: var(--color-muted);
-        line-height: 1.7;
-    }
-
-    .section-content .lead {
-        color: var(--color-text);
-        font-size: 1.12rem;
-    }
-
-    .section-content p a { color: var(--color-blue); }
-
-    .step-grid,
-    .decision-list {
-        display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 1rem;
-        margin-top: 1.5rem;
-    }
-
-    .step-card,
-    .decision-list article {
-        padding: 1.3rem;
+    .walk {
+        margin-top: 1.4rem;
+        padding: 1.2rem;
         border: 1px solid var(--color-border);
         border-radius: 16px;
         background: rgba(10, 26, 43, 0.5);
     }
 
-    .card-number {
-        color: var(--color-orange);
-        font-size: 0.78rem;
-        font-weight: 800;
+    .walk-tabs { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1.1rem; }
+
+    .walk-tabs button {
+        padding: 0.5rem 0.85rem;
+        border: 1px solid #2a4560;
+        border-radius: 999px;
+        color: var(--color-muted);
+        background: transparent;
+        font: inherit;
+        font-size: 0.85rem;
+        font-weight: 700;
+        cursor: pointer;
     }
 
-    .step-card h3,
-    .decision-list h3 {
-        margin: 0.4rem 0 0.5rem;
-        font-size: 1.08rem;
+    .walk-tabs button[aria-selected="true"] {
+        border-color: var(--color-orange);
+        color: #ffffff;
+        background: rgba(255, 138, 0, 0.12);
     }
 
-    .step-card p,
-    .decision-list p {
-        margin: 0;
-        font-size: 0.94rem;
+    .walk-tabs button:focus-visible { outline: 2px solid var(--color-orange); outline-offset: 2px; }
+
+    .walk-meta { margin: 0 0 0.9rem; color: var(--color-muted); font-size: 0.88rem; }
+
+    .walk-steps { display: grid; gap: 0.6rem; margin: 0; padding: 0; list-style: none; }
+
+    .walk-step {
+        display: flex;
+        gap: 0.8rem;
+        align-items: flex-start;
+        padding: 0.75rem 0.9rem;
+        border: 1px solid var(--color-border);
+        border-radius: 12px;
+        background: rgba(5, 11, 20, 0.6);
     }
 
-    .project-end {
-        padding: 3rem 0 4rem;
-        border-top: 1px solid var(--color-border);
+    .walk-dot {
+        flex: 0 0 26px;
+        height: 26px;
+        border-radius: 50%;
+        color: #04121f;
+        background: #3ecf8e;
+        font-size: 0.8rem;
+        font-weight: 900;
+        line-height: 26px;
         text-align: center;
     }
 
-    .project-end h2 { margin: 0 0 1rem; }
+    .walk-step.is-stop .walk-dot { color: #ffffff; background: #e5484d; }
 
-    .text-link {
-        color: var(--color-blue);
+    .walk-step strong { display: block; color: #ffffff; font-size: 0.92rem; }
+    .walk-step span { color: var(--color-muted); font-size: 0.9rem; line-height: 1.55; }
+
+    .walk-result {
+        margin: 0.9rem 0 0;
+        padding: 0.75rem 0.9rem;
+        border-radius: 10px;
         font-weight: 700;
-        text-decoration: none;
     }
 
-    @media (max-width: 900px) {
-        .metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-        .case-section { grid-template-columns: 1fr; gap: 0.5rem; }
-    }
-
-    @media (max-width: 650px) {
-        .step-grid,
-        .decision-list { grid-template-columns: 1fr; }
-    }
+    .walk-result.is-ok { color: #3ecf8e; background: rgba(62, 207, 142, 0.08); }
+    .walk-result.is-stop { color: #ff8f93; background: rgba(229, 72, 77, 0.08); }
 </style>

@@ -23,6 +23,10 @@ export const projects = {
         title: "Job Scout",
         href: "/projects/job-scout/",
     },
+    calculator: {
+        title: "Print Price Calculator",
+        href: "/projects/print-price-calculator/",
+    },
     aiOutreach: {
         title: "Job search automation: earlier versions",
         href: "/projects/ai-job-outreach/",
@@ -133,7 +137,7 @@ export const skills = [
         label: "Pricing Operations",
         umbrella: "operations-ecommerce",
         description: "Combining market references, rules, margin awareness, and human judgement to maintain large variation catalogues.",
-        projects: ["rocketeers", "operations", "repricing"],
+        projects: ["calculator", "rocketeers", "operations", "repricing"],
     },
     {
         id: "inventory-management",
@@ -175,7 +179,7 @@ export const skills = [
         label: "Commercial Analysis",
         umbrella: "operations-ecommerce",
         description: "Using sales, pricing, fee, inventory, and channel information to support day-to-day commercial decisions.",
-        projects: ["rocketeers", "finance"],
+        projects: ["calculator", "rocketeers", "finance"],
     },
     {
         id: "commercial-operations",
@@ -518,7 +522,7 @@ export const skills = [
         label: "HTML & CSS",
         umbrella: "python-data-web",
         description: "Building semantic, responsive portfolio pages and reusable visual components with custom styling.",
-        projects: ["portfolio", "rame", "mathWallpapers", "mandala"],
+        projects: ["calculator", "portfolio", "rame", "mathWallpapers", "mandala"],
     },
     {
         id: "wordpress",
@@ -602,7 +606,7 @@ export const skills = [
         label: "Netlify",
         umbrella: "python-data-web",
         description: "Deploying and reviewing the Astro portfolio through a Git-connected static hosting workflow.",
-        projects: ["portfolio"],
+        projects: ["calculator", "portfolio"],
     },
     {
         id: "responsive-web-design",
